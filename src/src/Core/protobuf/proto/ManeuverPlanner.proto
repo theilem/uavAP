@@ -1,0 +1,15 @@
+syntax="proto3";
+
+import "Shapes.proto";
+
+message ManeuverPlannerParams {
+	Rectangle safety_rectangle = 1;
+	double safety_height = 2;
+	double inner_radius = 3;
+	double return_velocity = 4;
+}
+
+message ManeuverPlannerStatus {
+	bool maneuver_set_active = 1;
+	bool manual_override_active = 2;	
+}

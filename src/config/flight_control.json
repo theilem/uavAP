@@ -1,0 +1,61 @@
+{
+	"controller": 
+	{
+		"type" : "maneuver",
+		"hard_roll_constraint" : 45.0,
+		"hard_pitch_constraint" : 30.0,
+		"pids":
+		{
+			"climb_angle": {
+				"ff": 0,
+				"imax": 10,
+				"kd": 0,
+				"ki": 0,
+				"kp": 2
+			},
+			"pitch": {
+				"ff": 0,
+				"imax": 2,
+				"kd": 0.2,
+				"ki": 0.1,
+				"kp": 0.8
+			},
+			"roll": {
+				"ff": 0,
+				"imax": 5,
+				"kd": 0.05,
+				"ki": 0.1,
+				"kp": 1
+			},
+			"velocity": {
+				"ff": 0,
+				"imax": 10,
+				"kd": 0,
+				"ki": 0.2,
+				"kp": 1
+			},
+			"yaw_rate": {
+				"ff": 1.5,
+				"imax": 0,
+				"kd": 0,
+				"ki": 0,
+				"kp": 0
+            },
+            "rudder": {
+                "ff": 0,
+                "imax": 1,
+                "kd": 0.4,
+                "ki": 0.6,
+                "kp": 1.5
+            }
+		}		
+	},
+	"local_planner":
+	{
+		"type":"linear",
+		"k_altitude":0.2,
+		"k_heading":0.01,
+		"k_yaw_rate":1.0	
+	}
+}
+

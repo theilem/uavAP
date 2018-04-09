@@ -1,0 +1,5 @@
+# Ignoring Build Folder
+[Bb]ld*/
+
+# Ignoring Qt User Profiles
+*.user

@@ -1,0 +1,6 @@
+{
+	"interface":
+	{
+		"serial_port":"/dev/ttyUSB1"	
+	}	
+}

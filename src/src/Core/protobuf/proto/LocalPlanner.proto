@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "Velocities.proto";
+message AirplaneLinearLocalPlannerStatus {
+	double heading_target = 1;
+}
+
+message LinearLocalPlannerStatus {
+	AirplaneLinearLocalPlannerStatus airplane_status = 1;
+	uint32 current_path_section = 2;
+	VelocityBody velocity_target = 3;
+	double yaw_rate_target = 4;
+}
+
+message LocalPlannerStatus {
+	LinearLocalPlannerStatus linear_status = 1;
+}
+
+message AirplaneLinearLocalPlannerParams {
+	double k_altitude = 1;
+	double k_heading = 2;
+	double k_yaw_rate = 3;
+}
+
+message LinearLocalPlannerParams {
+	AirplaneLinearLocalPlannerParams airplane_params = 1;
+}
+
+message LocalPlannerParams {
+	LinearLocalPlannerParams linear_params = 1;
+}

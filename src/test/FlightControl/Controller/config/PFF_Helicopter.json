@@ -1,0 +1,33 @@
+{
+    "velocity_x":
+    {
+	"kp":1.0,
+	"ff":1.0
+    },
+    "velocity_y":
+    {
+	"kp":1.0,
+	"ff":1.0
+    },
+    "climb_rate":
+    {
+	"kp":1.0,
+	"ff":1.0
+    },
+    "roll":
+    {
+	"kp":1.0,
+	"ff":1.0
+    },
+    "pitch":
+    {
+	"kp":1.0,
+	"ff":1.0
+    },
+    "yaw_rate":
+    {
+	"kp":1.0,
+	"ff":1.0
+    },
+    "airplane":false
+}
