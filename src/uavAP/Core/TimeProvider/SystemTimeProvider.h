@@ -33,6 +33,8 @@ class SystemTimeProvider: public ITimeProvider, public IAggregatableObject
 {
 public:
 
+	static constexpr TypeId typeId = "system";
+
 	SystemTimeProvider();
 
 	static std::shared_ptr<ITimeProvider>
@@ -42,13 +44,15 @@ public:
 	now() override;
 
 	bool
-	waitFor(Duration duration, boost::condition_variable& interrupt, boost::unique_lock<boost::mutex>& lock) override;
+	waitFor(Duration duration, boost::condition_variable& interrupt,
+			boost::unique_lock<boost::mutex>& lock) override;
 
 	bool
-	waitUntil(TimePoint timePoint, boost::condition_variable& interrupt, boost::unique_lock<boost::mutex>& lock) override;
+	waitUntil(TimePoint timePoint, boost::condition_variable& interrupt,
+			boost::unique_lock<boost::mutex>& lock) override;
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 private:
 

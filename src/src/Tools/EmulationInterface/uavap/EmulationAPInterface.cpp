@@ -1,18 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
-// 
+//
 // This file is part of uavAP.
-// 
+//
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,6 @@
  *  Created on: Nov 25, 2017
  *      Author: mircot
  */
-
 
 #include <uavAP/API/ap_ext/ap_ext.h>
 #include <uavAP/API/ap_ext/ApExtManager.h>
@@ -48,7 +47,7 @@ EmulationAPInterface::create(const boost::property_tree::ptree& config)
 {
 	auto emulation = std::make_shared<EmulationAPInterface>();
 	if (!emulation->configure(config))
-		APLOG_ERROR <<"Configuration of EmulationAPInterface not successfull.";
+		APLOG_ERROR << "Configuration of EmulationAPInterface not successfull.";
 	return emulation;
 }
 
@@ -61,7 +60,7 @@ EmulationAPInterface::configure(const boost::property_tree::ptree& config)
 }
 
 void
-EmulationAPInterface::notifyAggregationOnUpdate(Aggregator& agg)
+EmulationAPInterface::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	idc_.setFromAggregationIfNotSet(agg);
 	scheduler_.setFromAggregationIfNotSet(agg);
@@ -95,14 +94,12 @@ EmulationAPInterface::run(RunStage stage)
 	case RunStage::NORMAL:
 	{
 		auto idc = idc_.get();
-		if (!idc)
-			return true;
 		auto sched = scheduler_.get();
-		if (!sched)
-			return true;
 
-		SerialIDCParams params(serialPort_, 115200, "*-*\n");
-		idc->subscribeOnPacket(params, std::bind(&EmulationAPInterface::onPacket, this, std::placeholders::_1));
+		SerialNetworkParams params(serialPort_, 115200, "*-*
+");
+		idc->subscribeOnPacket(params,
+				std::bind(&EmulationAPInterface::onPacket, this, std::placeholders::_1));
 		actuationSender_ = idc->createSender(params);
 
 		dataSample_.imu_sample = new imu_sample_t;
@@ -114,12 +111,12 @@ EmulationAPInterface::run(RunStage stage)
 			return true;
 //		sched->schedule(std::bind(&EmulationAPInterface::sendActuation, this), Milliseconds(0), Milliseconds(2));
 		auto apMan = getApExtManager();
-		apMan->notifyOnActuation(std::bind(&EmulationAPInterface::sendActuation,this));
+		apMan->notifyOnActuation(std::bind(&EmulationAPInterface::sendActuation, this));
 		setup_ = true;
 		break;
 	}
 	case RunStage::FINAL:
-			break;
+		break;
 	default:
 		break;
 	}
@@ -232,7 +229,9 @@ EmulationAPInterface::onPacket(const Packet& packet)
 	}
 	else
 	{
-		APLOG_ERROR << "Invalid packet received. Only sensor data and sensorDataLight allowed. Content: " << static_cast<int>(content);
+		APLOG_ERROR
+				<< "Invalid packet received. Only sensor data and sensorDataLight allowed. Content: "
+				<< static_cast<int>(content);
 		return;
 	}
 

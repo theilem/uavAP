@@ -51,6 +51,4 @@ private:
 
 };
 
-
-
 #endif /* UAVAP_CORE_IPC_SUBSCRIPTION_H_ */

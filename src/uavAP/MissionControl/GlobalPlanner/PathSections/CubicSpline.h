@@ -123,7 +123,7 @@ struct CubicSpline: public IPathSection
 				/ (pow(dp_du[0], 2) + pow(dp_du[1], 2));
 		double du_dt = 1.0 / dp_du.norm();
 
-		return -1 * dPsi_du * du_dt; //Clockwise is positive for heading (not counter clockwise)
+		return dPsi_du * du_dt; //Clockwise is positive for heading (not counter clockwise)
 	}
 
 	Vector3
@@ -151,5 +151,20 @@ struct CubicSpline: public IPathSection
 	double velocity_;
 
 };
+
+namespace dp
+{
+template<class Archive, typename Type>
+inline void
+serialize(Archive& ar, CubicSpline& t)
+{
+	ar & t.c0_;
+	ar & t.c1_;
+	ar & t.c2_;
+	ar & t.c3_;
+	ar & t.closestU_;
+	ar & t.velocity_;
+}
+}
 
 #endif /* UAVAP_MISSIONCONTROL_GLOBALPLANNER_PATHSECTIONS_CUBICSPLINE_H_ */

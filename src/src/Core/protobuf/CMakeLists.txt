@@ -25,4 +25,5 @@ set(CORE_SRC 	${CORE_SRC}
 				${CMAKE_CURRENT_SOURCE_DIR}/messages/Positions.pb.cc
 				${CMAKE_CURRENT_SOURCE_DIR}/messages/Velocities.pb.cc
 				${CMAKE_CURRENT_SOURCE_DIR}/messages/Shapes.pb.cc
+				${CMAKE_CURRENT_SOURCE_DIR}/messages/Attitudes.pb.cc
 				PARENT_SCOPE)

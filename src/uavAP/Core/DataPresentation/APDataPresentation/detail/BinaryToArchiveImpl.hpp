@@ -64,5 +64,4 @@ BinaryToArchive::operator >>(const Type& val)
 	return *this;
 }
 
-
 #endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_DETAIL_BINARYTOARCHIVEIMPL_HPP_ */

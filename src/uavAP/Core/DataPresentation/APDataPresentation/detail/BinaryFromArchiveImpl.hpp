@@ -50,7 +50,6 @@ BinaryFromArchive::operator >>(Type& message)
 	return *this;
 }
 
-
 template<class Type>
 inline void
 BinaryFromArchive::operator &(Type& val)
@@ -64,8 +63,5 @@ BinaryFromArchive::operator <<(Type& val)
 {
 	return *this;
 }
-
-
-
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_DETAIL_BINARYFROMARCHIVEIMPL_HPP_ */

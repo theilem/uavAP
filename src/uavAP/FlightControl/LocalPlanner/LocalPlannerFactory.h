@@ -29,6 +29,7 @@
 #include "uavAP/Core/Framework/Factory.h"
 #include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"
+#include "uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlanner.h"
 
 class LocalPlannerFactory: public Factory<ILocalPlanner>
 {
@@ -36,11 +37,12 @@ public:
 
 	LocalPlannerFactory()
 	{
-		addCreator("linear", &LinearLocalPlanner::create);
+		addCreator<LinearLocalPlanner>();
+		addCreator<ManeuverLocalPlanner>();
 	}
 
+	static constexpr TypeId typeId = "local_planner";
+
 };
-
-
 
 #endif /* UAVAP_FLIGHTCONTROL_LOCALPLANNER_LOCALPLANNERFACTORY_H_ */

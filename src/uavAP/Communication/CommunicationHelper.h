@@ -28,28 +28,33 @@
 #ifndef UAVAP_COMMUNICATION_COMMUNICATIONHELPER_H_
 #define UAVAP_COMMUNICATION_COMMUNICATIONHELPER_H_
 
-#include "uavAP/Core/DataPresentation/Content.h"
+#include <uavAP/Core/DataPresentation/ContentMapping.h>
+#include "uavAP/Core/IDC/NetworkLayer/NetworkFactory.h"
+#include "uavAP/Core/IDC/IDC.h"
 #include "uavAP/Core/DataPresentation/DataPresentationFactory.h"
-#include "uavAP/Core/IDC/IDCFactory.h"
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/TimeProvider/TimeProviderFactory.h"
-#include "uavAP/Communication/Comm/CommFactory.h"
 #include "uavAP/Core/Scheduler/SchedulerFactory.h"
 #include "uavAP/Core/Framework/Helper.h"
+
+#include "uavAP/Communication/Comm/CommFactory.h"
 
 class CommunicationHelper: public Helper
 {
 public:
+
 	CommunicationHelper()
 	{
-		addDefaultCreator<IPC>("ipc");
-		addDefault<IDCFactory>("idc");
-		addDefault<SchedulerFactory>("scheduler");
-		addDefault<TimeProviderFactory>("time_provider");
-		addDefault<DataPresentationFactory<Content,Target>>("data_presentation");
+		addDefaultCreator<IPC>();
+		addDefaultCreator<IDC>();
+		addDefault<SchedulerFactory>();
+		addDefault<TimeProviderFactory>();
+		addDefault<DataPresentationFactory<Content, Target>>();
 
-		addFactory<CommFactory>("comm");
+		addFactory<NetworkFactory>();
+		addFactory<CommFactory>();
 	}
+
 };
 
 #endif /* UAVAP_COMMUNICATION_COMMUNICATIONHELPER_H_ */

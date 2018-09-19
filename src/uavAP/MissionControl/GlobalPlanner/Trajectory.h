@@ -43,6 +43,7 @@ using PathSectionIterator = std::vector<std::shared_ptr<IPathSection>>::iterator
 struct Trajectory
 {
 	PathSections pathSections;
+	std::shared_ptr<IPathSection> approachSection;
 	bool infinite;
 
 	Trajectory() :
@@ -51,12 +52,116 @@ struct Trajectory
 	}
 
 	Trajectory(const PathSections& path, bool inf) :
-			pathSections(path),
-			infinite(inf)
+			pathSections(path), infinite(inf)
+	{
+	}
+
+	Trajectory(const PathSections& path, std::shared_ptr<IPathSection> approach, bool inf) :
+			pathSections(path), approachSection(approach), infinite(inf)
 	{
 	}
 
 };
 
+
+
+namespace dp
+{
+template<class Archive, typename Type>
+void
+store(Archive & ar, const std::shared_ptr<IPathSection> & t)
+{
+	bool notNull = t != nullptr;
+	ar << notNull;
+	if (notNull)
+	{
+		if (auto curve = std::dynamic_pointer_cast<Curve>(t))
+		{
+			ar << PathSectionType::CURVE;
+			ar << *curve;
+		}
+		else if (auto orbit = std::dynamic_pointer_cast<Orbit>(t))
+		{
+			ar << PathSectionType::ORBIT;
+			ar << *orbit;
+		}
+		else if (auto line = std::dynamic_pointer_cast<Line>(t))
+		{
+			ar << PathSectionType::LINE;
+			ar << *line;
+		}
+		else if (auto spline = std::dynamic_pointer_cast<CubicSpline>(t))
+		{
+			ar << PathSectionType::SPLINE;
+			ar << *spline;
+		}
+		else
+		{
+			ar << PathSectionType::UNNKNOWN;
+		}
+	}
+}
+
+template<class Archive, typename Type>
+void
+load(Archive & ar, std::shared_ptr<IPathSection> & t)
+{
+	bool notNull = false;
+	ar >> notNull;
+	if (notNull)
+	{
+		PathSectionType type;
+		ar >> type;
+		if (type == PathSectionType::CURVE)
+		{
+			auto curve = std::make_shared<Curve>();
+			ar >> *curve;
+			t = curve;
+		}
+		else if (type == PathSectionType::ORBIT)
+		{
+			auto orbit = std::make_shared<Orbit>();
+			ar >> *orbit;
+			t = orbit;
+		}
+		else if (type == PathSectionType::LINE)
+		{
+			auto line = std::make_shared<Line>();
+			ar >> *line;
+			t = line;
+		}
+		else if (type == PathSectionType::SPLINE)
+		{
+			auto spline = std::make_shared<CubicSpline>();
+			ar >> *spline;
+			t = spline;
+		}
+		else
+		{
+			t = nullptr;
+		}
+	}
+	else
+	{
+		t = nullptr;
+	}
+}
+
+template<class Archive, typename Type>
+inline void
+serialize(Archive& ar, std::shared_ptr<IPathSection>& t)
+{
+	split(ar, t);
+}
+
+template<class Archive, typename Type>
+inline void
+serialize(Archive& ar, Trajectory& t)
+{
+	ar & t.pathSections;
+	ar & t.approachSection;
+	ar & t.infinite;
+}
+} //namespace dp
 
 #endif /* UAVAP_FLIGHTCONTROL_GLOBALPLANNER_TRAJECTORY_H_ */

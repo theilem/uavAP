@@ -1,24 +1,28 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
-// 
+//
 // This file is part of uavAP.
-// 
+//
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
+/*
+ *
+ */
 #include <boost/property_tree/json_parser.hpp>
 #include "uavAP/API/ap_ext/ap_ext.h"
 #include "uavAP/API/ap_ext/ApExtManager.h"
+#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include <string>
 
 #define SERVO_MIN 3600
@@ -26,7 +30,7 @@
 #define SERVO_RANGE_HALF 2400
 
 static ApExtManager* apManager = nullptr;
-static const std::string configPath = "/usr/local/config/alvolo.json";
+static std::string configPath = "/usr/local/config/alvolo.json";
 
 int
 ap_ext_setup()
@@ -103,8 +107,20 @@ ap_ext_teardown()
 	return 0;
 }
 
+int
+ap_ext_ctrl(int* cmd)
+{
+	return 0;
+}
+
 ApExtManager*
 getApExtManager()
 {
 	return apManager;
+}
+
+void
+setConfigPath(const std::string& path)
+{
+	configPath = path;
 }

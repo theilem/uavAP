@@ -27,95 +27,59 @@
 #define UAVAP_SIMULATION_CHANNELMIXING_H_
 #include <boost/optional/optional.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <uavAP/FlightControl/Controller/AdvancedControl.h>
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include <vector>
 
+#include <Eigen/Dense>
+
 struct ControllerOutput;
-class IPC;
-enum class Content;
-enum class Target;
 
-template<typename C, typename T>
-class IDataPresentation;
-
-class ChannelMixing: public IAggregatableObject, public IRunnableObject
+class ChannelMixing
 {
 public:
 
 	ChannelMixing();
 
-	static std::shared_ptr<ChannelMixing>
-	create(const boost::property_tree::ptree& config);
-
 	bool
 	configure(const boost::property_tree::ptree& config);
 
-	std::vector<double>
+	Eigen::VectorXd
 	mixChannels(const ControllerOutput& controllerOut);
 
-	ControllerOutput
-	unmixChannels(const std::vector<double>& channels);
+	std::vector<unsigned int>
+	mapChannels(const ControllerOutput& out, const AdvancedControl& advanced);
 
-	enum class Airplane
-	{
-		AILERONL = 0,
-		AILERONR,
-		ELEVATORL,
-		ELEVATORR,
-		FLAPL,
-		FLAPR,
-		RUDDER,
-		THROTTLE,
-		NUM_AIRPLANE_CHANNEL
-	};
-
-	struct AirplaneChannel
-	{
-		double ch[(int) Airplane::NUM_AIRPLANE_CHANNEL];
-	};
-
-	struct ServoConfig
-	{
-		bool mapped;
-		bool reversed;
-		unsigned int outChannel;
-		//Mapping as well
-
-		ServoConfig(const boost::property_tree::ptree& config);
-	};
-
-	AirplaneChannel
-	mixAirplane(const ControllerOutput& controllerOut);
-
-	ControllerOutput
-	unmixAirplane(const AirplaneChannel& controllerOut);
-
-	bool
-	run(RunStage stage) override;
-
-	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
 
 private:
 
-	bool
-	configureAirplaneChannel(const boost::property_tree::ptree& config);
 
-	bool
-	configureHelicopterChannel(const boost::property_tree::ptree& config);
+	struct Mapping
+	{
+		Eigen::ArrayXd negThrows;
+		Eigen::ArrayXd center;
+		Eigen::ArrayXd posThrows;
+	};
 
-	bool airplane_;
+	Mapping
+	getMapping(const boost::property_tree::ptree& config);
+
 	int numOfOutputChannel_;
 
-	std::vector<ServoConfig> servoConfig_;
+	Eigen::MatrixXd mixingMatrix_;
 
-	ObjectHandle<IPC> ipc_;
-	ObjectHandle<IDataPresentation<Content,Target>> dataPresentation_;
+	std::map<ThrowsControl, Mapping> mapping_;
 
-	Publisher channelMixPublisher_;
+	std::map<CamberControl, Eigen::ArrayXd> camberOffsets_;
+
+	std::map<SpecialControl, Eigen::ArrayXd> specialOffsets_;
+
+	Eigen::ArrayXd channelMin_;
+	Eigen::ArrayXd channelMax_;
+
 
 };
 

@@ -37,11 +37,11 @@
 #include <functional>
 #include <map>
 
-using boost::interprocess::interprocess_semaphore;
-
 class MicroSimulator: public IScheduler, public IAggregatableObject, public ITimeProvider
 {
 public:
+
+	static constexpr TypeId typeId = "micro_sim";
 
 	MicroSimulator();
 
@@ -63,16 +63,18 @@ public:
 	startSchedule() override;
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	TimePoint
 	now() override;
 
 	bool
-	waitFor(Duration duration, boost::condition_variable& interrupt, boost::unique_lock<boost::mutex>& lock) override;
+	waitFor(Duration duration, boost::condition_variable& interrupt,
+			boost::unique_lock<boost::mutex>& lock) override;
 
 	bool
-	waitUntil(TimePoint timePoint, boost::condition_variable& interrupt, boost::unique_lock<boost::mutex>& lock) override;
+	waitUntil(TimePoint timePoint, boost::condition_variable& interrupt,
+			boost::unique_lock<boost::mutex>& lock) override;
 
 	int
 	simulate(Duration duration);

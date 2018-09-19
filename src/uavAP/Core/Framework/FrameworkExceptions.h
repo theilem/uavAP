@@ -74,5 +74,4 @@ public:
 	}
 };
 
-
 #endif /* UAVAP_CORE_FRAMEWORK_FRAMEWORKEXCEPTIONS_H_ */

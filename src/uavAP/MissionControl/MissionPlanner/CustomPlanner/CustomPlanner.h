@@ -17,103 +17,100 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
 /*
- * CustomPlanner.h
+ * ManeuverPlanner.h
  *
- *  Created on: Nov 27, 2017
+ *  Created on: Sep 6, 2017
  *      Author: mircot
  */
 
-#ifndef UAVAP_MISSIONCONTROL_MISSIONPLANNER_CUSTOMPLANNER_CUSTOMPLANNER_H_
-#define UAVAP_MISSIONCONTROL_MISSIONPLANNER_CUSTOMPLANNER_CUSTOMPLANNER_H_
+#ifndef UAVAP_MISSIONCONTROL_MISSIONPLANNER_CUSTOMPLANNER_H_
+#define UAVAP_MISSIONCONTROL_MISSIONPLANNER_CUSTOMPLANNER_H_
 
-#include <boost/property_tree/ptree.hpp>
-#include "uavAP/Core/Object/IAggregatableObject.h"
-#include "uavAP/Core/Runner/IRunnableObject.h"
-#include "uavAP/MissionControl/MissionPlanner/IMissionPlanner.h"
 #include <memory>
 #include <unordered_map>
+#include <boost/property_tree/ptree.hpp>
+#include "uavAP/Core/IPC/Publisher.h"
+#include "uavAP/Core/IPC/Subscription.h"
+#include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/Core/Object/ObjectHandle.h"
+#include "uavAP/Core/Runner/IRunnableObject.h"
+#include "uavAP/MissionControl/MissionPlanner/IMissionPlanner.h"
+#include "uavAP/MissionControl/MissionPlanner/Mission.h"
 
 class IPC;
 class IGlobalPlanner;
 class IScheduler;
-class SensorData;
 
+struct SensorData;
+
+/**
+ * @brief   The CustomPlanner class is a mission planner that can accept
+ *          maneuver overrides from the ground station. It's controller cascade
+ *          has switches which can be switched from PID output to override output.
+ */
 class CustomPlanner : public IMissionPlanner, public IAggregatableObject, public IRunnableObject
 {
 public:
 
-	CustomPlanner();
+	static constexpr TypeId typeId = "custom";
 
-	static std::shared_ptr<CustomPlanner>
-	create(const boost::property_tree::ptree& config);
+	CustomPlanner();
 
 	bool
 	configure(const boost::property_tree::ptree& config);
 
+	ADD_CREATE_WITH_CONFIG(CustomPlanner)
+
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	bool
 	run(RunStage stage) override;
 
+	/**
+	 * @brief   missionRequest searches for a list of waypoints with a name
+	 *          matching mission. If found, it sets the current mission to that
+	 *          set of waypoints and then begins to fly it.
+	 * @param   mission name of set of waypoints to fly
+	 */
 	void
-	groundStationOverride(const ManeuverOverride& manOverride);
-
-	void
-	maneuverSetRequest(const std::string& maneuver);
-
-	void
-	missionRequest(const std::string& mission);
-
-	Rectangle
-	getSafetyRectangle() const;
+	missionRequest(const std::string& mission) override;
 
 private:
 
+	using MissionMap = std::unordered_map<std::string, Mission>;
+
+	/**
+	 * @brief   publishMission notifies the global planner of the new mission to
+	 *          fly
+	 */
 	void
 	publishMission();
 
+	/**
+	 * @brief   onSensorData is called every time sensor data is received. This
+	 *          function checks to see if the aircraft has left safety bounds
+	 *          and if so, disables the override
+	 * @param   data sensor data containing current override position
+	 */
 	void
 	onSensorData(const SensorData& data);
 
-	void
-	startManeuver();
+	double defaultVelocity_;
+	bool useApproach_;
 
-	void
-	nextManeuver();
-
-	void
-	stopManeuver();
-
-	ManeuverPlannerParams params_;
-
-	Publisher maneuverTargetPublisher_;
-	Publisher maneuverActivationPublisher_;
+	ObjectHandle<IPC> ipc_;
+	ObjectHandle<IScheduler> scheduler_;
+	ObjectHandle<IGlobalPlanner> globalPlanner_;
 
 	Subscription sensorDataSubscription_;
 
-	using ManeuverMap = std::unordered_map<std::string, ManeuverSet>;
-	ManeuverMap maneuverSetMap_;
-	ManeuverMap::const_iterator currentManeuverSet_;
-
-	using MissionMap = std::unordered_map<std::string, Mission>;
 	MissionMap missionMap_;
 	MissionMap::const_iterator currentMission_;
 
-	using OverrideTargetIterator = std::vector<double>::const_iterator;
-	OverrideTargetIterator rollIterator_;
-	OverrideTargetIterator pitchIterator_;
-	OverrideTargetIterator velocityIterator_;
-	Event nextManeuverEvent_;
-
-	bool overrideActive_;
-	bool overrideRestart_;
-	ManeuverOverride lastManualOverride_;
-
-	ObjectHandle<IPC> ipc_;
-	ObjectHandle<IGlobalPlanner> globalPlanner_;
-	ObjectHandle<IScheduler> scheduler_;
+	Vector3 currentPosition_;
+	Vector3 currentDirection_;
+	std::mutex positionMutex_;
 };
 
-
-#endif /* UAVAP_MISSIONCONTROL_MISSIONPLANNER_CUSTOMPLANNER_CUSTOMPLANNER_H_ */
+#endif /* UAVAP_MISSIONCONTROL_MISSIONPLANNER_MANEUVERPLANNER_H_ */

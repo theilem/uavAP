@@ -35,15 +35,12 @@
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 
-enum class Content;
-enum class Target;
-
-template<typename C, typename T>
-class IDataPresentation;
 
 class FilletGlobalPlanner: public IGlobalPlanner, public IAggregatableObject, public IRunnableObject
 {
 public:
+
+	static constexpr TypeId typeId = "fillet";
 
 	FilletGlobalPlanner();
 
@@ -66,7 +63,7 @@ public:
 	run(RunStage stage) override;
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 private:
 
@@ -75,7 +72,6 @@ private:
 	Mission mission_;
 
 	ObjectHandle<IPC> ipc_;
-	ObjectHandle<IDataPresentation<Content,Target>> dataPresentation_;
 
 	Publisher trajectoryPublisher_;
 

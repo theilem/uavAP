@@ -32,16 +32,13 @@
 struct Line: public IPathSection, public EigenLine
 {
 
-	Line():
-		velocity_(0)
+	Line() :
+			velocity_(0)
 	{
 	}
 
 	Line(const EigenLine& line, const Vector3& end, double vel) :
-			EigenLine(line),
-			endPoint_(end),
-			currentPosition_(0, 0, 0),
-			velocity_(vel)
+			EigenLine(line), endPoint_(end), currentPosition_(0, 0, 0), velocity_(vel)
 	{
 	}
 
@@ -99,11 +96,24 @@ struct Line: public IPathSection, public EigenLine
 		return velocity_;
 	}
 
-
 	Vector3 endPoint_;
 	Vector3 currentPosition_;
 	double velocity_;
 
 };
+
+namespace dp
+{
+template<class Archive, typename Type>
+inline void
+serialize(Archive& ar, Line& t)
+{
+	ar & static_cast<EigenLine&>(t);
+
+	ar & t.endPoint_;
+	ar & t.currentPosition_;
+	ar & t.velocity_;
+}
+}
 
 #endif /* UAVAP_CONTROL_GLOBALPLANNER_LINE_H_ */

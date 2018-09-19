@@ -47,6 +47,9 @@ class Factory
 
 public:
 
+	virtual
+	~Factory() = default;
+
 	/**
 	 * @brief 	Create function called by a helper. Uses "type" argument in config to determine the class to
 	 * 			be created
@@ -55,6 +58,8 @@ public:
 	 */
 	std::shared_ptr<Type>
 	create(const boost::property_tree::ptree& config);
+
+	using TypeId = const char* const;
 
 protected:
 
@@ -66,15 +71,17 @@ protected:
 	 * @param id ID of that objects creator
 	 * @param creator The objects creator that creates the object using a config tree
 	 */
+	template <class SpecificType>
 	void
-	addCreator(const std::string& id, const Creator& creator);
+	addCreator();
 
 	/**
 	 * @brief Set a default id. If no type is set in the tree this default object is created.
 	 * @param defaultId Default id.
 	 */
+	template <class SpecificType>
 	void
-	setDefault(const std::string& defaultId);
+	setDefault();
 
 private:
 
@@ -116,24 +123,28 @@ Factory<Type>::create(const boost::property_tree::ptree& config)
 	return it->second(config);
 }
 
-template<class Type>
+template <class Type>
+template <class SpecificType>
 inline void
-Factory<Type>::addCreator(const std::string& id, const Creator& creator)
+Factory<Type>::addCreator()
 {
-	if (creatorMap_.find(id) != creatorMap_.end())
+	std::string type = SpecificType::typeId;
+	if (creatorMap_.find(type) != creatorMap_.end())
 	{
 		APLOG_ERROR << "Same id for different creator added. Ignore.";
 		return;
 	}
 
-	creatorMap_.insert(std::make_pair(id, creator));
+	creatorMap_.insert(std::make_pair(type, &SpecificType::create));
 }
 
-template<class Type>
+template <class Type>
+template <class SpecificType>
 inline void
-Factory<Type>::setDefault(const std::string& defaultId)
+Factory<Type>::setDefault()
 {
-	defaultId_ = defaultId;
+	defaultId_ = SpecificType::typeId;
+	this->addCreator<SpecificType>();
 }
 
 #endif /* UAVAP_CORE_FRAMEWORK_FACTORY_H_ */

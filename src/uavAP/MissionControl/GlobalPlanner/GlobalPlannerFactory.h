@@ -34,15 +34,17 @@
 #include "uavAP/MissionControl/GlobalPlanner/FilletGlobalPlanner/FilletGlobalPlanner.h"
 #include "uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlanner.h"
 
-
 class GlobalPlannerFactory: public Factory<IGlobalPlanner>
 {
 public:
 	GlobalPlannerFactory()
 	{
-		addCreator("fillet", &FilletGlobalPlanner::create);
-		addCreator("spline", &SplineGlobalPlanner::create);
+		addCreator<FilletGlobalPlanner>();
+		addCreator<SplineGlobalPlanner>();
 	}
+
+
+	static constexpr TypeId typeId = "global_planner";
 };
 
 #endif /* FLIGHTPLANNER_FLIGHTPLANNERFACTORY_H_ */

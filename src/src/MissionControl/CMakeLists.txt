@@ -16,20 +16,29 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
+set(MISSION_CONTROL_SRC "")
+
 add_subdirectory(MissionPlanner)
 add_subdirectory(GlobalPlanner)
 add_subdirectory(DataHandling)
+add_subdirectory(ManeuverPlanner)
+add_subdirectory(ConditionManager)
+add_subdirectory(LocalFrameManager)
+add_subdirectory(Geofencing)
 
 set(MISSION_CONTROL_SRC ${MISSION_CONTROL_SRC}
-						MissionControlPrint.cpp)
+						MissionControlPrint.cpp
+						Polygon.cpp)
 
 add_library(uavap_mission_control SHARED ${MISSION_CONTROL_SRC})
 
-target_link_libraries(uavap_mission_control 	uavap_core)
+target_link_libraries(uavap_mission_control 	uavap_core
+												arb)
 
 add_executable(MissionControl   MissionControl.cpp)
 
-target_link_libraries(MissionControl    uavap_mission_control
+target_link_libraries(MissionControl    uavap_flight_analysis
+										uavap_mission_control
                                         )
                                         
 install(TARGETS MissionControl uavap_mission_control 

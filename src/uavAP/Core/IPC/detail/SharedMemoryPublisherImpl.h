@@ -32,7 +32,7 @@
 #include "uavAP/Core/IPC/detail/MessageObject.h"
 #include "uavAP/Core/Logging/APLogger.h"
 
-template <class Object>
+template<class Object>
 class SharedMemoryPublisherImpl: public IPublisherImpl
 {
 public:
@@ -62,10 +62,10 @@ SharedMemoryPublisherImpl<Object>::SharedMemoryPublisherImpl(std::string id, Obj
 	{
 		sharedMem_ = shared_memory_object(open_only, id.c_str(), read_write);
 		APLOG_WARN << "Shared memory object " << id << " aready exists. Using existing.";
-	} catch(interprocess_exception&)
+	} catch (interprocess_exception&)
 	{
 		sharedMem_ = shared_memory_object(create_only, id.c_str(), read_write);
-		sharedMem_.truncate(sizeof(MessageObject<Object>));
+		sharedMem_.truncate(sizeof(MessageObject<Object> ));
 	}
 	mapped_region region(sharedMem_, read_write);
 	void* address = region.get_address();
@@ -83,7 +83,7 @@ SharedMemoryPublisherImpl<Object>::publish(const boost::any& obj)
 	try
 	{
 		casted = boost::any_cast<Object>(obj);
-	}catch (boost::bad_any_cast&)
+	} catch (boost::bad_any_cast&)
 	{
 		APLOG_ERROR << "Wrong data type of the Object to be published.";
 		return;

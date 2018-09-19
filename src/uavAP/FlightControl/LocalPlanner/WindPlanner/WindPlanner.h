@@ -28,7 +28,6 @@
 
 #include "FlightControl/LocalPlanner/WindPlanner/Filter.h"
 
-
 class WindPlanner
 {
 public:

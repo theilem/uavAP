@@ -36,8 +36,8 @@
 class ArchiveError: public std::range_error
 {
 public:
-	ArchiveError(const std::string& what):
-		std::range_error(what)
+	ArchiveError(const std::string& what) :
+			std::range_error(what)
 	{
 	}
 
@@ -55,6 +55,9 @@ public:
 	 * @param str String to be read from
 	 */
 	BinaryFromArchive(const std::string& str);
+
+	void
+	compressDouble(bool compress);
 
 	/**
 	 * @return return current first character of the string.
@@ -89,6 +92,9 @@ public:
 			BinaryFromArchive>::type&
 	operator >>(Type& message);
 
+	BinaryFromArchive&
+	operator >>(double& doub);
+
 	/**
 	 * @brief Operator & defining behavior for flush out
 	 * @param val Value to be flushed in or out.
@@ -112,7 +118,12 @@ public:
 	 */
 	std::string
 	getRemaining();
+
+	std::size_t
+	getConsumed();
 private:
+
+	bool compressDouble_;
 
 	const std::string& string_; //!< String to be parsed, but not modified
 

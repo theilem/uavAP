@@ -37,6 +37,7 @@ struct ProcessInfo
 	std::string binaryPath;
 	std::string configPath;
 	boost::process::child process;
+	bool joined;
 	pid_t id;
 
 	ProcessInfo(const std::string& name);

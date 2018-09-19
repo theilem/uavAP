@@ -19,3 +19,7 @@
 add_executable(ControllerSim ControllerSim)
 
 target_link_libraries(ControllerSim  uavap_core)
+
+install(TARGETS ControllerSim 
+		RUNTIME DESTINATION bin/uavAP
+		LIBRARY DESTINATION lib)

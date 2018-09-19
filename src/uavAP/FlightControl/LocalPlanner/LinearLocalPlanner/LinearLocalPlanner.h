@@ -29,7 +29,6 @@
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_LINEARLOCALPLANNER_LINEARLOCALPLANNER_H_
 
 #include <boost/property_tree/ptree.hpp>
-#include "uavAP/Core/DataPresentation/Packet.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/ILinearPlannerImpl.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlannerStatus.h"
 
@@ -40,31 +39,28 @@
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/LockTypes.h"
-#include "uavAP/Core/DataPresentation/Content.h"
 
 class FlightControlData;
 class IScheduler;
 class IController;
-enum class Content;
-enum class Target;
-
-template<typename C, typename T>
-class IDataPresentation;
 class IPC;
 class SensingActuationIO;
+class Packet;
+struct SensorData;
 struct ControllerTarget;
 
 class LinearLocalPlanner: public ILocalPlanner, public IRunnableObject, public IAggregatableObject
 {
 public:
 
-	LinearLocalPlanner();
+	static constexpr TypeId typeId = "linear";
 
-	static std::shared_ptr<LinearLocalPlanner>
-	create(const boost::property_tree::ptree& config);
+	LinearLocalPlanner();
 
 	bool
 	configure(const boost::property_tree::ptree& config);
+
+	ADD_CREATE_WITH_CONFIG(LinearLocalPlanner)
 
 	bool
 	run(RunStage stage) override;
@@ -79,18 +75,21 @@ public:
 	getTrajectory() const override;
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	std::shared_ptr<ILinearPlannerImpl>
 	getImpl();
 
 	LocalPlannerStatus
-	getStatus();
+	getStatus() const override;
+
+	bool
+	tune(const LocalPlannerParams& params) override;
 
 private:
 
 	void
-	createLocalPlan(const SensorData& data);
+	createLocalPlan(const Vector3& position, double heading, bool hasGPSFix, uint32_t seqNum);
 
 	void
 	nextSection();
@@ -98,20 +97,27 @@ private:
 	void
 	onTrajectoryPacket(const Packet& packet);
 
+	void
+	onSensorData(const SensorData& sd);
+
+	void
+	update();
+
 	ObjectHandle<SensingActuationIO> sensing_;
 	ObjectHandle<IController> controller_;
 	ObjectHandle<IScheduler> scheduler_;
 	ObjectHandle<IPC> ipc_;
-	ObjectHandle<IDataPresentation<Content,Target>> dataPresentation_;
 
 	std::shared_ptr<ILinearPlannerImpl> localPlannerImpl_;
 
 	Trajectory trajectory_;
 	PathSectionIterator currentSection_;
+	bool inApproach_;
 	std::mutex trajectoryMutex_;
 	ControllerTarget controllerTarget_;
 
 	bool airplane_;
+	unsigned int period_;
 	uint8_t currentPathSectionIdx_;
 };
 

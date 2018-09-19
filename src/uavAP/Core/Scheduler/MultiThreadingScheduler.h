@@ -39,6 +39,8 @@ class MultiThreadingScheduler: public IScheduler, public IAggregatableObject, pu
 {
 public:
 
+	static constexpr TypeId typeId = "thread";
+
 	/**
 	 * @brief
 	 */
@@ -70,7 +72,7 @@ public:
 	startSchedule() override;
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 private:
 

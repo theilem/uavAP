@@ -28,19 +28,43 @@
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_CONTROLLERTARGET_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_CONTROLLERTARGET_H_
 #include "uavAP/Core/LinearAlgebra.h"
+#include "uavAP/Core/EnumMap.hpp"
 
-struct ControllerTarget
+struct ControllerTarget : SerializeCustom
 {
-	Vector3 velocity; //Vehicle-1-Frame: Only dependend on heading -> x,y,Z
+	double velocity;
 	double yawRate;
 	double climbAngle;
 
 	uint32_t sequenceNr; //Trace sequence number to get timing
 
 	ControllerTarget() :
-			velocity(0, 0, 0), yawRate(0), climbAngle(0), sequenceNr(0)
+			velocity(0), yawRate(0), climbAngle(0), sequenceNr(0)
 	{
 	}
 };
 
+enum class ControllerTargets
+{
+	INVALID = 0, VELOCITY, YAW_RATE, CLIMB_ANGLE, NUM_TARGET
+};
+
+ENUMMAP_INIT(ControllerTargets, {
+		{ControllerTargets::VELOCITY, "velocity"},
+		{ControllerTargets::YAW_RATE, "yaw_rate"},
+		{ControllerTargets::CLIMB_ANGLE, "climb_angle"},
+});
+
+namespace dp
+{
+template<class Archive, typename Type>
+inline void
+serialize(Archive& ar, ControllerTarget& t)
+{
+	ar & t.velocity;
+	ar & t.yawRate;
+	ar & t.climbAngle;
+}
+
+}
 #endif /* UAVAP_FLIGHTCONTROL_CONTROLLER_CONTROLLERTARGET_H_ */

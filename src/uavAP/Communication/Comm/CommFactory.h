@@ -28,19 +28,21 @@
 #ifndef UAVAP_COMMUNICATION_COMM_COMMFACTORY_H_
 #define UAVAP_COMMUNICATION_COMM_COMMFACTORY_H_
 
+#include <uavAP/Communication/Comm/IDCComm/IDCComm.h>
 #include "uavAP/Communication/Comm/MessageQueueComm/MessageQueueComm.h"
-#include "uavAP/Communication/Comm/SerialComm/SerialComm.h"
 #include "uavAP/Communication/Comm/IComm.h"
 #include "uavAP/Core/Framework/Factory.h"
 
-class CommFactory : public Factory<IComm>
+class CommFactory: public Factory<IComm>
 {
 public:
 	CommFactory()
 	{
-		addCreator("serial", &SerialComm::create);
-		addCreator("message_queue", &MessageQueueComm::create);
+		addCreator<IDCComm>();
+		addCreator<MessageQueueComm>();
 	}
+
+	static constexpr TypeId typeId = "comm";
 };
 
 #endif /* UAVAP_COMMUNICATION_COMM_COMMFACTORY_H_ */

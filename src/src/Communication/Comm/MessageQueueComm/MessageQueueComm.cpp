@@ -1,18 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
-// 
+//
 // This file is part of uavAP.
-// 
+//
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,8 +25,8 @@
  *  Description
  */
 
+#include <uavAP/Core/DataPresentation/ContentMapping.h>
 #include "uavAP/Communication/Comm/MessageQueueComm/MessageQueueComm.h"
-#include "uavAP/Core/DataPresentation/Content.h"
 #include "uavAP/Core/DataPresentation/IDataPresentation.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightControl/Controller/IController.h"
@@ -34,8 +34,8 @@
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/LockTypes.h"
 
-MessageQueueComm::MessageQueueComm():
-groundStationConnected_(false)
+MessageQueueComm::MessageQueueComm() :
+		groundStationConnected_(false)
 {
 }
 
@@ -79,6 +79,7 @@ MessageQueueComm::run(RunStage stage)
 		}
 
 		auto ipc = ipc_.get();
+		flightAnalysisPublisher_ = ipc->publishPackets("data_com_fa");
 		flightControlPublisher_ = ipc->publishPackets("data_com_fc");
 		missionControlPublisher_ = ipc->publishPackets("data_com_mc");
 		apiPublisher_ = ipc->publishPackets("data_com_api");
@@ -90,6 +91,14 @@ MessageQueueComm::run(RunStage stage)
 	case RunStage::NORMAL:
 	{
 		auto ipc = ipc_.get();
+
+		flightAnalysisSubscription_ = ipc->subscribeOnPacket("data_fa_com",
+				std::bind(&MessageQueueComm::sendPacket, this, std::placeholders::_1));
+
+		if (!flightAnalysisSubscription_.connected())
+		{
+			APLOG_WARN << "Cannot connect to data_fa_com. Ignoring.";
+		}
 
 		flightControlSubscription_ = ipc->subscribeOnPacket("data_fc_com",
 				std::bind(&MessageQueueComm::sendPacket, this, std::placeholders::_1));
@@ -150,6 +159,9 @@ MessageQueueComm::receivePacket(const Packet& packet)
 
 	switch (target)
 	{
+	case Target::FLIGHT_ANALYSIS:
+		flightAnalysisPublisher_.publish(packet);
+		break;
 	case Target::FLIGHT_CONTROL:
 		flightControlPublisher_.publish(packet);
 		break;
@@ -167,7 +179,7 @@ MessageQueueComm::receivePacket(const Packet& packet)
 }
 
 void
-MessageQueueComm::notifyAggregationOnUpdate(Aggregator& agg)
+MessageQueueComm::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	scheduler_.setFromAggregationIfNotSet(agg);
 	dataPresentation_.setFromAggregationIfNotSet(agg);

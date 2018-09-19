@@ -27,6 +27,7 @@
 #define UAVAP_CORE_IPC_DETAIL_MESSAGEQUEUESUBSCRIPTIONIMPL_H_
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/signals2.hpp>
+#include <boost/thread/pthread/thread_data.hpp>
 #include <boost/thread/thread_time.hpp>
 #include "uavAP/Core/IPC/detail/ISubscriptionImpl.h"
 #include "uavAP/Core/IPC/detail/MessageObject.h"
@@ -34,7 +35,7 @@
 #include "uavAP/Core/Time.h"
 #include <thread>
 
-template <class Object>
+template<class Object>
 class MessageQueueSubscriptionImpl: public ISubscriptionImpl
 {
 public:
@@ -73,10 +74,8 @@ private:
 
 template<class Object>
 inline
-MessageQueueSubscriptionImpl<Object>::MessageQueueSubscriptionImpl(const std::string& id):
-	messageQueue_(boost::interprocess::open_only, id.c_str()),
-	listenerCanceled_(false),
-	id_(id)
+MessageQueueSubscriptionImpl<Object>::MessageQueueSubscriptionImpl(const std::string& id) :
+		messageQueue_(boost::interprocess::open_only, id.c_str()), listenerCanceled_(false), id_(id)
 {
 }
 
@@ -104,7 +103,8 @@ template<class Object>
 inline void
 MessageQueueSubscriptionImpl<Object>::start()
 {
-	listenerThread_ = std::thread(std::bind(&MessageQueueSubscriptionImpl<Object>::onMessageQueue, this));
+	listenerThread_ = std::thread(
+			std::bind(&MessageQueueSubscriptionImpl<Object>::onMessageQueue, this));
 	listenerThread_.detach();
 }
 

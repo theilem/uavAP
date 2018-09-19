@@ -37,6 +37,8 @@ class AggregatableRunner: public IAggregatableObject
 
 public:
 
+	static constexpr TypeId typeId = "runner";
+
 	AggregatableRunner();
 
 	bool
@@ -46,7 +48,7 @@ public:
 	runAllStages();
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg);
+	notifyAggregationOnUpdate(const Aggregator& agg);
 
 private:
 

@@ -30,11 +30,23 @@ set(Boost_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/")
 set(Protobuf_LIBRARY_DIRS "${LIBRARY_ROOT_DIR}/usr/local/lib/")
 set(Protobuf_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/")
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -std=c++11 -fPIC -Wall")
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
+if(CMAKE_COMPILER_IS_GNUCC)
+	if(CMAKE_C_COMPILER_VERSION VERSION_GREATER 5.9.9)
+		message(WARNING "gcc version too new, setting gcc-5 as C compiler")
+		set(CMAKE_C_COMPILER /usr/bin/gcc-5)
+	endif(CMAKE_C_COMPILER_VERSION VERSION_GREATER 5.9.9)
+
+	if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.9.9)
+		message(WARNING "g++ version too new, setting g++-5 as CXX compiler")
+		set(CMAKE_CXX_COMPILER /usr/bin/g++-5)
+	endif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.9.9)
+
+endif(CMAKE_COMPILER_IS_GNUCC)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -std=c++11 -fPIC -Wall")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
 message(INFO ${LIBRARY_ROOT_DIR})
-					
 
 include_directories(	${CMAKE_SOURCE_DIR}
 						${Boost_INCLUDE_DIRS}

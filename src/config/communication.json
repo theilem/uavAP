@@ -1,7 +1,0 @@
-{
-	"comm":
-	{
-		"type":"serial",
-		"serial_port":"/dev/tnt0"
-	}
-}

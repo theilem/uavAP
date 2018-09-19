@@ -23,6 +23,7 @@ add_executable(EduInterface	main.cpp
 add_library(api_edu SHARED api_edu.cpp)
 									
 target_link_libraries(EduInterface 	uavap_core
+									uavap_flight_analysis
 									api_edu)
 
 install(TARGETS EduInterface 

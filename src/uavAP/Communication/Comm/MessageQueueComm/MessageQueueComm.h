@@ -36,17 +36,21 @@
 
 #include <memory>
 
-
 class IScheduler;
-enum class Content;
-enum class Target;
+enum class Content
+;
+enum class Target
+;
 
 template<typename C, typename T>
 class IDataPresentation;
 
-class MessageQueueComm : public IComm, public IAggregatableObject, public IRunnableObject
+class MessageQueueComm: public IComm, public IAggregatableObject, public IRunnableObject
 {
 public:
+
+	static constexpr TypeId typeId = "message_queue";
+
 	MessageQueueComm();
 
 	static std::shared_ptr<MessageQueueComm>
@@ -59,7 +63,7 @@ public:
 	run(RunStage stage) override;
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 private:
 
@@ -77,11 +81,13 @@ private:
 
 	ObjectHandle<IPC> ipc_;
 	ObjectHandle<IScheduler> scheduler_;
-	ObjectHandle<IDataPresentation<Content,Target>> dataPresentation_;
+	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
 
+	Subscription flightAnalysisSubscription_;
 	Subscription flightControlSubscription_;
 	Subscription missionControlSubscription_;
 	Subscription channelMixingSubscription_;
+	Publisher flightAnalysisPublisher_;
 	Publisher flightControlPublisher_;
 	Publisher missionControlPublisher_;
 	Publisher apiPublisher_;
@@ -95,6 +101,5 @@ private:
 
 	std::string serialPort_;
 };
-
 
 #endif /* UAVAP_COMMUNICATION_COMM_MESSAGEQUEUECOMM_MESSAGEQUEUECOMM_H_ */

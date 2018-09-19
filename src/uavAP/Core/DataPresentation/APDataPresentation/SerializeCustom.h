@@ -32,7 +32,7 @@
  * 			a POD type, but the serialization is more complex.
  */
 struct SerializeCustom
-{};
-
+{
+};
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_SERIALIZECUSTOM_H_ */

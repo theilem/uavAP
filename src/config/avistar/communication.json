@@ -1,0 +1,15 @@
+{
+	"comm": {
+		"type": "idc"
+	},
+	"network": {
+		"type": "serial",
+		"ports": {
+			"ground_station": {
+				"serial_port": "/dev/ttyUSB0",
+				"delimiter_string": "*\n",
+				"use_crc": true
+			}
+		}
+	}
+}

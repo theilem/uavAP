@@ -17,10 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
 set(CORE_SRC 	${CORE_SRC}
-				${CMAKE_CURRENT_SOURCE_DIR}/Sender.cpp
-				${CMAKE_CURRENT_SOURCE_DIR}/Serial/SerialIDC.cpp
-				${CMAKE_CURRENT_SOURCE_DIR}/Serial/SerialIDCParams.cpp
-				${CMAKE_CURRENT_SOURCE_DIR}/Serial/SerialSenderImpl.cpp
-				${CMAKE_CURRENT_SOURCE_DIR}/Serial/SerialReceiver.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/NetworkLayer/Serial/SerialHandler.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/NetworkLayer/Serial/SerialNetworkLayer.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/NetworkLayer/Serial/SerialNetworkParams.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/IDC.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/IDCSender.cpp
 				PARENT_SCOPE)
 

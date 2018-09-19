@@ -1,6 +1,7 @@
 CMakeLists.txt
 Doxyfile
 format.astylerc
+uavAP/API/ap_ext/logger.h
 uavAP/Watchdog/ProcessMonitor/ProcessMonitor.h
 uavAP/Watchdog/ProcessMonitor/ProcessInfo.h
 uavAP/MissionControl/MissionControlHelper.h

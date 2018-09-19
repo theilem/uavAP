@@ -17,11 +17,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
 add_executable(Communication   	Communication.cpp
-								Comm/SerialComm/SerialComm.cpp
+								Comm/IDCComm/IDCComm.cpp
 								Comm/MessageQueueComm/MessageQueueComm.cpp)
 
-target_link_libraries(Communication    uavap_core
-                                        )
+target_link_libraries(Communication    uavap_flight_analysis
+									   uavap_core
+                                       )
                                         
 install(TARGETS Communication 
 		RUNTIME DESTINATION bin/uavAP

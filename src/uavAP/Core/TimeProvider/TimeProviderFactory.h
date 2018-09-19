@@ -29,18 +29,16 @@
 #include "uavAP/Core/TimeProvider/ITimeProvider.h"
 #include "uavAP/Core/TimeProvider/SystemTimeProvider.h"
 
-
-
 class TimeProviderFactory: public Factory<ITimeProvider>
 {
 public:
 	TimeProviderFactory()
 	{
-		addCreator("system", &SystemTimeProvider::create);
-
-		setDefault("system");
+		setDefault<SystemTimeProvider>();
 	}
-};
 
+	static constexpr TypeId typeId = "time_provider";
+
+};
 
 #endif /* UAVAP_CORE_TIMEPROVIDER_TIMEPROVIDERFACTORY_H_ */

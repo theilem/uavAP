@@ -42,6 +42,4 @@ public:
 	publish(const std::vector<boost::any>& vec) = 0;
 };
 
-
-
 #endif /* UAVAP_CORE_IPC_IPUBLISHERIMPL_H_ */

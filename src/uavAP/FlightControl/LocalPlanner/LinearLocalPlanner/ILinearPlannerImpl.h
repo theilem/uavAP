@@ -29,8 +29,6 @@
 #include <boost/variant/variant.hpp>
 #include "uavAP/Core/protobuf/messages/LocalPlanner.pb.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
-#include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/detail/LocalPlannerParams.h"
-#include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlannerStatus.h"
 
 class LinearLocalPlanner;
 class LocalPlannerParams;

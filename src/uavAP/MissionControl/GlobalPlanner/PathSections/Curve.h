@@ -56,11 +56,22 @@ struct Curve: public Orbit
 		return endPoint_;
 	}
 
-
 	Vector3 endPoint_;
 	Vector3 endPointDirection_;
 
 };
 
+namespace dp
+{
+template<class Archive, typename Type>
+inline void
+serialize(Archive& ar, Curve& t)
+{
+	ar & static_cast<Orbit&>(t);
+
+	ar & t.endPoint_;
+	ar & t.endPointDirection_;
+}
+}
 
 #endif /* UAVAP_CONTROL_GLOBALPLANNER_CURVE_H_ */

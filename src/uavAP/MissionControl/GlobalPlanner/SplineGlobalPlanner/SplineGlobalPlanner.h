@@ -30,17 +30,15 @@
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
+#include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 
 class IPC;
-enum class Content;
-enum class Target;
 
-template<typename C, typename T>
-class IDataPresentation;
-
-class SplineGlobalPlanner : public IGlobalPlanner, public IAggregatableObject, public IRunnableObject
+class SplineGlobalPlanner: public IGlobalPlanner, public IAggregatableObject, public IRunnableObject
 {
 public:
+
+	static constexpr TypeId typeId = "spline";
 
 	SplineGlobalPlanner();
 
@@ -54,7 +52,7 @@ public:
 	run(RunStage stage) override;
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	void
 	setMission(const Mission& mission) override;
@@ -64,16 +62,22 @@ public:
 
 private:
 
+	Trajectory
+	createNaturalSplines(const Mission& mission);
+
+	Trajectory
+	createCatmulRomSplines(const Mission& mission);
+
 	double tau_;
+	uint8_t inclusionLength_;
 	bool smoothenZ_;
+	bool naturalSplines_;
 
 	Mission mission_;
 
 	ObjectHandle<IPC> ipc_;
-	ObjectHandle<IDataPresentation<Content,Target>> dataPresentation_;
 
 	Publisher trajectoryPublisher_;
-
 
 };
 

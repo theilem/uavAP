@@ -30,11 +30,7 @@
 
 enum class PathSectionType
 {
-	UNNKNOWN = 0,
-	CURVE,
-	ORBIT,
-	LINE,
-	SPLINE
+	UNNKNOWN = 0, CURVE, ORBIT, LINE, SPLINE
 };
 
 struct IPathSection

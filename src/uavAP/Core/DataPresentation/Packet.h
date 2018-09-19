@@ -54,6 +54,9 @@ public:
 	void
 	prepend(const std::string& str);
 
+	void
+	prepend(const Packet& str);
+
 	/**
 	 * @return Return a const reference to the buffer_
 	 */
@@ -72,6 +75,12 @@ public:
 	 */
 	std::size_t
 	getSize() const;
+
+	std::string
+	consume(std::size_t length);
+
+	uint16_t
+	getCRC16() const;
 
 private:
 

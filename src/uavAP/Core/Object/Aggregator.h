@@ -49,6 +49,9 @@ public:
 	void
 	add(std::shared_ptr<IAggregatableObject> obj);
 
+	void
+	add(std::vector<std::shared_ptr<IAggregatableObject> > obj);
+
 	template<class Type>
 	std::shared_ptr<Type>
 	getOne() const;
@@ -63,16 +66,22 @@ public:
 	using OnSIGINT = boost::signals2::signal<void(int)>;
 
 	void
-	subscribeOnSigint(const OnSIGINT::slot_type& slot);
+	subscribeOnSigint(const OnSIGINT::slot_type& slot) const;
 
 	void
 	callSigHandlers(int sig);
+
+	void
+	merge(Aggregator& agg);
+
+	void
+	mergeInto(Aggregator& agg);
 
 private:
 
 	std::vector<std::shared_ptr<IAggregatableObject> > container_;
 
-	OnSIGINT onSigint_;
+	mutable OnSIGINT onSigint_;
 
 };
 

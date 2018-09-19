@@ -1,3 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (C) 2018 University of Illinois Board of Trustees
+//
+// This file is part of uavAP.
+//
+// uavAP is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// uavAP is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////////////
 /*
  * UTMToLatLong.h
  *
@@ -147,11 +165,11 @@ DatumConvert(int dIn, double LatIn, double LongIn, double HtIn, int dTo, double&
 	Z = (N * (1 - ee) + HtIn) * sin(LatIn * deg2rad);
 
 	//--apply delta-terms dX dY dZ
-	//cout<<"\tX:" <<X <<" Y:" <<Y <<" Z:" <<Z;		//==DEBUG
+	//cout<<"	X:" <<X <<" Y:" <<Y <<" Z:" <<Z;		//==DEBUG
 	X += datum[dIn].dX - datum[dTo].dX;
 	Y += datum[dIn].dY - datum[dTo].dY;
 	Z += datum[dIn].dZ - datum[dTo].dZ;
-	//cout<<"\tX:" <<X <<" Y:" <<Y <<" Z:" <<Z;		//==DEBUG
+	//cout<<"	X:" <<X <<" Y:" <<Y <<" Z:" <<Z;		//==DEBUG
 
 	//--transform back to LatLongHeight, using the "To" ellipsoid
 	a = ellip[datum[dTo].eId].EquatorialRadius;

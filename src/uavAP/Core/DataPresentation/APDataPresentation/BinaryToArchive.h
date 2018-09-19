@@ -41,6 +41,9 @@ public:
 	 */
 	BinaryToArchive(std::string& str);
 
+	void
+	compressDouble(bool compress);
+
 	/**
 	 * @brief Append the string with length characters from c
 	 * @param c Characters to be appended
@@ -75,6 +78,14 @@ public:
 	operator <<(const Type& message);
 
 	/**
+	 * @brief Handle double according to setting compressDouble_
+	 * @param doub
+	 * @return
+	 */
+	BinaryToArchive&
+	operator <<(const double& doub);
+
+	/**
 	 * @brief Operator & for flush in
 	 * @param val Data to be flushed in
 	 */
@@ -93,8 +104,9 @@ public:
 
 private:
 
+	bool compressDouble_;
+
 	std::string& string_; //!< String that is wrapped around and filled with serialized data.
 };
-
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BINARYTOARCHIVE_H_ */

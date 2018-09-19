@@ -26,6 +26,8 @@
 #ifndef UAVAP_CORE_OBJECT_IAGGREGATABLEOBJECT_H_
 #define UAVAP_CORE_OBJECT_IAGGREGATABLEOBJECT_H_
 
+#include <boost/property_tree/ptree.hpp>
+
 class Aggregator;
 
 class IAggregatableObject
@@ -39,8 +41,30 @@ public:
 	}
 
 	virtual void
-	notifyAggregationOnUpdate(Aggregator& agg) = 0;
+	notifyAggregationOnUpdate(const Aggregator& agg) = 0;
+
+	using TypeId = const char* const;
+	using Configuration = boost::property_tree::ptree;
 
 };
+
+#define ADD_CREATE_WITH_CONFIG(obj) \
+static inline std::shared_ptr<obj> \
+create(const boost::property_tree::ptree& config) \
+{\
+	auto agg = std::make_shared<obj>();\
+	if (!agg->configure(config))\
+	{\
+		APLOG_ERROR << #obj << ": Configuration failed";\
+	}\
+	return agg;\
+}\
+
+#define ADD_CREATE_WITHOUT_CONFIG(obj) \
+static inline std::shared_ptr<obj> \
+create(const boost::property_tree::ptree& config) \
+{\
+	return std::make_shared<obj>();\
+}\
 
 #endif /* UAVAP_CORE_OBJECT_IAGGREGATABLEOBJECT_H_ */

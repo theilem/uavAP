@@ -1,18 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
-// 
+//
 // This file is part of uavAP.
-// 
+//
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,14 +73,17 @@ BOOST_AUTO_TEST_CASE(test001)
 	auto ipc = std::make_shared<IPC>();
 	auto tp = std::make_shared<SystemTimeProvider>();
 	auto sched = std::make_shared<MultiThreadingScheduler>();
-	auto agg = Aggregator::aggregate({ipc, tp, sched});
+	auto agg = Aggregator::aggregate(
+	{ ipc, tp, sched });
 
 	Publisher publisher = ipc->publishOnSharedMemory<Test>("test");
 
 	int counter1 = 0;
 	int counter2 = 0;
-	Subscription sub1 = ipc->subscribeOnSharedMemory<Test>("test", boost::bind(&checkValue, _1, boost::ref(counter1)));
-	Subscription sub2 = ipc->subscribeOnSharedMemory<Test>("test", boost::bind(&checkValue, _1, boost::ref(counter2)));
+	Subscription sub1 = ipc->subscribeOnSharedMemory<Test>("test",
+			boost::bind(&checkValue, _1, boost::ref(counter1)));
+	Subscription sub2 = ipc->subscribeOnSharedMemory<Test>("test",
+			boost::bind(&checkValue, _1, boost::ref(counter2)));
 	BOOST_REQUIRE(sub1.connected());
 	BOOST_REQUIRE(sub2.connected());
 	SimpleRunner run(agg);
@@ -118,11 +121,13 @@ BOOST_AUTO_TEST_CASE(test002)
 	auto ipc = std::make_shared<IPC>();
 	auto tp = std::make_shared<SystemTimeProvider>();
 	auto sched = std::make_shared<MultiThreadingScheduler>();
-	auto agg = Aggregator::aggregate({ipc, tp, sched});
+	auto agg = Aggregator::aggregate(
+	{ ipc, tp, sched });
 
-	Publisher publisher = ipc->publishOnMessageQueue<Test>("test2", 5);
+	Publisher publisher = ipc->publishOnMessageQueue<Test>("test2", 10);
 	int counter1 = 0;
-	Subscription sub = ipc->subscribeOnMessageQueue<Test>("test2", boost::bind(&checkValue, _1, boost::ref(counter1)));
+	Subscription sub = ipc->subscribeOnMessageQueue<Test>("test2",
+			boost::bind(&checkValue, _1, boost::ref(counter1)));
 	BOOST_REQUIRE(sub.connected());
 	SimpleRunner run(agg);
 	BOOST_REQUIRE(!run.runAllStages());
@@ -151,4 +156,3 @@ BOOST_AUTO_TEST_CASE(test002)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-

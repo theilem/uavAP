@@ -19,9 +19,11 @@
 add_subdirectory(ControlElements)
 
 set(FLIGHT_CONTROL_SRC 	${FLIGHT_CONTROL_SRC}
-						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/PIDController.cpp
-						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/detail/AirplanePIDCascade.cpp
-						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/detail/HelicopterPIDCascade.cpp
-						${CMAKE_CURRENT_SOURCE_DIR}/ManeuverPIDController/ManeuverPIDController.cpp
-						${CMAKE_CURRENT_SOURCE_DIR}/ManeuverPIDController/detail/ManeuverCascade.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/SimplePIDController/SimplePIDController.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/SimplePIDController/detail/AirplaneSimplePIDCascade.cpp
+#						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/SimplePIDController/detail/HelicopterSimplePIDCascade.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/ManeuverPIDController/ManeuverPIDController.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/ManeuverPIDController/detail/ManeuverCascade.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/RatePIDController/RatePIDController.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/RatePIDController/detail/RateCascade.cpp
 						PARENT_SCOPE)

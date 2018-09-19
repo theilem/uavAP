@@ -1,0 +1,75 @@
+{
+	"controller": {
+		"type": "rate",
+		"hard_roll_constraint": 45.0,
+		"hard_roll_rate_constraint": 30.0,
+		"hard_pitch_constraint": 30.0,
+		"hard_pitch_rate_constraint": 30.0,
+		"pids": {
+			"climb_angle": {
+				"ff": 1,
+				"imax": 0.2,
+				"kd": 0,
+				"ki": 0.5,
+				"kp": 2
+			},
+			"pitch": {
+				"ff": 0,
+				"imax": 0.2,
+				"kd": 0.2,
+				"ki": 1,
+				"kp": 0.8
+			},
+			"pitch_rate": {
+				"ff": 1,
+				"imax": 0,
+				"kd": 0,
+				"ki": 0,
+				"kp": 0
+			},
+			"roll": {
+				"ff": 0,
+				"imax": 0,
+				"kd": 0,
+				"ki": 0,
+				"kp": 6
+			},
+			"roll_rate": {
+				"ff": 0.25,
+				"imax": 0.2,
+				"kd": 0,
+				"ki": 0.2,
+				"kp": 0.1
+			},
+			"rudder": {
+				"ff": 0,
+				"imax": 1,
+				"kd": 0,
+				"ki": 0.5,
+				"kp": 0
+			},
+			"velocity": {
+				"ff": 0,
+				"imax": 10,
+				"kd": 0,
+				"ki": 0.2,
+				"kp": 1
+			}
+		}
+	},
+	"local_planner": {
+		"type": "maneuver",
+		"period": 0,
+		"safety_velocity": 15,
+		"k_altitude": 1.0,
+		"k_convergence": 0.02,
+		"k_yaw_rate": 1.0
+	},
+	"fc_data_handling": {
+		"compress_sensor_data": true,
+		"period": 100
+	},
+	"data_presentation": {
+		"compress_double": true
+	}
+}

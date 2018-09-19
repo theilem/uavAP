@@ -32,8 +32,8 @@
 #include "uavAP/Core/Framework/Factory.h"
 #include "uavAP/Core/DataPresentation/IDataPresentation.h"
 
-template <typename Content, typename Target>
-class DataPresentationFactory : public Factory<IDataPresentation<Content, Target>>
+template<typename Content, typename Target>
+class DataPresentationFactory: public Factory<IDataPresentation<Content, Target>>
 {
 public:
 	/**
@@ -41,10 +41,11 @@ public:
 	 */
 	DataPresentationFactory()
 	{
-		this->addCreator("ap", &APDataPresentation<Content,Target>::create);
-
-		this->setDefault("ap");
+		this->template setDefault<APDataPresentation<Content, Target> >();
 	}
+
+	static constexpr typename Factory<IDataPresentation<Content, Target>>::TypeId typeId = "data_presentation";
+
 };
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_DATAPRESENTATIONFACTORY_H_ */

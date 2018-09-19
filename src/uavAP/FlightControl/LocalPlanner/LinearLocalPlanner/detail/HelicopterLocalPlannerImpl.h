@@ -47,7 +47,7 @@ public:
 
 private:
 
-	HelicopterLocalPlannerParams params_;
+	LinearLocalPlannerParams params_;
 
 	Vector2 directionTarget_;
 

@@ -3,10 +3,12 @@ syntax="proto3";
 import "Shapes.proto";
 
 message ManeuverPlannerParams {
-	Rectangle safety_rectangle = 1;
-	double safety_height = 2;
-	double inner_radius = 3;
-	double return_velocity = 4;
+	Rectanguloid safety_bounds = 1;
+	double return_velocity = 2;
+	bool manual_restart = 3;
+	bool maneuver_restart = 4;
+	bool use_safety_bounds = 5;
+	bool perform_in_safety_bounds = 6;
 }
 
 message ManeuverPlannerStatus {

@@ -29,14 +29,13 @@
 #define UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BASICSERIALIZATION_H_
 
 #include "uavAP/Core/DataPresentation/APDataPresentation/SerializeCustom.h"
-#include "uavAP/Core/DataPresentation/APDataPresentation/BinaryFromArchive.h"
-#include "uavAP/Core/DataPresentation/APDataPresentation/BinaryToArchive.h"
 
 #include <boost/optional/optional.hpp>
 
 #include <cstdint>
 #include <map>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 class BinaryFromArchive;
@@ -81,8 +80,6 @@ template<class Type>
 void
 split(BinaryToArchive& ar, Type& val);
 
-
-
 /**
  * @brief Load function for POD types that are not enum or SerializeCustom objects.
  */
@@ -107,7 +104,7 @@ store(BinaryToArchive& ar,
  * @brief Serialize function for POD types that are not enum or SerializeCustom objects.
  */
 template<class Archive, typename PODType>
-void
+inline void
 serialize(Archive& ar,
 		typename std::enable_if<
 				std::is_pod<PODType>::value && !std::is_enum<PODType>::value
@@ -133,7 +130,7 @@ store(BinaryToArchive& ar,
  * @brief Serialize function for all enum data types
  */
 template<class Archive, class EnumType>
-void
+inline void
 serialize(Archive& ar, typename std::enable_if<std::is_enum<EnumType>::value, EnumType>::type& val);
 
 /**
@@ -170,7 +167,7 @@ store(BinaryToArchive& ar, typename std::enable_if<is_vector<Type>::value, Type>
  * @brief Serialize function for any vector
  */
 template<class Archive, typename Type>
-void
+inline void
 serialize(Archive& ar, typename std::enable_if<is_vector<Type>::value, Type>::type& val);
 
 /**
@@ -207,31 +204,32 @@ store(BinaryToArchive& ar, typename std::enable_if<is_map<Type>::value, Type>::t
  * @brief Serialize function for any map
  */
 template<class Archive, typename Type>
-void
+inline void
 serialize(Archive& ar, typename std::enable_if<is_map<Type>::value, Type>::type& val);
-
 
 /**
  * @brief Load function for strings
  */
 template<class Archive, typename Type>
 void
-load(BinaryFromArchive& ar, typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val);
+load(BinaryFromArchive& ar,
+		typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val);
 
 /**
  * @brief Store function for strings
  */
 template<class Archive, typename Type>
 void
-store(BinaryToArchive& ar, typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val);
+store(BinaryToArchive& ar,
+		typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val);
 
 /**
  * @brief Serialize function for strings
  */
 template<class Archive, typename Type>
-void
-serialize(Archive& ar, typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val);
-
+inline void
+serialize(Archive& ar,
+		typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val);
 
 /**
  * @brief is_optional struct false_type because T is not a boost optional
@@ -267,9 +265,32 @@ store(BinaryToArchive& ar, typename std::enable_if<is_optional<Type>::value, Typ
  * @brief Serialize function for boost optionals
  */
 template<class Archive, typename Type>
-void
+inline void
 serialize(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val);
 
-}
+/**
+ * @brief is_pair struct false_type because T is not a pair
+ */
+template<typename T>
+struct is_pair: public std::false_type
+{
+};
+
+/**
+ * @brief is_pair struct true_type because T is a pair
+ */
+template<typename T, typename A>
+struct is_pair<std::pair<T, A>> : public std::true_type
+{
+};
+
+/**
+ * @brief Serialize function for any pair
+ */
+template<class Archive, typename Type>
+inline void
+serialize(Archive& ar, typename std::enable_if<is_pair<Type>::value, Type>::type& val);
+
+} /* dp */
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BASICSERIALIZATION_H_ */

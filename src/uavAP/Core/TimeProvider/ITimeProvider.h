@@ -40,10 +40,12 @@ public:
 	now() = 0;
 
 	virtual bool
-	waitFor(Duration duration, boost::condition_variable& interrupt, boost::unique_lock<boost::mutex>& lock) = 0;
+	waitFor(Duration duration, boost::condition_variable& interrupt,
+			boost::unique_lock<boost::mutex>& lock) = 0;
 
 	virtual bool
-	waitUntil(TimePoint timePoint, boost::condition_variable& interrupt, boost::unique_lock<boost::mutex>& lock) = 0;
+	waitUntil(TimePoint timePoint, boost::condition_variable& interrupt,
+			boost::unique_lock<boost::mutex>& lock) = 0;
 
 private:
 

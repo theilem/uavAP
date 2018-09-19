@@ -38,12 +38,45 @@ struct PIDStatus;
 namespace Control
 {
 
+class Filter: public IEvaluableControlElement
+{
+
+public:
+
+	Filter(Element in, double alpha);
+
+	void
+	evaluate() override;
+
+	double
+	getValue() override;
+
+	void
+	setAlpha(double alpha);
+
+private:
+
+	Element in_;
+
+	bool init_;
+
+	double smoothData_;
+
+	double alpha_;
+};
+
 class Output: public IEvaluableControlElement
 {
 
 public:
 
 	Output(Element in, double* out);
+
+	void
+	overrideOutput(double newOutput);
+
+	void
+	disableOverride();
 
 	void
 	evaluate() override;
@@ -55,6 +88,9 @@ private:
 
 	Element in_;
 	double* out_;
+	bool override_;
+	double overrideOut_;
+
 
 };
 
@@ -75,11 +111,11 @@ public:
 		configure(const boost::property_tree::ptree& p)
 		{
 			PropertyMapper pm(p);
-			pm.add("kp", kp, true);
-			pm.add("ki", ki, false);
-			pm.add("kd", kd, false);
-			pm.add("imax", imax, false);
-			pm.add("ff", ff, false);
+			pm.add<double>("kp", kp, true);
+			pm.add<double>("ki", ki, false);
+			pm.add<double>("kd", kd, false);
+			pm.add<double>("imax", imax, false);
+			pm.add<double>("ff", ff, false);
 			return pm.map();
 		}
 	};
@@ -95,6 +131,12 @@ public:
 
 	void
 	setControlParameters(const Parameters& params);
+
+	void
+	overrideTarget(double newTarget);
+
+	void
+	disableOverride();
 
 	void
 	evaluate() override;
@@ -132,6 +174,7 @@ private:
 	Duration* timeDiff_;
 
 	//Internal PID state
+	double targetValue_;
 
 	double currentError_;
 
@@ -141,8 +184,25 @@ private:
 
 	//Latest calculated output value
 	double output_;
+
+	bool override_;
+	double overrideTarget_;
 };
 
+}
+
+namespace dp
+{
+template<class Archive, typename Type>
+inline void
+serialize(Archive& ar, Control::PID::Parameters& t)
+{
+	ar & t.kp;
+	ar & t.ki;
+	ar & t.kd;
+	ar & t.imax;
+	ar & t.ff;
+}
 }
 
 #endif /* CONTROL_EVALUABLECONTROLELEMENT_H_ */

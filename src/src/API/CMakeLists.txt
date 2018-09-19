@@ -16,28 +16,27 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-add_executable(Simulation       Simulation/Simulation.cpp
-                                Simulation/Connector/SimulationConnector.cpp
-                                Simulation/Connector/Codec.cpp
-                                ChannelMixing.cpp
-                                )
-
-target_link_libraries(Simulation uavap_core)
+#add_executable(Simulation       Simulation/Simulation.cpp
+#                                Simulation/Connector/SimulationConnector.cpp
+#                                Simulation/Connector/Codec.cpp
+#                                ChannelMixing.cpp
+#                                )
+#
+#target_link_libraries(Simulation uavap_core)
 
 add_library(ap_ext SHARED	ap_ext/ap_ext.cpp
 							ap_ext/ApExtManager.cpp
-							ap_ext/Servo.cpp
-							ap_ext/ServoMapping.cpp
 							ChannelMixing.cpp)
 							
-target_link_libraries(ap_ext	uavap_core)
+target_link_libraries(ap_ext	uavap_core
+								uavap_api)
 
-add_executable(AlVoloTest       ap_ext/AlVoloTest.cpp
-                                )
+add_library(uavap_api SHARED	AutopilotAPI.cpp
+								)
+							
+target_link_libraries(uavap_api	uavap_core)
 
-target_link_libraries(AlVoloTest ap_ext)
-
-install(TARGETS ap_ext Simulation
+install(TARGETS ap_ext uavap_api
 		RUNTIME DESTINATION bin/uavAP
 		LIBRARY DESTINATION lib)
 

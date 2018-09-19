@@ -23,9 +23,10 @@
  *      Author: mircot
  */
 
-#ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_IPIDCASCADE_H_
-#define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_IPIDCASCADE_H_
+#ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_SIMPLEPIDCONTROLLER_IPIDCASCADE_H_
+#define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_SIMPLEPIDCONTROLLER_IPIDCASCADE_H_
 #include "uavAP/FlightControl/Controller/ControlElements/EvaluableControlElements.h"
+#include "uavAP/FlightControl/Controller/PIDController/PIDMapping.h"
 #include <map>
 
 class IPIDCascade
@@ -38,7 +39,7 @@ public:
 	configure(const boost::property_tree::ptree& config) = 0;
 
 	virtual bool
-	tunePID(int pid, const Control::PID::Parameters& params) = 0;
+	tunePID(PIDs pid, const Control::PID::Parameters& params) = 0;
 
 	virtual bool
 	tuneRollBounds(double min, double max) = 0;
@@ -46,7 +47,7 @@ public:
 	virtual bool
 	tunePitchBounds(double min, double max) = 0;
 
-	virtual std::map<int, PIDStatus>
+	virtual std::map<PIDs, PIDStatus>
 	getPIDStatus() = 0;
 
 	virtual void
@@ -54,4 +55,4 @@ public:
 
 };
 
-#endif /* UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_IPIDCASCADE_H_ */
+#endif /* UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_SIMPLEPIDCONTROLLER_IPIDCASCADE_H_ */

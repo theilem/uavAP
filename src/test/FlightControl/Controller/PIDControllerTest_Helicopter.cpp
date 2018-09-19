@@ -1,18 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
-// 
+//
 // This file is part of uavAP.
-// 
+//
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ public:
 	}
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg)
+	notifyAggregationOnUpdate(const Aggregator& agg)
 	{
 	}
 
@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE(PFFControl)
 	target.velocity[2] = 0.5;
 	target.yawRate = 0.5;
 	data->sensorData.velocity = Vector3(0, 0, 0.5);
-	data->sensorData.velocityGround = 1.0;
+	data->sensorData.groundSpeed = 1.0;
 	data->sensorData.attitude = Vector3(0.5, 0.5, 0);
 	data->sensorData.angularRate = Vector3(0, 0, 0.5);
 
@@ -294,7 +294,7 @@ BOOST_AUTO_TEST_CASE(PIControl)
 	target.yawRate = 0.1;
 	data->sensorData.timestamp = data->sensorData.timestamp + Seconds(1);
 	data->sensorData.velocity = Vector3(0, 0, 0.1);
-	data->sensorData.velocityGround = 1.0;
+	data->sensorData.groundSpeed = 1.0;
 	data->sensorData.angularRate = Vector3(0, 0, 0.1);
 
 	/* Store Test Case 3 Targets to Test Controller */

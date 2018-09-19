@@ -198,7 +198,8 @@ dp::serialize(Archive& ar, typename std::enable_if<is_map<Type>::value, Type>::t
 
 template<class Archive, typename Type>
 inline void
-dp::load(BinaryFromArchive& ar, typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val)
+dp::load(BinaryFromArchive& ar,
+		typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val)
 {
 	uint16_t size;
 	ar >> size;
@@ -208,7 +209,8 @@ dp::load(BinaryFromArchive& ar, typename std::enable_if<std::is_same<Type, std::
 
 template<class Archive, typename Type>
 inline void
-dp::store(BinaryToArchive& ar, typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val)
+dp::store(BinaryToArchive& ar,
+		typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val)
 {
 	ar << static_cast<uint16_t>(val.size());
 	ar.append(val.c_str(), val.size());
@@ -216,10 +218,18 @@ dp::store(BinaryToArchive& ar, typename std::enable_if<std::is_same<Type, std::s
 
 template<class Archive, typename Type>
 inline void
-dp::serialize(Archive& ar, typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val)
+dp::serialize(Archive& ar,
+		typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val)
 {
 	split(ar, val);
 }
 
+template<class Archive, typename Type>
+inline void
+dp::serialize(Archive& ar, typename std::enable_if<is_pair<Type>::value, Type>::type& val)
+{
+	ar &val.first;
+	ar  & val.second;
+}
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_DETAIL_BASICSERIALIZATIONIMPL_HPP_ */

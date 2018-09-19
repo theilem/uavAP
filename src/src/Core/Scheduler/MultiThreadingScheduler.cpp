@@ -1,18 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
-// 
+//
 // This file is part of uavAP.
-// 
+//
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,8 +28,7 @@
 #include <utility>
 
 MultiThreadingScheduler::MultiThreadingScheduler() :
-		started_(false),
-		mainThread_(false)
+		started_(false), mainThread_(false)
 {
 }
 
@@ -97,7 +96,8 @@ MultiThreadingScheduler::run(RunStage stage)
 	case RunStage::FINAL:
 		started_ = true;
 		if (!mainThread_)
-			invokerThread_ = boost::thread(boost::bind(&MultiThreadingScheduler::runSchedule, this));
+			invokerThread_ = boost::thread(
+					boost::bind(&MultiThreadingScheduler::runSchedule, this));
 
 		break;
 	default:
@@ -107,7 +107,7 @@ MultiThreadingScheduler::run(RunStage stage)
 }
 
 void
-MultiThreadingScheduler::notifyAggregationOnUpdate(Aggregator& agg)
+MultiThreadingScheduler::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	timeProvider_.setFromAggregationIfNotSet(agg);
 }
@@ -250,7 +250,8 @@ MultiThreadingScheduler::startSchedule()
 {
 	if (!mainThread_)
 	{
-		APLOG_ERROR << "Scheduler not configured to be main thread. Invoker thread probably running.";
+		APLOG_ERROR
+				<< "Scheduler not configured to be main thread. Invoker thread probably running.";
 		return;
 	}
 	runSchedule();
@@ -265,4 +266,3 @@ MultiThreadingScheduler::handleMissedDeadline(std::shared_ptr<EventBody> body)
 	events_.insert(element);
 	events_.erase(events_.begin());
 }
-

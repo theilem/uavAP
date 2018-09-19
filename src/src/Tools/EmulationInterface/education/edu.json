@@ -1,6 +1,13 @@
 {
-	"interface":
+	"edu":
 	{
-		"serial_port":"/dev/ttyUSB1"	
-	}	
+	},	
+	"network":
+	{
+		"type":"serial",
+		"sim":
+		{
+			"serial_port":"/dev/ttyUSB1"
+		}
+	}
 }

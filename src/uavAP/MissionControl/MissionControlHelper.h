@@ -26,13 +26,17 @@
 #ifndef UAVAP_MISSIONCONTROL_MISSIONCONTROLHELPER_H_
 #define UAVAP_MISSIONCONTROL_MISSIONCONTROLHELPER_H_
 
-#include "uavAP/Core/DataPresentation/Content.h"
+#include <uavAP/Core/DataPresentation/ContentMapping.h>
+#include <uavAP/MissionControl/Geofencing/Geofencing.h>
+#include <uavAP/MissionControl/LocalFrameManager/LocalFrameManager.h>
+#include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
 #include "uavAP/Core/DataPresentation/DataPresentationFactory.h"
 #include "uavAP/Core/Framework/Helper.h"
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/Scheduler/SchedulerFactory.h"
 #include "uavAP/Core/TimeProvider/TimeProviderFactory.h"
 #include "uavAP/MissionControl/DataHandling/MissionControlDataHandling.h"
+#include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/GlobalPlanner/GlobalPlannerFactory.h"
 #include "uavAP/MissionControl/MissionPlanner/MissionPlannerFactory.h"
 
@@ -41,15 +45,19 @@ class MissionControlHelper: public Helper
 public:
 	MissionControlHelper()
 	{
-		addDefaultCreator<IPC>("ipc");
-		addDefaultCreator<MissionControlDataHandling>("data_handling");
+		addDefaultCreator<IPC>();
+		addDefaultCreator<MissionControlDataHandling>();
+		addDefaultCreator<ConditionManager>();
 
-		addDefault<SchedulerFactory>("scheduler");
-		addDefault<TimeProviderFactory>("time_provider");
-		addDefault<DataPresentationFactory<Content,Target>>("data_presentation");
+		addDefault<SchedulerFactory>();
+		addDefault<TimeProviderFactory>();
+		addDefault<DataPresentationFactory<Content, Target>>();
 
-		addFactory<MissionPlannerFactory>("planner");
-		addFactory<GlobalPlannerFactory>("global_planner");
+		addCreator<ManeuverPlanner>();
+		addCreator<LocalFrameManager>();
+		addFactory<MissionPlannerFactory>();
+		addFactory<GlobalPlannerFactory>();
+		addCreator<Geofencing>();
 	}
 };
 

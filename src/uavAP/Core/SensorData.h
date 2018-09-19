@@ -27,6 +27,7 @@
 #ifndef UAVAP_CORE_SENSORDATA_H_
 #define UAVAP_CORE_SENSORDATA_H_
 
+#include "uavAP/Core/Frames/IFrame.h"
 #include "uavAP/Core/LinearAlgebra.h"
 #include "uavAP/Core/Time.h"
 
@@ -35,15 +36,15 @@
  */
 struct SensorData
 {
-	Vector3 position; //!< UTM Frame, [X: North, Y: East, Z: Down]
+	Vector3 position; //!< UTM Frame, [X: East, Y: North, Z: Up]
 	Vector3 velocity; //!< Earth Frame
 	Vector3 acceleration; //!< Body Frame
 	Vector3 attitude; //!< [X: Roll, Y: Pitch, Z: Yaw]
 	Vector3 angularRate; //!< [X: Roll, Y: Pitch, Z: Yaw]
 	Vector3 angularAcc;  //!< [X: Roll, Y: Pitch, Z: Yaw]
 	TimePoint timestamp; //!< Timestamp of this sensor data struct
-	double velocityAir; //!< total forward velocity w.r.t. wind
-	double velocityGround; //!< total forward velocity w.r.t. ground
+	double airSpeed; //!< total velocity w.r.t. wind
+	double groundSpeed; //!< total velocity w.r.t. ground
 	bool hasGPSFix; //!< Shows whether the GPS has a fix
 	bool autopilotActive; //!< Shows if the autopilot is active, always true in simulation
 
@@ -53,71 +54,42 @@ struct SensorData
 	double consumedEnergy; //!< measured or estimated total used energy for propulsion
 	uint32_t sequenceNr; //!< Sequence number of the struct
 
+	double batteryVoltage;
+
 	SensorData() :
 			position(0, 0, 0), velocity(0, 0, 0), acceleration(0, 0, 0), attitude(0, 0, 0), angularRate(
-					0, 0, 0), angularAcc(0, 0, 0), velocityAir(0), velocityGround(0), hasGPSFix(
-					false), autopilotActive(false), angleOfAttack(0), propulsionPower(0), consumedEnergy(
-					0), sequenceNr(0)
+					0, 0, 0), angularAcc(0, 0, 0), airSpeed(0), groundSpeed(0), hasGPSFix(false), autopilotActive(
+					false), angleOfAttack(0), propulsionPower(0), consumedEnergy(0), sequenceNr(0), batteryVoltage(
+					0)
 	{
 	}
 };
 
-/**
- * @brief SensorDataLight struct. Smaller version of the SensorData struct.
- *
- * Contains similar information as SensorData with only float32 precision. Booleans are
- * compressed in one 8bit integer.
- */
-struct SensorDataLight
+SensorData&
+changeFrame(const IFrame& orig, const IFrame& dest, SensorData& data);
+
+namespace dp
 {
-	using Vector3f = Eigen::Vector3f;
-	Vector3f position; //!< UTM Frame, [X: North, Y: East, Z: Down]
-	Vector3f velocity; //!< Velocity in Earth Frame
-	Vector3f acceleration; //!< Acceleration Body Frame
-	Vector3f attitude; //!< Attitude [X: Roll, Y: Pitch, Z: Yaw]
-	Vector3f angularRate; //!< Angular rate [X: Roll, Y: Pitch, Z: Yaw]
-	TimePoint timestamp; //!< Timestamp of this sensor data struct
-	float velocityAir; //!< total forward velocity w.r.t. wind
-	float velocityGround; //!< total forward velocity w.r.t. ground
-	float angleOfAttack; //!< current angle of attack
-	float propulsionPower; //!< measured or estimated current propulsion power
-	float consumedEnergy; //!< measured or estimated total used energy for propulsion
-
-	uint8_t flags; //!< Bit field containing:  [0,0,0,0,0,0,hasGPSFix,autopilotActive]
-
-	uint32_t sequenceNr; //!< Sequence number of the struct
-};
-
-/**
- * @brief Convert float Vector3 to double
- * @param vec float Eigen Vector3
- * @return double Eigen Vector3
- */
-Eigen::Vector3d
-vectorFloatToDouble(const Eigen::Vector3f& vec);
-
-/**
- * @brief Convert double Vector3 to float
- * @param vec double Eigen Vector3
- * @return float Eigen Vector3
- */
-Eigen::Vector3f
-vectorDoubleToFloat(const Eigen::Vector3d& vec);
-
-/**
- * @brief Convert SensorDataLight to SensorData
- * @param sd SensorDataLight object to be converted
- * @return SensorData object
- */
-SensorData
-fromSensorDataLight(const SensorDataLight& sd);
-
-/**
- * @brief Convert SensorData to SensorDataLight
- * @param sd SensorDataLight object to be converted
- * @return SensorDataLight object
- */
-SensorDataLight
-fromSensorData(const SensorData& sd);
+template<class Archive, typename Type>
+inline void
+serialize(Archive& ar, SensorData& t)
+{
+	ar & t.position;
+	ar & t.velocity;
+	ar & t.acceleration;
+	ar & t.attitude;
+	ar & t.angularRate;
+	ar & t.angularAcc;
+	ar & t.timestamp;
+	ar & t.airSpeed;
+	ar & t.groundSpeed;
+	ar & t.propulsionPower;
+	ar & t.consumedEnergy;
+	ar & t.hasGPSFix;
+	ar & t.autopilotActive;
+	ar & t.sequenceNr;
+	ar & t.batteryVoltage;
+}
+}
 
 #endif /* UAVAP_CORE_SENSORDATA_H_ */

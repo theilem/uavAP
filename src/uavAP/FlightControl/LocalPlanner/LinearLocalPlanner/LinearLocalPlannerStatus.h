@@ -39,4 +39,16 @@ struct HelicopterLocalPlannerStatus
 	ControllerTarget controllerTarget;
 };
 
+namespace dp
+{
+template<class Archive, typename Type>
+inline void
+serialize(Archive& ar, HelicopterLocalPlannerStatus& t)
+{
+	ar & t.controllerTarget;
+	ar & t.currentPathSection;
+	ar & t.directionTarget;
+}
+}
+
 #endif /* UAVAP_FLIGHTCONTROL_LOCALPLANNER_LINEARLOCALPLANNER_LINEARLOCALPLANNERSTATUS_H_ */

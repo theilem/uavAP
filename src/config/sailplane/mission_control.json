@@ -1,0 +1,235 @@
+{
+	"local_frame": {
+		"origin": [
+			367836.57,
+			4435383.06,
+			200
+		],
+		"yaw": 47
+	},
+	"global_planner": {
+		"type": "spline",
+		"tau": 0.6
+	},
+	"maneuver_planner": {
+		"safety_bounds": {
+			"center": {
+				"north": 0,
+				"east": 0,
+				"up": 120
+			},
+			"major_side_length": 800,
+			"minor_side_length": 400,
+			"major_side_orientation": 0,
+			"height": 120
+		},
+		"return_velocity": 12,
+		"manual_restart": false,
+		"maneuver_restart": false,
+		"use_safety_bounds": true,
+		"perform_in_safety_bounds": true,
+		"maneuvers": {
+			"default": [
+				{
+					"override": {
+						"local_planner/velocity": 15.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "duration_condition",
+						"duration": 8000000
+					},
+					"analysis": false
+				}
+			],
+			"roll_right_maneuver": [
+				{
+					"override": {
+						"local_planner/velocity": 15.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state_condition",
+						"steady_state": true
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 15.0,
+						"pids/roll": 45.0
+					},
+					"condition": {
+						"type": "duration_condition",
+						"duration": 15000
+					},
+					"analysis": true
+				}
+			],
+			"roll_left_maneuver": [
+				{
+					"override": {
+						"local_planner/velocity": 15.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state_condition",
+						"steady_state": true
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 15.0,
+						"pids/roll": -45.0
+					},
+					"condition": {
+						"type": "duration_condition",
+						"duration": 15000
+					},
+					"analysis": true
+				}
+			],
+			"roll_right_left_maneuver": [
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"pids/roll": 30.0
+					},
+					"condition": {
+						"type": "steady_state_condition",
+						"steady_state": true
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"pids/roll": -45.0
+					},
+					"condition": {
+						"type": "duration_condition",
+						"duration": 15000
+					},
+					"analysis": true
+				}
+			],
+			"roll_left_right_maneuver": [
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"pids/roll": -30.0
+					},
+					"condition": {
+						"type": "steady_state_condition",
+						"steady_state": true
+					},
+					"analysis": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"pids/roll": 45.0
+					},
+					"condition": {
+						"type": "duration_condition",
+						"duration": 15000
+					},
+					"analysis": true
+				}
+			]
+		}
+	},
+	"mission_planner": {
+		"type": "custom",
+		"use_approach": false,
+		"default_velocity": 12,
+		"missions": {
+			"simple_mission": {
+				"velocity": 12,
+				"infinite": true,
+				"offset": {
+					"e": 0,
+					"n": 0,
+					"u": 100
+				},
+				"waypoints": [
+					{
+						"e": 200,
+						"n": 100,
+						"u": 0
+					},
+					{
+						"e": 200,
+						"n": -100,
+						"u": 0
+					},
+					{
+						"e": -200,
+						"n": -100,
+						"u": 0
+					},
+					{
+						"e": -200,
+						"n": 100,
+						"u": 0
+					}
+				]
+			},
+			"validation_mission": {
+				"velocity": 12,
+				"infinite": true,
+				"offset": {
+					"e": 0,
+					"n": 0,
+					"u": 100
+				},
+				"waypoints": [
+					{
+						"e": 300,
+						"n": 150,
+						"u": 0
+					},
+					{
+						"e": 300,
+						"n": -150,
+						"u": 0
+					},
+					{
+						"e": 150,
+						"n": -150,
+						"u": 0
+					},
+					{
+						"e": -150,
+						"n": -150,
+						"u": 50
+					},
+					{
+						"e": -300,
+						"n": -150,
+						"u": 50
+					},
+					{
+						"e": -300,
+						"n": 150,
+						"u": 50
+					},
+					{
+						"e": -150,
+						"n": 150,
+						"u": 50
+					},
+					{
+						"e": 150,
+						"n": 150,
+						"u": 0
+					}
+				]
+			}
+		}
+	},
+	"data_presentation": {
+		"compress_double": true
+	}
+}

@@ -38,64 +38,54 @@
 
 struct Waypoint
 {
-    Vector3 location;
-    boost::optional<Vector3> direction;
-    boost::optional<double> velocity; //Desired velocity upto this waypoint
+	Vector3 location;
+	boost::optional<Vector3> direction;
+	boost::optional<double> velocity; //Desired velocity upto this waypoint
 
-    Waypoint() :
-        location(0, 0, 0),
-        direction(boost::none),
-        velocity(boost::none)
-    {
-    }
+	Waypoint() :
+			location(0, 0, 0), direction(boost::none), velocity(boost::none)
+	{
+	}
 
-    Waypoint(const Vector3& loc) :
-        location(loc),
-        direction(boost::none),
-        velocity(boost::none)
-    {
-    }
+	Waypoint(const Vector3& loc) :
+			location(loc), direction(boost::none), velocity(boost::none)
+	{
+	}
 
-    Waypoint(const Vector3& loc, const Vector3& dir) :
-        location(loc),
-        direction(dir),
-        velocity(boost::none)
-    {
-    }
+	Waypoint(const Vector3& loc, const Vector3& dir) :
+			location(loc), direction(dir), velocity(boost::none)
+	{
+	}
 
-    Waypoint(const Vector3& loc, double vel) :
-        location(loc),
-        direction(boost::none),
-        velocity(vel)
-    {
-    }
+	Waypoint(const Vector3& loc, double vel) :
+			location(loc), direction(boost::none), velocity(vel)
+	{
+	}
 
-    Waypoint(const Vector3& loc, const Vector3& dir, double vel) :
-        location(loc),
-        direction(dir),
-        velocity(vel)
-    {
-    }
+	Waypoint(const Vector3& loc, const Vector3& dir, double vel) :
+			location(loc), direction(dir), velocity(vel)
+	{
+	}
 
-    bool
-    configure(const boost::property_tree::ptree& config);
+	bool
+	configure(const boost::property_tree::ptree& config);
 
 };
 
 struct Mission
 {
-    std::vector<Waypoint> waypoints;
-    bool infinite;
-    double velocity;
+	std::vector<Waypoint> waypoints;
+	boost::optional<Waypoint> initialPosition;
+	bool infinite;
+	double velocity;
 
-    Mission():
-        infinite(false),
-        velocity(DEFAULT_VELOCITY)
-    {
-    }
+	Mission() :
+			infinite(false), velocity(DEFAULT_VELOCITY)
+	{
+	}
 
-    bool
-    configure(const boost::property_tree::ptree& config);
+	bool
+	configure(const boost::property_tree::ptree& config);
 };
 
 namespace dp
@@ -104,9 +94,19 @@ template<class Archive, typename Type>
 inline void
 serialize(Archive& ar, Waypoint& t)
 {
-    ar& t.location;
-    ar& t.velocity;
-    ar& t.direction;
+	ar & t.location;
+	ar & t.velocity;
+	ar & t.direction;
+}
+
+template<class Archive, typename Type>
+inline void
+serialize(Archive& ar, Mission& t)
+{
+	ar & t.waypoints;
+	ar & t.initialPosition;
+	ar & t.velocity;
+	ar & t.infinite;
 }
 }
 

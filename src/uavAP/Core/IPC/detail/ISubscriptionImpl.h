@@ -27,7 +27,6 @@
 #define UAVAP_CORE_IPC_DETAIL_ISUBSCRIPTIONIMPL_H_
 #include <boost/signals2/connection.hpp>
 
-
 class ISubscriptionImpl
 {
 public:
@@ -41,9 +40,6 @@ public:
 	virtual void
 	start() = 0;
 
-
 };
-
-
 
 #endif /* UAVAP_CORE_IPC_DETAIL_ISUBSCRIPTIONIMPL_H_ */

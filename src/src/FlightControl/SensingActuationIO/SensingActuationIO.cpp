@@ -1,18 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
-// 
+//
 // This file is part of uavAP.
-// 
+//
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@
  *  Created on: Jul 26, 2017
  *      Author: mircot
  */
+#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h"
 
@@ -29,14 +30,8 @@ SensingActuationIO::SensingActuationIO()
 {
 }
 
-std::shared_ptr<SensingActuationIO>
-SensingActuationIO::create(const boost::property_tree::ptree&)
-{
-	return std::make_shared<SensingActuationIO>();
-}
-
 void
-SensingActuationIO::notifyAggregationOnUpdate(Aggregator& agg)
+SensingActuationIO::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	ipc_.setFromAggregationIfNotSet(agg);
 }
@@ -63,7 +58,8 @@ SensingActuationIO::run(RunStage stage)
 	case RunStage::NORMAL:
 	{
 		auto ipc = ipc_.get();
-		sensorSubscription_ = ipc->subscribeOnSharedMemory<SensorData>("sensor_data", boost::bind(&SensingActuationIO::onSensorData, this, _1));
+		sensorSubscription_ = ipc->subscribeOnSharedMemory<SensorData>("sensor_data",
+				boost::bind(&SensingActuationIO::onSensorData, this, _1));
 		if (!sensorSubscription_.connected())
 		{
 			APLOG_ERROR << "SensorData in shared memory missing. Cannot continue.";

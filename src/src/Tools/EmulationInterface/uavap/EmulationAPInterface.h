@@ -1,3 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (C) 2018 University of Illinois Board of Trustees
+//
+// This file is part of uavAP.
+//
+// uavAP is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// uavAP is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////////////
 /*
  * AutopilotInterface.h
  *
@@ -17,15 +35,17 @@
 #include <uavAP/API/ap_ext/ap_ext.h>
 #include <uavAP/API/ap_ext/ServoMapping.h>
 #include <uavAP/API/ChannelMixing.h>
-#include <uavAP/Core/DataPresentation/Content.h>
 #include <uavAP/Core/DataPresentation/APDataPresentation/APDataPresentation.h>
+#include <uavAP/Core/DataPresentation/ContentMapping.h>
 #include <uavAP/Core/IDC/Serial/SerialIDC.h>
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/Core/Scheduler/IScheduler.h>
 
-class EmulationAPInterface : public IAggregatableObject, public IRunnableObject
+class EmulationAPInterface: public IAggregatableObject, public IRunnableObject
 {
 public:
+
+	static constexpr TypeId typeId = "emulation_interface";
 
 	EmulationAPInterface();
 
@@ -38,7 +58,7 @@ public:
 	configure(const boost::property_tree::ptree& config);
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	bool
 	run(RunStage stage) override;
@@ -63,9 +83,9 @@ private:
 
 	ChannelMixing channelMixing_;
 	ServoMapping servoMapping_;
-	ObjectHandle<IDataPresentation<Content,Target>> dataPresentation_;
+	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
 	ObjectHandle<IScheduler> scheduler_;
-	ObjectHandle<IInterDeviceComm> idc_;
+	ObjectHandle<INetworkLayer> idc_;
 
 	std::string serialPort_;
 	Sender actuationSender_;

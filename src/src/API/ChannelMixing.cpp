@@ -1,18 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
-// 
+//
 // This file is part of uavAP.
-// 
+//
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 
 ChannelMixing::ChannelMixing() :
-		airplane_(true), numOfOutputChannel_(0)
+		numOfOutputChannel_(0)
 {
 }
 
@@ -38,221 +38,166 @@ ChannelMixing::configure(const boost::property_tree::ptree& config)
 {
 	PropertyMapper pm(config);
 
-	boost::property_tree::ptree channelConfig;
-	pm.add("servo", channelConfig, true);
-	pm.add("num_output_channel", numOfOutputChannel_, true);
-	pm.add("airplane", airplane_, false);
+	boost::property_tree::ptree channelMixing;
+	boost::property_tree::ptree channelMapping;
+	boost::property_tree::ptree camberOffset;
+	boost::property_tree::ptree specialOffset;
+	boost::property_tree::ptree channelContraints;
+	pm.add("channel_mixing", channelMixing, true);
+	pm.add("channel_mapping", channelMapping, true);
+	pm.add("camber_offset", camberOffset, true);
+	pm.add("special_control", specialOffset, true);
+	pm.add("channel_constraints", channelContraints, true);
+	pm.add<int>("num_output_channel", numOfOutputChannel_, true);
 
 	if (!pm.map())
 	{
 		APLOG_ERROR << "ChannelMixing configuration failed.";
 		return false;
 	}
+	//Create mixing matrix
 
-	if (airplane_)
+	PropertyMapper pmMix(channelMixing);
+	Eigen::VectorXd roll, pitch, yaw, throttle;
+	pmMix.add("roll_out", roll, true);
+	pmMix.add("pitch_out", pitch, true);
+	pmMix.add("yaw_out", yaw, true);
+	pmMix.add("throttle_out", throttle, true);
+
+	mixingMatrix_.resize(numOfOutputChannel_, 4);
+	mixingMatrix_.col(0) = roll;
+	mixingMatrix_.col(1) = pitch;
+	mixingMatrix_.col(2) = yaw;
+	mixingMatrix_.col(3) = throttle;
+
+	//Load mappings
+	for (const auto& it : channelMapping)
 	{
-		return configureAirplaneChannel(channelConfig);
-	}
-
-	return configureHelicopterChannel(channelConfig);;
-}
-
-std::vector<double>
-ChannelMixing::mixChannels(const ControllerOutput& controllerOut)
-{
-	std::vector<double> output(numOfOutputChannel_, 0.0);
-	if (airplane_)
-	{
-		if (servoConfig_.size() < (int)Airplane::NUM_AIRPLANE_CHANNEL)
+		auto throws = ThrowsBimapRight.find(it.first);
+		if (throws == ThrowsBimapRight.end())
 		{
-			APLOG_ERROR << "Servo config size does not match.";
-			return std::vector<double>();
+			APLOG_ERROR << "Throws naming not found: " << it.first;
+			continue;
 		}
-		auto channel = mixAirplane(controllerOut);
-
-		for (int i = (int) Airplane::AILERONL; i < (int) Airplane::NUM_AIRPLANE_CHANNEL; i++)
-		{
-			ServoConfig& servo = servoConfig_[i];
-			if (servo.mapped)
-			{
-				if (servo.reversed)
-					output[servo.outChannel] = channel.ch[i] * -1;
-				else
-					output[servo.outChannel] = channel.ch[i];
-			}
-		}
+		mapping_.insert(std::make_pair(throws->second, getMapping(it.second)));
 	}
-	return output;
-}
 
-ControllerOutput
-ChannelMixing::unmixChannels(const std::vector<double>& channels)
-{
-	AirplaneChannel airplane;
-
-	for (int i = (int) Airplane::AILERONL; i < (int) Airplane::NUM_AIRPLANE_CHANNEL; i++)
+	//Load camber
+	PropertyMapper camberPm(camberOffset);
+	for (const auto& it : camberOffset)
 	{
-		ServoConfig& servo = servoConfig_[i];
-		if (servo.mapped)
-			airplane.ch[i] = channels[servo.outChannel] * (servo.reversed ? -1 : 1);
-	}
-
-	//Fill in unmapped channels
-	for (int i = (int) Airplane::AILERONL; i < (int) Airplane::NUM_AIRPLANE_CHANNEL; i++)
-	{
-		ServoConfig& servo = servoConfig_[i];
-		if (!servo.mapped)
+		auto camber = CamberBimapRight.find(it.first);
+		if (camber == CamberBimapRight.end())
 		{
-			switch (static_cast<Airplane>(i))
-			{
-			case Airplane::AILERONL :
-				airplane.ch[i] = -1 * airplane.ch[(int)Airplane::AILERONR];
-				break;
-			case Airplane::AILERONR :
-				airplane.ch[i] = -1 * airplane.ch[(int)Airplane::AILERONL];
-				break;
-			case Airplane::ELEVATORL :
-				airplane.ch[i] = airplane.ch[(int)Airplane::ELEVATORR];
-				break;
-			case Airplane::ELEVATORR :
-				airplane.ch[i] = airplane.ch[(int)Airplane::ELEVATORL];
-				break;
-			case Airplane::FLAPL :
-				airplane.ch[i] = airplane.ch[(int)Airplane::FLAPR];
-				break;
-			case Airplane::FLAPR :
-				airplane.ch[i] = airplane.ch[(int)Airplane::FLAPL];
-				break;
-			default:
-				break;
-			}
+			APLOG_ERROR << "Camber naming not found: " << it.first;
+			continue;
 		}
+		Eigen::ArrayXd offset;
+		camberPm.add(it.first, offset, true);
+		camberOffsets_.insert(std::make_pair(camber->second, offset));
 	}
 
-	return unmixAirplane(airplane);
+	//Load special
+	PropertyMapper specialPm(specialOffset);
+	for (const auto& it : specialOffset)
+	{
+		auto special = SpecialControlBimapRight.find(it.first);
+		if (special == SpecialControlBimapRight.end())
+		{
+			APLOG_ERROR << "special naming not found: " << it.first;
+			continue;
+		}
+		Eigen::ArrayXd offset;
+		specialPm.add(it.first, offset, true);
+		specialOffsets_.insert(std::make_pair(special->second, offset));
+	}
+
+	//Load constraints
+	PropertyMapper constraintPm(channelContraints);
+	constraintPm.add("min", channelMin_, true);
+	constraintPm.add("max", channelMax_, true);
+
+	return pmMix.map() && camberPm.map() && specialPm.map() && constraintPm.map();
 }
 
-ChannelMixing::AirplaneChannel
-ChannelMixing::mixAirplane(const ControllerOutput& controllerOut)
+Eigen::VectorXd
+ChannelMixing::mixChannels(const ControllerOutput& out)
 {
-	AirplaneChannel airplane;
-	airplane.ch[(int) Airplane::AILERONL] = controllerOut.rollOutput;
-	airplane.ch[(int) Airplane::AILERONR] = -controllerOut.rollOutput;
-	airplane.ch[(int) Airplane::ELEVATORL] = controllerOut.pitchOutput;
-	airplane.ch[(int) Airplane::ELEVATORR] = controllerOut.pitchOutput;
-	airplane.ch[(int) Airplane::FLAPL] = controllerOut.flapOutput;
-	airplane.ch[(int) Airplane::FLAPR] = controllerOut.flapOutput;
-	airplane.ch[(int) Airplane::RUDDER] = controllerOut.yawOutput;
-	airplane.ch[(int) Airplane::THROTTLE] = controllerOut.throttleOutput;
-	return airplane;
+	Eigen::Vector4d controlVector(out.rollOutput, out.pitchOutput, out.yawOutput,
+			out.throttleOutput);
+
+	return mixingMatrix_ * controlVector;
 }
 
-ControllerOutput
-ChannelMixing::unmixAirplane(const AirplaneChannel& channel)
+std::vector<unsigned int>
+ChannelMixing::mapChannels(const ControllerOutput& out, const AdvancedControl& advanced)
 {
-	ControllerOutput control;
-	control.rollOutput = channel.ch[(int) Airplane::AILERONL];
-	control.pitchOutput = channel.ch[(int) Airplane::ELEVATORL];
-	control.flapOutput = channel.ch[(int) Airplane::FLAPL];
-	control.yawOutput = channel.ch[(int) Airplane::RUDDER];
-	control.throttleOutput = channel.ch[(int) Airplane::THROTTLE];
-	control.collectiveOutput = 0;
-	return control;
+
+	auto mix = mixChannels(out);
+
+	auto throws = mapping_.find(advanced.throwsSelection);
+	if (throws == mapping_.end())
+	{
+		APLOG_ERROR << "Throws not available. Set to first mapping.";
+		throws = mapping_.begin();
+	}
+
+	const auto& negThrows = throws->second.negThrows;
+	const auto& posThrows = throws->second.posThrows;
+	const auto& center = throws->second.center;
+
+	Eigen::ArrayXd result = mix.array().min(0) * negThrows + mix.array().max(0) * posThrows
+			+ center;
+
+	if (advanced.camberSelection != CamberControl::NORMAL)
+	{
+		auto camber = camberOffsets_.find(advanced.camberSelection);
+		if (camber == camberOffsets_.end())
+		{
+			APLOG_ERROR << "camber not available. Set to first camber.";
+			camber = camberOffsets_.begin();
+		}
+
+		result = result + (camber->second * advanced.camberValue);
+	}
+
+	if (advanced.specialSelection != SpecialControl::NONE)
+	{
+		auto special = specialOffsets_.find(advanced.specialSelection);
+		if (special == specialOffsets_.end())
+		{
+			APLOG_ERROR << "special not available. Set to first special.";
+			special = specialOffsets_.begin();
+		}
+
+		result = result + (special->second * advanced.specialValue);
+	}
+
+	result = result.max(channelMin_).min(channelMax_);
+
+	std::vector<unsigned int> vec;
+	for (int i = 0; i < result.size(); i++)
+	{
+		vec.push_back(round(result[i]));
+	}
+
+	return vec;
+
 }
 
-ChannelMixing::ServoConfig::ServoConfig(const boost::property_tree::ptree& config) :
-		mapped(false), reversed(false), outChannel(0)
+ChannelMixing::Mapping
+ChannelMixing::getMapping(const boost::property_tree::ptree& config)
 {
 	PropertyMapper pm(config);
-	pm.add("reversed", reversed, false);
-	if (pm.add("channel", outChannel, false))
-		mapped = true;
+	Eigen::ArrayXd min, max, center;
+	pm.add("min", min, true);
+	pm.add("max", max, true);
+	pm.add("center", center, true);
 
-}
+	Mapping map;
+	map.negThrows = center - min;
+	map.posThrows = max - center;
+	map.center = center;
 
-bool
-ChannelMixing::configureAirplaneChannel(const boost::property_tree::ptree& config)
-{
-	PropertyMapper pm(config);
-	boost::property_tree::ptree aileronlConf;
-	boost::property_tree::ptree aileronrConf;
-	boost::property_tree::ptree elevatorlConf;
-	boost::property_tree::ptree elevatorrConf;
-	boost::property_tree::ptree flaplConf;
-	boost::property_tree::ptree flaprConf;
-	boost::property_tree::ptree rudderConf;
-	boost::property_tree::ptree throttleConf;
-	pm.add("aileron_l", aileronlConf, true);
-	pm.add("aileron_r", aileronrConf, true);
-	pm.add("elevator_l", elevatorlConf, true);
-	pm.add("elevator_r", elevatorrConf, true);
-	pm.add("flap_l", flaplConf, true);
-	pm.add("flap_r", flaprConf, true);
-	pm.add("rudder", rudderConf, true);
-	pm.add("throttle", throttleConf, true);
-
-	if (!pm.map())
-	{
-		APLOG_ERROR << "ChannelMixing missing servo configuration.";
-		return false;
-	}
-
-	servoConfig_.push_back(ServoConfig(aileronlConf));
-	servoConfig_.push_back(ServoConfig(aileronrConf));
-	servoConfig_.push_back(ServoConfig(elevatorlConf));
-	servoConfig_.push_back(ServoConfig(elevatorrConf));
-	servoConfig_.push_back(ServoConfig(flaplConf));
-	servoConfig_.push_back(ServoConfig(flaprConf));
-	servoConfig_.push_back(ServoConfig(rudderConf));
-	servoConfig_.push_back(ServoConfig(throttleConf));
-	return true;
-}
-bool
-ChannelMixing::configureHelicopterChannel(const boost::property_tree::ptree& config)
-{
-	return true;
-}
-
-bool
-ChannelMixing::run(RunStage stage)
-{
-	switch (stage)
-	{
-	case RunStage::INIT:
-	{
-		if (!ipc_.isSet())
-		{
-			APLOG_ERROR << "ChannelMixing: IPC missing.";
-			return true;
-		}
-		if (!dataPresentation_.isSet())
-		{
-			APLOG_ERROR << "ChannelMixing: DataPresentation missing.";
-			return true;
-		}
-
-		auto ipc = ipc_.get();
-		channelMixPublisher_ = ipc->publishPackets("data_ch_com");
-
-		break;
-	}
-	default:
-		break;
-	}
-	return false;
-}
-
-void
-ChannelMixing::notifyAggregationOnUpdate(Aggregator& agg)
-{
-	ipc_.setFromAggregationIfNotSet(agg);
-	dataPresentation_.setFromAggregationIfNotSet(agg);
-}
-
-std::shared_ptr<ChannelMixing>
-ChannelMixing::create(const boost::property_tree::ptree& config)
-{
-	auto chMix = std::make_shared<ChannelMixing>();
-	chMix->configure(config);
-	return chMix;
+	return map;
 }

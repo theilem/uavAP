@@ -25,36 +25,39 @@
 
 #ifndef UAVAP_CORE_IPC_IPC_H_
 #define UAVAP_CORE_IPC_IPC_H_
-#include <boost/thread.hpp>
-#include "uavAP/Core/Object/IAggregatableObject.h"
-#include "uavAP/Core/Runner/IRunnableObject.h"
-#include <boost/function.hpp>
-#include <boost/interprocess/ipc/message_queue.hpp>
-#include <boost/interprocess/shared_memory_object.hpp>
-#include <boost/thread/lock_types.hpp>
-#include "uavAP/Core/IPC/Publisher.h"
+
 #include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
+
+#include <boost/interprocess/ipc/message_queue.hpp>
+#include <boost/interprocess/shared_memory_object.hpp>
+#include <boost/thread/lock_types.hpp>
 #include <boost/interprocess/sync/sharable_lock.hpp>
 #include <boost/property_tree/ptree.hpp>
+
+#include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/DataPresentation/Packet.h"
 #include "uavAP/Core/IPC/detail/ISubscriptionImpl.h"
 #include "uavAP/Core/IPC/detail/MessageQueuePublisherImpl.h"
 #include "uavAP/Core/IPC/detail/MessageQueueSubscriptionImpl.h"
 #include "uavAP/Core/IPC/detail/SharedMemoryPublisherImpl.h"
 #include "uavAP/Core/IPC/detail/SharedMemorySubscriptionImpl.h"
+#include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
-#include "uavAP/Core/TimeProvider/ITimeProvider.h"
 
 class IPC: public IRunnableObject, public IAggregatableObject
 {
 
 public:
+
+	static constexpr TypeId typeId = "ipc";
+
 
 	IPC();
 
@@ -92,7 +95,7 @@ public:
 	run(RunStage stage) override;
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg);
+	notifyAggregationOnUpdate(const Aggregator& agg);
 
 	void
 	sigintHandler(int sig);
@@ -104,7 +107,6 @@ private:
 	std::mutex subscribeMutex_;
 	std::map<std::string, std::shared_ptr<ISubscriptionImpl>> subscriptions_;
 
-	ObjectHandle<ITimeProvider> timeProvider_;
 	ObjectHandle<IScheduler> scheduler_;
 
 	bool subscribedOnSigint_;

@@ -36,6 +36,7 @@
 #include "uavAP/Core/Object/IAggregatableObject.h"
 
 #include <boost/property_tree/ptree.hpp>
+#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/Logging/APLogger.h"
 
 #include <memory>
@@ -58,29 +59,33 @@ default: break;}
 #define SERIALIZE_CONTENT(ENUM)		CONTENTMAPPING(ENUM,SERIALIZE)
 #define DESERIALIZE_CONTENT(ENUM)	CONTENTMAPPING(ENUM,DESERIALIZE)
 
-
 /**
  * @brief Defines the serialization of data represented by Content.
  */
-template <typename Content, typename Target>
+template<typename Content, typename Target>
 class APDataPresentation: public IDataPresentation<Content, Target>, public IAggregatableObject
 {
 public:
 
+	static constexpr IAggregatableObject::TypeId typeId = "ap";
+
 	/**
 	 * @brief Default constructor
 	 */
-	APDataPresentation() = default;
+	APDataPresentation() :
+			compressDouble_(false)
+	{
+	}
 
 	/**
 	 * @brief Create a APDataPresentation shared_ptr.
 	 * @param config configuration for the data presentation
 	 * @return Shared ptr to a new object
 	 */
-	static std::shared_ptr<IDataPresentation<Content,Target>>
+	static std::shared_ptr<IDataPresentation<Content, Target>>
 	create(const boost::property_tree::ptree& config)
 	{
-		auto dp = std::make_shared<APDataPresentation<Content,Target>>();
+		auto dp = std::make_shared<APDataPresentation<Content, Target>>();
 		dp->configure(config);
 		return dp;
 	}
@@ -93,7 +98,9 @@ public:
 	bool
 	configure(const boost::property_tree::ptree& config)
 	{
-		return true;
+		PropertyMapper pm(config);
+		pm.add<bool>("compress_double", compressDouble_, false);
+		return pm.map();
 	}
 
 	/**
@@ -131,7 +138,7 @@ public:
 	 * Interface implementation. Not needed.
 	 */
 	void
-	notifyAggregationOnUpdate(Aggregator&) override
+	notifyAggregationOnUpdate(const Aggregator&) override
 	{
 	}
 
@@ -146,6 +153,7 @@ public:
 	{
 		std::string str;
 		BinaryToArchive archive(str);
+		archive.compressDouble(compressDouble_);
 		try
 		{
 			archive << content;
@@ -173,11 +181,12 @@ public:
 			return boost::any();
 		}
 		BinaryFromArchive archive(packet.getBuffer());
+		archive.compressDouble(compressDouble_);
 		try
 		{
 			uint8_t c;
 			archive >> c;
-			content = (Content)c;
+			content = (Content) c;
 			DESERIALIZE_CONTENT(content)
 		} catch (ArchiveError& err)
 		{
@@ -190,6 +199,8 @@ public:
 	}
 
 private:
+
+	bool compressDouble_;
 };
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_APDATAPRESENTATION_H_ */

@@ -36,7 +36,7 @@
  *
  * Template defines the enum for Content and Target.
  */
-template <typename Content, typename Target>
+template<typename Content, typename Target>
 class IDataPresentation
 {
 public:

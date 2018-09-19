@@ -16,19 +16,31 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef __AP_EXT_H__
-#define __AP_EXT_H__
+/*
+ *
+ */
+#ifndef UAVAP_EXT_H__
+#define UAVAP_EXT_H__
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <linux/types.h>
 #include <stdint.h>
-#include <cstdint>
+#include <unistd.h>
+
+#include <iostream>
+#include <fstream>
 
 #define PWM_CHS 22
 #define ADC_CHS 32
 #define LOADC_CHS 2
+#define PIC_BUFFER_SIZE (sizeof(struct pic_sample_t))
+#define LINE_SEP_MAXLEN 10
 #define MOTOR_CHS 1
 #define SLINK_NUM_CMDS 11
 
 #define AIRSPEED_ADC_CH 18
+#define USE_AUTOPILOT
 
 struct data_sample_t;
 struct imu_sample_t;
@@ -44,7 +56,7 @@ struct data_sample_t
 	struct imu_sample_t * imu_sample;
 	struct int_imu_sample_t * int_imu_sample;
 	struct pic_sample_t * pic_sample;
-	struct rpm_sample_t * rpm_sample;
+	struct airs_sample_t * airs_sample;
 	struct slink_sample_t * slink_sample;
 	struct phidget_sample_t * phidget_sample;
 };
@@ -63,6 +75,18 @@ struct int_imu_sample_t
 			double imu_euler_yaw;
 		};
 		double imu_euler[3];
+	};
+
+	union
+	{
+		struct
+		{
+			double imu_quat_w;
+			double imu_quat_x;
+			double imu_quat_y;
+			double imu_quat_z;
+		};
+		double imu_quat[4];
 	};
 
 	union
@@ -114,6 +138,18 @@ struct imu_sample_t
 			double imu_euler_yaw;
 		};
 		double imu_euler[3];
+	};
+
+	union
+	{
+		struct
+		{
+			double imu_quat_w;
+			double imu_quat_x;
+			double imu_quat_y;
+			double imu_quat_z;
+		};
+		double imu_quat[4];
 	};
 
 	union
@@ -185,7 +221,7 @@ struct PUBX_POS_fields
 {
 	char hour;
 	char minute;
-	/* This fields contains the fix and 
+	/* This fields contains the fix and
 	 * checksum_valid flags*/
 	char flags;
 	char satellites;
@@ -217,7 +253,7 @@ struct GGA_fields
 {
 	char hour;
 	char minute;
-	/* This fields contains the fix and 
+	/* This fields contains the fix and
 	 * checksum_valid flags*/
 	char flags;
 	char satellites;
@@ -244,13 +280,23 @@ struct GPS_sample
 	struct PUBX_TIME_fields time;
 };
 
+struct pts_sample_t
+{
+	float press;
+	float temp;
+};
+
 /* END of PIC-dependent structures */
 
 struct pic_sample_t
 {
 	unsigned short adc_channels[ADC_CHS];
+	struct pts_sample_t pts_sample;
 	unsigned long pwm_channels[PWM_CHS];
 	struct GPS_sample gps_sample;
+	unsigned long pkt_nr;
+	unsigned short user_action;
+	unsigned short fw_version;
 };
 
 struct slink_sample_t
@@ -280,33 +326,220 @@ struct phidget_sample_t
 	double loadc_ch[LOADC_CHS];
 };
 
-struct rpm_sample_t
-{
-	unsigned long motor_ch[MOTOR_CHS];
+struct airs_sample_t {
+    unsigned short airs;
+#ifdef USE_AUTOPILOT
+    double cal_airs;
+#endif
+    /* These fields should replace internal PIC measurements if an
+     * external probe is available */
+    float press;
+    float temp;
 };
 
- #ifdef __cplusplus
- #define EXTERNC extern "C"
- #else
- #define EXTERNC
- #endif
+struct adc_ch_setting_t
+{
+	char enabled;
+	char format;
+	char range;
+	char reserved;
+	double min;
+	double max;
+	/* Filled at output format parsing time */
+	double scale;
+};
 
- EXTERNC int
+struct generic_field_setting_t
+{
+	char enabled;
+	char format;
+};
+
+struct pwm_ch_setting_t
+{
+	char enabled;
+	char format;
+};
+
+struct imu_field_setting_t
+{
+	char enabled;
+	char format;
+};
+
+struct gps_field_setting_t
+{
+	char enabled;
+	char format;
+};
+
+struct esc_field_setting_t
+{
+	char enabled;
+	char format;
+};
+
+struct airs_field_setting_t
+{
+	char enabled;
+	char format;
+	char calibrated;
+};
+
+struct pts_field_setting_t
+{
+	char enabled;
+	char format;
+};
+
+struct imu_setting_t
+{
+	imu_field_setting_t pkt;
+	imu_field_setting_t euler;
+	imu_field_setting_t accel;
+	imu_field_setting_t temp;
+	imu_field_setting_t press;
+	imu_field_setting_t lat;
+	imu_field_setting_t lon;
+	imu_field_setting_t alt;
+	imu_field_setting_t rot;
+	imu_field_setting_t mag;
+	imu_field_setting_t vel;
+	imu_field_setting_t time_day;
+	imu_field_setting_t time_hour;
+	imu_field_setting_t time_minute;
+	imu_field_setting_t time_month;
+	imu_field_setting_t time_nano;
+	imu_field_setting_t time_second;
+	imu_field_setting_t time_year;
+};
+
+struct int_imu_setting_t
+{
+	imu_field_setting_t pkt;
+	imu_field_setting_t euler;
+	imu_field_setting_t accel;
+	imu_field_setting_t rot;
+	imu_field_setting_t mag;
+};
+
+struct gps_setting_t
+{
+	gps_field_setting_t lat;
+	gps_field_setting_t lon;
+	gps_field_setting_t alt;
+	gps_field_setting_t sep;
+	gps_field_setting_t fix;
+	gps_field_setting_t sats;
+	gps_field_setting_t course_gnd;
+	gps_field_setting_t speed_gnd;
+	gps_field_setting_t speed_vert;
+	gps_field_setting_t time_day;
+	gps_field_setting_t time_hour;
+	gps_field_setting_t time_minute;
+	gps_field_setting_t time_month;
+	gps_field_setting_t time_second;
+	gps_field_setting_t time_year;
+};
+
+struct esc_setting_t
+{
+	esc_field_setting_t volt;
+	esc_field_setting_t curr;
+	esc_field_setting_t thr;
+	esc_field_setting_t rpm;
+	esc_field_setting_t bec_volt;
+	esc_field_setting_t bec_curr;
+};
+
+struct airs_setting_t
+{
+	airs_field_setting_t airs;
+};
+
+struct pts_setting_t
+{
+	pts_field_setting_t press;
+	pts_field_setting_t temp;
+};
+
+struct output_stats_t
+{
+	size_t total_bytes;
+	size_t bytes_sample;
+	size_t sample_count;
+	size_t length;
+};
+
+struct run_requirements_t
+{
+	union
+	{
+		struct
+		{
+			unsigned long imu :1;
+			unsigned long int_imu :1;
+			unsigned long pic :1;
+			unsigned long slink :1;
+			unsigned long airs :1;
+			unsigned long phidget :1;
+		};
+		unsigned long raw_mask;
+	};
+
+	unsigned int dac_val[2];
+};
+
+struct output_settings_t
+{
+	char enabled;
+	char active;
+	char done_cmd;
+	ulong speed;
+	char field_sep;
+	char field_sep_char;
+	char line_sep_char[LINE_SEP_MAXLEN];
+	/* Not a DB field */
+	ulong line_sep_char_len;
+	char use_imu;
+	int outfd;
+	unsigned long log_id;
+	struct adc_ch_setting_t adc_ch[ADC_CHS];
+	struct pwm_ch_setting_t pwm_ch[PWM_CHS];
+	struct imu_setting_t imu_setup;
+	struct int_imu_setting_t int_imu_setup;
+	struct gps_setting_t gps_setup;
+	struct esc_setting_t esc_setup;
+	struct airs_setting_t airs_setup;
+	struct pts_setting_t pts_setup;
+	struct output_stats_t stats;
+};
+
+#ifdef __cplusplus
+#define EXTERNC extern "C"
+#else
+#define EXTERNC
+#endif
+
+EXTERNC int
 ap_ext_setup();
- EXTERNC int
+EXTERNC int
 ap_ext_sense(const struct data_sample_t * sample);
- EXTERNC int
+EXTERNC int
 ap_ext_actuate(unsigned long * pwm, unsigned int num_channels);
 EXTERNC int
 ap_ext_teardown();
+EXTERNC int
+ap_ext_ctrl(int* cmd);
 
-
- #undef EXTERNC
+#undef EXTERNC
 
 class ApExtManager;
 
 ApExtManager*
 getApExtManager();
 
+void
+setConfigPath(const std::string& configPath);
 
 #endif

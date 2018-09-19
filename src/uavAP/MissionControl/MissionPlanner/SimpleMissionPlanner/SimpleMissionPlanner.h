@@ -35,9 +35,13 @@
 class IScheduler;
 class IGlobalPlanner;
 
-class SimpleMissionPlanner: public IMissionPlanner, public IAggregatableObject, public IRunnableObject
+class SimpleMissionPlanner: public IMissionPlanner,
+		public IAggregatableObject,
+		public IRunnableObject
 {
 public:
+
+	static constexpr TypeId typeId = "simple";
 
 	SimpleMissionPlanner();
 
@@ -45,10 +49,13 @@ public:
 	create(const boost::property_tree::ptree& config);
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	bool
 	run(RunStage stage) override;
+
+	void
+	missionRequest(const std::string& mission) override;
 
 private:
 
@@ -62,7 +69,5 @@ private:
 
 	Publisher missionPublisher_;
 };
-
-
 
 #endif /* UAVAP_MISSIONCONTROL_MISSIONPLANNER_SIMPLEMISSIONPLANNER_SIMPLEMISSIONPLANNER_H_ */

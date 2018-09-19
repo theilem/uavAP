@@ -17,10 +17,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
 /**
-  * @file MessageObject.h
-  * @author Mirco Theile, mircot@illinois.edu
-  * @date [DD.MM.YYYY] 18.07.2017
-  */
+ * @file MessageObject.h
+ * @author Mirco Theile, mircot@illinois.edu
+ * @date [DD.MM.YYYY] 18.07.2017
+ */
 
 #ifndef UAVAP_CORE_IPC_MESSAGEOBJECT_H_
 #define UAVAP_CORE_IPC_MESSAGEOBJECT_H_
@@ -32,15 +32,15 @@ template<class Object>
 struct MessageObject: public Object
 {
 
-    boost::interprocess::interprocess_condition_any cnd;
-    boost::interprocess::interprocess_sharable_mutex mtx;
+	boost::interprocess::interprocess_condition_any cnd;
+	boost::interprocess::interprocess_sharable_mutex mtx;
 
-    std::atomic_bool active;
+	std::atomic_bool active;
 
-    MessageObject():
-        Object(),
-        active(true)
-    {}
+	MessageObject() :
+			Object(), active(true)
+	{
+	}
 
 };
 
@@ -65,15 +65,13 @@ struct MessageObject: public Object
 
 enum class VectorWrapperIndicator
 {
-    BEGIN = 0,
-    ADD,
-    END
+	BEGIN = 0, ADD, END
 };
 
 template<class Object>
 struct VectorWrapper: public Object
 {
-    VectorWrapperIndicator indicator;
+	VectorWrapperIndicator indicator;
 };
 
 #endif /* UAVAP_CORE_IPC_MESSAGEOBJECT_H_ */

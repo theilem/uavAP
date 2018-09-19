@@ -17,13 +17,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
 set (TEST_SOURCES 	TestRunner.cpp
-			Core/APLoggerTest.cpp
+			#Core/APLoggerTest.cpp
 			Core/RunnerTest.cpp
                         Core/DataPresentationTest.cpp
                         Core/IPCTest.cpp
                         Core/SchedulerTest.cpp
+                        Core/PropertyMapperTest.cpp
+                        
+                        Math/BetaIncompleteTest.cpp
+                        Geofencing/GeneralTests.cpp
+                        #Core/FramesTest.cpp
 			#FlightControl/Controller/PIDControllerTest_Airplane.cpp
 			#FlightControl/Controller/PIDControllerTest_Helicopter.cpp
+			API/ApExtTest.cpp
 			)
 
 set (TEST_DEPENDENCIES 	boost_system
@@ -32,12 +38,21 @@ set (TEST_DEPENDENCIES 	boost_system
         		boost_date_time
         		pthread
         		rt
-        		${AP_FLIGHT_CONTROL}
-        		${AP_CORE}
+        		uavap_core
+        		uavap_mission_control
+        		ap_ext
+        		uavap_api
+        		arb
+        		flint
         		)
 
 add_executable (tests EXCLUDE_FROM_ALL ${TEST_SOURCES})
 target_link_libraries (tests ${TEST_DEPENDENCIES})
+
+add_executable(testman EXCLUDE_FROM_ALL TestRunner.cpp
+										TestMan.cpp)
+										
+target_link_libraries(testman boost_unit_test_framework.a)
 
 configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/P_Airplane.json ${CMAKE_BINARY_DIR}/test/FlightControl/Controller/config/P_Airplane.json COPYONLY)
 configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/PD_Airplane.json ${CMAKE_BINARY_DIR}/test/FlightControl/Controller/config/PD_Airplane.json COPYONLY)
@@ -48,6 +63,8 @@ configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/P_Heli
 configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/PD_Helicopter.json ${CMAKE_BINARY_DIR}/test/FlightControl/Controller/config/PD_Helicopter.json COPYONLY)
 configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/PFF_Helicopter.json ${CMAKE_BINARY_DIR}/test/FlightControl/Controller/config/PFF_Helicopter.json COPYONLY)
 configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/PI_Helicopter.json ${CMAKE_BINARY_DIR}/test/FlightControl/Controller/config/PI_Helicopter.json COPYONLY)
+
+configure_file(${PROJECT_SOURCE_DIR}/test/Core/config/pm_test.json ${CMAKE_BINARY_DIR}/test/Core/config/pm_test.json COPYONLY)
 
 
 #Real Time tests

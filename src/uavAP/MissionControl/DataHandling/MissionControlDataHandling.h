@@ -25,7 +25,9 @@
 
 #ifndef UAVAP_MISSIONCONTROL_DATAHANDLING_MISSIONCONTROLDATAHANDLING_H_
 #define UAVAP_MISSIONCONTROL_DATAHANDLING_MISSIONCONTROLDATAHANDLING_H_
+
 #include <boost/property_tree/ptree.hpp>
+
 #include "uavAP/Core/DataPresentation/Packet.h"
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/IPC/Subscription.h"
@@ -34,8 +36,10 @@
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Time.h"
 
-enum class Content;
-enum class Target;
+enum class Content
+;
+enum class Target
+;
 
 template<typename C, typename T>
 class IDataPresentation;
@@ -44,11 +48,17 @@ class IPC;
 class IScheduler;
 class IGlobalPlanner;
 class ManeuverPlanner;
-
+class IMissionPlanner;
+class LocalFrameManager;
+class ConditionManager;
+class Geofencing;
 
 class MissionControlDataHandling: public IAggregatableObject, public IRunnableObject
 {
 public:
+
+	static constexpr TypeId typeId = "mc_data_handling";
+
 	MissionControlDataHandling();
 
 	static std::shared_ptr<MissionControlDataHandling>
@@ -61,7 +71,7 @@ public:
 	run(RunStage stage) override;
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 private:
 	void
@@ -71,23 +81,30 @@ private:
 	receiveAndDistribute(const Packet& packet);
 
 	void
-	collectAndSendMission(std::shared_ptr<IDataPresentation<Content,Target>> dp);
+	collectAndSendMission(std::shared_ptr<IDataPresentation<Content, Target>> dp);
 
 	void
-	collectAndSendSafetyBounds(std::shared_ptr<IDataPresentation<Content,Target>> dp);
+	collectAndSendSafetyBounds(std::shared_ptr<IDataPresentation<Content, Target>> dp);
+
+	void
+	collectAndSendLocalFrame(std::shared_ptr<IDataPresentation<Content, Target>> dp);
 
 	ObjectHandle<IPC> ipc_;
 	ObjectHandle<IScheduler> scheduler_;
 	ObjectHandle<IGlobalPlanner> globalPlanner_;
 	ObjectHandle<ManeuverPlanner> maneuverPlanner_;
-	ObjectHandle<IDataPresentation<Content,Target>> dataPresentation_;
+	ObjectHandle<IMissionPlanner> missionPlanner_;
+	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
+	ObjectHandle<LocalFrameManager> localFrameManager_;
+	ObjectHandle<ConditionManager> conditionManager_;
+	ObjectHandle<Geofencing> geofencing_;
 
 	Subscription missionControlSubscription_;
 	Publisher publisher_;
+	Publisher overridePublisher_;
 
+	unsigned int lastOverrideSeqNr_;
 	Duration period_;
 };
-
-
 
 #endif /* UAVAP_MISSIONCONTROL_DATAHANDLING_MISSIONCONTROLDATAHANDLING_H_ */

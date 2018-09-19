@@ -23,7 +23,6 @@
  * @author Mirco Theile, mircot@illinois.edu
  */
 
-
 #ifndef UAVAP_CORE_FRAMEWORK_HELPER_H_
 #define UAVAP_CORE_FRAMEWORK_HELPER_H_
 #include <boost/property_tree/ptree.hpp>
@@ -43,177 +42,181 @@ class Helper
 {
 public:
 
-    /**
-     * @brief Create an Aggregator containing Objects defined in a configuration loaded in from a config path.
-     * @param configPath path to the configuration .json file
-     * @return Aggregator containing the objects
-     */
-    Aggregator
-    createAggregation(const std::string& configPath);
+	/**
+	 * @brief Create an Aggregator containing Objects defined in a configuration loaded in from a config path.
+	 * @param configPath path to the configuration .json file
+	 * @return Aggregator containing the objects
+	 */
+	Aggregator
+	createAggregation(const std::string& configPath);
 
-    /**
-     * @brief Create an Aggregator containing Objects defined in a configuration.
-     * @param config Configuration object tree
-     * @return Aggregator containing the objects
-     */
-    Aggregator
-    createAggregation(const boost::property_tree::ptree& config);
+	/**
+	 * @brief Create an Aggregator containing Objects defined in a configuration.
+	 * @param config Configuration object tree
+	 * @return Aggregator containing the objects
+	 */
+	Aggregator
+	createAggregation(const boost::property_tree::ptree& config);
 
 protected:
 
-    /**
-     * @brief Adds a factory to the possible factories. The template argument defines the factory.
-     * @param id ID of the factory
-     */
-    template<class FactoryType>
-    void
-    addFactory(const std::string& id);
+	/**
+	 * @brief Adds a factory to the possible factories. The template argument defines the factory.
+	 * @param id ID of the factory
+	 */
+	template<class FactoryType>
+	void
+	addFactory();
 
-    /**
-     * @brief Adds a creator without a factory. The creator should create an Aggregatable object.
-     * @param id ID of the Creator object
-     */
-    template<class Aggregatable>
-    void
-    addCreator(const std::string& id);
+	/**
+	 * @brief Adds a creator without a factory. The creator should create an Aggregatable object.
+	 * @param id ID of the Creator object
+	 */
+	template<class Aggregatable>
+	void
+	addCreator();
 
-    /**
-     * @brief Add a default factory that is always used.
-     *
-     * If the configuration file indicates another type that is not the default type of the factory, the configuration
-     * file defined object will be created.
-     * @param id ID of the factory
-     */
-    template<class FactoryType>
-    void
-    addDefault(const std::string& id);
+	/**
+	 * @brief Add a default factory that is always used.
+	 *
+	 * If the configuration file indicates another type that is not the default type of the factory, the configuration
+	 * file defined object will be created.
+	 * @param id ID of the factory
+	 */
+	template<class FactoryType>
+	void
+	addDefault();
 
-    /**
-     * @brief Add a default creator that does not need a factory and will be created by default.
-     * @param id ID of the creator
-     */
-    template<class Aggregatable>
-    void
-    addDefaultCreator(const std::string& id);
+	/**
+	 * @brief Add a default creator that does not need a factory and will be created by default.
+	 * @param id ID of the creator
+	 */
+	template<class Aggregatable>
+	void
+	addDefaultCreator();
 
 private:
 
-    /**
-     * @brief Creates an IAggregatableObject using a factory and a configuration tree
-     * @param factory Factory to be used to create the object
-     * @param config Configuration object passed to the factory
-     * @return Object created from the factory
-     */
-    template<class FactoryType>
-    static std::shared_ptr<IAggregatableObject>
-    createAggregatable(FactoryType factory, const boost::property_tree::ptree& config);
+	/**
+	 * @brief Creates an IAggregatableObject using a factory and a configuration tree
+	 * @param factory Factory to be used to create the object
+	 * @param config Configuration object passed to the factory
+	 * @return Object created from the factory
+	 */
+	template<class FactoryType>
+	static std::shared_ptr<IAggregatableObject>
+	createAggregatable(FactoryType factory, const boost::property_tree::ptree& config);
 
-    /**
-     * @brief Merging to configuration trees, adding global configuration subtrees to the configuration tree
-     * @param config Configuration tree to be appended with the globalConf
-     * @param globalConf Global configuration to be appended to the config
-     */
-    void
-    mergeGlobalConfig(boost::property_tree::ptree& config,
-                      const boost::property_tree::ptree& globalConf);
+	/**
+	 * @brief Merging to configuration trees, adding global configuration subtrees to the configuration tree
+	 * @param config Configuration tree to be appended with the globalConf
+	 * @param globalConf Global configuration to be appended to the config
+	 */
+	void
+	mergeGlobalConfig(boost::property_tree::ptree& config,
+			const boost::property_tree::ptree& globalConf);
 
-    //! Creator functor to create an IAggregatableObject
-    using CreatorAgg = std::function<std::shared_ptr<IAggregatableObject>(const boost::property_tree::ptree&)>;
+	//! Creator functor to create an IAggregatableObject
+	using CreatorAgg = std::function<std::shared_ptr<IAggregatableObject>(const boost::property_tree::ptree&)>;
 
-    //! Map containing the Creators that do not need factories mapped to their ID.
-    std::map<std::string, CreatorAgg> creators_;
+	//! Map containing the Creators that do not need factories mapped to their ID.
+	std::map<std::string, CreatorAgg> creators_;
 
-    //! Default creator functor to create an IAggregatableObject that does not need a configuration
-    using DefaultCreatorAgg = std::function<std::shared_ptr<IAggregatableObject>()>;
+	//! Default creator functor to create an IAggregatableObject that does not need a configuration
+	using DefaultCreatorAgg = std::function<std::shared_ptr<IAggregatableObject>()>;
 
-    //! Map containing the Default Creators that do not need factories mapped to their ID.
-    std::map<std::string, DefaultCreatorAgg> defaultCreators_;
+	//! Map containing the Default Creators that do not need factories mapped to their ID.
+	std::map<std::string, DefaultCreatorAgg> defaultCreators_;
 
 };
 
 template<class FactoryType>
 inline void
-Helper::addFactory(const std::string& id)
+Helper::addFactory()
 {
-    if (creators_.find(id) != creators_.end())
-    {
-        APLOG_ERROR << "Same id for different factory added. Ignore.";
-        return;
-    }
+	std::string type = FactoryType::typeId;
+	if (creators_.find(type) != creators_.end())
+	{
+		APLOG_ERROR << "Same id for different factory added. Ignore.";
+		return;
+	}
 
-    FactoryType factory;
-    CreatorAgg creator = std::bind(&Helper::createAggregatable<FactoryType>, factory,
-                                   std::placeholders::_1);
+	FactoryType factory;
+	CreatorAgg creator = std::bind(&Helper::createAggregatable<FactoryType>, factory,
+			std::placeholders::_1);
 
-    creators_.insert(std::make_pair(id, creator));
+	creators_.insert(std::make_pair(type, creator));
 }
 
 template<class FactoryType>
 inline void
-Helper::addDefault(const std::string& id)
+Helper::addDefault()
 {
-    if (defaultCreators_.find(id) != defaultCreators_.end())
-    {
-        APLOG_ERROR << "Same id for different default factory added. Ignore.";
-        return;
-    }
+	std::string type = FactoryType::typeId;
+	if (defaultCreators_.find(type) != defaultCreators_.end())
+	{
+		APLOG_ERROR << "Same id for different default factory added. Ignore.";
+		return;
+	}
 
-    FactoryType factory;
-    boost::property_tree::ptree emptyConf;
-    DefaultCreatorAgg defaultCreator = std::bind(&Helper::createAggregatable<FactoryType>, factory,
-                                       emptyConf);
+	FactoryType factory;
+	boost::property_tree::ptree emptyConf;
+	DefaultCreatorAgg defaultCreator = std::bind(&Helper::createAggregatable<FactoryType>, factory,
+			emptyConf);
 
-    CreatorAgg creator = std::bind(&Helper::createAggregatable<FactoryType>, factory,
-                                   std::placeholders::_1);
+	CreatorAgg creator = std::bind(&Helper::createAggregatable<FactoryType>, factory,
+			std::placeholders::_1);
 
-    defaultCreators_.insert(std::make_pair(id, defaultCreator));
-    creators_.insert(std::make_pair(id, creator));
+	defaultCreators_.insert(std::make_pair(type, defaultCreator));
+	creators_.insert(std::make_pair(type, creator));
 }
 
 template<class FactoryType>
 inline std::shared_ptr<IAggregatableObject>
 Helper::createAggregatable(FactoryType factory, const boost::property_tree::ptree& config)
 {
-    auto obj = factory.create(config);
-    if (auto aggObj = std::dynamic_pointer_cast<IAggregatableObject>(obj))
-    {
-        return aggObj;
-    }
-    throw InvalidTypeError("Object is not aggregatable.");
+	auto obj = factory.create(config);
+	if (auto aggObj = std::dynamic_pointer_cast<IAggregatableObject>(obj))
+	{
+		return aggObj;
+	}
+	throw InvalidTypeError("Object is not aggregatable.");
 }
 
 template<class Aggregatable>
 inline void
-Helper::addCreator(const std::string& id)
+Helper::addCreator()
 {
-    if (creators_.find(id) != creators_.end())
-    {
-        APLOG_ERROR << "Same id for different factory added. Ignore.";
-        return;
-    }
 
-    CreatorAgg creator = &Aggregatable::create;
+	std::string type = Aggregatable::typeId;
+	if (creators_.find(type) != creators_.end())
+	{
+		APLOG_ERROR << "Same id for different factory added. Ignore.";
+		return;
+	}
 
-    creators_.insert(std::make_pair(id, creator));
+	CreatorAgg creator = &Aggregatable::create;
+
+	creators_.insert(std::make_pair(type, creator));
 }
 
 template<class Aggregatable>
 inline void
-Helper::addDefaultCreator(const std::string& id)
+Helper::addDefaultCreator()
 {
-    if (defaultCreators_.find(id) != defaultCreators_.end())
-    {
-        APLOG_ERROR << "Same id for different default factory added. Ignore.";
-        return;
-    }
+	std::string type = Aggregatable::typeId;
+	if (defaultCreators_.find(type) != defaultCreators_.end())
+	{
+		APLOG_ERROR << "Same id for different default factory added. Ignore.";
+		return;
+	}
 
-    boost::property_tree::ptree emptyConf;
-    DefaultCreatorAgg defaultCreator = std::bind(&Aggregatable::create, emptyConf);
-    defaultCreators_.insert(std::make_pair(id, defaultCreator));
+	boost::property_tree::ptree emptyConf;
+	DefaultCreatorAgg defaultCreator = std::bind(&Aggregatable::create, emptyConf);
+	defaultCreators_.insert(std::make_pair(type, defaultCreator));
 
-    CreatorAgg creator = &Aggregatable::create;
-    creators_.insert(std::make_pair(id, creator));
+	CreatorAgg creator = &Aggregatable::create;
+	creators_.insert(std::make_pair(type, creator));
 }
 
 #endif /* UAVAP_CORE_FRAMEWORK_HELPER_H_ */
-

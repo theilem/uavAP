@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
+set(CORE_SRC "")
+
 add_subdirectory(Scheduler)
 add_subdirectory(PropertyMapper)
 add_subdirectory(Logging)
@@ -27,6 +29,7 @@ add_subdirectory(Object)
 add_subdirectory(TimeProvider)
 add_subdirectory(Framework)
 add_subdirectory(DataPresentation)
+add_subdirectory(Frames)
 
 set(CORE_SRC 	${CORE_SRC}
 				${CMAKE_CURRENT_SOURCE_DIR}/LinearAlgebra.cpp

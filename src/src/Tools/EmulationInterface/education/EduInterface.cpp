@@ -1,18 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
-// 
+//
 // This file is part of uavAP.
-// 
+//
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,8 @@
  *      Author: mircot
  */
 
-
+#include <uavAP/Core/IDC/IDC.h>
+#include <uavAP/Core/IDC/NetworkLayer/INetworkLayer.h>
 #include <uavAP/Core/LinearAlgebra.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
 
@@ -33,196 +34,194 @@
 #include "SensorDataEdu.h"
 
 EduInterface::EduInterface() :
-    setup_(false),
-    subscribedOnSigint_(false)
+		setup_(false), subscribedOnSigint_(false)
 {
 }
 
 EduInterface::~EduInterface()
 {
-    if (api_terminate() != 0)
-    {
-        APLOG_ERROR << "Shutdown unsuccessful. Check for possible memory leakage or zombie processes.";
-    }
+	if (api_terminate() != 0)
+	{
+		APLOG_ERROR
+				<< "Shutdown unsuccessful. Check for possible memory leakage or zombie processes.";
+	}
 }
 
 std::shared_ptr<EduInterface>
 EduInterface::create(const boost::property_tree::ptree& config)
 {
-    auto emulation = std::make_shared<EduInterface>();
-    if (!emulation->configure(config))
-        APLOG_ERROR << "Configuration of EduInterface not successfull.";
-    return emulation;
+	auto emulation = std::make_shared<EduInterface>();
+	if (!emulation->configure(config))
+		APLOG_ERROR << "Configuration of EduInterface not successfull.";
+	return emulation;
 }
 
 bool
 EduInterface::configure(const boost::property_tree::ptree& config)
 {
-    PropertyMapper pm(config);
-    pm.add("serial_port", serialPort_, true);
-    return pm.map();
+	PropertyMapper pm(config);
+	return pm.map();
 }
 
 void
-EduInterface::notifyAggregationOnUpdate(Aggregator& agg)
+EduInterface::notifyAggregationOnUpdate(const Aggregator& agg)
 {
-    idc_.setFromAggregationIfNotSet(agg);
-    dataPresentation_.setFromAggregationIfNotSet(agg);
+	idc_.setFromAggregationIfNotSet(agg);
+	dataPresentation_.setFromAggregationIfNotSet(agg);
 
-    if (!subscribedOnSigint_)
-    {
-        agg.subscribeOnSigint(std::bind(&EduInterface::sigHandler, this, std::placeholders::_1));
-        subscribedOnSigint_ = true;
-    }
+	if (!subscribedOnSigint_)
+	{
+		agg.subscribeOnSigint(std::bind(&EduInterface::sigHandler, this, std::placeholders::_1));
+		subscribedOnSigint_ = true;
+	}
 }
 
 bool
 EduInterface::run(RunStage stage)
 {
-    switch (stage)
-    {
-    case RunStage::INIT:
-    {
-        if (!idc_.isSet())
-        {
-            APLOG_ERROR << "EduInterface idc missing.";
-            return true;
-        }
-        if (!dataPresentation_.isSet())
-        {
-            APLOG_ERROR << "EduInterface dataPresentation missing.";
-            return true;
-        }
+	switch (stage)
+	{
+	case RunStage::INIT:
+	{
+		if (!idc_.isSet())
+		{
+			APLOG_ERROR << "EduInterface idc missing.";
+			return true;
+		}
+		if (!dataPresentation_.isSet())
+		{
+			APLOG_ERROR << "EduInterface dataPresentation missing.";
+			return true;
+		}
 
-        int result = api_initialize();
-        if (result != 0)
-        {
-            APLOG_ERROR << "Failed to initialize the API. Result: " << result << "; Abort.";
-            return true;
-        }
-        setup_ = true;
-        break;
-    }
-    case RunStage::NORMAL:
-    {
-        auto idc = idc_.get();
-        if (!idc)
-            return true;
+		int result = api_initialize();
+		if (result != 0)
+		{
+			APLOG_ERROR << "Failed to initialize the API. Result: " << result << "; Abort.";
+			return true;
+		}
+		setup_ = true;
+		break;
+	}
+	case RunStage::NORMAL:
+	{
+		auto idc = idc_.get();
+		idc->subscribeOnPacket("sim",
+				std::bind(&EduInterface::onPacket, this, std::placeholders::_1));
 
-        SerialIDCParams params(serialPort_, 115200, "*-*\n");
-        idc->subscribeOnPacket(params, std::bind(&EduInterface::onPacket, this, std::placeholders::_1));
-        actuationSender_ = idc->createSender(params);
-
-        break;
-    }
-    case RunStage::FINAL:
-        break;
-    default:
-        break;
-    }
-    return false;
+		break;
+	}
+	case RunStage::FINAL:
+		break;
+	default:
+		break;
+	}
+	return false;
 }
 
 void
 EduInterface::onSensorData(const SensorData& sensorData)
 {
-    if (!setup_)
-    {
-        APLOG_ERROR << "ApExt not setup. Cannot send sensor data through api.";
-        return;
-    }
+	if (!setup_)
+	{
+		APLOG_ERROR << "ApExt not setup. Cannot send sensor data through api.";
+		return;
+	}
 
-    //First get the most recent actuation
-    ControllerOutputEdu eduControl;
-    int actuationResult = api_actuate(eduControl);
-    if (actuationResult == 0)
-    {
-        sendActuation(eduControl);
-    }
-    else
-    {
-        APLOG_WARN << "Actuation unsuccessful. Ignore command.";
-    }
+	//First get the most recent actuation
+	ControllerOutputEdu eduControl;
+	int actuationResult = api_actuate(eduControl);
+	if (actuationResult == 0)
+	{
+		sendActuation(eduControl);
+	}
+	else
+	{
+		APLOG_WARN << "Actuation unsuccessful. Ignore command.";
+	}
 
-    SensorDataEdu eduSense;
+	SensorDataEdu eduSense;
 
-    vector3ToArray(sensorData.position, eduSense.position);
-    vector3ToArray(sensorData.velocity, eduSense.velocity);
-    vector3ToArray(sensorData.acceleration, eduSense.acceleration);
-    vector3ToArray(sensorData.attitude, eduSense.attitude);
-    vector3ToArray(sensorData.angularRate, eduSense.angularRate);
-    eduSense.sequenceNr = sensorData.sequenceNr;
+	vector3ToArray(sensorData.position, eduSense.position);
+	vector3ToArray(sensorData.velocity, eduSense.velocity);
+	vector3ToArray(sensorData.acceleration, eduSense.acceleration);
+	vector3ToArray(sensorData.attitude, eduSense.attitude);
+	vector3ToArray(sensorData.angularRate, eduSense.angularRate);
+	eduSense.sequenceNr = sensorData.sequenceNr;
 
-    int sensResult = api_sense(eduSense);
+	int sensResult = api_sense(eduSense);
 
-    if (sensResult != 0)
-    {
-        APLOG_WARN << "Something went wrong sending the sensor data.";
-    }
+	if (sensResult != 0)
+	{
+		APLOG_WARN << "Something went wrong sending the sensor data.";
+	}
 }
 
 void
 EduInterface::onPacket(const Packet& packet)
 {
-    APLOG_DEBUG << "Received packet.";
-    auto dp = dataPresentation_.get();
-    if (!dp)
-    {
-        APLOG_ERROR << "Data presentation missing. Cannot deserialize packet.";
-        return;
-    }
+	APLOG_DEBUG << "Received packet.";
+	auto dp = dataPresentation_.get();
+	if (!dp)
+	{
+		APLOG_ERROR << "Data presentation missing. Cannot deserialize packet.";
+		return;
+	}
 
-    Content content = Content::INVALID;
-    auto any = dp->deserialize(packet, content);
+	Content content = Content::INVALID;
+	auto any = dp->deserialize(packet, content);
 
-    if (content == Content::SENSOR_DATA)
-    {
-        onSensorData(boost::any_cast<SensorData>(any));
-    }
-    else if (content == Content::SENSOR_DATA_LIGHT)
-    {
-        onSensorData(fromSensorDataLight(boost::any_cast<SensorDataLight>(any)));
-    }
-    else
-    {
-        APLOG_ERROR << "Invalid packet received. Only sensor data and sensorDataLight allowed. Content: " << static_cast<int>(content);
-        return;
-    }
+	if (content == Content::SENSOR_DATA)
+	{
+		onSensorData(boost::any_cast<SensorData>(any));
+	}
+	else
+	{
+		APLOG_ERROR
+				<< "Invalid packet received. Only sensor data allowed. Content: "
+				<< static_cast<int>(content);
+		return;
+	}
 
 }
 
 void
 EduInterface::sendActuation(const ControllerOutputEdu& control)
 {
-    ControllerOutput out;
-    out.collectiveOutput = 0;
-    out.flapOutput = 2 * control.flapOutput - 1;
-    out.pitchOutput = control.pitchOutput;
-    out.rollOutput = control.rollOutput;
-    out.throttleOutput = 2 * control.throttleOutput - 1;
-    out.yawOutput = control.yawOutput;
-    out.sequenceNr = control.sequenceNr;
+	ControllerOutput out;
+	out.pitchOutput = control.pitchOutput;
+	out.rollOutput = control.rollOutput;
+	out.throttleOutput = 2 * control.throttleOutput - 1;
+	out.yawOutput = control.yawOutput;
+	out.sequenceNr = control.sequenceNr;
 
-    auto dp = dataPresentation_.get();
-    if (!dp)
-    {
-        APLOG_ERROR << "Data presentation missing. Cannot send Actuation.";
-        return;
-    }
-    auto actLight = fromControllerOutput(out);
-    auto packet = dp->serialize(actLight, Content::CONTROLLER_OUTPUT_LIGHT);
-    actuationSender_.sendPacket(packet);
+	auto dp = dataPresentation_.get();
+	if (!dp)
+	{
+		APLOG_ERROR << "Data presentation missing. Cannot send Actuation.";
+		return;
+	}
+	auto packet = dp->serialize(out, Content::CONTROLLER_OUTPUT);
+
+	auto idc = idc_.get();
+	if (!idc)
+	{
+		APLOG_ERROR << "Network missing. Cannot send Actuation.";
+		return;
+	}
+	idc->sendPacket("sim", packet);
 }
 
 void
 EduInterface::vector3ToArray(const Vector3& vec, double (&array)[3])
 {
-    array[0] = vec[0];
-    array[1] = vec[1];
-    array[2] = vec[2];
+	array[0] = vec[0];
+	array[1] = vec[1];
+	array[2] = vec[2];
 }
 
-void EduInterface::sigHandler(int sig)
+void
+EduInterface::sigHandler(int sig)
 {
-    api_terminate();
+	api_terminate();
 }

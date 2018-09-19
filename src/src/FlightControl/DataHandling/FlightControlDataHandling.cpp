@@ -1,18 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
-// 
+//
 // This file is part of uavAP.
-// 
+//
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,23 +25,25 @@
  *  Description
  */
 
-#include "uavAP/FlightControl/Controller/PIDController/detail/PIDHandling.h"
-#include "uavAP/FlightControl/DataHandling/FlightControlDataHandling.h"
+#include <uavAP/Core/DataPresentation/Content.h>
+#include <uavAP/FlightControl/Controller/AdvancedControl.h>
 #include <memory>
 
-#include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"
-#include "uavAP/FlightControl/Controller/PIDController/PIDController.h"
-#include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/Core/DataPresentation/IDataPresentation.h"
-#include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
-#include "uavAP/FlightControl/Controller/IController.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/LockTypes.h"
+#include "uavAP/FlightControl/Controller/IController.h"
+#include "uavAP/FlightControl/Controller/ControllerOutput.h"
+#include "uavAP/FlightControl/DataHandling/FlightControlDataHandling.h"
+#include "uavAP/FlightControl/Controller/PIDController/RatePIDController/RatePIDController.h"
+#include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/SimplePIDController.h"
+#include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
+#include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 
 FlightControlDataHandling::FlightControlDataHandling() :
-		period_(Milliseconds(100))
+		period_(Milliseconds(100)), compressSensorData_(false)
 {
 }
 
@@ -63,6 +65,7 @@ FlightControlDataHandling::configure(const boost::property_tree::ptree& configur
 {
 	PropertyMapper propertyMapper(configuration);
 	propertyMapper.add("period", period_, false);
+	propertyMapper.add<bool>("compress_sensor_data", compressSensorData_, false);
 
 	return propertyMapper.map();
 }
@@ -104,6 +107,8 @@ FlightControlDataHandling::run(RunStage stage)
 
 		auto ipc = ipc_.get();
 		publisher_ = ipc->publishPackets("data_fc_com");
+		pidStatiPublisher_ = ipc->publishPackets("pid_stati");
+		advancedControlPublisher_ = ipc->publishOnSharedMemory<AdvancedControl>("advanced_control");
 
 		break;
 	}
@@ -163,7 +168,7 @@ FlightControlDataHandling::receiveAndDistribute(const Packet& packet)
 
 	if (!dp)
 	{
-		APLOG_ERROR << "Data presentaiton missing. Cannot Handle packet.";
+		APLOG_ERROR << "Data presentation missing. Cannot Handle packet.";
 		return;
 	}
 
@@ -197,6 +202,14 @@ FlightControlDataHandling::receiveAndDistribute(const Packet& packet)
 
 		break;
 	}
+
+	case Content::ADVANCED_CONTROL:
+	{
+		auto advanced = boost::any_cast<AdvancedControl>(any);
+
+		advancedControlPublisher_.publish(advanced);
+		break;
+	}
 	default:
 	{
 		APLOG_ERROR << "Unspecified Content: " << static_cast<int>(content);
@@ -206,7 +219,7 @@ FlightControlDataHandling::receiveAndDistribute(const Packet& packet)
 }
 
 void
-FlightControlDataHandling::notifyAggregationOnUpdate(Aggregator& agg)
+FlightControlDataHandling::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	localPlanner_.setFromAggregationIfNotSet(agg);
 	controller_.setFromAggregationIfNotSet(agg);
@@ -217,7 +230,8 @@ FlightControlDataHandling::notifyAggregationOnUpdate(Aggregator& agg)
 }
 
 void
-FlightControlDataHandling::collectAndSendSensorData(std::shared_ptr<IDataPresentation<Content, Target>> dp)
+FlightControlDataHandling::collectAndSendSensorData(
+		std::shared_ptr<IDataPresentation<Content, Target>> dp)
 {
 	auto sens = sensActIO_.get();
 	if (!sens)
@@ -232,12 +246,15 @@ FlightControlDataHandling::collectAndSendSensorData(std::shared_ptr<IDataPresent
 		sensData = sens->sensorData;
 	}
 
-	Packet sensorPacket = dp->serialize(sensData, Content::SENSOR_DATA);
+	Packet sensorPacket;
+	sensorPacket = dp->serialize(sensData, Content::SENSOR_DATA);
+
 	publisher_.publish(sensorPacket);
 }
 
 void
-FlightControlDataHandling::collectAndSendTrajectory(std::shared_ptr<IDataPresentation<Content, Target>> dp)
+FlightControlDataHandling::collectAndSendTrajectory(
+		std::shared_ptr<IDataPresentation<Content, Target>> dp)
 {
 	APLOG_WARN << "Collect and send Trajectory";
 	auto lp = localPlanner_.get();
@@ -262,10 +279,10 @@ FlightControlDataHandling::tunePID(const PIDTuning& params)
 		return;
 	}
 
-	if (auto manController = std::dynamic_pointer_cast<ManeuverPIDController>(controller))
-		manController->getCascade()->tunePID(params.pid, params.params);
-	else if (auto pidController = std::dynamic_pointer_cast<ManeuverPIDController>(controller))
-		pidController->getCascade()->tunePID(params.pid, params.params);
+	if (auto pidController = std::dynamic_pointer_cast<IPIDController>(controller))
+	{
+		pidController->getCascade()->tunePID(static_cast<PIDs>(params.pid), params.params);
+	}
 	else
 	{
 		APLOG_ERROR << "Cannot tune pid for given controller type.";
@@ -274,7 +291,8 @@ FlightControlDataHandling::tunePID(const PIDTuning& params)
 }
 
 void
-FlightControlDataHandling::collectAndSendPIDStatus(std::shared_ptr<IDataPresentation<Content, Target>> dp)
+FlightControlDataHandling::collectAndSendPIDStatus(
+		std::shared_ptr<IDataPresentation<Content, Target>> dp)
 {
 	auto controller = controller_.get();
 	if (!controller)
@@ -283,11 +301,11 @@ FlightControlDataHandling::collectAndSendPIDStatus(std::shared_ptr<IDataPresenta
 		return;
 	}
 
-	std::map<int, PIDStatus> status;
-	if (auto manController = std::dynamic_pointer_cast<ManeuverPIDController>(controller))
-		status = manController->getCascade()->getPIDStatus();
-	else if (auto pidController = std::dynamic_pointer_cast<ManeuverPIDController>(controller))
-		 status = pidController->getCascade()->getPIDStatus();
+	PIDStati status;
+	if (auto pidController = std::dynamic_pointer_cast<IPIDController>(controller))
+	{
+		status = pidController->getCascade()->getPIDStatus();
+	}
 	else
 	{
 		APLOG_ERROR << "Cannot get PID status.";
@@ -296,10 +314,12 @@ FlightControlDataHandling::collectAndSendPIDStatus(std::shared_ptr<IDataPresenta
 
 	Packet packet = dp->serialize(status, Content::PID_STATUS);
 	publisher_.publish(packet);
+	pidStatiPublisher_.publish(dp::serialize(status));
 }
 
 void
-FlightControlDataHandling::collectAndSendLocalPlannerStatus(std::shared_ptr<IDataPresentation<Content, Target>> dp)
+FlightControlDataHandling::collectAndSendLocalPlannerStatus(
+		std::shared_ptr<IDataPresentation<Content, Target>> dp)
 {
 	auto lp = localPlanner_.get();
 	if (!lp)
@@ -323,5 +343,5 @@ FlightControlDataHandling::tuneLocalPlanner(const LocalPlannerParams& params)
 		return;
 	}
 
-	lp->getImpl()->tuneParams(params);
+	lp->tune(params);
 }

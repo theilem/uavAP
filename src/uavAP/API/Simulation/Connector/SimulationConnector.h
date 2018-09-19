@@ -1,3 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (C) 2018 University of Illinois Board of Trustees
+//
+// This file is part of uavAP.
+//
+// uavAP is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// uavAP is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////////////
 /*
  * SimulationConnector.h
  *
@@ -8,9 +26,9 @@
 #ifndef UAVAP_SIMULATION_SIMULATIONCONNECTOR_H_
 #define UAVAP_SIMULATION_SIMULATIONCONNECTOR_H_
 #include <boost/smart_ptr/shared_ptr.hpp>
-#include "uavAP/Core/DataPresentation/Content.h"
-#include "uavAP/Core/IDC/IInterDeviceComm.h"
-#include "uavAP/Core/IDC/Sender.h"
+#include <uavAP/Core/DataPresentation/ContentMapping.h>
+#include <uavAP/Core/IDC/IDCSender.h>
+#include <uavAP/Core/IDC/INetworkLayer.h>
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
@@ -26,13 +44,15 @@
 class IPC;
 class IScheduler;
 class ITimeProvider;
-class SerialIDC;
+class SerialNetworkLayer;
 class ChannelMixing;
 class SensorData;
 
 class SimulationConnector: public IRunnableObject, public IAggregatableObject
 {
 public:
+
+	static constexpr TypeId typeId = "connector";
 
 	SimulationConnector();
 
@@ -48,7 +68,7 @@ public:
 	run(RunStage stage) override;
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 private:
 
@@ -82,9 +102,9 @@ private:
 	ObjectHandle<IPC> ipc_;
 	ObjectHandle<IScheduler> scheduler_;
 	ObjectHandle<ITimeProvider> timeProvider_;
-	ObjectHandle<SerialIDC> idc_;
+	ObjectHandle<SerialNetworkLayer> idc_;
 	ObjectHandle<ChannelMixing> channelMixing_;
-	ObjectHandle<IDataPresentation<Content,Target>> dataPresentation_;
+	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
 
 	Subscription actuationSubscription_;
 	Subscription communicationSubscription_;
@@ -100,7 +120,5 @@ private:
 	std::string loggingPath_;
 	std::ofstream fileStream_;
 };
-
-
 
 #endif /* UAVAP_SIMULATION_SIMULATIONCONNECTOR_H_ */

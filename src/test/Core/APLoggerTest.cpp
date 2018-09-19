@@ -1,18 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
-// 
+//
 // This file is part of uavAP.
-// 
+//
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,10 @@ BOOST_AUTO_TEST_CASE(LoggingTest)
 	APLOG_WARN << "warn";
 	APLOG_DEBUG << "debug";
 	APLOG_TRACE << "trace";
-	BOOST_CHECK_EQUAL(stream.str().compare("\n[ERROR] error\n[WARNING] warn\n[DEBUG] debug"), 0);
+	BOOST_CHECK_EQUAL(stream.str().compare("
+[ERROR] error
+[WARNING] warn
+[DEBUG] debug"), 0);
 	stream.str("");
 
 	APLogger::instance()->setLogLevel(LogLevel::NONE);
@@ -62,7 +65,11 @@ BOOST_AUTO_TEST_CASE(LoggingTest)
 	APLOG_TRACE << "trace";
 
 	BOOST_CHECK_EQUAL(
-			stream.str().compare("\n[ERROR] error\n[WARNING] warn\n[DEBUG] debug\n[TRACE] trace"),
+			stream.str().compare("
+[ERROR] error
+[WARNING] warn
+[DEBUG] debug
+[TRACE] trace"),
 			0);
 	stream.str("");
 

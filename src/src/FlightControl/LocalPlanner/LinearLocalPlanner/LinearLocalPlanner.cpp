@@ -1,18 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
-// 
+//
 // This file is part of uavAP.
-// 
+//
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,10 +26,8 @@
  */
 
 #include <boost/thread/pthread/shared_mutex.hpp>
-#include "uavAP/Core/DataPresentation/Content.h"
-#include "uavAP/Core/DataPresentation/IDataPresentation.h"
+#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/detail/AirplaneLocalPlannerImpl.h"
-#include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/detail/HelicopterLocalPlannerImpl.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include "uavAP/FlightControl/Controller/IController.h"
@@ -37,290 +35,313 @@
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/LockTypes.h"
+#include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
 #include <memory>
 
 LinearLocalPlanner::LinearLocalPlanner() :
-    airplane_(true),
-    currentPathSectionIdx_(0)
+		inApproach_(false), airplane_(true), period_(0), currentPathSectionIdx_(0)
 {
-}
-
-std::shared_ptr<LinearLocalPlanner>
-LinearLocalPlanner::create(const boost::property_tree::ptree& config)
-{
-    auto planner = std::make_shared<LinearLocalPlanner>();
-
-    if (!planner->configure(config))
-    {
-        APLOG_ERROR << "LinearLocalPlanner: Configuration failed";
-    }
-
-    return planner;
 }
 
 bool
 LinearLocalPlanner::configure(const boost::property_tree::ptree& config)
 {
-    PropertyMapper propertyMapper(config);
-    propertyMapper.add("airplane", airplane_, false);
+	PropertyMapper propertyMapper(config);
+	propertyMapper.add<bool>("airplane", airplane_, false);
+	propertyMapper.add<unsigned int>("period", period_, false);
 
-    if (airplane_)
-    {
-        localPlannerImpl_ = std::make_shared<AirplaneLocalPlannerImpl>();
-    }
-    else
-    {
-        localPlannerImpl_ = std::make_shared<HelicopterLocalPlannerImpl>();
-    }
+	if (airplane_)
+	{
+		localPlannerImpl_ = std::make_shared<AirplaneLocalPlannerImpl>();
+	}
+	else
+	{
+		APLOG_ERROR << "Only airplane is defined";
+//		localPlannerImpl_ = std::make_shared<HelicopterLocalPlannerImpl>();
+	}
 
-    return localPlannerImpl_->configure(config);
+	return localPlannerImpl_->configure(config);
 }
 
 bool
 LinearLocalPlanner::run(RunStage stage)
 {
-    switch (stage)
-    {
-    case RunStage::INIT:
-    {
-        if (!controller_.isSet())
-        {
-            APLOG_ERROR << "LinearLocalPlanner: Controller missing";
+	switch (stage)
+	{
+	case RunStage::INIT:
+	{
+		if (!controller_.isSet())
+		{
+			APLOG_ERROR << "LinearLocalPlanner: Controller missing";
 
-            return true;
-        }
-        if (!sensing_.isSet())
-        {
-            APLOG_ERROR << "LinearLocalPlanner: FlightControlData missing";
+			return true;
+		}
+		if (!sensing_.isSet())
+		{
+			APLOG_ERROR << "LinearLocalPlanner: FlightControlData missing";
 
-            return true;
-        }
-        if (!scheduler_.isSet())
-        {
-            APLOG_ERROR << "LinearLocalPlanner: Scheduler missing";
+			return true;
+		}
+		if (!scheduler_.isSet())
+		{
+			APLOG_ERROR << "LinearLocalPlanner: Scheduler missing";
 
-            return true;
-        }
-        if (!ipc_.isSet())
-        {
-            APLOG_ERROR << "LinearLocalPlanner: IPC missing";
+			return true;
+		}
+		if (!ipc_.isSet())
+		{
+			APLOG_ERROR << "LinearLocalPlanner: IPC missing";
 
-            return true;
-        }
-        if (!dataPresentation_.isSet())
-        {
-            APLOG_ERROR << "LinearLocalPlanner: Data Presentation missing";
+			return true;
+		}
 
-            return true;
-        }
+		break;
+	}
+	case RunStage::NORMAL:
+	{
 
-        break;
-    }
-    case RunStage::NORMAL:
-    {
-        auto sensing = sensing_.get();
+		//Directly calculate local plan when sensor data comes in
+		if (period_ == 0)
+		{
+			auto sensing = sensing_.get();
+			sensing->subscribeOnSensorData(
+					boost::bind(&LinearLocalPlanner::onSensorData, this, _1));
+		}
+		else
+		{
+			auto scheduler = scheduler_.get();
+			scheduler->schedule(std::bind(&LinearLocalPlanner::update, this), Milliseconds(period_),
+					Milliseconds(period_));
+		}
 
-        sensing->subscribeOnSensorData(boost::bind(&LinearLocalPlanner::createLocalPlan, this, _1));
+		auto ipc = ipc_.get();
 
-//		if (localPlannerImpl_)
-//		{
-//			scheduler->schedule(std::bind(&LinearLocalPlanner::createLocalPlan, this),
-//					Milliseconds(0), Milliseconds(10));
-//		}
+		ipc->subscribeOnPacket("trajectory",
+				std::bind(&LinearLocalPlanner::onTrajectoryPacket, this, std::placeholders::_1));
 
-        auto ipc = ipc_.get();
-
-        ipc->subscribeOnPacket("trajectory",
-                               std::bind(&LinearLocalPlanner::onTrajectoryPacket, this, std::placeholders::_1));
-
-        break;
-    }
-    case RunStage::FINAL:
-    {
-        break;
-    }
-    default:
-    {
-        break;
-    }
-    }
-    return false;
+		break;
+	}
+	case RunStage::FINAL:
+	{
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
+	return false;
 }
 
 void
 LinearLocalPlanner::setTrajectory(const Trajectory& traj)
 {
-    LockGuard lock(trajectoryMutex_);
+	LockGuard lock(trajectoryMutex_);
 
-    trajectory_ = traj;
-    currentSection_ = trajectory_.pathSections.begin();
-    currentPathSectionIdx_ = 0;
-    APLOG_DEBUG << "Trajectory set.";
+	trajectory_ = traj;
+	currentSection_ = trajectory_.pathSections.begin();
+	currentPathSectionIdx_ = 0;
+	inApproach_ = trajectory_.approachSection != nullptr;
+	APLOG_DEBUG << "Trajectory set.";
 }
 
 ControllerTarget
 LinearLocalPlanner::getControllerTarget()
 {
-    return controllerTarget_;
+	return controllerTarget_;
 }
 
 void
 LinearLocalPlanner::nextSection()
 {
-    if (currentSection_ == trajectory_.pathSections.end())
-    {
-        return;
-    }
-    ++currentSection_;
-    ++currentPathSectionIdx_;
+	if (inApproach_)
+	{
+		//We were approaching the first waypoint
+		currentSection_ = trajectory_.pathSections.begin();
+		inApproach_ = false;
+		return;
+	}
 
-    if (currentSection_ == trajectory_.pathSections.end() && trajectory_.infinite)
-    {
-        currentSection_ = trajectory_.pathSections.begin();
-        currentPathSectionIdx_ = 0;
-    }
+	if (currentSection_ == trajectory_.pathSections.end())
+	{
+		return;
+	}
+	++currentSection_;
+	++currentPathSectionIdx_;
+
+	if (currentSection_ == trajectory_.pathSections.end() && trajectory_.infinite)
+	{
+		currentSection_ = trajectory_.pathSections.begin();
+		currentPathSectionIdx_ = 0;
+	}
+}
+
+bool
+LinearLocalPlanner::tune(const LocalPlannerParams& params)
+{
+	auto impl = getImpl();
+	if (!impl)
+	{
+		APLOG_ERROR << "Impl missing. Cannot tune local planner.";
+		return false;
+	}
+	return impl->tuneParams(params);
 }
 
 void
-LinearLocalPlanner::createLocalPlan(const SensorData& data)
+LinearLocalPlanner::createLocalPlan(const Vector3& position, double heading, bool hasGPSFix,
+		uint32_t seqNum)
 {
-//	auto sensing = sensing_.get();
-//
-//	if (!sensing)
-//	{
-//		APLOG_ERROR << "PIDController: FlightControlData missing";
-//		return;
-//	}
-//
-//	SharedLock sensorLock(sensing->mutex);
-//	Vector3 position = sensing->sensorData.position;
-//	double heading = sensing->sensorData.attitude.z();
-//    bool hasFix = sensing->sensorData.hasGPSFix;
-//    uint64_t seq = sensing->sensorData.sequenceNr;
-//	sensorLock.unlock();
 
-    Vector3 position = data.position;
-    double heading = data.attitude.z();
-    bool hasFix = data.hasGPSFix;
-    uint32_t seq = data.sequenceNr;
+	Lock lock(trajectoryMutex_);
+	std::shared_ptr<IPathSection> currentSection;
 
-    Lock lock(trajectoryMutex_);
-    if (currentSection_ == trajectory_.pathSections.end())
-    {
-        APLOG_ERROR << "Trajectory at the end.";
-        return;
-    }
+	if (!inApproach_)
+	{
+		if (currentSection_ == trajectory_.pathSections.end())
+		{
+			APLOG_ERROR << "Trajectory at the end.";
+			return;
+		}
+		currentSection = *currentSection_;
+	}
+	else
+	{
+		currentSection = trajectory_.approachSection;
+	}
 
-    auto currentSection = *currentSection_;
-    if (!currentSection)
-    {
-        APLOG_ERROR << "Current Section is nullptr. Abort.";
-        return;
-    }
-    currentSection->updatePosition(position);
+	if (!currentSection)
+	{
+		APLOG_ERROR << "Current Section is nullptr. Abort.";
+		return;
+	}
+	currentSection->updatePosition(position);
 
-    if (currentSection->inTransition())
-    {
-        nextSection();
+	if (currentSection->inTransition())
+	{
+		nextSection();
 
-        if (currentSection_ == trajectory_.pathSections.end())
-        {
-            APLOG_ERROR << "Trajectory at the end.";
-            return;
-        }
+		if (currentSection_ == trajectory_.pathSections.end())
+		{
+			APLOG_ERROR << "Trajectory at the end.";
+			return;
+		}
 
-        currentSection = *currentSection_;
-        if (!currentSection)
-        {
-            APLOG_ERROR << "Current Section is nullptr. Abort.";
-            return;
-        }
-        currentSection->updatePosition(position);
-    }
-    lock.unlock();
+		currentSection = *currentSection_;
+		if (!currentSection)
+		{
+			APLOG_ERROR << "Current Section is nullptr. Abort.";
+			return;
+		}
+		currentSection->updatePosition(position);
+	}
+	lock.unlock();
 
-    if (hasFix)
-        controllerTarget_ = localPlannerImpl_->evaluate(position, heading, currentSection);
-    else
-    {
-        APLOG_WARN << "Lost GPS fix. LocalPlanner safety procedure.";
-        controllerTarget_.velocity[0] = currentSection->getVelocity();
-        controllerTarget_.velocity[2] = 0;
-        controllerTarget_.yawRate = 0;
-    }
-    controllerTarget_.sequenceNr = seq;
+	if (hasGPSFix)
+		controllerTarget_ = localPlannerImpl_->evaluate(position, heading, currentSection);
+	else
+	{
+		APLOG_WARN << "Lost GPS fix. LocalPlanner safety procedure.";
+		controllerTarget_.velocity = currentSection->getVelocity();
+		controllerTarget_.yawRate = 0;
+	}
+	controllerTarget_.sequenceNr = seqNum;
 
-    auto controller = controller_.get();
-    if (!controller)
-    {
-        APLOG_ERROR << "LinearLocalPlanner: Controller missing";
+	auto controller = controller_.get();
+	if (!controller)
+	{
+		APLOG_ERROR << "LinearLocalPlanner: Controller missing";
 
-        return;
-    }
+		return;
+	}
 
-    controller->setControllerTarget(controllerTarget_);
+	controller->setControllerTarget(controllerTarget_);
 }
 
 Trajectory
 LinearLocalPlanner::getTrajectory() const
 {
-    return trajectory_;
+	return trajectory_;
 }
 
 std::shared_ptr<ILinearPlannerImpl>
 LinearLocalPlanner::getImpl()
 {
-    return localPlannerImpl_;
+	return localPlannerImpl_;
 }
 
 LocalPlannerStatus
-LinearLocalPlanner::getStatus()
+LinearLocalPlanner::getStatus() const
 {
-    auto status = localPlannerImpl_->getStatus();
-    if (!status.has_linear_status())
-    {
-        APLOG_ERROR << "Status from impl is wrong";
-        return status;
-    }
+	auto status = localPlannerImpl_->getStatus();
+	if (!status.has_linear_status())
+	{
+		APLOG_ERROR << "Status from impl is wrong";
+		return status;
+	}
 
-    status.mutable_linear_status()->set_current_path_section(currentPathSectionIdx_);
-    status.mutable_linear_status()->mutable_velocity_target()->set_velocity_x(controllerTarget_.velocity.x());
-    status.mutable_linear_status()->mutable_velocity_target()->set_velocity_y(controllerTarget_.velocity.y());
-    status.mutable_linear_status()->mutable_velocity_target()->set_velocity_z(controllerTarget_.velocity.z());
-    status.mutable_linear_status()->set_yaw_rate_target(controllerTarget_.yawRate);
+	status.mutable_linear_status()->set_current_path_section(currentPathSectionIdx_);
+	status.mutable_linear_status()->mutable_velocity_target()->set_velocity_x(
+			controllerTarget_.velocity);
+	status.mutable_linear_status()->mutable_velocity_target()->set_velocity_y(0);
+	status.mutable_linear_status()->mutable_velocity_target()->set_velocity_z(0);
+	status.mutable_linear_status()->set_yaw_rate_target(controllerTarget_.yawRate);
+	status.mutable_linear_status()->set_is_in_approach(inApproach_);
 
-    return status;
+	return status;
 }
 
 void
-LinearLocalPlanner::notifyAggregationOnUpdate(Aggregator& agg)
+LinearLocalPlanner::notifyAggregationOnUpdate(const Aggregator& agg)
 {
-    controller_.setFromAggregationIfNotSet(agg);
-    sensing_.setFromAggregationIfNotSet(agg);
-    scheduler_.setFromAggregationIfNotSet(agg);
-    ipc_.setFromAggregationIfNotSet(agg);
-    dataPresentation_.setFromAggregationIfNotSet(agg);
+	controller_.setFromAggregationIfNotSet(agg);
+	sensing_.setFromAggregationIfNotSet(agg);
+	scheduler_.setFromAggregationIfNotSet(agg);
+	ipc_.setFromAggregationIfNotSet(agg);
 }
 
 void
 LinearLocalPlanner::onTrajectoryPacket(const Packet& packet)
 {
-    auto dp = dataPresentation_.get();
+	try
+	{
+		setTrajectory(dp::deserialize < Trajectory > (packet));
+	} catch (ArchiveError& err)
+	{
+		APLOG_ERROR << "Invalid Trajectory packet: " << err.what();
+		return;
+	}
+}
 
-    if (!dp)
-    {
-        APLOG_ERROR << "Data Presentation missing. Cannot deserialize packet.";
-        return;
-    }
+void
+LinearLocalPlanner::onSensorData(const SensorData& sd)
+{
+	//TODO Lock?
+	Vector3 position = sd.position;
+	double heading = sd.attitude.z();
+	bool hasFix = sd.hasGPSFix;
+	uint32_t seq = sd.sequenceNr;
 
-    Content content = Content::INVALID;
-    auto any = dp->deserialize(packet, content);
-    if (content != Content::TRAJECTORY)
-    {
-        APLOG_ERROR << "Invalid packet received. Content: " << (int) content;
-        return;
-    }
+	createLocalPlan(position, heading, hasFix, seq);
+}
 
-    setTrajectory(boost::any_cast<Trajectory>(any));
+void
+LinearLocalPlanner::update()
+{
+	auto sensing = sensing_.get();
 
+	if (!sensing)
+	{
+		APLOG_ERROR << "PIDController: FlightControlData missing";
+		return;
+	}
+
+	SharedLock sensorLock(sensing->mutex);
+	Vector3 position = sensing->sensorData.position;
+	double heading = sensing->sensorData.attitude.z();
+	bool hasFix = sensing->sensorData.hasGPSFix;
+	uint32_t seq = sensing->sensorData.sequenceNr;
+	sensorLock.unlock();
+
+	createLocalPlan(position, heading, hasFix, seq);
 }

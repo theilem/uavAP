@@ -34,12 +34,11 @@ class SchedulerFactory: public Factory<IScheduler>
 public:
 	SchedulerFactory()
 	{
-		addCreator("thread", &MultiThreadingScheduler::create);
-
-		setDefault("thread");
+		setDefault<MultiThreadingScheduler>();
 	}
+
+	static constexpr TypeId typeId = "scheduler";
+
 };
-
-
 
 #endif /* UAVAP_CORE_SCHEDULER_SCHEDULERFACTORY_H_ */

@@ -27,7 +27,7 @@
 #define UAVAP_MISSIONCONTROL_MISSIONPLANNER_MISSIONPLANNERFACTORY_H_
 #include "uavAP/Core/Framework/Factory.h"
 #include "uavAP/MissionControl/MissionPlanner/IMissionPlanner.h"
-#include "uavAP/MissionControl/MissionPlanner/ManeuverPlanner/ManeuverPlanner.h"
+#include "uavAP/MissionControl/MissionPlanner/CustomPlanner/CustomPlanner.h"
 #include "uavAP/MissionControl/MissionPlanner/SimpleMissionPlanner/SimpleMissionPlanner.h"
 
 class MissionPlannerFactory: public Factory<IMissionPlanner>
@@ -35,9 +35,12 @@ class MissionPlannerFactory: public Factory<IMissionPlanner>
 public:
 	MissionPlannerFactory()
 	{
-		addCreator("simple", &SimpleMissionPlanner::create);
-		addCreator("maneuver", &ManeuverPlanner::create);
+		addCreator<SimpleMissionPlanner>();
+		addCreator<CustomPlanner>();
 	}
+
+	static constexpr TypeId typeId = "mission_planner";
+
 };
 
 #endif /* UAVAP_MISSIONCONTROL_MISSIONPLANNER_MISSIONPLANNERFACTORY_H_ */

@@ -28,7 +28,6 @@
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include "uavAP/Core/IPC/detail/IPublisherImpl.h"
 
-
 class PacketPublisherImpl: public IPublisherImpl
 {
 public:
@@ -52,7 +51,5 @@ private:
 	std::size_t maxPacketSize_;
 
 };
-
-
 
 #endif /* UAVAP_CORE_IPC_DETAIL_PACKETPUBLISHERIMPL_H_ */

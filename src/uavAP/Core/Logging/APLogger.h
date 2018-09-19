@@ -32,11 +32,7 @@
 
 enum class LogLevel
 {
-	TRACE = 0,
-	DEBUG = 1,
-	WARN = 2,
-	ERROR = 3,
-	NONE = 4
+	TRACE = 0, DEBUG = 1, WARN = 2, ERROR = 3, NONE = 4
 };
 
 class APLogger
@@ -80,30 +76,28 @@ private:
 	};
 };
 
-
 #define APLOG(level) (APLogger::instance()->log(level))
-#define APLOG_ERROR (APLOG(LogLevel::ERROR) << "[ERROR] ")
-#define APLOG_WARN (APLOG(LogLevel::WARN) << "[WARNING] ")
+#define APLOG_ERROR (APLOG(::LogLevel::ERROR) << "[ERROR] ")
+#define APLOG_WARN (APLOG(::LogLevel::WARN) << "[WARNING] ")
 
 #ifdef NODEBUG
-#define APLOG_DEBUG if (0) APLOG(LogLevel::DEBUG)
-#define APLOG_TRACE if (0) APLOG(LogLevel::TRACE)
+#define APLOG_DEBUG if (0) APLOG(::LogLevel::DEBUG)
+#define APLOG_TRACE if (0) APLOG(::LogLevel::TRACE)
 #else
-#define APLOG_DEBUG (APLOG(LogLevel::DEBUG) << "[DEBUG] ")
-#define APLOG_TRACE (APLOG(LogLevel::TRACE) << "[TRACE] ")
+#define APLOG_DEBUG (APLOG(::LogLevel::DEBUG) << "[DEBUG] ")
+#define APLOG_TRACE (APLOG(::LogLevel::TRACE) << "[TRACE] ")
 #endif
 
-
 #define MODULE_LOG(level, module) (APLogger::instance()->log(level, module))
-#define MODULE_LOG_ERROR(module) (MODULE_LOG(LogLevel::ERROR, module) << "[ERROR] ")
-#define MODULE_LOG_WARN(module) (MODULE_LOG(LogLevel::WARN, module) << "[WARNING] ")
+#define MODULE_LOG_ERROR(module) (MODULE_LOG(::LogLevel::ERROR, module) << "[ERROR] ")
+#define MODULE_LOG_WARN(module) (MODULE_LOG(::LogLevel::WARN, module) << "[WARNING] ")
 
 #ifdef NODEBUG
-#define MODULE_LOG_DEBUG(module) if (0) MODULE_LOG(LogLevel::DEBUG, module)
-#define MODULE_LOG_TRACE(module) if (0) MODULE_LOG(LogLevel::TRACE, module)
+#define MODULE_LOG_DEBUG(module) if (0) MODULE_LOG(::LogLevel::DEBUG, module)
+#define MODULE_LOG_TRACE(module) if (0) MODULE_LOG(::LogLevel::TRACE, module)
 #else
-#define MODULE_LOG_DEBUG(module) (MODULE_LOG(LogLevel::DEBUG, module) << "[DEBUG] ")
-#define MODULE_LOG_TRACE(module) (MODULE_LOG(LogLevel::TRACE, module) << "[TRACE] ")
+#define MODULE_LOG_DEBUG(module) (MODULE_LOG(::LogLevel::DEBUG, module) << "[DEBUG] ")
+#define MODULE_LOG_TRACE(module) (MODULE_LOG(::LogLevel::TRACE, module) << "[TRACE] ")
 #endif
 
 #endif /* UAVAP_CORE_LOGGING_APLOGGER_H_ */

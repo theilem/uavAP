@@ -26,28 +26,36 @@
 #ifndef UAVAP_FLIGHTCONTROL_FLIGHTCONTROLDATA_H_
 #define UAVAP_FLIGHTCONTROL_FLIGHTCONTROLDATA_H_
 
-#include "uavAP/Core/Object/IAggregatableObject.h"
-#include "uavAP/Core/SensorData.h"
 #include <boost/thread/shared_mutex.hpp>
-#include "uavAP/Core/IPC/IPC.h"
+#include <boost/signals2.hpp>
+#include <boost/property_tree/ptree.hpp>
+
+#include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/Core/Object/ObjectHandle.h"
+#include "uavAP/Core/IPC/Publisher.h"
+#include "uavAP/Core/IPC/Subscription.h"
+#include "uavAP/Core/SensorData.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 
-#include <boost/signals2.hpp>
 
 struct ControllerOutput;
+class IPC;
 
-class SensingActuationIO: public ISensingActuationIO, public IAggregatableObject, public IRunnableObject
+class SensingActuationIO: public ISensingActuationIO,
+		public IAggregatableObject,
+		public IRunnableObject
 {
 public:
 
+	static constexpr TypeId typeId = "shared_memory";
+
 	SensingActuationIO();
 
-	static std::shared_ptr<SensingActuationIO>
-	create(const boost::property_tree::ptree& config);
+	ADD_CREATE_WITHOUT_CONFIG(SensingActuationIO)
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	bool
 	run(RunStage stage) override;

@@ -30,70 +30,30 @@
 
 #include "uavAP/Core/DataPresentation/APDataPresentation/SerializeCustom.h"
 #include "uavAP/Core/LinearAlgebra.h"
+#include "uavAP/Core/EnumMap.hpp"
+
+enum class ControllerOutputs
+{
+	INVALID, ROLL, PITCH, YAW, THROTTLE, NUM_OUTPUT
+};
+
+ENUMMAP_INIT(ControllerOutputs, { {ControllerOutputs::ROLL, "roll"}, {ControllerOutputs::PITCH,
+		"pitch"}, {ControllerOutputs::YAW, "yaw"}, {ControllerOutputs::THROTTLE, "throttle"} });
 
 struct ControllerOutput: SerializeCustom
 {
 	double rollOutput;
 	double pitchOutput;
 	double yawOutput;
-	double collectiveOutput;
 	double throttleOutput;
-	double flapOutput; //-1: no flap, 1: full flap
 
 	uint32_t sequenceNr; //Trace sequence number to get timing
 
 	ControllerOutput() :
-			rollOutput(0), pitchOutput(0), yawOutput(0), collectiveOutput(0), throttleOutput(0), flapOutput(
-					-1), sequenceNr(0)
+			rollOutput(0), pitchOutput(0), yawOutput(0), throttleOutput(-1), sequenceNr(0)
 	{
 	}
 };
-
-struct ControllerOutputLight: SerializeCustom
-{
-	float rollOutput;
-	float pitchOutput;
-	float yawOutput;
-	float collectiveOutput;
-	float throttleOutput;
-	float flapOutput; //-1: no flap, 1: full flap
-
-	uint32_t sequenceNr; //Trace sequence number to get timing
-
-	ControllerOutputLight() :
-			rollOutput(0), pitchOutput(0), yawOutput(0), collectiveOutput(0), throttleOutput(0), flapOutput(
-					-1), sequenceNr(0)
-	{
-	}
-};
-
-inline ControllerOutput
-fromControllerOutputLight(const ControllerOutputLight& out)
-{
-	ControllerOutput con;
-	con.rollOutput = static_cast<double>(out.rollOutput);
-	con.pitchOutput = static_cast<double>(out.pitchOutput);
-	con.yawOutput = static_cast<double>(out.yawOutput);
-	con.collectiveOutput = static_cast<double>(out.collectiveOutput);
-	con.throttleOutput = static_cast<double>(out.throttleOutput);
-	con.flapOutput = static_cast<double>(out.flapOutput);
-	con.sequenceNr = out.sequenceNr;
-	return con;
-}
-
-inline ControllerOutputLight
-fromControllerOutput(const ControllerOutput& out)
-{
-	ControllerOutputLight con;
-	con.rollOutput = static_cast<float>(out.rollOutput);
-	con.pitchOutput = static_cast<float>(out.pitchOutput);
-	con.yawOutput = static_cast<float>(out.yawOutput);
-	con.collectiveOutput = static_cast<float>(out.collectiveOutput);
-	con.throttleOutput = static_cast<float>(out.throttleOutput);
-	con.flapOutput = static_cast<float>(out.flapOutput);
-	con.sequenceNr = out.sequenceNr;
-	return con;
-}
 
 namespace dp
 {
@@ -104,25 +64,9 @@ serialize(Archive& ar, ControllerOutput& t)
 	ar & t.rollOutput;
 	ar & t.pitchOutput;
 	ar & t.yawOutput;
-	ar & t.collectiveOutput;
 	ar & t.throttleOutput;
-	ar & t.flapOutput;
 	ar & t.sequenceNr;
 }
-
-template<class Archive, typename Type>
-inline void
-serialize(Archive& ar, ControllerOutputLight& t)
-{
-	ar & t.rollOutput;
-	ar & t.pitchOutput;
-	ar & t.yawOutput;
-	ar & t.collectiveOutput;
-	ar & t.throttleOutput;
-	ar & t.flapOutput;
-	ar & t.sequenceNr;
-}
-
 }
 
 #endif /* UAVAP_FLIGHTCONTROL_CONTROLLER_CONTROLLEROUTPUT_H_ */

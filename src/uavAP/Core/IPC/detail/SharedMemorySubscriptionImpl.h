@@ -28,13 +28,14 @@
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/interprocess/shared_memory_object.hpp>
 #include <boost/signals2.hpp>
+#include <boost/thread/pthread/thread_data.hpp>
 #include <boost/thread/thread_time.hpp>
 #include "uavAP/Core/IPC/detail/ISubscriptionImpl.h"
 #include "uavAP/Core/IPC/detail/MessageObject.h"
 #include "uavAP/Core/Time.h"
 #include <thread>
 
-template <class Object>
+template<class Object>
 class SharedMemorySubscriptionImpl: public ISubscriptionImpl
 {
 public:
@@ -71,9 +72,9 @@ private:
 
 template<class Object>
 inline
-SharedMemorySubscriptionImpl<Object>::SharedMemorySubscriptionImpl(std::string id):
-	sharedMem_(boost::interprocess::open_only, id.c_str(), boost::interprocess::read_write),
-	listenerCanceled_(false)
+SharedMemorySubscriptionImpl<Object>::SharedMemorySubscriptionImpl(std::string id) :
+		sharedMem_(boost::interprocess::open_only, id.c_str(), boost::interprocess::read_write), listenerCanceled_(
+				false)
 {
 }
 
@@ -110,7 +111,8 @@ template<class Object>
 inline void
 SharedMemorySubscriptionImpl<Object>::start()
 {
-	listenerThread_ = std::thread(std::bind(&SharedMemorySubscriptionImpl<Object>::onSharedMemory, this));
+	listenerThread_ = std::thread(
+			std::bind(&SharedMemorySubscriptionImpl<Object>::onSharedMemory, this));
 	listenerThread_.detach();
 }
 

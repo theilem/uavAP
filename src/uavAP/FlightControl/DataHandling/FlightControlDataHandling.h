@@ -29,32 +29,38 @@
 #define UAVAP_FLIGHTCONTROL_DATAHANDLING_FLIGHTCONTROLDATAHANDLING_H_
 
 #include <boost/property_tree/ptree.hpp>
-#include "uavAP/Core/DataPresentation/IDataPresentation.h"
-#include "uavAP/FlightControl/Controller/ManeuverPIDController/ManeuverPIDController.h"
-#include "uavAP/FlightControl/Controller/PIDController/detail/PIDHandling.h"
-#include "uavAP/FlightControl/Controller/PIDController/PIDController.h"
-#include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"
 
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/DataPresentation/Packet.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/IPC/IPC.h"
+#include "uavAP/Core/DataPresentation/IDataPresentation.h"
+#include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/ManeuverPIDController.h"
+#include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/SimplePIDController.h"
+#include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
+#include "uavAP/FlightControl/Controller/PIDController/PIDMapping.h"
 
 class IGlobalPlanner;
 class ILocalPlanner;
 class IController;
 class IScheduler;
-enum class Content;
-enum class Target;
+enum class Content
+;
+enum class Target
+;
 
 template<typename C, typename T>
 class IDataPresentation;
 struct ControllerOutput;
+class LocalPlannerParams;
 
 class FlightControlDataHandling: public IAggregatableObject, public IRunnableObject
 {
 public:
+
+	static constexpr TypeId typeId = "fc_data_handling";
+
 	FlightControlDataHandling();
 
 	static std::shared_ptr<FlightControlDataHandling>
@@ -67,9 +73,10 @@ public:
 	run(RunStage stage) override;
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg) override;
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 private:
+
 	void
 	collectAndSend();
 
@@ -95,15 +102,18 @@ private:
 	tuneLocalPlanner(const LocalPlannerParams& params);
 
 	ObjectHandle<IPC> ipc_;
-	ObjectHandle<LinearLocalPlanner> localPlanner_;
+	ObjectHandle<ILocalPlanner> localPlanner_;
 	ObjectHandle<IController> controller_;
 	ObjectHandle<SensingActuationIO> sensActIO_;
 	ObjectHandle<IScheduler> scheduler_;
-	ObjectHandle<IDataPresentation<Content,Target>> dataPresentation_;
+	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
 	Subscription flightControlSubscription_;
 	Publisher publisher_;
+	Publisher pidStatiPublisher_;
+	Publisher advancedControlPublisher_;
 
 	Duration period_;
+	bool compressSensorData_;
 };
 
 #endif /* UAVAP_FLIGHTCONTROL_DATAHANDLING_FLIGHTCONTROLDATAHANDLING_H_ */

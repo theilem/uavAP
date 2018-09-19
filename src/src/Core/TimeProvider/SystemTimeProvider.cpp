@@ -1,18 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
-// 
+//
 // This file is part of uavAP.
-// 
+//
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,14 +47,16 @@ SystemTimeProvider::now()
 }
 
 bool
-SystemTimeProvider::waitFor(Duration duration, boost::condition_variable& interrupt, boost::unique_lock<boost::mutex>& lock)
+SystemTimeProvider::waitFor(Duration duration, boost::condition_variable& interrupt,
+		boost::unique_lock<boost::mutex>& lock)
 {
 	boost::chrono::nanoseconds nsec(duration.total_nanoseconds());
 	return interrupt.wait_for(lock, nsec) == boost::cv_status::timeout;
 }
 
 bool
-SystemTimeProvider::waitUntil(TimePoint timePoint, boost::condition_variable& interrupt, boost::unique_lock<boost::mutex>& lock)
+SystemTimeProvider::waitUntil(TimePoint timePoint, boost::condition_variable& interrupt,
+		boost::unique_lock<boost::mutex>& lock)
 {
 	auto t = boost::posix_time::to_time_t(timePoint);
 	boost::chrono::system_clock::time_point tp = boost::chrono::system_clock::from_time_t(t)
@@ -64,7 +66,6 @@ SystemTimeProvider::waitUntil(TimePoint timePoint, boost::condition_variable& in
 }
 
 void
-SystemTimeProvider::notifyAggregationOnUpdate(Aggregator&)
+SystemTimeProvider::notifyAggregationOnUpdate(const Aggregator&)
 {
 }
-

@@ -31,6 +31,9 @@ class IMissionPlanner
 public:
 	virtual
 	~IMissionPlanner() = default;
+
+	virtual void
+	missionRequest(const std::string& mission) = 0;
 };
 
 #endif /* UAVAP_MISSIONCONTROL_MISSIONPLANNER_IMISSIONPLANNER_H_ */

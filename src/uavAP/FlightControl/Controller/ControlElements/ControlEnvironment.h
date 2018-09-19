@@ -51,6 +51,9 @@ public:
 	std::shared_ptr<Input>
 	addInput(double* in);
 
+	std::shared_ptr<Filter>
+	addFilter(Element in, double alpha);
+
 	std::shared_ptr<Output>
 	addOutput(Element in, double* out);
 

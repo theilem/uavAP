@@ -37,6 +37,8 @@ class ProcessMonitor: public IRunnableObject, public IAggregatableObject
 {
 public:
 
+	static constexpr TypeId typeId = "process_monitor";
+
 	ProcessMonitor();
 
 	bool
@@ -46,7 +48,7 @@ public:
 	run(RunStage stage) override;
 
 	void
-	notifyAggregationOnUpdate(Aggregator& agg);
+	notifyAggregationOnUpdate(const Aggregator& agg);
 
 	int
 	getNumOfProcesses();
@@ -54,13 +56,16 @@ public:
 	void
 	killAll();
 
-	void
+	bool
 	checkAlive();
 
 	bool
 	startAll();
 
 private:
+
+	bool
+	tryJoinAll(Duration timeout);
 
 	std::map<std::string, ProcessInfo> processes_;
 

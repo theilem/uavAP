@@ -26,20 +26,25 @@
 #ifndef FLIGHTCONTROLLER_FLIGHTCONTROLLERFACTORY_H_
 #define FLIGHTCONTROLLER_FLIGHTCONTROLLERFACTORY_H_
 
-#include "uavAP/Core/Framework/Factory.h"
-#include "uavAP/FlightControl/Controller/ManeuverPIDController/ManeuverPIDController.h"
-#include "uavAP/FlightControl/Controller/PIDController/PIDController.h"
 #include <iostream>
 #include <string>
+
+#include "uavAP/Core/Framework/Factory.h"
+#include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/ManeuverPIDController.h"
+#include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/SimplePIDController.h"
+#include "uavAP/FlightControl/Controller/PIDController/RatePIDController/RatePIDController.h"
 
 class ControllerFactory: public Factory<IController>
 {
 public:
 	ControllerFactory()
 	{
-		addCreator("pid", &PIDController::create);
-		addCreator("maneuver", &ManeuverPIDController::create);
+		addCreator<SimplePIDController>();
+		addCreator<ManeuverPIDController>();
+		addCreator<RatePIDController>();
 	}
+
+	static constexpr TypeId typeId = "controller";
 };
 
 #endif /* FLIGHTCONTROLLER_FLIGHTCONTROLLERFACTORY_H_ */

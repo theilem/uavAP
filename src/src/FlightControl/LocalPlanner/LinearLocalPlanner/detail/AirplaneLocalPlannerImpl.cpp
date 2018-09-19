@@ -1,18 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2018 University of Illinois Board of Trustees
-// 
+//
 // This file is part of uavAP.
-// 
+//
 // uavAP is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // uavAP is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,10 +23,8 @@
  *      Author: mircot
  */
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/detail/AirplaneLocalPlannerImpl.h"
-#include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/detail/LocalPlannerParams.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"
 
-#include <boost/variant.hpp>
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 
@@ -38,7 +36,7 @@ AirplaneLocalPlannerImpl::AirplaneLocalPlannerImpl() :
 bool
 AirplaneLocalPlannerImpl::configure(const boost::property_tree::ptree& config)
 {
-	return PropertyMapper::configure(params_,config);
+	return PropertyMapper::configure(params_, config);
 }
 
 bool
@@ -62,15 +60,19 @@ AirplaneLocalPlannerImpl::evaluate(const Vector3& position, double heading,
 {
 	ControllerTarget controllerTarget;
 
-	controllerTarget.velocity[0] = section->getVelocity();
+	double vel = section->getVelocity();
+
+	controllerTarget.velocity = vel;
 	auto positionDeviation = section->getPositionDeviation();
 
 	// Climb Rate
-	double climbRate = controllerTarget.velocity[0] * section->getSlope()
+	double climbRate = controllerTarget.velocity * section->getSlope()
 			+ params_.k_altitude() * positionDeviation.z();
 
+	climbRate = climbRate > vel ? vel : climbRate < -vel ? -vel : climbRate;
+
 	//Climb angle
-	controllerTarget.climbAngle = sin(climbRate / section->getVelocity());
+	controllerTarget.climbAngle = asin(climbRate / vel);
 
 	// Heading
 	Vector2 directionTarget_ = params_.k_heading() * positionDeviation.head(2)
@@ -80,7 +82,7 @@ AirplaneLocalPlannerImpl::evaluate(const Vector3& position, double heading,
 	double headingError = boundAngleRad(headingTarget_ - heading);
 
 	// Yaw Rate
-	controllerTarget.yawRate = controllerTarget.velocity[0] * section->getCurvature()
+	controllerTarget.yawRate = vel * section->getCurvature()
 			+ params_.k_yaw_rate() * headingError;
 	return controllerTarget;
 }

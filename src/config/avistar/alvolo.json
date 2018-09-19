@@ -1,0 +1,51 @@
+{
+	"interface":
+	{
+		"num_output_channel":7,
+		"trace_seq_nr":false,
+		"internal_imu":false,
+		"use_airspeed":false,
+		"external_gps":false,
+		"course_as_heading":false,
+		"channel_naming":
+		{
+			"throttle":		0,
+			"elevator_l":	1,
+			"aileron_r":	2,
+			"flap_l":		3,
+			"aileron_l":	4,
+			"rudder":		5,
+			"flap_r":		6
+		},
+		"channel_mixing":
+		{
+			"roll_out":		[0, 0,-1, 0, 1, 0, 0],
+			"pitch_out":	[0,-1, 0, 0, 0, 0, 0],
+			"yaw_out":		[0, 0, 0, 0, 0, 1, 0],
+			"throttle_out":	[1, 0, 0, 0, 0, 0, 0]
+		},
+		"channel_mapping":
+		{
+			"normal":
+			{
+				"min":		[4404, 5348, 4448, 7372, 4224, 4140, 4156],
+				"center":	[6082, 6340, 6120, 7372, 5900, 6124, 4156],
+				"max":		[7760, 7248, 7808, 7372, 7580, 8136, 4156]
+			}
+		},
+		"camber_offset":
+		{
+		},
+		"special_control":
+		{
+			"flap": 		[0, 0, 0,-3356, 0, 0, 3356]
+		},
+		"channel_constraints":
+		{
+			"min":		[4404, 5348, 4448, 4016, 4224, 4140, 4156],
+			"max":		[7760, 7248, 7808, 7372, 7580, 8136, 7512]
+		}
+	}
+}
+
+
