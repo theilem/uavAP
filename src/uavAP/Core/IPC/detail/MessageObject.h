@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 /**
  * @file MessageObject.h
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  * @date [DD.MM.YYYY] 18.07.2017
  */
 

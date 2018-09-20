@@ -22,7 +22,7 @@
  *
  * Defines SensorData and SensorDataLight and provides conversions between float and double datatypes
  * @date 23 June 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 #ifndef UAVAP_CORE_SENSORDATA_H_
 #define UAVAP_CORE_SENSORDATA_H_

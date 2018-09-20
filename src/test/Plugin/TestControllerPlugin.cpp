@@ -17,61 +17,31 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * @file FrameworkExceptions.h
- * @brief Defines the exceptions that can be thrown by the Framework helpers and factories
- * @date Jul 26, 2017
+ * @file TestControllerPlugin.cpp
+ * @date Sep 20, 2018
  * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#ifndef UAVAP_CORE_FRAMEWORK_FRAMEWORKEXCEPTIONS_H_
-#define UAVAP_CORE_FRAMEWORK_FRAMEWORKEXCEPTIONS_H_
-#include <string>
+#include "TestControllerPlugin.h"
+#include <uavAP/FlightControl/Controller/ControllerFactory.h>
 
-/**
- * @brief general framework error
- */
-class FrameworkError
+extern "C"
 {
-public:
-
-	FrameworkError(const std::string& what) :
-			what_(what)
-	{
-	}
-
-	std::string
-	what()
-	{
-		return what_;
-	}
-
-private:
-
-	std::string what_;
-};
-
-/**
- * @brief Data type invalid error
- */
-class InvalidTypeError: public FrameworkError
+void
+register_plugin()
 {
-public:
-	InvalidTypeError(const std::string& what) :
-			FrameworkError(what)
-	{
-	}
-};
+	ControllerFactory::registerExternalCreator<TestControllerPlugin>();
+}
+}
 
-/**
- * @brief Error in the factory initialization
- */
-class FactoryInitializationError: public FrameworkError
+void
+TestControllerPlugin::notifyAggregationOnUpdate(const Aggregator& agg)
 {
-public:
-	FactoryInitializationError(const std::string& what) :
-			FrameworkError(what)
-	{
-	}
-};
+	APLOG_ERROR << "TEST";
+}
 
-#endif /* UAVAP_CORE_FRAMEWORK_FRAMEWORKEXCEPTIONS_H_ */
+void
+TestControllerPlugin::setControllerTarget(const ControllerTarget& target)
+{
+}

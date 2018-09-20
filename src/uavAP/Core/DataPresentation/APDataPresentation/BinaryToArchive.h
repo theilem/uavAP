@@ -20,7 +20,7 @@
  * @file BinaryToArchive.h
  * @brief Defines the BinaryRoArchive
  * @date Aug 22, 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 
 #ifndef UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BINARYTOARCHIVE_H_

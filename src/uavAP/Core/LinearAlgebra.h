@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 /**
  *  @file         LinearAlgebra.h
- *  @author  Mirco Theile, mircot@illinois.edu
+ *  @author  Mirco Theile, mirco.theile@tum.de
  *  @date      23 June 2017
  *  @brief      Vector handling, conversions and rotations
  */

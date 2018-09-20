@@ -43,7 +43,7 @@ public:
 	FlightControlHelper()
 	{
 		addFactory<LocalPlannerFactory>();
-		addFactory<ControllerFactory>();
+		addFactory<ControllerFactory>(PluginRestriction::ALLOWED);
 
 		addDefault<SchedulerFactory>();
 		addDefault<TimeProviderFactory>();

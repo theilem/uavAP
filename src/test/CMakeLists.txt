@@ -39,12 +39,15 @@ set (TEST_DEPENDENCIES 	boost_system
         		pthread
         		rt
         		uavap_core
+        		uavap_flight_control
         		uavap_mission_control
         		ap_ext
         		uavap_api
         		arb
         		flint
         		)
+        		
+add_subdirectory(Plugin)
 
 add_executable (tests EXCLUDE_FROM_ALL ${TEST_SOURCES})
 target_link_libraries (tests ${TEST_DEPENDENCIES})
@@ -65,6 +68,8 @@ configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/PFF_He
 configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/PI_Helicopter.json ${CMAKE_BINARY_DIR}/test/FlightControl/Controller/config/PI_Helicopter.json COPYONLY)
 
 configure_file(${PROJECT_SOURCE_DIR}/test/Core/config/pm_test.json ${CMAKE_BINARY_DIR}/test/Core/config/pm_test.json COPYONLY)
+
+configure_file(${PROJECT_SOURCE_DIR}/test/Plugin/flight_control.json ${CMAKE_BINARY_DIR}/test/Plugin/flight_control.json COPYONLY)
 
 
 #Real Time tests

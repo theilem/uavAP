@@ -20,7 +20,7 @@
  * @file SerialIDC.h
  * @brief Defines SerialIDC
  * @date Jun 12, 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 #ifndef GROUNDCOMMUNICATION_SERIALCONNECTION_H_
 #define GROUNDCOMMUNICATION_SERIALCONNECTION_H_

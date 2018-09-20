@@ -17,61 +17,39 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * @file FrameworkExceptions.h
- * @brief Defines the exceptions that can be thrown by the Framework helpers and factories
- * @date Jul 26, 2017
+ * @file PluginManager.h
+ * @date Sep 20, 2018
  * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#ifndef UAVAP_CORE_FRAMEWORK_FRAMEWORKEXCEPTIONS_H_
-#define UAVAP_CORE_FRAMEWORK_FRAMEWORKEXCEPTIONS_H_
-#include <string>
+#ifndef UAVAP_CORE_FRAMEWORK_PLUGINMANAGER_H_
+#define UAVAP_CORE_FRAMEWORK_PLUGINMANAGER_H_
 
-/**
- * @brief general framework error
- */
-class FrameworkError
+#include <boost/property_tree/ptree.hpp>
+#include <functional>
+
+class PluginManager
 {
 public:
 
-	FrameworkError(const std::string& what) :
-			what_(what)
-	{
-	}
+	PluginManager() = default;
 
-	std::string
-	what()
-	{
-		return what_;
-	}
+	bool
+	configure(const boost::property_tree::ptree& config);
+
+	using PluginHandle = void*;
+	using FunctionPtr = void (*)();
 
 private:
 
-	std::string what_;
+	PluginHandle
+	loadPlugin(const std::string& path);
+
+	bool
+	registerCreators(PluginHandle handle);
+
+
 };
 
-/**
- * @brief Data type invalid error
- */
-class InvalidTypeError: public FrameworkError
-{
-public:
-	InvalidTypeError(const std::string& what) :
-			FrameworkError(what)
-	{
-	}
-};
-
-/**
- * @brief Error in the factory initialization
- */
-class FactoryInitializationError: public FrameworkError
-{
-public:
-	FactoryInitializationError(const std::string& what) :
-			FrameworkError(what)
-	{
-	}
-};
-
-#endif /* UAVAP_CORE_FRAMEWORK_FRAMEWORKEXCEPTIONS_H_ */
+#endif /* UAVAP_CORE_FRAMEWORK_PLUGINMANAGER_H_ */

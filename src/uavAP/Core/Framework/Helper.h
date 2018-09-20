@@ -20,7 +20,7 @@
  * @file Helper.h
  * @brief Defines the Helper class which is used for the fast setup of any process.
  * @date Jul 26, 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 
 #ifndef UAVAP_CORE_FRAMEWORK_HELPER_H_
@@ -58,6 +58,9 @@ public:
 	Aggregator
 	createAggregation(const boost::property_tree::ptree& config);
 
+	void
+	setDefaultPluginRestriction(PluginRestriction plug);
+
 protected:
 
 	/**
@@ -66,7 +69,7 @@ protected:
 	 */
 	template<class FactoryType>
 	void
-	addFactory();
+	addFactory(PluginRestriction restriction = PluginRestriction::DEFAULT);
 
 	/**
 	 * @brief Adds a creator without a factory. The creator should create an Aggregatable object.
@@ -85,7 +88,7 @@ protected:
 	 */
 	template<class FactoryType>
 	void
-	addDefault();
+	addDefault(PluginRestriction restriction = PluginRestriction::DEFAULT);
 
 	/**
 	 * @brief Add a default creator that does not need a factory and will be created by default.
@@ -128,11 +131,13 @@ private:
 	//! Map containing the Default Creators that do not need factories mapped to their ID.
 	std::map<std::string, DefaultCreatorAgg> defaultCreators_;
 
+	PluginRestriction defaultPluginRestriction_  = PluginRestriction::NOT_ALLOWED;
+
 };
 
 template<class FactoryType>
 inline void
-Helper::addFactory()
+Helper::addFactory(PluginRestriction restriction)
 {
 	std::string type = FactoryType::typeId;
 	if (creators_.find(type) != creators_.end())
@@ -141,7 +146,10 @@ Helper::addFactory()
 		return;
 	}
 
+	if (restriction == PluginRestriction::DEFAULT)
+		restriction = defaultPluginRestriction_;
 	FactoryType factory;
+	factory.setPluginRestriction(restriction);
 	CreatorAgg creator = std::bind(&Helper::createAggregatable<FactoryType>, factory,
 			std::placeholders::_1);
 
@@ -150,7 +158,7 @@ Helper::addFactory()
 
 template<class FactoryType>
 inline void
-Helper::addDefault()
+Helper::addDefault(PluginRestriction restriction)
 {
 	std::string type = FactoryType::typeId;
 	if (defaultCreators_.find(type) != defaultCreators_.end())

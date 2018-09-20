@@ -22,7 +22,7 @@
  *
  * The implementation of the basic methods can be found in BasicSerializationImpl.hpp
  * @date Aug 22, 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 
 #ifndef UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BASICSERIALIZATION_H_

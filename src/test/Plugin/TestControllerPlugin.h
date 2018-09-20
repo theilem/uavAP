@@ -17,61 +17,39 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * @file FrameworkExceptions.h
- * @brief Defines the exceptions that can be thrown by the Framework helpers and factories
- * @date Jul 26, 2017
+ * @file TestControllerPlugin.h
+ * @date Sep 20, 2018
  * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#ifndef UAVAP_CORE_FRAMEWORK_FRAMEWORKEXCEPTIONS_H_
-#define UAVAP_CORE_FRAMEWORK_FRAMEWORKEXCEPTIONS_H_
-#include <string>
+#ifndef TEST_PLUGIN_TESTCONTROLLERPLUGIN_H_
+#define TEST_PLUGIN_TESTCONTROLLERPLUGIN_H_
+#include <uavAP/Core/Object/IAggregatableObject.h>
+#include <uavAP/FlightControl/Controller/IController.h>
 
-/**
- * @brief general framework error
- */
-class FrameworkError
+extern "C"
+{
+void
+register_plugin();
+}
+
+class TestControllerPlugin: public IAggregatableObject, public IController
 {
 public:
 
-	FrameworkError(const std::string& what) :
-			what_(what)
-	{
-	}
+	static constexpr TypeId typeId = "test_controller";
 
-	std::string
-	what()
-	{
-		return what_;
-	}
+	TestControllerPlugin() = default;
 
-private:
+	ADD_CREATE_WITHOUT_CONFIG(TestControllerPlugin)
 
-	std::string what_;
+	void
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
+
+	void
+	setControllerTarget(const ControllerTarget& target) override;
+
 };
 
-/**
- * @brief Data type invalid error
- */
-class InvalidTypeError: public FrameworkError
-{
-public:
-	InvalidTypeError(const std::string& what) :
-			FrameworkError(what)
-	{
-	}
-};
-
-/**
- * @brief Error in the factory initialization
- */
-class FactoryInitializationError: public FrameworkError
-{
-public:
-	FactoryInitializationError(const std::string& what) :
-			FrameworkError(what)
-	{
-	}
-};
-
-#endif /* UAVAP_CORE_FRAMEWORK_FRAMEWORKEXCEPTIONS_H_ */
+#endif /* TEST_PLUGIN_TESTCONTROLLERPLUGIN_H_ */
