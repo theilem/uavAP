@@ -6,56 +6,72 @@
 #include <algorithm>
 
 #include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/port.h>
 #include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
 #include <google/protobuf/wire_format_lite_inl.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/reflection_ops.h>
 #include <google/protobuf/wire_format.h>
+// This is a temporary google only hack
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+#include "third_party/protobuf/version.h"
+#endif
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
-extern PROTOBUF_INTERNAL_EXPORT_LocalPlanner_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_AirplaneLinearLocalPlannerParams_LocalPlanner_2eproto;
-extern PROTOBUF_INTERNAL_EXPORT_LocalPlanner_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_AirplaneLinearLocalPlannerStatus_LocalPlanner_2eproto;
-extern PROTOBUF_INTERNAL_EXPORT_LocalPlanner_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ManeuverLocalPlannerParams_LocalPlanner_2eproto;
-extern PROTOBUF_INTERNAL_EXPORT_LocalPlanner_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ManeuverLocalPlannerStatus_LocalPlanner_2eproto;
-extern PROTOBUF_INTERNAL_EXPORT_LocalPlanner_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_LinearLocalPlannerParams_LocalPlanner_2eproto;
-extern PROTOBUF_INTERNAL_EXPORT_LocalPlanner_2eproto ::google::protobuf::internal::SCCInfo<2> scc_info_LinearLocalPlannerStatus_LocalPlanner_2eproto;
-extern PROTOBUF_INTERNAL_EXPORT_Velocities_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_VelocityBody_Velocities_2eproto;
+namespace protobuf_LocalPlanner_2eproto {
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_LocalPlanner_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_AirplaneLinearLocalPlannerParams;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_LocalPlanner_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_AirplaneLinearLocalPlannerStatus;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_LocalPlanner_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ManeuverLocalPlannerParams;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_LocalPlanner_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ManeuverLocalPlannerStatus;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_LocalPlanner_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_LinearLocalPlannerParams;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_LocalPlanner_2eproto ::google::protobuf::internal::SCCInfo<2> scc_info_LinearLocalPlannerStatus;
+}  // namespace protobuf_LocalPlanner_2eproto
+namespace protobuf_Velocities_2eproto {
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_Velocities_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_VelocityBody;
+}  // namespace protobuf_Velocities_2eproto
 class AirplaneLinearLocalPlannerStatusDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<AirplaneLinearLocalPlannerStatus> _instance;
+  ::google::protobuf::internal::ExplicitlyConstructed<AirplaneLinearLocalPlannerStatus>
+      _instance;
 } _AirplaneLinearLocalPlannerStatus_default_instance_;
 class LinearLocalPlannerStatusDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<LinearLocalPlannerStatus> _instance;
+  ::google::protobuf::internal::ExplicitlyConstructed<LinearLocalPlannerStatus>
+      _instance;
 } _LinearLocalPlannerStatus_default_instance_;
 class ManeuverLocalPlannerStatusDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<ManeuverLocalPlannerStatus> _instance;
+  ::google::protobuf::internal::ExplicitlyConstructed<ManeuverLocalPlannerStatus>
+      _instance;
 } _ManeuverLocalPlannerStatus_default_instance_;
 class LocalPlannerStatusDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<LocalPlannerStatus> _instance;
+  ::google::protobuf::internal::ExplicitlyConstructed<LocalPlannerStatus>
+      _instance;
 } _LocalPlannerStatus_default_instance_;
 class AirplaneLinearLocalPlannerParamsDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<AirplaneLinearLocalPlannerParams> _instance;
+  ::google::protobuf::internal::ExplicitlyConstructed<AirplaneLinearLocalPlannerParams>
+      _instance;
 } _AirplaneLinearLocalPlannerParams_default_instance_;
 class LinearLocalPlannerParamsDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<LinearLocalPlannerParams> _instance;
+  ::google::protobuf::internal::ExplicitlyConstructed<LinearLocalPlannerParams>
+      _instance;
 } _LinearLocalPlannerParams_default_instance_;
 class ManeuverLocalPlannerParamsDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<ManeuverLocalPlannerParams> _instance;
+  ::google::protobuf::internal::ExplicitlyConstructed<ManeuverLocalPlannerParams>
+      _instance;
 } _ManeuverLocalPlannerParams_default_instance_;
 class LocalPlannerParamsDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<LocalPlannerParams> _instance;
+  ::google::protobuf::internal::ExplicitlyConstructed<LocalPlannerParams>
+      _instance;
 } _LocalPlannerParams_default_instance_;
-static void InitDefaultsAirplaneLinearLocalPlannerStatus_LocalPlanner_2eproto() {
+namespace protobuf_LocalPlanner_2eproto {
+static void InitDefaultsAirplaneLinearLocalPlannerStatus() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
@@ -66,10 +82,10 @@ static void InitDefaultsAirplaneLinearLocalPlannerStatus_LocalPlanner_2eproto() 
   ::AirplaneLinearLocalPlannerStatus::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_AirplaneLinearLocalPlannerStatus_LocalPlanner_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsAirplaneLinearLocalPlannerStatus_LocalPlanner_2eproto}, {}};
+::google::protobuf::internal::SCCInfo<0> scc_info_AirplaneLinearLocalPlannerStatus =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsAirplaneLinearLocalPlannerStatus}, {}};
 
-static void InitDefaultsLinearLocalPlannerStatus_LocalPlanner_2eproto() {
+static void InitDefaultsLinearLocalPlannerStatus() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
@@ -80,12 +96,12 @@ static void InitDefaultsLinearLocalPlannerStatus_LocalPlanner_2eproto() {
   ::LinearLocalPlannerStatus::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<2> scc_info_LinearLocalPlannerStatus_LocalPlanner_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 2, InitDefaultsLinearLocalPlannerStatus_LocalPlanner_2eproto}, {
-      &scc_info_AirplaneLinearLocalPlannerStatus_LocalPlanner_2eproto.base,
-      &scc_info_VelocityBody_Velocities_2eproto.base,}};
+::google::protobuf::internal::SCCInfo<2> scc_info_LinearLocalPlannerStatus =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 2, InitDefaultsLinearLocalPlannerStatus}, {
+      &protobuf_LocalPlanner_2eproto::scc_info_AirplaneLinearLocalPlannerStatus.base,
+      &protobuf_Velocities_2eproto::scc_info_VelocityBody.base,}};
 
-static void InitDefaultsManeuverLocalPlannerStatus_LocalPlanner_2eproto() {
+static void InitDefaultsManeuverLocalPlannerStatus() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
@@ -96,10 +112,10 @@ static void InitDefaultsManeuverLocalPlannerStatus_LocalPlanner_2eproto() {
   ::ManeuverLocalPlannerStatus::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_ManeuverLocalPlannerStatus_LocalPlanner_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsManeuverLocalPlannerStatus_LocalPlanner_2eproto}, {}};
+::google::protobuf::internal::SCCInfo<0> scc_info_ManeuverLocalPlannerStatus =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsManeuverLocalPlannerStatus}, {}};
 
-static void InitDefaultsLocalPlannerStatus_LocalPlanner_2eproto() {
+static void InitDefaultsLocalPlannerStatus() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
@@ -110,12 +126,12 @@ static void InitDefaultsLocalPlannerStatus_LocalPlanner_2eproto() {
   ::LocalPlannerStatus::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<2> scc_info_LocalPlannerStatus_LocalPlanner_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 2, InitDefaultsLocalPlannerStatus_LocalPlanner_2eproto}, {
-      &scc_info_LinearLocalPlannerStatus_LocalPlanner_2eproto.base,
-      &scc_info_ManeuverLocalPlannerStatus_LocalPlanner_2eproto.base,}};
+::google::protobuf::internal::SCCInfo<2> scc_info_LocalPlannerStatus =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 2, InitDefaultsLocalPlannerStatus}, {
+      &protobuf_LocalPlanner_2eproto::scc_info_LinearLocalPlannerStatus.base,
+      &protobuf_LocalPlanner_2eproto::scc_info_ManeuverLocalPlannerStatus.base,}};
 
-static void InitDefaultsAirplaneLinearLocalPlannerParams_LocalPlanner_2eproto() {
+static void InitDefaultsAirplaneLinearLocalPlannerParams() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
@@ -126,10 +142,10 @@ static void InitDefaultsAirplaneLinearLocalPlannerParams_LocalPlanner_2eproto() 
   ::AirplaneLinearLocalPlannerParams::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_AirplaneLinearLocalPlannerParams_LocalPlanner_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsAirplaneLinearLocalPlannerParams_LocalPlanner_2eproto}, {}};
+::google::protobuf::internal::SCCInfo<0> scc_info_AirplaneLinearLocalPlannerParams =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsAirplaneLinearLocalPlannerParams}, {}};
 
-static void InitDefaultsLinearLocalPlannerParams_LocalPlanner_2eproto() {
+static void InitDefaultsLinearLocalPlannerParams() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
@@ -140,11 +156,11 @@ static void InitDefaultsLinearLocalPlannerParams_LocalPlanner_2eproto() {
   ::LinearLocalPlannerParams::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<1> scc_info_LinearLocalPlannerParams_LocalPlanner_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsLinearLocalPlannerParams_LocalPlanner_2eproto}, {
-      &scc_info_AirplaneLinearLocalPlannerParams_LocalPlanner_2eproto.base,}};
+::google::protobuf::internal::SCCInfo<1> scc_info_LinearLocalPlannerParams =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsLinearLocalPlannerParams}, {
+      &protobuf_LocalPlanner_2eproto::scc_info_AirplaneLinearLocalPlannerParams.base,}};
 
-static void InitDefaultsManeuverLocalPlannerParams_LocalPlanner_2eproto() {
+static void InitDefaultsManeuverLocalPlannerParams() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
@@ -155,10 +171,10 @@ static void InitDefaultsManeuverLocalPlannerParams_LocalPlanner_2eproto() {
   ::ManeuverLocalPlannerParams::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_ManeuverLocalPlannerParams_LocalPlanner_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsManeuverLocalPlannerParams_LocalPlanner_2eproto}, {}};
+::google::protobuf::internal::SCCInfo<0> scc_info_ManeuverLocalPlannerParams =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsManeuverLocalPlannerParams}, {}};
 
-static void InitDefaultsLocalPlannerParams_LocalPlanner_2eproto() {
+static void InitDefaultsLocalPlannerParams() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
@@ -169,92 +185,90 @@ static void InitDefaultsLocalPlannerParams_LocalPlanner_2eproto() {
   ::LocalPlannerParams::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<2> scc_info_LocalPlannerParams_LocalPlanner_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 2, InitDefaultsLocalPlannerParams_LocalPlanner_2eproto}, {
-      &scc_info_LinearLocalPlannerParams_LocalPlanner_2eproto.base,
-      &scc_info_ManeuverLocalPlannerParams_LocalPlanner_2eproto.base,}};
+::google::protobuf::internal::SCCInfo<2> scc_info_LocalPlannerParams =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 2, InitDefaultsLocalPlannerParams}, {
+      &protobuf_LocalPlanner_2eproto::scc_info_LinearLocalPlannerParams.base,
+      &protobuf_LocalPlanner_2eproto::scc_info_ManeuverLocalPlannerParams.base,}};
 
-void InitDefaults_LocalPlanner_2eproto() {
-  ::google::protobuf::internal::InitSCC(&scc_info_AirplaneLinearLocalPlannerStatus_LocalPlanner_2eproto.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_LinearLocalPlannerStatus_LocalPlanner_2eproto.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_ManeuverLocalPlannerStatus_LocalPlanner_2eproto.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_LocalPlannerStatus_LocalPlanner_2eproto.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_AirplaneLinearLocalPlannerParams_LocalPlanner_2eproto.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_LinearLocalPlannerParams_LocalPlanner_2eproto.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_ManeuverLocalPlannerParams_LocalPlanner_2eproto.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_LocalPlannerParams_LocalPlanner_2eproto.base);
+void InitDefaults() {
+  ::google::protobuf::internal::InitSCC(&scc_info_AirplaneLinearLocalPlannerStatus.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_LinearLocalPlannerStatus.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_ManeuverLocalPlannerStatus.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_LocalPlannerStatus.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_AirplaneLinearLocalPlannerParams.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_LinearLocalPlannerParams.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_ManeuverLocalPlannerParams.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_LocalPlannerParams.base);
 }
 
-::google::protobuf::Metadata file_level_metadata_LocalPlanner_2eproto[8];
-constexpr ::google::protobuf::EnumDescriptor const** file_level_enum_descriptors_LocalPlanner_2eproto = nullptr;
-constexpr ::google::protobuf::ServiceDescriptor const** file_level_service_descriptors_LocalPlanner_2eproto = nullptr;
+::google::protobuf::Metadata file_level_metadata[8];
 
-const ::google::protobuf::uint32 TableStruct_LocalPlanner_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::AirplaneLinearLocalPlannerStatus, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::AirplaneLinearLocalPlannerStatus, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::AirplaneLinearLocalPlannerStatus, heading_target_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::AirplaneLinearLocalPlannerStatus, heading_target_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerStatus, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerStatus, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerStatus, airplane_status_),
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerStatus, current_path_section_),
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerStatus, velocity_target_),
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerStatus, yaw_rate_target_),
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerStatus, is_in_approach_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerStatus, airplane_status_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerStatus, current_path_section_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerStatus, velocity_target_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerStatus, yaw_rate_target_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerStatus, is_in_approach_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerStatus, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerStatus, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerStatus, current_path_section_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerStatus, velocity_target_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerStatus, yaw_rate_target_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerStatus, climb_angle_target_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerStatus, heading_target_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerStatus, is_in_approach_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerStatus, current_path_section_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerStatus, velocity_target_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerStatus, yaw_rate_target_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerStatus, climb_angle_target_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerStatus, heading_target_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerStatus, is_in_approach_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::LocalPlannerStatus, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LocalPlannerStatus, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::LocalPlannerStatus, linear_status_),
-  PROTOBUF_FIELD_OFFSET(::LocalPlannerStatus, maneuver_status_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LocalPlannerStatus, linear_status_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LocalPlannerStatus, maneuver_status_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, k_altitude_),
-  PROTOBUF_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, k_heading_),
-  PROTOBUF_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, k_yaw_rate_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, k_altitude_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, k_heading_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, k_yaw_rate_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerParams, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerParams, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerParams, airplane_params_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerParams, airplane_params_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerParams, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerParams, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerParams, k_altitude_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerParams, k_convergence_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerParams, k_yaw_rate_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerParams, k_altitude_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerParams, k_convergence_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerParams, k_yaw_rate_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::LocalPlannerParams, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LocalPlannerParams, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::LocalPlannerParams, linear_params_),
-  PROTOBUF_FIELD_OFFSET(::LocalPlannerParams, maneuver_params_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LocalPlannerParams, linear_params_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LocalPlannerParams, maneuver_params_),
 };
-static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::AirplaneLinearLocalPlannerStatus)},
   { 6, -1, sizeof(::LinearLocalPlannerStatus)},
   { 16, -1, sizeof(::ManeuverLocalPlannerStatus)},
@@ -276,69 +290,85 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::_LocalPlannerParams_default_instance_),
 };
 
-::google::protobuf::internal::AssignDescriptorsTable assign_descriptors_table_LocalPlanner_2eproto = {
-  {}, AddDescriptors_LocalPlanner_2eproto, "LocalPlanner.proto", schemas,
-  file_default_instances, TableStruct_LocalPlanner_2eproto::offsets,
-  file_level_metadata_LocalPlanner_2eproto, 8, file_level_enum_descriptors_LocalPlanner_2eproto, file_level_service_descriptors_LocalPlanner_2eproto,
-};
-
-::google::protobuf::internal::DescriptorTable descriptor_table_LocalPlanner_2eproto = {
-  false, InitDefaults_LocalPlanner_2eproto, 
-  "\n\022LocalPlanner.proto\032\020Velocities.proto\":"
-  "\n AirplaneLinearLocalPlannerStatus\022\026\n\016he"
-  "ading_target\030\001 \001(\001\"\315\001\n\030LinearLocalPlanne"
-  "rStatus\022:\n\017airplane_status\030\001 \001(\0132!.Airpl"
-  "aneLinearLocalPlannerStatus\022\034\n\024current_p"
-  "ath_section\030\002 \001(\r\022&\n\017velocity_target\030\003 \001"
-  "(\0132\r.VelocityBody\022\027\n\017yaw_rate_target\030\004 \001"
-  "(\001\022\026\n\016is_in_approach\030\005 \001(\010\"\270\001\n\032ManeuverL"
-  "ocalPlannerStatus\022\034\n\024current_path_sectio"
-  "n\030\001 \001(\r\022\027\n\017velocity_target\030\002 \001(\001\022\027\n\017yaw_"
-  "rate_target\030\003 \001(\001\022\032\n\022climb_angle_target\030"
-  "\004 \001(\001\022\026\n\016heading_target\030\005 \001(\001\022\026\n\016is_in_a"
-  "pproach\030\006 \001(\010\"|\n\022LocalPlannerStatus\0220\n\rl"
-  "inear_status\030\001 \001(\0132\031.LinearLocalPlannerS"
-  "tatus\0224\n\017maneuver_status\030\002 \001(\0132\033.Maneuve"
-  "rLocalPlannerStatus\"]\n AirplaneLinearLoc"
-  "alPlannerParams\022\022\n\nk_altitude\030\001 \001(\001\022\021\n\tk"
-  "_heading\030\002 \001(\001\022\022\n\nk_yaw_rate\030\003 \001(\001\"V\n\030Li"
-  "nearLocalPlannerParams\022:\n\017airplane_param"
-  "s\030\001 \001(\0132!.AirplaneLinearLocalPlannerPara"
-  "ms\"[\n\032ManeuverLocalPlannerParams\022\022\n\nk_al"
-  "titude\030\001 \001(\001\022\025\n\rk_convergence\030\002 \001(\001\022\022\n\nk"
-  "_yaw_rate\030\003 \001(\001\"|\n\022LocalPlannerParams\0220\n"
-  "\rlinear_params\030\001 \001(\0132\031.LinearLocalPlanne"
-  "rParams\0224\n\017maneuver_params\030\002 \001(\0132\033.Maneu"
-  "verLocalPlannerParamsb\006proto3"
-,
-  "LocalPlanner.proto", &assign_descriptors_table_LocalPlanner_2eproto, 1029,
-};
-
-void AddDescriptors_LocalPlanner_2eproto() {
-  static constexpr ::google::protobuf::internal::InitFunc deps[1] =
-  {
-    ::AddDescriptors_Velocities_2eproto,
-  };
- ::google::protobuf::internal::AddDescriptors(&descriptor_table_LocalPlanner_2eproto, deps, 1);
+static void protobuf_AssignDescriptors() {
+  AddDescriptors();
+  AssignDescriptors(
+      "LocalPlanner.proto", schemas, file_default_instances, TableStruct::offsets,
+      file_level_metadata, NULL, NULL);
 }
 
-// Force running AddDescriptors() at dynamic initialization time.
-static bool dynamic_init_dummy_LocalPlanner_2eproto = []() { AddDescriptors_LocalPlanner_2eproto(); return true; }();
+static void protobuf_AssignDescriptorsOnce() {
+  static ::google::protobuf::internal::once_flag once;
+  ::google::protobuf::internal::call_once(once, protobuf_AssignDescriptors);
+}
+
+void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
+void protobuf_RegisterTypes(const ::std::string&) {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 8);
+}
+
+static void AddDescriptorsImpl() {
+  InitDefaults();
+  static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
+      "\n\022LocalPlanner.proto\032\020Velocities.proto\":"
+      "\n AirplaneLinearLocalPlannerStatus\022\026\n\016he"
+      "ading_target\030\001 \001(\001\"\315\001\n\030LinearLocalPlanne"
+      "rStatus\022:\n\017airplane_status\030\001 \001(\0132!.Airpl"
+      "aneLinearLocalPlannerStatus\022\034\n\024current_p"
+      "ath_section\030\002 \001(\r\022&\n\017velocity_target\030\003 \001"
+      "(\0132\r.VelocityBody\022\027\n\017yaw_rate_target\030\004 \001"
+      "(\001\022\026\n\016is_in_approach\030\005 \001(\010\"\270\001\n\032ManeuverL"
+      "ocalPlannerStatus\022\034\n\024current_path_sectio"
+      "n\030\001 \001(\r\022\027\n\017velocity_target\030\002 \001(\001\022\027\n\017yaw_"
+      "rate_target\030\003 \001(\001\022\032\n\022climb_angle_target\030"
+      "\004 \001(\001\022\026\n\016heading_target\030\005 \001(\001\022\026\n\016is_in_a"
+      "pproach\030\006 \001(\010\"|\n\022LocalPlannerStatus\0220\n\rl"
+      "inear_status\030\001 \001(\0132\031.LinearLocalPlannerS"
+      "tatus\0224\n\017maneuver_status\030\002 \001(\0132\033.Maneuve"
+      "rLocalPlannerStatus\"]\n AirplaneLinearLoc"
+      "alPlannerParams\022\022\n\nk_altitude\030\001 \001(\001\022\021\n\tk"
+      "_heading\030\002 \001(\001\022\022\n\nk_yaw_rate\030\003 \001(\001\"V\n\030Li"
+      "nearLocalPlannerParams\022:\n\017airplane_param"
+      "s\030\001 \001(\0132!.AirplaneLinearLocalPlannerPara"
+      "ms\"[\n\032ManeuverLocalPlannerParams\022\022\n\nk_al"
+      "titude\030\001 \001(\001\022\025\n\rk_convergence\030\002 \001(\001\022\022\n\nk"
+      "_yaw_rate\030\003 \001(\001\"|\n\022LocalPlannerParams\0220\n"
+      "\rlinear_params\030\001 \001(\0132\031.LinearLocalPlanne"
+      "rParams\0224\n\017maneuver_params\030\002 \001(\0132\033.Maneu"
+      "verLocalPlannerParamsb\006proto3"
+  };
+  ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
+      descriptor, 1029);
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
+    "LocalPlanner.proto", &protobuf_RegisterTypes);
+  ::protobuf_Velocities_2eproto::AddDescriptors();
+}
+
+void AddDescriptors() {
+  static ::google::protobuf::internal::once_flag once;
+  ::google::protobuf::internal::call_once(once, AddDescriptorsImpl);
+}
+// Force AddDescriptors() to be called at dynamic initialization time.
+struct StaticDescriptorInitializer {
+  StaticDescriptorInitializer() {
+    AddDescriptors();
+  }
+} static_descriptor_initializer;
+}  // namespace protobuf_LocalPlanner_2eproto
 
 // ===================================================================
 
 void AirplaneLinearLocalPlannerStatus::InitAsDefaultInstance() {
 }
-class AirplaneLinearLocalPlannerStatus::HasBitSetters {
- public:
-};
-
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int AirplaneLinearLocalPlannerStatus::kHeadingTargetFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 AirplaneLinearLocalPlannerStatus::AirplaneLinearLocalPlannerStatus()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_LocalPlanner_2eproto::scc_info_AirplaneLinearLocalPlannerStatus.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:AirplaneLinearLocalPlannerStatus)
 }
@@ -365,8 +395,13 @@ void AirplaneLinearLocalPlannerStatus::SharedDtor() {
 void AirplaneLinearLocalPlannerStatus::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
+const ::google::protobuf::Descriptor* AirplaneLinearLocalPlannerStatus::descriptor() {
+  ::protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
 const AirplaneLinearLocalPlannerStatus& AirplaneLinearLocalPlannerStatus::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_AirplaneLinearLocalPlannerStatus_LocalPlanner_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_LocalPlanner_2eproto::scc_info_AirplaneLinearLocalPlannerStatus.base);
   return *internal_default_instance();
 }
 
@@ -381,55 +416,9 @@ void AirplaneLinearLocalPlannerStatus::Clear() {
   _internal_metadata_.Clear();
 }
 
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* AirplaneLinearLocalPlannerStatus::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<AirplaneLinearLocalPlannerStatus*>(object);
-  ::google::protobuf::uint32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ::google::protobuf::uint32 tag;
-    ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // double heading_target = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 9) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_heading_target(val);
-        break;
-      }
-      default: {
-      handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-len_delim_till_end: (void)&&len_delim_till_end;
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                                 {parser_till_end, object}, size);
-group_continues: (void)&&group_continues;
-  GOOGLE_DCHECK(ptr >= end);
-  ctx->StoreGroup({_InternalParse, msg}, {parser_till_end, object}, depth);
-  return ptr;
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool AirplaneLinearLocalPlannerStatus::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:AirplaneLinearLocalPlannerStatus)
   for (;;) {
@@ -439,7 +428,8 @@ bool AirplaneLinearLocalPlannerStatus::MergePartialFromCodedStream(
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // double heading_target = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (9 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(9u /* 9 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -469,7 +459,6 @@ failure:
   return false;
 #undef DO_
 }
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 
 void AirplaneLinearLocalPlannerStatus::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
@@ -482,9 +471,9 @@ void AirplaneLinearLocalPlannerStatus::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->heading_target(), output);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
   // @@protoc_insertion_point(serialize_end:AirplaneLinearLocalPlannerStatus)
 }
@@ -501,9 +490,9 @@ void AirplaneLinearLocalPlannerStatus::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->heading_target(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
   // @@protoc_insertion_point(serialize_to_array_end:AirplaneLinearLocalPlannerStatus)
   return target;
@@ -513,15 +502,11 @@ size_t AirplaneLinearLocalPlannerStatus::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:AirplaneLinearLocalPlannerStatus)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
   // double heading_target = 1;
   if (this->heading_target() != 0) {
     total_size += 1 + 8;
@@ -536,7 +521,7 @@ void AirplaneLinearLocalPlannerStatus::MergeFrom(const ::google::protobuf::Messa
 // @@protoc_insertion_point(generalized_merge_from_start:AirplaneLinearLocalPlannerStatus)
   GOOGLE_DCHECK_NE(&from, this);
   const AirplaneLinearLocalPlannerStatus* source =
-      ::google::protobuf::DynamicCastToGenerated<AirplaneLinearLocalPlannerStatus>(
+      ::google::protobuf::internal::DynamicCastToGenerated<const AirplaneLinearLocalPlannerStatus>(
           &from);
   if (source == NULL) {
   // @@protoc_insertion_point(generalized_merge_from_cast_fail:AirplaneLinearLocalPlannerStatus)
@@ -583,13 +568,13 @@ void AirplaneLinearLocalPlannerStatus::Swap(AirplaneLinearLocalPlannerStatus* ot
 }
 void AirplaneLinearLocalPlannerStatus::InternalSwap(AirplaneLinearLocalPlannerStatus* other) {
   using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(heading_target_, other->heading_target_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
 ::google::protobuf::Metadata AirplaneLinearLocalPlannerStatus::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_LocalPlanner_2eproto);
-  return ::file_level_metadata_LocalPlanner_2eproto[kIndexInFileMessages];
+  protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages];
 }
 
 
@@ -600,20 +585,6 @@ void LinearLocalPlannerStatus::InitAsDefaultInstance() {
       ::AirplaneLinearLocalPlannerStatus::internal_default_instance());
   ::_LinearLocalPlannerStatus_default_instance_._instance.get_mutable()->velocity_target_ = const_cast< ::VelocityBody*>(
       ::VelocityBody::internal_default_instance());
-}
-class LinearLocalPlannerStatus::HasBitSetters {
- public:
-  static const ::AirplaneLinearLocalPlannerStatus& airplane_status(const LinearLocalPlannerStatus* msg);
-  static const ::VelocityBody& velocity_target(const LinearLocalPlannerStatus* msg);
-};
-
-const ::AirplaneLinearLocalPlannerStatus&
-LinearLocalPlannerStatus::HasBitSetters::airplane_status(const LinearLocalPlannerStatus* msg) {
-  return *msg->airplane_status_;
-}
-const ::VelocityBody&
-LinearLocalPlannerStatus::HasBitSetters::velocity_target(const LinearLocalPlannerStatus* msg) {
-  return *msg->velocity_target_;
 }
 void LinearLocalPlannerStatus::clear_velocity_target() {
   if (GetArenaNoVirtual() == NULL && velocity_target_ != NULL) {
@@ -631,6 +602,8 @@ const int LinearLocalPlannerStatus::kIsInApproachFieldNumber;
 
 LinearLocalPlannerStatus::LinearLocalPlannerStatus()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_LocalPlanner_2eproto::scc_info_LinearLocalPlannerStatus.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:LinearLocalPlannerStatus)
 }
@@ -655,8 +628,6 @@ LinearLocalPlannerStatus::LinearLocalPlannerStatus(const LinearLocalPlannerStatu
 }
 
 void LinearLocalPlannerStatus::SharedCtor() {
-  ::google::protobuf::internal::InitSCC(
-      &scc_info_LinearLocalPlannerStatus_LocalPlanner_2eproto.base);
   ::memset(&airplane_status_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&yaw_rate_target_) -
       reinterpret_cast<char*>(&airplane_status_)) + sizeof(yaw_rate_target_));
@@ -675,8 +646,13 @@ void LinearLocalPlannerStatus::SharedDtor() {
 void LinearLocalPlannerStatus::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
+const ::google::protobuf::Descriptor* LinearLocalPlannerStatus::descriptor() {
+  ::protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
 const LinearLocalPlannerStatus& LinearLocalPlannerStatus::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_LinearLocalPlannerStatus_LocalPlanner_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_LocalPlanner_2eproto::scc_info_LinearLocalPlannerStatus.base);
   return *internal_default_instance();
 }
 
@@ -701,105 +677,9 @@ void LinearLocalPlannerStatus::Clear() {
   _internal_metadata_.Clear();
 }
 
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* LinearLocalPlannerStatus::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<LinearLocalPlannerStatus*>(object);
-  ::google::protobuf::uint32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ::google::protobuf::uint32 tag;
-    ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // .AirplaneLinearLocalPlannerStatus airplane_status = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
-        ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        parser_till_end = ::AirplaneLinearLocalPlannerStatus::_InternalParse;
-        object = msg->mutable_airplane_status();
-        if (size > end - ptr) goto len_delim_till_end;
-        auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-        ptr = newend;
-        break;
-      }
-      // uint32 current_path_section = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 16) goto handle_unusual;
-        ::google::protobuf::uint64 val;
-        ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ::google::protobuf::uint32 value = val;
-        msg->set_current_path_section(value);
-        break;
-      }
-      // .VelocityBody velocity_target = 3;
-      case 3: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 26) goto handle_unusual;
-        ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        parser_till_end = ::VelocityBody::_InternalParse;
-        object = msg->mutable_velocity_target();
-        if (size > end - ptr) goto len_delim_till_end;
-        auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-        ptr = newend;
-        break;
-      }
-      // double yaw_rate_target = 4;
-      case 4: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 33) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_yaw_rate_target(val);
-        break;
-      }
-      // bool is_in_approach = 5;
-      case 5: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 40) goto handle_unusual;
-        ::google::protobuf::uint64 val;
-        ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        bool value = val;
-        msg->set_is_in_approach(value);
-        break;
-      }
-      default: {
-      handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-len_delim_till_end: (void)&&len_delim_till_end;
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                                 {parser_till_end, object}, size);
-group_continues: (void)&&group_continues;
-  GOOGLE_DCHECK(ptr >= end);
-  ctx->StoreGroup({_InternalParse, msg}, {parser_till_end, object}, depth);
-  return ptr;
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool LinearLocalPlannerStatus::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:LinearLocalPlannerStatus)
   for (;;) {
@@ -809,7 +689,8 @@ bool LinearLocalPlannerStatus::MergePartialFromCodedStream(
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // .AirplaneLinearLocalPlannerStatus airplane_status = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                input, mutable_airplane_status()));
         } else {
@@ -820,7 +701,8 @@ bool LinearLocalPlannerStatus::MergePartialFromCodedStream(
 
       // uint32 current_path_section = 2;
       case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (16 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
@@ -833,7 +715,8 @@ bool LinearLocalPlannerStatus::MergePartialFromCodedStream(
 
       // .VelocityBody velocity_target = 3;
       case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (26 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                input, mutable_velocity_target()));
         } else {
@@ -844,7 +727,8 @@ bool LinearLocalPlannerStatus::MergePartialFromCodedStream(
 
       // double yaw_rate_target = 4;
       case 4: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (33 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(33u /* 33 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -857,7 +741,8 @@ bool LinearLocalPlannerStatus::MergePartialFromCodedStream(
 
       // bool is_in_approach = 5;
       case 5: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (40 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(40u /* 40 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
@@ -887,7 +772,6 @@ failure:
   return false;
 #undef DO_
 }
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 
 void LinearLocalPlannerStatus::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
@@ -898,7 +782,7 @@ void LinearLocalPlannerStatus::SerializeWithCachedSizes(
   // .AirplaneLinearLocalPlannerStatus airplane_status = 1;
   if (this->has_airplane_status()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, HasBitSetters::airplane_status(this), output);
+      1, this->_internal_airplane_status(), output);
   }
 
   // uint32 current_path_section = 2;
@@ -909,7 +793,7 @@ void LinearLocalPlannerStatus::SerializeWithCachedSizes(
   // .VelocityBody velocity_target = 3;
   if (this->has_velocity_target()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, HasBitSetters::velocity_target(this), output);
+      3, this->_internal_velocity_target(), output);
   }
 
   // double yaw_rate_target = 4;
@@ -922,9 +806,9 @@ void LinearLocalPlannerStatus::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->is_in_approach(), output);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
   // @@protoc_insertion_point(serialize_end:LinearLocalPlannerStatus)
 }
@@ -940,7 +824,7 @@ void LinearLocalPlannerStatus::SerializeWithCachedSizes(
   if (this->has_airplane_status()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        1, HasBitSetters::airplane_status(this), deterministic, target);
+        1, this->_internal_airplane_status(), deterministic, target);
   }
 
   // uint32 current_path_section = 2;
@@ -952,7 +836,7 @@ void LinearLocalPlannerStatus::SerializeWithCachedSizes(
   if (this->has_velocity_target()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        3, HasBitSetters::velocity_target(this), deterministic, target);
+        3, this->_internal_velocity_target(), deterministic, target);
   }
 
   // double yaw_rate_target = 4;
@@ -965,9 +849,9 @@ void LinearLocalPlannerStatus::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->is_in_approach(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
   // @@protoc_insertion_point(serialize_to_array_end:LinearLocalPlannerStatus)
   return target;
@@ -977,15 +861,11 @@ size_t LinearLocalPlannerStatus::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:LinearLocalPlannerStatus)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
   // .AirplaneLinearLocalPlannerStatus airplane_status = 1;
   if (this->has_airplane_status()) {
     total_size += 1 +
@@ -1026,7 +906,7 @@ void LinearLocalPlannerStatus::MergeFrom(const ::google::protobuf::Message& from
 // @@protoc_insertion_point(generalized_merge_from_start:LinearLocalPlannerStatus)
   GOOGLE_DCHECK_NE(&from, this);
   const LinearLocalPlannerStatus* source =
-      ::google::protobuf::DynamicCastToGenerated<LinearLocalPlannerStatus>(
+      ::google::protobuf::internal::DynamicCastToGenerated<const LinearLocalPlannerStatus>(
           &from);
   if (source == NULL) {
   // @@protoc_insertion_point(generalized_merge_from_cast_fail:LinearLocalPlannerStatus)
@@ -1085,17 +965,17 @@ void LinearLocalPlannerStatus::Swap(LinearLocalPlannerStatus* other) {
 }
 void LinearLocalPlannerStatus::InternalSwap(LinearLocalPlannerStatus* other) {
   using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(airplane_status_, other->airplane_status_);
   swap(velocity_target_, other->velocity_target_);
   swap(current_path_section_, other->current_path_section_);
   swap(is_in_approach_, other->is_in_approach_);
   swap(yaw_rate_target_, other->yaw_rate_target_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
 ::google::protobuf::Metadata LinearLocalPlannerStatus::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_LocalPlanner_2eproto);
-  return ::file_level_metadata_LocalPlanner_2eproto[kIndexInFileMessages];
+  protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages];
 }
 
 
@@ -1103,10 +983,6 @@ void LinearLocalPlannerStatus::InternalSwap(LinearLocalPlannerStatus* other) {
 
 void ManeuverLocalPlannerStatus::InitAsDefaultInstance() {
 }
-class ManeuverLocalPlannerStatus::HasBitSetters {
- public:
-};
-
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int ManeuverLocalPlannerStatus::kCurrentPathSectionFieldNumber;
 const int ManeuverLocalPlannerStatus::kVelocityTargetFieldNumber;
@@ -1118,6 +994,8 @@ const int ManeuverLocalPlannerStatus::kIsInApproachFieldNumber;
 
 ManeuverLocalPlannerStatus::ManeuverLocalPlannerStatus()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_LocalPlanner_2eproto::scc_info_ManeuverLocalPlannerStatus.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:ManeuverLocalPlannerStatus)
 }
@@ -1148,8 +1026,13 @@ void ManeuverLocalPlannerStatus::SharedDtor() {
 void ManeuverLocalPlannerStatus::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
+const ::google::protobuf::Descriptor* ManeuverLocalPlannerStatus::descriptor() {
+  ::protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
 const ManeuverLocalPlannerStatus& ManeuverLocalPlannerStatus::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_ManeuverLocalPlannerStatus_LocalPlanner_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_LocalPlanner_2eproto::scc_info_ManeuverLocalPlannerStatus.base);
   return *internal_default_instance();
 }
 
@@ -1166,102 +1049,9 @@ void ManeuverLocalPlannerStatus::Clear() {
   _internal_metadata_.Clear();
 }
 
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* ManeuverLocalPlannerStatus::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<ManeuverLocalPlannerStatus*>(object);
-  ::google::protobuf::uint32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ::google::protobuf::uint32 tag;
-    ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // uint32 current_path_section = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 8) goto handle_unusual;
-        ::google::protobuf::uint64 val;
-        ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ::google::protobuf::uint32 value = val;
-        msg->set_current_path_section(value);
-        break;
-      }
-      // double velocity_target = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 17) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_velocity_target(val);
-        break;
-      }
-      // double yaw_rate_target = 3;
-      case 3: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 25) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_yaw_rate_target(val);
-        break;
-      }
-      // double climb_angle_target = 4;
-      case 4: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 33) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_climb_angle_target(val);
-        break;
-      }
-      // double heading_target = 5;
-      case 5: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 41) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_heading_target(val);
-        break;
-      }
-      // bool is_in_approach = 6;
-      case 6: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 48) goto handle_unusual;
-        ::google::protobuf::uint64 val;
-        ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        bool value = val;
-        msg->set_is_in_approach(value);
-        break;
-      }
-      default: {
-      handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-len_delim_till_end: (void)&&len_delim_till_end;
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                                 {parser_till_end, object}, size);
-group_continues: (void)&&group_continues;
-  GOOGLE_DCHECK(ptr >= end);
-  ctx->StoreGroup({_InternalParse, msg}, {parser_till_end, object}, depth);
-  return ptr;
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool ManeuverLocalPlannerStatus::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:ManeuverLocalPlannerStatus)
   for (;;) {
@@ -1271,7 +1061,8 @@ bool ManeuverLocalPlannerStatus::MergePartialFromCodedStream(
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // uint32 current_path_section = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (8 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
@@ -1284,7 +1075,8 @@ bool ManeuverLocalPlannerStatus::MergePartialFromCodedStream(
 
       // double velocity_target = 2;
       case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (17 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(17u /* 17 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -1297,7 +1089,8 @@ bool ManeuverLocalPlannerStatus::MergePartialFromCodedStream(
 
       // double yaw_rate_target = 3;
       case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (25 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(25u /* 25 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -1310,7 +1103,8 @@ bool ManeuverLocalPlannerStatus::MergePartialFromCodedStream(
 
       // double climb_angle_target = 4;
       case 4: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (33 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(33u /* 33 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -1323,7 +1117,8 @@ bool ManeuverLocalPlannerStatus::MergePartialFromCodedStream(
 
       // double heading_target = 5;
       case 5: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (41 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(41u /* 41 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -1336,7 +1131,8 @@ bool ManeuverLocalPlannerStatus::MergePartialFromCodedStream(
 
       // bool is_in_approach = 6;
       case 6: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (48 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(48u /* 48 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
@@ -1366,7 +1162,6 @@ failure:
   return false;
 #undef DO_
 }
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 
 void ManeuverLocalPlannerStatus::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
@@ -1404,9 +1199,9 @@ void ManeuverLocalPlannerStatus::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(6, this->is_in_approach(), output);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
   // @@protoc_insertion_point(serialize_end:ManeuverLocalPlannerStatus)
 }
@@ -1448,9 +1243,9 @@ void ManeuverLocalPlannerStatus::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(6, this->is_in_approach(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
   // @@protoc_insertion_point(serialize_to_array_end:ManeuverLocalPlannerStatus)
   return target;
@@ -1460,15 +1255,11 @@ size_t ManeuverLocalPlannerStatus::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:ManeuverLocalPlannerStatus)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
   // double velocity_target = 2;
   if (this->velocity_target() != 0) {
     total_size += 1 + 8;
@@ -1510,7 +1301,7 @@ void ManeuverLocalPlannerStatus::MergeFrom(const ::google::protobuf::Message& fr
 // @@protoc_insertion_point(generalized_merge_from_start:ManeuverLocalPlannerStatus)
   GOOGLE_DCHECK_NE(&from, this);
   const ManeuverLocalPlannerStatus* source =
-      ::google::protobuf::DynamicCastToGenerated<ManeuverLocalPlannerStatus>(
+      ::google::protobuf::internal::DynamicCastToGenerated<const ManeuverLocalPlannerStatus>(
           &from);
   if (source == NULL) {
   // @@protoc_insertion_point(generalized_merge_from_cast_fail:ManeuverLocalPlannerStatus)
@@ -1572,18 +1363,18 @@ void ManeuverLocalPlannerStatus::Swap(ManeuverLocalPlannerStatus* other) {
 }
 void ManeuverLocalPlannerStatus::InternalSwap(ManeuverLocalPlannerStatus* other) {
   using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(velocity_target_, other->velocity_target_);
   swap(yaw_rate_target_, other->yaw_rate_target_);
   swap(current_path_section_, other->current_path_section_);
   swap(is_in_approach_, other->is_in_approach_);
   swap(climb_angle_target_, other->climb_angle_target_);
   swap(heading_target_, other->heading_target_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
 ::google::protobuf::Metadata ManeuverLocalPlannerStatus::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_LocalPlanner_2eproto);
-  return ::file_level_metadata_LocalPlanner_2eproto[kIndexInFileMessages];
+  protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages];
 }
 
 
@@ -1595,20 +1386,6 @@ void LocalPlannerStatus::InitAsDefaultInstance() {
   ::_LocalPlannerStatus_default_instance_._instance.get_mutable()->maneuver_status_ = const_cast< ::ManeuverLocalPlannerStatus*>(
       ::ManeuverLocalPlannerStatus::internal_default_instance());
 }
-class LocalPlannerStatus::HasBitSetters {
- public:
-  static const ::LinearLocalPlannerStatus& linear_status(const LocalPlannerStatus* msg);
-  static const ::ManeuverLocalPlannerStatus& maneuver_status(const LocalPlannerStatus* msg);
-};
-
-const ::LinearLocalPlannerStatus&
-LocalPlannerStatus::HasBitSetters::linear_status(const LocalPlannerStatus* msg) {
-  return *msg->linear_status_;
-}
-const ::ManeuverLocalPlannerStatus&
-LocalPlannerStatus::HasBitSetters::maneuver_status(const LocalPlannerStatus* msg) {
-  return *msg->maneuver_status_;
-}
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int LocalPlannerStatus::kLinearStatusFieldNumber;
 const int LocalPlannerStatus::kManeuverStatusFieldNumber;
@@ -1616,6 +1393,8 @@ const int LocalPlannerStatus::kManeuverStatusFieldNumber;
 
 LocalPlannerStatus::LocalPlannerStatus()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_LocalPlanner_2eproto::scc_info_LocalPlannerStatus.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:LocalPlannerStatus)
 }
@@ -1637,8 +1416,6 @@ LocalPlannerStatus::LocalPlannerStatus(const LocalPlannerStatus& from)
 }
 
 void LocalPlannerStatus::SharedCtor() {
-  ::google::protobuf::internal::InitSCC(
-      &scc_info_LocalPlannerStatus_LocalPlanner_2eproto.base);
   ::memset(&linear_status_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&maneuver_status_) -
       reinterpret_cast<char*>(&linear_status_)) + sizeof(maneuver_status_));
@@ -1657,8 +1434,13 @@ void LocalPlannerStatus::SharedDtor() {
 void LocalPlannerStatus::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
+const ::google::protobuf::Descriptor* LocalPlannerStatus::descriptor() {
+  ::protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
 const LocalPlannerStatus& LocalPlannerStatus::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_LocalPlannerStatus_LocalPlanner_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_LocalPlanner_2eproto::scc_info_LocalPlannerStatus.base);
   return *internal_default_instance();
 }
 
@@ -1680,76 +1462,9 @@ void LocalPlannerStatus::Clear() {
   _internal_metadata_.Clear();
 }
 
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* LocalPlannerStatus::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<LocalPlannerStatus*>(object);
-  ::google::protobuf::uint32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ::google::protobuf::uint32 tag;
-    ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // .LinearLocalPlannerStatus linear_status = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
-        ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        parser_till_end = ::LinearLocalPlannerStatus::_InternalParse;
-        object = msg->mutable_linear_status();
-        if (size > end - ptr) goto len_delim_till_end;
-        auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-        ptr = newend;
-        break;
-      }
-      // .ManeuverLocalPlannerStatus maneuver_status = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 18) goto handle_unusual;
-        ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        parser_till_end = ::ManeuverLocalPlannerStatus::_InternalParse;
-        object = msg->mutable_maneuver_status();
-        if (size > end - ptr) goto len_delim_till_end;
-        auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-        ptr = newend;
-        break;
-      }
-      default: {
-      handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-len_delim_till_end: (void)&&len_delim_till_end;
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                                 {parser_till_end, object}, size);
-group_continues: (void)&&group_continues;
-  GOOGLE_DCHECK(ptr >= end);
-  ctx->StoreGroup({_InternalParse, msg}, {parser_till_end, object}, depth);
-  return ptr;
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool LocalPlannerStatus::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:LocalPlannerStatus)
   for (;;) {
@@ -1759,7 +1474,8 @@ bool LocalPlannerStatus::MergePartialFromCodedStream(
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // .LinearLocalPlannerStatus linear_status = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                input, mutable_linear_status()));
         } else {
@@ -1770,7 +1486,8 @@ bool LocalPlannerStatus::MergePartialFromCodedStream(
 
       // .ManeuverLocalPlannerStatus maneuver_status = 2;
       case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (18 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                input, mutable_maneuver_status()));
         } else {
@@ -1798,7 +1515,6 @@ failure:
   return false;
 #undef DO_
 }
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 
 void LocalPlannerStatus::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
@@ -1809,18 +1525,18 @@ void LocalPlannerStatus::SerializeWithCachedSizes(
   // .LinearLocalPlannerStatus linear_status = 1;
   if (this->has_linear_status()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, HasBitSetters::linear_status(this), output);
+      1, this->_internal_linear_status(), output);
   }
 
   // .ManeuverLocalPlannerStatus maneuver_status = 2;
   if (this->has_maneuver_status()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, HasBitSetters::maneuver_status(this), output);
+      2, this->_internal_maneuver_status(), output);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
   // @@protoc_insertion_point(serialize_end:LocalPlannerStatus)
 }
@@ -1836,19 +1552,19 @@ void LocalPlannerStatus::SerializeWithCachedSizes(
   if (this->has_linear_status()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        1, HasBitSetters::linear_status(this), deterministic, target);
+        1, this->_internal_linear_status(), deterministic, target);
   }
 
   // .ManeuverLocalPlannerStatus maneuver_status = 2;
   if (this->has_maneuver_status()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        2, HasBitSetters::maneuver_status(this), deterministic, target);
+        2, this->_internal_maneuver_status(), deterministic, target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
   // @@protoc_insertion_point(serialize_to_array_end:LocalPlannerStatus)
   return target;
@@ -1858,15 +1574,11 @@ size_t LocalPlannerStatus::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:LocalPlannerStatus)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
   // .LinearLocalPlannerStatus linear_status = 1;
   if (this->has_linear_status()) {
     total_size += 1 +
@@ -1890,7 +1602,7 @@ void LocalPlannerStatus::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:LocalPlannerStatus)
   GOOGLE_DCHECK_NE(&from, this);
   const LocalPlannerStatus* source =
-      ::google::protobuf::DynamicCastToGenerated<LocalPlannerStatus>(
+      ::google::protobuf::internal::DynamicCastToGenerated<const LocalPlannerStatus>(
           &from);
   if (source == NULL) {
   // @@protoc_insertion_point(generalized_merge_from_cast_fail:LocalPlannerStatus)
@@ -1940,14 +1652,14 @@ void LocalPlannerStatus::Swap(LocalPlannerStatus* other) {
 }
 void LocalPlannerStatus::InternalSwap(LocalPlannerStatus* other) {
   using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(linear_status_, other->linear_status_);
   swap(maneuver_status_, other->maneuver_status_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
 ::google::protobuf::Metadata LocalPlannerStatus::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_LocalPlanner_2eproto);
-  return ::file_level_metadata_LocalPlanner_2eproto[kIndexInFileMessages];
+  protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages];
 }
 
 
@@ -1955,10 +1667,6 @@ void LocalPlannerStatus::InternalSwap(LocalPlannerStatus* other) {
 
 void AirplaneLinearLocalPlannerParams::InitAsDefaultInstance() {
 }
-class AirplaneLinearLocalPlannerParams::HasBitSetters {
- public:
-};
-
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int AirplaneLinearLocalPlannerParams::kKAltitudeFieldNumber;
 const int AirplaneLinearLocalPlannerParams::kKHeadingFieldNumber;
@@ -1967,6 +1675,8 @@ const int AirplaneLinearLocalPlannerParams::kKYawRateFieldNumber;
 
 AirplaneLinearLocalPlannerParams::AirplaneLinearLocalPlannerParams()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_LocalPlanner_2eproto::scc_info_AirplaneLinearLocalPlannerParams.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:AirplaneLinearLocalPlannerParams)
 }
@@ -1997,8 +1707,13 @@ void AirplaneLinearLocalPlannerParams::SharedDtor() {
 void AirplaneLinearLocalPlannerParams::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
+const ::google::protobuf::Descriptor* AirplaneLinearLocalPlannerParams::descriptor() {
+  ::protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
 const AirplaneLinearLocalPlannerParams& AirplaneLinearLocalPlannerParams::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_AirplaneLinearLocalPlannerParams_LocalPlanner_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_LocalPlanner_2eproto::scc_info_AirplaneLinearLocalPlannerParams.base);
   return *internal_default_instance();
 }
 
@@ -2015,73 +1730,9 @@ void AirplaneLinearLocalPlannerParams::Clear() {
   _internal_metadata_.Clear();
 }
 
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* AirplaneLinearLocalPlannerParams::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<AirplaneLinearLocalPlannerParams*>(object);
-  ::google::protobuf::uint32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ::google::protobuf::uint32 tag;
-    ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // double k_altitude = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 9) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_k_altitude(val);
-        break;
-      }
-      // double k_heading = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 17) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_k_heading(val);
-        break;
-      }
-      // double k_yaw_rate = 3;
-      case 3: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 25) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_k_yaw_rate(val);
-        break;
-      }
-      default: {
-      handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-len_delim_till_end: (void)&&len_delim_till_end;
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                                 {parser_till_end, object}, size);
-group_continues: (void)&&group_continues;
-  GOOGLE_DCHECK(ptr >= end);
-  ctx->StoreGroup({_InternalParse, msg}, {parser_till_end, object}, depth);
-  return ptr;
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool AirplaneLinearLocalPlannerParams::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:AirplaneLinearLocalPlannerParams)
   for (;;) {
@@ -2091,7 +1742,8 @@ bool AirplaneLinearLocalPlannerParams::MergePartialFromCodedStream(
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // double k_altitude = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (9 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(9u /* 9 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -2104,7 +1756,8 @@ bool AirplaneLinearLocalPlannerParams::MergePartialFromCodedStream(
 
       // double k_heading = 2;
       case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (17 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(17u /* 17 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -2117,7 +1770,8 @@ bool AirplaneLinearLocalPlannerParams::MergePartialFromCodedStream(
 
       // double k_yaw_rate = 3;
       case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (25 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(25u /* 25 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -2147,7 +1801,6 @@ failure:
   return false;
 #undef DO_
 }
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 
 void AirplaneLinearLocalPlannerParams::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
@@ -2170,9 +1823,9 @@ void AirplaneLinearLocalPlannerParams::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->k_yaw_rate(), output);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
   // @@protoc_insertion_point(serialize_end:AirplaneLinearLocalPlannerParams)
 }
@@ -2199,9 +1852,9 @@ void AirplaneLinearLocalPlannerParams::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->k_yaw_rate(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
   // @@protoc_insertion_point(serialize_to_array_end:AirplaneLinearLocalPlannerParams)
   return target;
@@ -2211,15 +1864,11 @@ size_t AirplaneLinearLocalPlannerParams::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:AirplaneLinearLocalPlannerParams)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
   // double k_altitude = 1;
   if (this->k_altitude() != 0) {
     total_size += 1 + 8;
@@ -2244,7 +1893,7 @@ void AirplaneLinearLocalPlannerParams::MergeFrom(const ::google::protobuf::Messa
 // @@protoc_insertion_point(generalized_merge_from_start:AirplaneLinearLocalPlannerParams)
   GOOGLE_DCHECK_NE(&from, this);
   const AirplaneLinearLocalPlannerParams* source =
-      ::google::protobuf::DynamicCastToGenerated<AirplaneLinearLocalPlannerParams>(
+      ::google::protobuf::internal::DynamicCastToGenerated<const AirplaneLinearLocalPlannerParams>(
           &from);
   if (source == NULL) {
   // @@protoc_insertion_point(generalized_merge_from_cast_fail:AirplaneLinearLocalPlannerParams)
@@ -2297,15 +1946,15 @@ void AirplaneLinearLocalPlannerParams::Swap(AirplaneLinearLocalPlannerParams* ot
 }
 void AirplaneLinearLocalPlannerParams::InternalSwap(AirplaneLinearLocalPlannerParams* other) {
   using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(k_altitude_, other->k_altitude_);
   swap(k_heading_, other->k_heading_);
   swap(k_yaw_rate_, other->k_yaw_rate_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
 ::google::protobuf::Metadata AirplaneLinearLocalPlannerParams::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_LocalPlanner_2eproto);
-  return ::file_level_metadata_LocalPlanner_2eproto[kIndexInFileMessages];
+  protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages];
 }
 
 
@@ -2315,21 +1964,14 @@ void LinearLocalPlannerParams::InitAsDefaultInstance() {
   ::_LinearLocalPlannerParams_default_instance_._instance.get_mutable()->airplane_params_ = const_cast< ::AirplaneLinearLocalPlannerParams*>(
       ::AirplaneLinearLocalPlannerParams::internal_default_instance());
 }
-class LinearLocalPlannerParams::HasBitSetters {
- public:
-  static const ::AirplaneLinearLocalPlannerParams& airplane_params(const LinearLocalPlannerParams* msg);
-};
-
-const ::AirplaneLinearLocalPlannerParams&
-LinearLocalPlannerParams::HasBitSetters::airplane_params(const LinearLocalPlannerParams* msg) {
-  return *msg->airplane_params_;
-}
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int LinearLocalPlannerParams::kAirplaneParamsFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 LinearLocalPlannerParams::LinearLocalPlannerParams()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_LocalPlanner_2eproto::scc_info_LinearLocalPlannerParams.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:LinearLocalPlannerParams)
 }
@@ -2346,8 +1988,6 @@ LinearLocalPlannerParams::LinearLocalPlannerParams(const LinearLocalPlannerParam
 }
 
 void LinearLocalPlannerParams::SharedCtor() {
-  ::google::protobuf::internal::InitSCC(
-      &scc_info_LinearLocalPlannerParams_LocalPlanner_2eproto.base);
   airplane_params_ = NULL;
 }
 
@@ -2363,8 +2003,13 @@ void LinearLocalPlannerParams::SharedDtor() {
 void LinearLocalPlannerParams::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
+const ::google::protobuf::Descriptor* LinearLocalPlannerParams::descriptor() {
+  ::protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
 const LinearLocalPlannerParams& LinearLocalPlannerParams::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_LinearLocalPlannerParams_LocalPlanner_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_LocalPlanner_2eproto::scc_info_LinearLocalPlannerParams.base);
   return *internal_default_instance();
 }
 
@@ -2382,61 +2027,9 @@ void LinearLocalPlannerParams::Clear() {
   _internal_metadata_.Clear();
 }
 
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* LinearLocalPlannerParams::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<LinearLocalPlannerParams*>(object);
-  ::google::protobuf::uint32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ::google::protobuf::uint32 tag;
-    ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // .AirplaneLinearLocalPlannerParams airplane_params = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
-        ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        parser_till_end = ::AirplaneLinearLocalPlannerParams::_InternalParse;
-        object = msg->mutable_airplane_params();
-        if (size > end - ptr) goto len_delim_till_end;
-        auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-        ptr = newend;
-        break;
-      }
-      default: {
-      handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-len_delim_till_end: (void)&&len_delim_till_end;
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                                 {parser_till_end, object}, size);
-group_continues: (void)&&group_continues;
-  GOOGLE_DCHECK(ptr >= end);
-  ctx->StoreGroup({_InternalParse, msg}, {parser_till_end, object}, depth);
-  return ptr;
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool LinearLocalPlannerParams::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:LinearLocalPlannerParams)
   for (;;) {
@@ -2446,7 +2039,8 @@ bool LinearLocalPlannerParams::MergePartialFromCodedStream(
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // .AirplaneLinearLocalPlannerParams airplane_params = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                input, mutable_airplane_params()));
         } else {
@@ -2474,7 +2068,6 @@ failure:
   return false;
 #undef DO_
 }
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 
 void LinearLocalPlannerParams::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
@@ -2485,12 +2078,12 @@ void LinearLocalPlannerParams::SerializeWithCachedSizes(
   // .AirplaneLinearLocalPlannerParams airplane_params = 1;
   if (this->has_airplane_params()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, HasBitSetters::airplane_params(this), output);
+      1, this->_internal_airplane_params(), output);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
   // @@protoc_insertion_point(serialize_end:LinearLocalPlannerParams)
 }
@@ -2506,12 +2099,12 @@ void LinearLocalPlannerParams::SerializeWithCachedSizes(
   if (this->has_airplane_params()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        1, HasBitSetters::airplane_params(this), deterministic, target);
+        1, this->_internal_airplane_params(), deterministic, target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
   // @@protoc_insertion_point(serialize_to_array_end:LinearLocalPlannerParams)
   return target;
@@ -2521,15 +2114,11 @@ size_t LinearLocalPlannerParams::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:LinearLocalPlannerParams)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
   // .AirplaneLinearLocalPlannerParams airplane_params = 1;
   if (this->has_airplane_params()) {
     total_size += 1 +
@@ -2546,7 +2135,7 @@ void LinearLocalPlannerParams::MergeFrom(const ::google::protobuf::Message& from
 // @@protoc_insertion_point(generalized_merge_from_start:LinearLocalPlannerParams)
   GOOGLE_DCHECK_NE(&from, this);
   const LinearLocalPlannerParams* source =
-      ::google::protobuf::DynamicCastToGenerated<LinearLocalPlannerParams>(
+      ::google::protobuf::internal::DynamicCastToGenerated<const LinearLocalPlannerParams>(
           &from);
   if (source == NULL) {
   // @@protoc_insertion_point(generalized_merge_from_cast_fail:LinearLocalPlannerParams)
@@ -2593,13 +2182,13 @@ void LinearLocalPlannerParams::Swap(LinearLocalPlannerParams* other) {
 }
 void LinearLocalPlannerParams::InternalSwap(LinearLocalPlannerParams* other) {
   using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(airplane_params_, other->airplane_params_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
 ::google::protobuf::Metadata LinearLocalPlannerParams::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_LocalPlanner_2eproto);
-  return ::file_level_metadata_LocalPlanner_2eproto[kIndexInFileMessages];
+  protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages];
 }
 
 
@@ -2607,10 +2196,6 @@ void LinearLocalPlannerParams::InternalSwap(LinearLocalPlannerParams* other) {
 
 void ManeuverLocalPlannerParams::InitAsDefaultInstance() {
 }
-class ManeuverLocalPlannerParams::HasBitSetters {
- public:
-};
-
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int ManeuverLocalPlannerParams::kKAltitudeFieldNumber;
 const int ManeuverLocalPlannerParams::kKConvergenceFieldNumber;
@@ -2619,6 +2204,8 @@ const int ManeuverLocalPlannerParams::kKYawRateFieldNumber;
 
 ManeuverLocalPlannerParams::ManeuverLocalPlannerParams()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_LocalPlanner_2eproto::scc_info_ManeuverLocalPlannerParams.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:ManeuverLocalPlannerParams)
 }
@@ -2649,8 +2236,13 @@ void ManeuverLocalPlannerParams::SharedDtor() {
 void ManeuverLocalPlannerParams::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
+const ::google::protobuf::Descriptor* ManeuverLocalPlannerParams::descriptor() {
+  ::protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
 const ManeuverLocalPlannerParams& ManeuverLocalPlannerParams::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_ManeuverLocalPlannerParams_LocalPlanner_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_LocalPlanner_2eproto::scc_info_ManeuverLocalPlannerParams.base);
   return *internal_default_instance();
 }
 
@@ -2667,73 +2259,9 @@ void ManeuverLocalPlannerParams::Clear() {
   _internal_metadata_.Clear();
 }
 
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* ManeuverLocalPlannerParams::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<ManeuverLocalPlannerParams*>(object);
-  ::google::protobuf::uint32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ::google::protobuf::uint32 tag;
-    ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // double k_altitude = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 9) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_k_altitude(val);
-        break;
-      }
-      // double k_convergence = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 17) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_k_convergence(val);
-        break;
-      }
-      // double k_yaw_rate = 3;
-      case 3: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 25) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_k_yaw_rate(val);
-        break;
-      }
-      default: {
-      handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-len_delim_till_end: (void)&&len_delim_till_end;
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                                 {parser_till_end, object}, size);
-group_continues: (void)&&group_continues;
-  GOOGLE_DCHECK(ptr >= end);
-  ctx->StoreGroup({_InternalParse, msg}, {parser_till_end, object}, depth);
-  return ptr;
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool ManeuverLocalPlannerParams::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:ManeuverLocalPlannerParams)
   for (;;) {
@@ -2743,7 +2271,8 @@ bool ManeuverLocalPlannerParams::MergePartialFromCodedStream(
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // double k_altitude = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (9 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(9u /* 9 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -2756,7 +2285,8 @@ bool ManeuverLocalPlannerParams::MergePartialFromCodedStream(
 
       // double k_convergence = 2;
       case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (17 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(17u /* 17 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -2769,7 +2299,8 @@ bool ManeuverLocalPlannerParams::MergePartialFromCodedStream(
 
       // double k_yaw_rate = 3;
       case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (25 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(25u /* 25 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -2799,7 +2330,6 @@ failure:
   return false;
 #undef DO_
 }
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 
 void ManeuverLocalPlannerParams::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
@@ -2822,9 +2352,9 @@ void ManeuverLocalPlannerParams::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->k_yaw_rate(), output);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
   // @@protoc_insertion_point(serialize_end:ManeuverLocalPlannerParams)
 }
@@ -2851,9 +2381,9 @@ void ManeuverLocalPlannerParams::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->k_yaw_rate(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
   // @@protoc_insertion_point(serialize_to_array_end:ManeuverLocalPlannerParams)
   return target;
@@ -2863,15 +2393,11 @@ size_t ManeuverLocalPlannerParams::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:ManeuverLocalPlannerParams)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
   // double k_altitude = 1;
   if (this->k_altitude() != 0) {
     total_size += 1 + 8;
@@ -2896,7 +2422,7 @@ void ManeuverLocalPlannerParams::MergeFrom(const ::google::protobuf::Message& fr
 // @@protoc_insertion_point(generalized_merge_from_start:ManeuverLocalPlannerParams)
   GOOGLE_DCHECK_NE(&from, this);
   const ManeuverLocalPlannerParams* source =
-      ::google::protobuf::DynamicCastToGenerated<ManeuverLocalPlannerParams>(
+      ::google::protobuf::internal::DynamicCastToGenerated<const ManeuverLocalPlannerParams>(
           &from);
   if (source == NULL) {
   // @@protoc_insertion_point(generalized_merge_from_cast_fail:ManeuverLocalPlannerParams)
@@ -2949,15 +2475,15 @@ void ManeuverLocalPlannerParams::Swap(ManeuverLocalPlannerParams* other) {
 }
 void ManeuverLocalPlannerParams::InternalSwap(ManeuverLocalPlannerParams* other) {
   using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(k_altitude_, other->k_altitude_);
   swap(k_convergence_, other->k_convergence_);
   swap(k_yaw_rate_, other->k_yaw_rate_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
 ::google::protobuf::Metadata ManeuverLocalPlannerParams::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_LocalPlanner_2eproto);
-  return ::file_level_metadata_LocalPlanner_2eproto[kIndexInFileMessages];
+  protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages];
 }
 
 
@@ -2969,20 +2495,6 @@ void LocalPlannerParams::InitAsDefaultInstance() {
   ::_LocalPlannerParams_default_instance_._instance.get_mutable()->maneuver_params_ = const_cast< ::ManeuverLocalPlannerParams*>(
       ::ManeuverLocalPlannerParams::internal_default_instance());
 }
-class LocalPlannerParams::HasBitSetters {
- public:
-  static const ::LinearLocalPlannerParams& linear_params(const LocalPlannerParams* msg);
-  static const ::ManeuverLocalPlannerParams& maneuver_params(const LocalPlannerParams* msg);
-};
-
-const ::LinearLocalPlannerParams&
-LocalPlannerParams::HasBitSetters::linear_params(const LocalPlannerParams* msg) {
-  return *msg->linear_params_;
-}
-const ::ManeuverLocalPlannerParams&
-LocalPlannerParams::HasBitSetters::maneuver_params(const LocalPlannerParams* msg) {
-  return *msg->maneuver_params_;
-}
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int LocalPlannerParams::kLinearParamsFieldNumber;
 const int LocalPlannerParams::kManeuverParamsFieldNumber;
@@ -2990,6 +2502,8 @@ const int LocalPlannerParams::kManeuverParamsFieldNumber;
 
 LocalPlannerParams::LocalPlannerParams()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_LocalPlanner_2eproto::scc_info_LocalPlannerParams.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:LocalPlannerParams)
 }
@@ -3011,8 +2525,6 @@ LocalPlannerParams::LocalPlannerParams(const LocalPlannerParams& from)
 }
 
 void LocalPlannerParams::SharedCtor() {
-  ::google::protobuf::internal::InitSCC(
-      &scc_info_LocalPlannerParams_LocalPlanner_2eproto.base);
   ::memset(&linear_params_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&maneuver_params_) -
       reinterpret_cast<char*>(&linear_params_)) + sizeof(maneuver_params_));
@@ -3031,8 +2543,13 @@ void LocalPlannerParams::SharedDtor() {
 void LocalPlannerParams::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
+const ::google::protobuf::Descriptor* LocalPlannerParams::descriptor() {
+  ::protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
 const LocalPlannerParams& LocalPlannerParams::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_LocalPlannerParams_LocalPlanner_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_LocalPlanner_2eproto::scc_info_LocalPlannerParams.base);
   return *internal_default_instance();
 }
 
@@ -3054,76 +2571,9 @@ void LocalPlannerParams::Clear() {
   _internal_metadata_.Clear();
 }
 
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* LocalPlannerParams::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<LocalPlannerParams*>(object);
-  ::google::protobuf::uint32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ::google::protobuf::uint32 tag;
-    ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // .LinearLocalPlannerParams linear_params = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
-        ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        parser_till_end = ::LinearLocalPlannerParams::_InternalParse;
-        object = msg->mutable_linear_params();
-        if (size > end - ptr) goto len_delim_till_end;
-        auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-        ptr = newend;
-        break;
-      }
-      // .ManeuverLocalPlannerParams maneuver_params = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 18) goto handle_unusual;
-        ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        parser_till_end = ::ManeuverLocalPlannerParams::_InternalParse;
-        object = msg->mutable_maneuver_params();
-        if (size > end - ptr) goto len_delim_till_end;
-        auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-        ptr = newend;
-        break;
-      }
-      default: {
-      handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-len_delim_till_end: (void)&&len_delim_till_end;
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                                 {parser_till_end, object}, size);
-group_continues: (void)&&group_continues;
-  GOOGLE_DCHECK(ptr >= end);
-  ctx->StoreGroup({_InternalParse, msg}, {parser_till_end, object}, depth);
-  return ptr;
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool LocalPlannerParams::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:LocalPlannerParams)
   for (;;) {
@@ -3133,7 +2583,8 @@ bool LocalPlannerParams::MergePartialFromCodedStream(
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // .LinearLocalPlannerParams linear_params = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                input, mutable_linear_params()));
         } else {
@@ -3144,7 +2595,8 @@ bool LocalPlannerParams::MergePartialFromCodedStream(
 
       // .ManeuverLocalPlannerParams maneuver_params = 2;
       case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (18 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                input, mutable_maneuver_params()));
         } else {
@@ -3172,7 +2624,6 @@ failure:
   return false;
 #undef DO_
 }
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 
 void LocalPlannerParams::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
@@ -3183,18 +2634,18 @@ void LocalPlannerParams::SerializeWithCachedSizes(
   // .LinearLocalPlannerParams linear_params = 1;
   if (this->has_linear_params()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, HasBitSetters::linear_params(this), output);
+      1, this->_internal_linear_params(), output);
   }
 
   // .ManeuverLocalPlannerParams maneuver_params = 2;
   if (this->has_maneuver_params()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, HasBitSetters::maneuver_params(this), output);
+      2, this->_internal_maneuver_params(), output);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
   // @@protoc_insertion_point(serialize_end:LocalPlannerParams)
 }
@@ -3210,19 +2661,19 @@ void LocalPlannerParams::SerializeWithCachedSizes(
   if (this->has_linear_params()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        1, HasBitSetters::linear_params(this), deterministic, target);
+        1, this->_internal_linear_params(), deterministic, target);
   }
 
   // .ManeuverLocalPlannerParams maneuver_params = 2;
   if (this->has_maneuver_params()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        2, HasBitSetters::maneuver_params(this), deterministic, target);
+        2, this->_internal_maneuver_params(), deterministic, target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
   // @@protoc_insertion_point(serialize_to_array_end:LocalPlannerParams)
   return target;
@@ -3232,15 +2683,11 @@ size_t LocalPlannerParams::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:LocalPlannerParams)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
   // .LinearLocalPlannerParams linear_params = 1;
   if (this->has_linear_params()) {
     total_size += 1 +
@@ -3264,7 +2711,7 @@ void LocalPlannerParams::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:LocalPlannerParams)
   GOOGLE_DCHECK_NE(&from, this);
   const LocalPlannerParams* source =
-      ::google::protobuf::DynamicCastToGenerated<LocalPlannerParams>(
+      ::google::protobuf::internal::DynamicCastToGenerated<const LocalPlannerParams>(
           &from);
   if (source == NULL) {
   // @@protoc_insertion_point(generalized_merge_from_cast_fail:LocalPlannerParams)
@@ -3314,46 +2761,45 @@ void LocalPlannerParams::Swap(LocalPlannerParams* other) {
 }
 void LocalPlannerParams::InternalSwap(LocalPlannerParams* other) {
   using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(linear_params_, other->linear_params_);
   swap(maneuver_params_, other->maneuver_params_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
 ::google::protobuf::Metadata LocalPlannerParams::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_LocalPlanner_2eproto);
-  return ::file_level_metadata_LocalPlanner_2eproto[kIndexInFileMessages];
+  protobuf_LocalPlanner_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_LocalPlanner_2eproto::file_level_metadata[kIndexInFileMessages];
 }
 
 
 // @@protoc_insertion_point(namespace_scope)
 namespace google {
 namespace protobuf {
-template<> PROTOBUF_NOINLINE ::AirplaneLinearLocalPlannerStatus* Arena::CreateMaybeMessage< ::AirplaneLinearLocalPlannerStatus >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::AirplaneLinearLocalPlannerStatus* Arena::CreateMaybeMessage< ::AirplaneLinearLocalPlannerStatus >(Arena* arena) {
   return Arena::CreateInternal< ::AirplaneLinearLocalPlannerStatus >(arena);
 }
-template<> PROTOBUF_NOINLINE ::LinearLocalPlannerStatus* Arena::CreateMaybeMessage< ::LinearLocalPlannerStatus >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::LinearLocalPlannerStatus* Arena::CreateMaybeMessage< ::LinearLocalPlannerStatus >(Arena* arena) {
   return Arena::CreateInternal< ::LinearLocalPlannerStatus >(arena);
 }
-template<> PROTOBUF_NOINLINE ::ManeuverLocalPlannerStatus* Arena::CreateMaybeMessage< ::ManeuverLocalPlannerStatus >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::ManeuverLocalPlannerStatus* Arena::CreateMaybeMessage< ::ManeuverLocalPlannerStatus >(Arena* arena) {
   return Arena::CreateInternal< ::ManeuverLocalPlannerStatus >(arena);
 }
-template<> PROTOBUF_NOINLINE ::LocalPlannerStatus* Arena::CreateMaybeMessage< ::LocalPlannerStatus >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::LocalPlannerStatus* Arena::CreateMaybeMessage< ::LocalPlannerStatus >(Arena* arena) {
   return Arena::CreateInternal< ::LocalPlannerStatus >(arena);
 }
-template<> PROTOBUF_NOINLINE ::AirplaneLinearLocalPlannerParams* Arena::CreateMaybeMessage< ::AirplaneLinearLocalPlannerParams >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::AirplaneLinearLocalPlannerParams* Arena::CreateMaybeMessage< ::AirplaneLinearLocalPlannerParams >(Arena* arena) {
   return Arena::CreateInternal< ::AirplaneLinearLocalPlannerParams >(arena);
 }
-template<> PROTOBUF_NOINLINE ::LinearLocalPlannerParams* Arena::CreateMaybeMessage< ::LinearLocalPlannerParams >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::LinearLocalPlannerParams* Arena::CreateMaybeMessage< ::LinearLocalPlannerParams >(Arena* arena) {
   return Arena::CreateInternal< ::LinearLocalPlannerParams >(arena);
 }
-template<> PROTOBUF_NOINLINE ::ManeuverLocalPlannerParams* Arena::CreateMaybeMessage< ::ManeuverLocalPlannerParams >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::ManeuverLocalPlannerParams* Arena::CreateMaybeMessage< ::ManeuverLocalPlannerParams >(Arena* arena) {
   return Arena::CreateInternal< ::ManeuverLocalPlannerParams >(arena);
 }
-template<> PROTOBUF_NOINLINE ::LocalPlannerParams* Arena::CreateMaybeMessage< ::LocalPlannerParams >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::LocalPlannerParams* Arena::CreateMaybeMessage< ::LocalPlannerParams >(Arena* arena) {
   return Arena::CreateInternal< ::LocalPlannerParams >(arena);
 }
 }  // namespace protobuf
 }  // namespace google
 
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>

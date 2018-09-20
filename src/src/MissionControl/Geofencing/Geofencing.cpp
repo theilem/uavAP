@@ -40,7 +40,6 @@ bool
 Geofencing::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
-	pm.add<ConstRollRateModel>("", model_, true);
 	pm.add<double>("roll_max", rollMax_, true);
 	pm.add<double>("evaluation_threshold", evaluationThreshold_, true);
 	pm.add<double>("distance_threshold", distanceThreshold_, true);
@@ -57,6 +56,7 @@ Geofencing::notifyAggregationOnUpdate(const Aggregator& agg)
 	ipc_.setFromAggregationIfNotSet(agg);
 	scheduler_.setFromAggregationIfNotSet(agg);
 	maneuverPlanner_.setFromAggregationIfNotSet(agg);
+	geofencingModel_.setFromAggregationIfNotSet(agg);
 }
 
 bool
@@ -79,6 +79,11 @@ Geofencing::run(RunStage stage)
 		if (!maneuverPlanner_.isSet())
 		{
 			APLOG_ERROR << "Geofencing: ManeuverPlanner not set";
+			return true;
+		}
+		if (!geofencingModel_.isSet())
+		{
+			APLOG_ERROR << "Geofencing: Geofencing Model Missing.";
 			return true;
 		}
 		break;
@@ -114,16 +119,25 @@ Mission
 Geofencing::criticalPoints()
 {
 	Mission mission;
+
+	auto geofencingModel = geofencingModel_.get();
+
+	if (!geofencingModel)
+	{
+		APLOG_ERROR << "Geofencing: Geofencing Model Missing.";
+		return Mission();
+	}
+
 	for (const auto& it : geoFence_.getEdges())
 	{
 		if (it.getDistanceAbs(position_.head(2)) > evaluationThreshold_)
 			continue;
-		for (const auto& points : model_.getCriticalPoints(it,
+		for (const auto& points : geofencingModel->getCriticalPoints(it,
 				IGeofencingModel::RollDirection::LEFT))
 		{
 			mission.waypoints.push_back(Waypoint(points));
 		}
-		for (const auto& points : model_.getCriticalPoints(it,
+		for (const auto& points : geofencingModel->getCriticalPoints(it,
 				IGeofencingModel::RollDirection::RIGHT))
 		{
 			mission.waypoints.push_back(Waypoint(points));
@@ -136,7 +150,15 @@ Geofencing::criticalPoints()
 void
 Geofencing::onSensorData(const SensorData& data)
 {
-	model_.updateModel(data);
+	auto geofencingModel = geofencingModel_.get();
+
+	if (!geofencingModel)
+	{
+		APLOG_ERROR << "Geofencing: Geofencing Model Missing.";
+		return;
+	}
+
+	geofencingModel->updateModel(data);
 	position_ = data.position;
 }
 
@@ -144,17 +166,27 @@ void
 Geofencing::evaluateSafety()
 {
 	auto mp = maneuverPlanner_.get();
+
 	if (!mp)
 	{
 		APLOG_ERROR << "Geofencing::evaluateSafety(): Manevuer planner missing";
 		return;
 	}
+
+	auto geofencingModel = geofencingModel_.get();
+
+	if (!geofencingModel)
+	{
+		APLOG_ERROR << "Geofencing: Geofencing Model Missing.";
+		return;
+	}
+
 	bool leftSafe = true, rightSafe = true;
 	for (const auto& it : geoFence_.getEdges())
 	{
 		if (it.getDistanceAbs(position_.head(2)) > evaluationThreshold_)
 			continue;
-		for (const auto& points : model_.getCriticalPoints(it,
+		for (const auto& points : geofencingModel->getCriticalPoints(it,
 				IGeofencingModel::RollDirection::LEFT))
 		{
 			if (it.getDistance(points.head(2)) < distanceThreshold_)
@@ -164,7 +196,7 @@ Geofencing::evaluateSafety()
 				break;
 			}
 		}
-		for (const auto& points : model_.getCriticalPoints(it,
+		for (const auto& points : geofencingModel->getCriticalPoints(it,
 				IGeofencingModel::RollDirection::RIGHT))
 		{
 			if (it.getDistance(points.head(2)) < distanceThreshold_)

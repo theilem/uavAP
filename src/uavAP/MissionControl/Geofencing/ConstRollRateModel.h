@@ -25,13 +25,16 @@
 
 #ifndef UAVAP_MISSIONCONTROL_GEOFENCING_CONSTROLLRATEMODEL_H_
 #define UAVAP_MISSIONCONTROL_GEOFENCING_CONSTROLLRATEMODEL_H_
-#include <uavAP/MissionControl/Geofencing/IGeofencingModel.h>
+
 #include <acb.h>
 #include <boost/property_tree/ptree.hpp>
-#include <uavAP/Core/Frames/VehicleOneFrame.h>
-#include <uavAP/Core/LinearAlgebra.h>
 
-class ConstRollRateModel: public IGeofencingModel
+#include "uavAP/Core/LinearAlgebra.h"
+#include "uavAP/Core/Frames/VehicleOneFrame.h"
+#include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/MissionControl/Geofencing/IGeofencingModel.h"
+
+class ConstRollRateModel: public IGeofencingModel, public IAggregatableObject
 {
 public:
 
@@ -41,8 +44,14 @@ public:
 
 	~ConstRollRateModel();
 
+	static std::shared_ptr<ConstRollRateModel>
+	create(const boost::property_tree::ptree& config);
+
 	bool
 	configure(const boost::property_tree::ptree& config);
+
+	void
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	bool
 	updateModel(const SensorData& data) override;

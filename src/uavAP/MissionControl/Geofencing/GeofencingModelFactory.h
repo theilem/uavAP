@@ -25,10 +25,11 @@
 
 #ifndef UAVAP_MISSIONCONTROL_GEOFENCING_GEOFENCINGMODELFACTORY_H_
 #define UAVAP_MISSIONCONTROL_GEOFENCING_GEOFENCINGMODELFACTORY_H_
-#include <uavAP/Core/Framework/Factory.h>
-#include <uavAP/MissionControl/Geofencing/ConstRollRateModel.h>
-//#include <uavAP/MissionControl/Geofencing/DirectRollModel.h>
-#include <uavAP/MissionControl/Geofencing/IGeofencingModel.h>
+
+#include "uavAP/Core/Framework/Factory.h"
+#include "uavAP/MissionControl/Geofencing/ConstRollRateModel.h"
+#include "uavAP/MissionControl/Geofencing/DirectRollModel.h"
+#include "uavAP/MissionControl/Geofencing/IGeofencingModel.h"
 
 class GeofencingModelFactory: public Factory<IGeofencingModel>
 {
@@ -37,11 +38,10 @@ public:
 	GeofencingModelFactory()
 	{
 		addCreator<ConstRollRateModel>();
-//		addCreator<DirectRollModel>();
+		addCreator<DirectRollModel>();
 	}
 
-	static constexpr TypeId typeId = "geofencing";
-
+	static constexpr TypeId typeId = "geofencing_model";
 };
 
 #endif /* UAVAP_MISSIONCONTROL_GEOFENCING_GEOFENCINGMODELFACTORY_H_ */

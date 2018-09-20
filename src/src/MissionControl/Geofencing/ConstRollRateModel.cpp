@@ -51,6 +51,19 @@ ConstRollRateModel::~ConstRollRateModel()
 	acb_clear(queryRes_);
 }
 
+std::shared_ptr<ConstRollRateModel>
+ConstRollRateModel::create(const boost::property_tree::ptree& config)
+{
+	auto constRollRateModel = std::make_shared<ConstRollRateModel>();
+
+	if (!constRollRateModel->configure(config))
+	{
+		APLOG_ERROR << "ConstRollRateModel: Failed to Load Config.";
+	}
+
+	return constRollRateModel;
+}
+
 bool
 ConstRollRateModel::configure(const boost::property_tree::ptree& config)
 {
@@ -64,6 +77,11 @@ ConstRollRateModel::configure(const boost::property_tree::ptree& config)
 	degToRadRef(rollMax_);
 
 	return pm.map();
+}
+
+void
+ConstRollRateModel::notifyAggregationOnUpdate(const Aggregator& agg)
+{
 }
 
 bool
@@ -143,12 +161,11 @@ ConstRollRateModel::getCriticalPoints(const Edge& edge, RollDirection dir)
 	{
 		result.push_back(calculatePoint(it, dir));
 	}
-	Vector3 normal(-edge.normal.x(),-edge.normal.y(),0);
+	Vector3 normal(-edge.normal.x(), -edge.normal.y(), 0);
 	if (dir == RollDirection::LEFT)
 		result.push_back(centerOrbitLeft_ + normal * radiusOrbit_);
 	else
 		result.push_back(centerOrbitRight_ + normal * radiusOrbit_);
-
 
 	return result;
 
@@ -209,7 +226,6 @@ ConstRollRateModel::calculateRoll(double yaw, RollDirection dir)
 		if (yawCenter > 0)
 			yawCenter -= M_PI;
 	}
-
 
 	double roll = acos(exp(rollRate * velocity_ / g_ * yawCenter));
 	double roll2 = acos(exp(rollRate * velocity_ / g_ * (yawCenter + M_PI)));

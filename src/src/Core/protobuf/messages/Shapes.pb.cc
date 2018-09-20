@@ -6,22 +6,29 @@
 #include <algorithm>
 
 #include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/port.h>
 #include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
 #include <google/protobuf/wire_format_lite_inl.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/reflection_ops.h>
 #include <google/protobuf/wire_format.h>
+// This is a temporary google only hack
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+#include "third_party/protobuf/version.h"
+#endif
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
-extern PROTOBUF_INTERNAL_EXPORT_Positions_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_PositionENU_Positions_2eproto;
+namespace protobuf_Positions_2eproto {
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_Positions_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_PositionENU;
+}  // namespace protobuf_Positions_2eproto
 class RectanguloidDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<Rectanguloid> _instance;
+  ::google::protobuf::internal::ExplicitlyConstructed<Rectanguloid>
+      _instance;
 } _Rectanguloid_default_instance_;
-static void InitDefaultsRectanguloid_Shapes_2eproto() {
+namespace protobuf_Shapes_2eproto {
+static void InitDefaultsRectanguloid() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
@@ -32,31 +39,29 @@ static void InitDefaultsRectanguloid_Shapes_2eproto() {
   ::Rectanguloid::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<1> scc_info_Rectanguloid_Shapes_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsRectanguloid_Shapes_2eproto}, {
-      &scc_info_PositionENU_Positions_2eproto.base,}};
+::google::protobuf::internal::SCCInfo<1> scc_info_Rectanguloid =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsRectanguloid}, {
+      &protobuf_Positions_2eproto::scc_info_PositionENU.base,}};
 
-void InitDefaults_Shapes_2eproto() {
-  ::google::protobuf::internal::InitSCC(&scc_info_Rectanguloid_Shapes_2eproto.base);
+void InitDefaults() {
+  ::google::protobuf::internal::InitSCC(&scc_info_Rectanguloid.base);
 }
 
-::google::protobuf::Metadata file_level_metadata_Shapes_2eproto[1];
-constexpr ::google::protobuf::EnumDescriptor const** file_level_enum_descriptors_Shapes_2eproto = nullptr;
-constexpr ::google::protobuf::ServiceDescriptor const** file_level_service_descriptors_Shapes_2eproto = nullptr;
+::google::protobuf::Metadata file_level_metadata[1];
 
-const ::google::protobuf::uint32 TableStruct_Shapes_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::Rectanguloid, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Rectanguloid, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::Rectanguloid, center_),
-  PROTOBUF_FIELD_OFFSET(::Rectanguloid, major_side_length_),
-  PROTOBUF_FIELD_OFFSET(::Rectanguloid, minor_side_length_),
-  PROTOBUF_FIELD_OFFSET(::Rectanguloid, major_side_orientation_),
-  PROTOBUF_FIELD_OFFSET(::Rectanguloid, height_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Rectanguloid, center_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Rectanguloid, major_side_length_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Rectanguloid, minor_side_length_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Rectanguloid, major_side_orientation_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Rectanguloid, height_),
 };
-static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::Rectanguloid)},
 };
 
@@ -64,48 +69,57 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::_Rectanguloid_default_instance_),
 };
 
-::google::protobuf::internal::AssignDescriptorsTable assign_descriptors_table_Shapes_2eproto = {
-  {}, AddDescriptors_Shapes_2eproto, "Shapes.proto", schemas,
-  file_default_instances, TableStruct_Shapes_2eproto::offsets,
-  file_level_metadata_Shapes_2eproto, 1, file_level_enum_descriptors_Shapes_2eproto, file_level_service_descriptors_Shapes_2eproto,
-};
-
-::google::protobuf::internal::DescriptorTable descriptor_table_Shapes_2eproto = {
-  false, InitDefaults_Shapes_2eproto, 
-  "\n\014Shapes.proto\032\017Positions.proto\"\222\001\n\014Rect"
-  "anguloid\022\034\n\006center\030\001 \001(\0132\014.PositionENU\022\031"
-  "\n\021major_side_length\030\002 \001(\001\022\031\n\021minor_side_"
-  "length\030\003 \001(\001\022\036\n\026major_side_orientation\030\004"
-  " \001(\001\022\016\n\006height\030\005 \001(\001b\006proto3"
-,
-  "Shapes.proto", &assign_descriptors_table_Shapes_2eproto, 188,
-};
-
-void AddDescriptors_Shapes_2eproto() {
-  static constexpr ::google::protobuf::internal::InitFunc deps[1] =
-  {
-    ::AddDescriptors_Positions_2eproto,
-  };
- ::google::protobuf::internal::AddDescriptors(&descriptor_table_Shapes_2eproto, deps, 1);
+static void protobuf_AssignDescriptors() {
+  AddDescriptors();
+  AssignDescriptors(
+      "Shapes.proto", schemas, file_default_instances, TableStruct::offsets,
+      file_level_metadata, NULL, NULL);
 }
 
-// Force running AddDescriptors() at dynamic initialization time.
-static bool dynamic_init_dummy_Shapes_2eproto = []() { AddDescriptors_Shapes_2eproto(); return true; }();
+static void protobuf_AssignDescriptorsOnce() {
+  static ::google::protobuf::internal::once_flag once;
+  ::google::protobuf::internal::call_once(once, protobuf_AssignDescriptors);
+}
+
+void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
+void protobuf_RegisterTypes(const ::std::string&) {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 1);
+}
+
+static void AddDescriptorsImpl() {
+  InitDefaults();
+  static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
+      "\n\014Shapes.proto\032\017Positions.proto\"\222\001\n\014Rect"
+      "anguloid\022\034\n\006center\030\001 \001(\0132\014.PositionENU\022\031"
+      "\n\021major_side_length\030\002 \001(\001\022\031\n\021minor_side_"
+      "length\030\003 \001(\001\022\036\n\026major_side_orientation\030\004"
+      " \001(\001\022\016\n\006height\030\005 \001(\001b\006proto3"
+  };
+  ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
+      descriptor, 188);
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
+    "Shapes.proto", &protobuf_RegisterTypes);
+  ::protobuf_Positions_2eproto::AddDescriptors();
+}
+
+void AddDescriptors() {
+  static ::google::protobuf::internal::once_flag once;
+  ::google::protobuf::internal::call_once(once, AddDescriptorsImpl);
+}
+// Force AddDescriptors() to be called at dynamic initialization time.
+struct StaticDescriptorInitializer {
+  StaticDescriptorInitializer() {
+    AddDescriptors();
+  }
+} static_descriptor_initializer;
+}  // namespace protobuf_Shapes_2eproto
 
 // ===================================================================
 
 void Rectanguloid::InitAsDefaultInstance() {
   ::_Rectanguloid_default_instance_._instance.get_mutable()->center_ = const_cast< ::PositionENU*>(
       ::PositionENU::internal_default_instance());
-}
-class Rectanguloid::HasBitSetters {
- public:
-  static const ::PositionENU& center(const Rectanguloid* msg);
-};
-
-const ::PositionENU&
-Rectanguloid::HasBitSetters::center(const Rectanguloid* msg) {
-  return *msg->center_;
 }
 void Rectanguloid::clear_center() {
   if (GetArenaNoVirtual() == NULL && center_ != NULL) {
@@ -123,6 +137,8 @@ const int Rectanguloid::kHeightFieldNumber;
 
 Rectanguloid::Rectanguloid()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_Shapes_2eproto::scc_info_Rectanguloid.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:Rectanguloid)
 }
@@ -142,8 +158,6 @@ Rectanguloid::Rectanguloid(const Rectanguloid& from)
 }
 
 void Rectanguloid::SharedCtor() {
-  ::google::protobuf::internal::InitSCC(
-      &scc_info_Rectanguloid_Shapes_2eproto.base);
   ::memset(&center_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&height_) -
       reinterpret_cast<char*>(&center_)) + sizeof(height_));
@@ -161,8 +175,13 @@ void Rectanguloid::SharedDtor() {
 void Rectanguloid::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
+const ::google::protobuf::Descriptor* Rectanguloid::descriptor() {
+  ::protobuf_Shapes_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_Shapes_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
 const Rectanguloid& Rectanguloid::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_Rectanguloid_Shapes_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_Shapes_2eproto::scc_info_Rectanguloid.base);
   return *internal_default_instance();
 }
 
@@ -183,97 +202,9 @@ void Rectanguloid::Clear() {
   _internal_metadata_.Clear();
 }
 
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* Rectanguloid::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<Rectanguloid*>(object);
-  ::google::protobuf::uint32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ::google::protobuf::uint32 tag;
-    ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // .PositionENU center = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
-        ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        parser_till_end = ::PositionENU::_InternalParse;
-        object = msg->mutable_center();
-        if (size > end - ptr) goto len_delim_till_end;
-        auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-        ptr = newend;
-        break;
-      }
-      // double major_side_length = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 17) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_major_side_length(val);
-        break;
-      }
-      // double minor_side_length = 3;
-      case 3: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 25) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_minor_side_length(val);
-        break;
-      }
-      // double major_side_orientation = 4;
-      case 4: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 33) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_major_side_orientation(val);
-        break;
-      }
-      // double height = 5;
-      case 5: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 41) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_height(val);
-        break;
-      }
-      default: {
-      handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-len_delim_till_end: (void)&&len_delim_till_end;
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                                 {parser_till_end, object}, size);
-group_continues: (void)&&group_continues;
-  GOOGLE_DCHECK(ptr >= end);
-  ctx->StoreGroup({_InternalParse, msg}, {parser_till_end, object}, depth);
-  return ptr;
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool Rectanguloid::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:Rectanguloid)
   for (;;) {
@@ -283,7 +214,8 @@ bool Rectanguloid::MergePartialFromCodedStream(
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // .PositionENU center = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                input, mutable_center()));
         } else {
@@ -294,7 +226,8 @@ bool Rectanguloid::MergePartialFromCodedStream(
 
       // double major_side_length = 2;
       case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (17 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(17u /* 17 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -307,7 +240,8 @@ bool Rectanguloid::MergePartialFromCodedStream(
 
       // double minor_side_length = 3;
       case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (25 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(25u /* 25 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -320,7 +254,8 @@ bool Rectanguloid::MergePartialFromCodedStream(
 
       // double major_side_orientation = 4;
       case 4: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (33 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(33u /* 33 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -333,7 +268,8 @@ bool Rectanguloid::MergePartialFromCodedStream(
 
       // double height = 5;
       case 5: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (41 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(41u /* 41 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -363,7 +299,6 @@ failure:
   return false;
 #undef DO_
 }
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 
 void Rectanguloid::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
@@ -374,7 +309,7 @@ void Rectanguloid::SerializeWithCachedSizes(
   // .PositionENU center = 1;
   if (this->has_center()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, HasBitSetters::center(this), output);
+      1, this->_internal_center(), output);
   }
 
   // double major_side_length = 2;
@@ -397,9 +332,9 @@ void Rectanguloid::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->height(), output);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
   // @@protoc_insertion_point(serialize_end:Rectanguloid)
 }
@@ -415,7 +350,7 @@ void Rectanguloid::SerializeWithCachedSizes(
   if (this->has_center()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        1, HasBitSetters::center(this), deterministic, target);
+        1, this->_internal_center(), deterministic, target);
   }
 
   // double major_side_length = 2;
@@ -438,9 +373,9 @@ void Rectanguloid::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->height(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
   // @@protoc_insertion_point(serialize_to_array_end:Rectanguloid)
   return target;
@@ -450,15 +385,11 @@ size_t Rectanguloid::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:Rectanguloid)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
   // .PositionENU center = 1;
   if (this->has_center()) {
     total_size += 1 +
@@ -495,7 +426,7 @@ void Rectanguloid::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:Rectanguloid)
   GOOGLE_DCHECK_NE(&from, this);
   const Rectanguloid* source =
-      ::google::protobuf::DynamicCastToGenerated<Rectanguloid>(
+      ::google::protobuf::internal::DynamicCastToGenerated<const Rectanguloid>(
           &from);
   if (source == NULL) {
   // @@protoc_insertion_point(generalized_merge_from_cast_fail:Rectanguloid)
@@ -554,28 +485,27 @@ void Rectanguloid::Swap(Rectanguloid* other) {
 }
 void Rectanguloid::InternalSwap(Rectanguloid* other) {
   using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(center_, other->center_);
   swap(major_side_length_, other->major_side_length_);
   swap(minor_side_length_, other->minor_side_length_);
   swap(major_side_orientation_, other->major_side_orientation_);
   swap(height_, other->height_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
 ::google::protobuf::Metadata Rectanguloid::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_Shapes_2eproto);
-  return ::file_level_metadata_Shapes_2eproto[kIndexInFileMessages];
+  protobuf_Shapes_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_Shapes_2eproto::file_level_metadata[kIndexInFileMessages];
 }
 
 
 // @@protoc_insertion_point(namespace_scope)
 namespace google {
 namespace protobuf {
-template<> PROTOBUF_NOINLINE ::Rectanguloid* Arena::CreateMaybeMessage< ::Rectanguloid >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Rectanguloid* Arena::CreateMaybeMessage< ::Rectanguloid >(Arena* arena) {
   return Arena::CreateInternal< ::Rectanguloid >(arena);
 }
 }  // namespace protobuf
 }  // namespace google
 
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>

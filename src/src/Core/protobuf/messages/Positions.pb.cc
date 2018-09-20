@@ -6,30 +6,39 @@
 #include <algorithm>
 
 #include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/port.h>
 #include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
 #include <google/protobuf/wire_format_lite_inl.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/reflection_ops.h>
 #include <google/protobuf/wire_format.h>
+// This is a temporary google only hack
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+#include "third_party/protobuf/version.h"
+#endif
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
-extern PROTOBUF_INTERNAL_EXPORT_Positions_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_PositionENU_Positions_2eproto;
+namespace protobuf_Positions_2eproto {
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_Positions_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_PositionENU;
+}  // namespace protobuf_Positions_2eproto
 class PositionENUDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<PositionENU> _instance;
+  ::google::protobuf::internal::ExplicitlyConstructed<PositionENU>
+      _instance;
 } _PositionENU_default_instance_;
 class PositionENUAdvancedDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<PositionENUAdvanced> _instance;
+  ::google::protobuf::internal::ExplicitlyConstructed<PositionENUAdvanced>
+      _instance;
 } _PositionENUAdvanced_default_instance_;
 class PositionWgs84DefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<PositionWgs84> _instance;
+  ::google::protobuf::internal::ExplicitlyConstructed<PositionWgs84>
+      _instance;
 } _PositionWgs84_default_instance_;
-static void InitDefaultsPositionENU_Positions_2eproto() {
+namespace protobuf_Positions_2eproto {
+static void InitDefaultsPositionENU() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
@@ -40,10 +49,10 @@ static void InitDefaultsPositionENU_Positions_2eproto() {
   ::PositionENU::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_PositionENU_Positions_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsPositionENU_Positions_2eproto}, {}};
+::google::protobuf::internal::SCCInfo<0> scc_info_PositionENU =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsPositionENU}, {}};
 
-static void InitDefaultsPositionENUAdvanced_Positions_2eproto() {
+static void InitDefaultsPositionENUAdvanced() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
@@ -54,11 +63,11 @@ static void InitDefaultsPositionENUAdvanced_Positions_2eproto() {
   ::PositionENUAdvanced::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<1> scc_info_PositionENUAdvanced_Positions_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsPositionENUAdvanced_Positions_2eproto}, {
-      &scc_info_PositionENU_Positions_2eproto.base,}};
+::google::protobuf::internal::SCCInfo<1> scc_info_PositionENUAdvanced =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsPositionENUAdvanced}, {
+      &protobuf_Positions_2eproto::scc_info_PositionENU.base,}};
 
-static void InitDefaultsPositionWgs84_Positions_2eproto() {
+static void InitDefaultsPositionWgs84() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
@@ -69,46 +78,45 @@ static void InitDefaultsPositionWgs84_Positions_2eproto() {
   ::PositionWgs84::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_PositionWgs84_Positions_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsPositionWgs84_Positions_2eproto}, {}};
+::google::protobuf::internal::SCCInfo<0> scc_info_PositionWgs84 =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsPositionWgs84}, {}};
 
-void InitDefaults_Positions_2eproto() {
-  ::google::protobuf::internal::InitSCC(&scc_info_PositionENU_Positions_2eproto.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_PositionENUAdvanced_Positions_2eproto.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_PositionWgs84_Positions_2eproto.base);
+void InitDefaults() {
+  ::google::protobuf::internal::InitSCC(&scc_info_PositionENU.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_PositionENUAdvanced.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_PositionWgs84.base);
 }
 
-::google::protobuf::Metadata file_level_metadata_Positions_2eproto[3];
-const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors_Positions_2eproto[1];
-constexpr ::google::protobuf::ServiceDescriptor const** file_level_service_descriptors_Positions_2eproto = nullptr;
+::google::protobuf::Metadata file_level_metadata[3];
+const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[1];
 
-const ::google::protobuf::uint32 TableStruct_Positions_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::PositionENU, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENU, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::PositionENU, east_),
-  PROTOBUF_FIELD_OFFSET(::PositionENU, north_),
-  PROTOBUF_FIELD_OFFSET(::PositionENU, up_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENU, east_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENU, north_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENU, up_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::PositionENUAdvanced, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENUAdvanced, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::PositionENUAdvanced, position_enu_),
-  PROTOBUF_FIELD_OFFSET(::PositionENUAdvanced, zone_),
-  PROTOBUF_FIELD_OFFSET(::PositionENUAdvanced, hemisphere_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENUAdvanced, position_enu_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENUAdvanced, zone_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENUAdvanced, hemisphere_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::PositionWgs84, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionWgs84, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::PositionWgs84, longitude_),
-  PROTOBUF_FIELD_OFFSET(::PositionWgs84, latitude_),
-  PROTOBUF_FIELD_OFFSET(::PositionWgs84, altitude_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionWgs84, longitude_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionWgs84, latitude_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionWgs84, altitude_),
 };
-static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::PositionENU)},
   { 8, -1, sizeof(::PositionENUAdvanced)},
   { 16, -1, sizeof(::PositionWgs84)},
@@ -120,38 +128,56 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::_PositionWgs84_default_instance_),
 };
 
-::google::protobuf::internal::AssignDescriptorsTable assign_descriptors_table_Positions_2eproto = {
-  {}, AddDescriptors_Positions_2eproto, "Positions.proto", schemas,
-  file_default_instances, TableStruct_Positions_2eproto::offsets,
-  file_level_metadata_Positions_2eproto, 3, file_level_enum_descriptors_Positions_2eproto, file_level_service_descriptors_Positions_2eproto,
-};
-
-::google::protobuf::internal::DescriptorTable descriptor_table_Positions_2eproto = {
-  false, InitDefaults_Positions_2eproto, 
-  "\n\017Positions.proto\"6\n\013PositionENU\022\014\n\004east"
-  "\030\001 \001(\001\022\r\n\005north\030\002 \001(\001\022\n\n\002up\030\003 \001(\001\"h\n\023Pos"
-  "itionENUAdvanced\022\"\n\014position_enu\030\001 \001(\0132\014"
-  ".PositionENU\022\014\n\004zone\030\002 \001(\005\022\037\n\nhemisphere"
-  "\030\003 \001(\0162\013.Hemisphere\"F\n\rPositionWgs84\022\021\n\t"
-  "longitude\030\001 \001(\001\022\020\n\010latitude\030\002 \001(\001\022\020\n\010alt"
-  "itude\030\003 \001(\001*\"\n\nHemisphere\022\t\n\005NORTH\020\000\022\t\n\005"
-  "SOUTH\020\001b\006proto3"
-,
-  "Positions.proto", &assign_descriptors_table_Positions_2eproto, 295,
-};
-
-void AddDescriptors_Positions_2eproto() {
-  static constexpr ::google::protobuf::internal::InitFunc deps[1] =
-  {
-  };
- ::google::protobuf::internal::AddDescriptors(&descriptor_table_Positions_2eproto, deps, 0);
+static void protobuf_AssignDescriptors() {
+  AddDescriptors();
+  AssignDescriptors(
+      "Positions.proto", schemas, file_default_instances, TableStruct::offsets,
+      file_level_metadata, file_level_enum_descriptors, NULL);
 }
 
-// Force running AddDescriptors() at dynamic initialization time.
-static bool dynamic_init_dummy_Positions_2eproto = []() { AddDescriptors_Positions_2eproto(); return true; }();
+static void protobuf_AssignDescriptorsOnce() {
+  static ::google::protobuf::internal::once_flag once;
+  ::google::protobuf::internal::call_once(once, protobuf_AssignDescriptors);
+}
+
+void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
+void protobuf_RegisterTypes(const ::std::string&) {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 3);
+}
+
+static void AddDescriptorsImpl() {
+  InitDefaults();
+  static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
+      "\n\017Positions.proto\"6\n\013PositionENU\022\014\n\004east"
+      "\030\001 \001(\001\022\r\n\005north\030\002 \001(\001\022\n\n\002up\030\003 \001(\001\"h\n\023Pos"
+      "itionENUAdvanced\022\"\n\014position_enu\030\001 \001(\0132\014"
+      ".PositionENU\022\014\n\004zone\030\002 \001(\005\022\037\n\nhemisphere"
+      "\030\003 \001(\0162\013.Hemisphere\"F\n\rPositionWgs84\022\021\n\t"
+      "longitude\030\001 \001(\001\022\020\n\010latitude\030\002 \001(\001\022\020\n\010alt"
+      "itude\030\003 \001(\001*\"\n\nHemisphere\022\t\n\005NORTH\020\000\022\t\n\005"
+      "SOUTH\020\001b\006proto3"
+  };
+  ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
+      descriptor, 295);
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
+    "Positions.proto", &protobuf_RegisterTypes);
+}
+
+void AddDescriptors() {
+  static ::google::protobuf::internal::once_flag once;
+  ::google::protobuf::internal::call_once(once, AddDescriptorsImpl);
+}
+// Force AddDescriptors() to be called at dynamic initialization time.
+struct StaticDescriptorInitializer {
+  StaticDescriptorInitializer() {
+    AddDescriptors();
+  }
+} static_descriptor_initializer;
+}  // namespace protobuf_Positions_2eproto
 const ::google::protobuf::EnumDescriptor* Hemisphere_descriptor() {
-  ::google::protobuf::internal::AssignDescriptors(&assign_descriptors_table_Positions_2eproto);
-  return file_level_enum_descriptors_Positions_2eproto[0];
+  protobuf_Positions_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_Positions_2eproto::file_level_enum_descriptors[0];
 }
 bool Hemisphere_IsValid(int value) {
   switch (value) {
@@ -168,10 +194,6 @@ bool Hemisphere_IsValid(int value) {
 
 void PositionENU::InitAsDefaultInstance() {
 }
-class PositionENU::HasBitSetters {
- public:
-};
-
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int PositionENU::kEastFieldNumber;
 const int PositionENU::kNorthFieldNumber;
@@ -180,6 +202,8 @@ const int PositionENU::kUpFieldNumber;
 
 PositionENU::PositionENU()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_Positions_2eproto::scc_info_PositionENU.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:PositionENU)
 }
@@ -210,8 +234,13 @@ void PositionENU::SharedDtor() {
 void PositionENU::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
+const ::google::protobuf::Descriptor* PositionENU::descriptor() {
+  ::protobuf_Positions_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_Positions_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
 const PositionENU& PositionENU::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_PositionENU_Positions_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_Positions_2eproto::scc_info_PositionENU.base);
   return *internal_default_instance();
 }
 
@@ -228,73 +257,9 @@ void PositionENU::Clear() {
   _internal_metadata_.Clear();
 }
 
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* PositionENU::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<PositionENU*>(object);
-  ::google::protobuf::uint32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ::google::protobuf::uint32 tag;
-    ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // double east = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 9) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_east(val);
-        break;
-      }
-      // double north = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 17) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_north(val);
-        break;
-      }
-      // double up = 3;
-      case 3: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 25) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_up(val);
-        break;
-      }
-      default: {
-      handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-len_delim_till_end: (void)&&len_delim_till_end;
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                                 {parser_till_end, object}, size);
-group_continues: (void)&&group_continues;
-  GOOGLE_DCHECK(ptr >= end);
-  ctx->StoreGroup({_InternalParse, msg}, {parser_till_end, object}, depth);
-  return ptr;
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool PositionENU::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:PositionENU)
   for (;;) {
@@ -304,7 +269,8 @@ bool PositionENU::MergePartialFromCodedStream(
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // double east = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (9 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(9u /* 9 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -317,7 +283,8 @@ bool PositionENU::MergePartialFromCodedStream(
 
       // double north = 2;
       case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (17 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(17u /* 17 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -330,7 +297,8 @@ bool PositionENU::MergePartialFromCodedStream(
 
       // double up = 3;
       case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (25 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(25u /* 25 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -360,7 +328,6 @@ failure:
   return false;
 #undef DO_
 }
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 
 void PositionENU::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
@@ -383,9 +350,9 @@ void PositionENU::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->up(), output);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
   // @@protoc_insertion_point(serialize_end:PositionENU)
 }
@@ -412,9 +379,9 @@ void PositionENU::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->up(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
   // @@protoc_insertion_point(serialize_to_array_end:PositionENU)
   return target;
@@ -424,15 +391,11 @@ size_t PositionENU::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:PositionENU)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
   // double east = 1;
   if (this->east() != 0) {
     total_size += 1 + 8;
@@ -457,7 +420,7 @@ void PositionENU::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:PositionENU)
   GOOGLE_DCHECK_NE(&from, this);
   const PositionENU* source =
-      ::google::protobuf::DynamicCastToGenerated<PositionENU>(
+      ::google::protobuf::internal::DynamicCastToGenerated<const PositionENU>(
           &from);
   if (source == NULL) {
   // @@protoc_insertion_point(generalized_merge_from_cast_fail:PositionENU)
@@ -510,15 +473,15 @@ void PositionENU::Swap(PositionENU* other) {
 }
 void PositionENU::InternalSwap(PositionENU* other) {
   using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(east_, other->east_);
   swap(north_, other->north_);
   swap(up_, other->up_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
 ::google::protobuf::Metadata PositionENU::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_Positions_2eproto);
-  return ::file_level_metadata_Positions_2eproto[kIndexInFileMessages];
+  protobuf_Positions_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_Positions_2eproto::file_level_metadata[kIndexInFileMessages];
 }
 
 
@@ -528,15 +491,6 @@ void PositionENUAdvanced::InitAsDefaultInstance() {
   ::_PositionENUAdvanced_default_instance_._instance.get_mutable()->position_enu_ = const_cast< ::PositionENU*>(
       ::PositionENU::internal_default_instance());
 }
-class PositionENUAdvanced::HasBitSetters {
- public:
-  static const ::PositionENU& position_enu(const PositionENUAdvanced* msg);
-};
-
-const ::PositionENU&
-PositionENUAdvanced::HasBitSetters::position_enu(const PositionENUAdvanced* msg) {
-  return *msg->position_enu_;
-}
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int PositionENUAdvanced::kPositionEnuFieldNumber;
 const int PositionENUAdvanced::kZoneFieldNumber;
@@ -545,6 +499,8 @@ const int PositionENUAdvanced::kHemisphereFieldNumber;
 
 PositionENUAdvanced::PositionENUAdvanced()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_Positions_2eproto::scc_info_PositionENUAdvanced.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:PositionENUAdvanced)
 }
@@ -564,8 +520,6 @@ PositionENUAdvanced::PositionENUAdvanced(const PositionENUAdvanced& from)
 }
 
 void PositionENUAdvanced::SharedCtor() {
-  ::google::protobuf::internal::InitSCC(
-      &scc_info_PositionENUAdvanced_Positions_2eproto.base);
   ::memset(&position_enu_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&hemisphere_) -
       reinterpret_cast<char*>(&position_enu_)) + sizeof(hemisphere_));
@@ -583,8 +537,13 @@ void PositionENUAdvanced::SharedDtor() {
 void PositionENUAdvanced::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
+const ::google::protobuf::Descriptor* PositionENUAdvanced::descriptor() {
+  ::protobuf_Positions_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_Positions_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
 const PositionENUAdvanced& PositionENUAdvanced::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_PositionENUAdvanced_Positions_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_Positions_2eproto::scc_info_PositionENUAdvanced.base);
   return *internal_default_instance();
 }
 
@@ -605,81 +564,9 @@ void PositionENUAdvanced::Clear() {
   _internal_metadata_.Clear();
 }
 
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* PositionENUAdvanced::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<PositionENUAdvanced*>(object);
-  ::google::protobuf::uint32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ::google::protobuf::uint32 tag;
-    ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // .PositionENU position_enu = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
-        ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        parser_till_end = ::PositionENU::_InternalParse;
-        object = msg->mutable_position_enu();
-        if (size > end - ptr) goto len_delim_till_end;
-        auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-        ptr = newend;
-        break;
-      }
-      // int32 zone = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 16) goto handle_unusual;
-        ::google::protobuf::uint64 val;
-        ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ::google::protobuf::int32 value = val;
-        msg->set_zone(value);
-        break;
-      }
-      // .Hemisphere hemisphere = 3;
-      case 3: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 24) goto handle_unusual;
-        ::google::protobuf::uint64 val;
-        ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ::Hemisphere value = static_cast<::Hemisphere>(val);
-        msg->set_hemisphere(value);
-        break;
-      }
-      default: {
-      handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-len_delim_till_end: (void)&&len_delim_till_end;
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                                 {parser_till_end, object}, size);
-group_continues: (void)&&group_continues;
-  GOOGLE_DCHECK(ptr >= end);
-  ctx->StoreGroup({_InternalParse, msg}, {parser_till_end, object}, depth);
-  return ptr;
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool PositionENUAdvanced::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:PositionENUAdvanced)
   for (;;) {
@@ -689,7 +576,8 @@ bool PositionENUAdvanced::MergePartialFromCodedStream(
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // .PositionENU position_enu = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                input, mutable_position_enu()));
         } else {
@@ -700,7 +588,8 @@ bool PositionENUAdvanced::MergePartialFromCodedStream(
 
       // int32 zone = 2;
       case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (16 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
@@ -713,7 +602,8 @@ bool PositionENUAdvanced::MergePartialFromCodedStream(
 
       // .Hemisphere hemisphere = 3;
       case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (24 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
           int value = 0;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
@@ -744,7 +634,6 @@ failure:
   return false;
 #undef DO_
 }
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 
 void PositionENUAdvanced::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
@@ -755,7 +644,7 @@ void PositionENUAdvanced::SerializeWithCachedSizes(
   // .PositionENU position_enu = 1;
   if (this->has_position_enu()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, HasBitSetters::position_enu(this), output);
+      1, this->_internal_position_enu(), output);
   }
 
   // int32 zone = 2;
@@ -769,9 +658,9 @@ void PositionENUAdvanced::SerializeWithCachedSizes(
       3, this->hemisphere(), output);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
   // @@protoc_insertion_point(serialize_end:PositionENUAdvanced)
 }
@@ -787,7 +676,7 @@ void PositionENUAdvanced::SerializeWithCachedSizes(
   if (this->has_position_enu()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        1, HasBitSetters::position_enu(this), deterministic, target);
+        1, this->_internal_position_enu(), deterministic, target);
   }
 
   // int32 zone = 2;
@@ -801,9 +690,9 @@ void PositionENUAdvanced::SerializeWithCachedSizes(
       3, this->hemisphere(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
   // @@protoc_insertion_point(serialize_to_array_end:PositionENUAdvanced)
   return target;
@@ -813,15 +702,11 @@ size_t PositionENUAdvanced::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:PositionENUAdvanced)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
   // .PositionENU position_enu = 1;
   if (this->has_position_enu()) {
     total_size += 1 +
@@ -851,7 +736,7 @@ void PositionENUAdvanced::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:PositionENUAdvanced)
   GOOGLE_DCHECK_NE(&from, this);
   const PositionENUAdvanced* source =
-      ::google::protobuf::DynamicCastToGenerated<PositionENUAdvanced>(
+      ::google::protobuf::internal::DynamicCastToGenerated<const PositionENUAdvanced>(
           &from);
   if (source == NULL) {
   // @@protoc_insertion_point(generalized_merge_from_cast_fail:PositionENUAdvanced)
@@ -904,15 +789,15 @@ void PositionENUAdvanced::Swap(PositionENUAdvanced* other) {
 }
 void PositionENUAdvanced::InternalSwap(PositionENUAdvanced* other) {
   using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(position_enu_, other->position_enu_);
   swap(zone_, other->zone_);
   swap(hemisphere_, other->hemisphere_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
 ::google::protobuf::Metadata PositionENUAdvanced::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_Positions_2eproto);
-  return ::file_level_metadata_Positions_2eproto[kIndexInFileMessages];
+  protobuf_Positions_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_Positions_2eproto::file_level_metadata[kIndexInFileMessages];
 }
 
 
@@ -920,10 +805,6 @@ void PositionENUAdvanced::InternalSwap(PositionENUAdvanced* other) {
 
 void PositionWgs84::InitAsDefaultInstance() {
 }
-class PositionWgs84::HasBitSetters {
- public:
-};
-
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int PositionWgs84::kLongitudeFieldNumber;
 const int PositionWgs84::kLatitudeFieldNumber;
@@ -932,6 +813,8 @@ const int PositionWgs84::kAltitudeFieldNumber;
 
 PositionWgs84::PositionWgs84()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_Positions_2eproto::scc_info_PositionWgs84.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:PositionWgs84)
 }
@@ -962,8 +845,13 @@ void PositionWgs84::SharedDtor() {
 void PositionWgs84::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
+const ::google::protobuf::Descriptor* PositionWgs84::descriptor() {
+  ::protobuf_Positions_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_Positions_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
 const PositionWgs84& PositionWgs84::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_PositionWgs84_Positions_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_Positions_2eproto::scc_info_PositionWgs84.base);
   return *internal_default_instance();
 }
 
@@ -980,73 +868,9 @@ void PositionWgs84::Clear() {
   _internal_metadata_.Clear();
 }
 
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* PositionWgs84::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<PositionWgs84*>(object);
-  ::google::protobuf::uint32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ::google::protobuf::uint32 tag;
-    ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // double longitude = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 9) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_longitude(val);
-        break;
-      }
-      // double latitude = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 17) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_latitude(val);
-        break;
-      }
-      // double altitude = 3;
-      case 3: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 25) goto handle_unusual;
-        double val;
-        ::std::memcpy(&val, ptr, 8);
-        ptr += 8;
-        msg->set_altitude(val);
-        break;
-      }
-      default: {
-      handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-len_delim_till_end: (void)&&len_delim_till_end;
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                                 {parser_till_end, object}, size);
-group_continues: (void)&&group_continues;
-  GOOGLE_DCHECK(ptr >= end);
-  ctx->StoreGroup({_InternalParse, msg}, {parser_till_end, object}, depth);
-  return ptr;
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool PositionWgs84::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:PositionWgs84)
   for (;;) {
@@ -1056,7 +880,8 @@ bool PositionWgs84::MergePartialFromCodedStream(
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // double longitude = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (9 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(9u /* 9 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -1069,7 +894,8 @@ bool PositionWgs84::MergePartialFromCodedStream(
 
       // double latitude = 2;
       case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (17 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(17u /* 17 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -1082,7 +908,8 @@ bool PositionWgs84::MergePartialFromCodedStream(
 
       // double altitude = 3;
       case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (25 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(25u /* 25 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -1112,7 +939,6 @@ failure:
   return false;
 #undef DO_
 }
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 
 void PositionWgs84::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
@@ -1135,9 +961,9 @@ void PositionWgs84::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->altitude(), output);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
   // @@protoc_insertion_point(serialize_end:PositionWgs84)
 }
@@ -1164,9 +990,9 @@ void PositionWgs84::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->altitude(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
   // @@protoc_insertion_point(serialize_to_array_end:PositionWgs84)
   return target;
@@ -1176,15 +1002,11 @@ size_t PositionWgs84::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:PositionWgs84)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
   // double longitude = 1;
   if (this->longitude() != 0) {
     total_size += 1 + 8;
@@ -1209,7 +1031,7 @@ void PositionWgs84::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:PositionWgs84)
   GOOGLE_DCHECK_NE(&from, this);
   const PositionWgs84* source =
-      ::google::protobuf::DynamicCastToGenerated<PositionWgs84>(
+      ::google::protobuf::internal::DynamicCastToGenerated<const PositionWgs84>(
           &from);
   if (source == NULL) {
   // @@protoc_insertion_point(generalized_merge_from_cast_fail:PositionWgs84)
@@ -1262,32 +1084,31 @@ void PositionWgs84::Swap(PositionWgs84* other) {
 }
 void PositionWgs84::InternalSwap(PositionWgs84* other) {
   using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(longitude_, other->longitude_);
   swap(latitude_, other->latitude_);
   swap(altitude_, other->altitude_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
 ::google::protobuf::Metadata PositionWgs84::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_Positions_2eproto);
-  return ::file_level_metadata_Positions_2eproto[kIndexInFileMessages];
+  protobuf_Positions_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_Positions_2eproto::file_level_metadata[kIndexInFileMessages];
 }
 
 
 // @@protoc_insertion_point(namespace_scope)
 namespace google {
 namespace protobuf {
-template<> PROTOBUF_NOINLINE ::PositionENU* Arena::CreateMaybeMessage< ::PositionENU >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::PositionENU* Arena::CreateMaybeMessage< ::PositionENU >(Arena* arena) {
   return Arena::CreateInternal< ::PositionENU >(arena);
 }
-template<> PROTOBUF_NOINLINE ::PositionENUAdvanced* Arena::CreateMaybeMessage< ::PositionENUAdvanced >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::PositionENUAdvanced* Arena::CreateMaybeMessage< ::PositionENUAdvanced >(Arena* arena) {
   return Arena::CreateInternal< ::PositionENUAdvanced >(arena);
 }
-template<> PROTOBUF_NOINLINE ::PositionWgs84* Arena::CreateMaybeMessage< ::PositionWgs84 >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::PositionWgs84* Arena::CreateMaybeMessage< ::PositionWgs84 >(Arena* arena) {
   return Arena::CreateInternal< ::PositionWgs84 >(arena);
 }
 }  // namespace protobuf
 }  // namespace google
 
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>

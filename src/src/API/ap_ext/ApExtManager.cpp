@@ -32,7 +32,7 @@
 #include <boost/thread/thread_time.hpp>
 
 ApExtManager::ApExtManager() :
-		internalImu_(false), externalGps_(false), useAirspeed_(false), traceSeqNr_(false), courseAsHeading_(
+		internalImu_(false), externalGps_(false), useAirspeed_(false), useEuler_(false), traceSeqNr_(false), courseAsHeading_(
 				false), gpsTimeout_(Seconds(1)), airspeedTimeout_(Milliseconds(100)), downsample_(0), gpsSampleTimestamp_(
 				boost::posix_time::min_date_time), sampleNr_(0)
 {
@@ -76,6 +76,7 @@ ApExtManager::configure(const boost::property_tree::ptree& config)
 	pm.add<bool>("internal_imu", internalImu_, false);
 	pm.add<bool>("external_gps", externalGps_, false);
 	pm.add<bool>("use_airspeed", useAirspeed_, false);
+	pm.add<bool>("use_euler", useEuler_, false);
 	pm.add<bool>("trace_seq_nr", traceSeqNr_, false);
 	pm.add<bool>("course_as_heading", courseAsHeading_, false);
 	pm.add("gps_timeout_ms", gpsTimeout_, false);
@@ -114,14 +115,19 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 		{
 
 			//Attitude
-			attitude.w() = imuSample->imu_quat_w;
-			attitude.x() = imuSample->imu_quat_x;
-			attitude.y() = imuSample->imu_quat_y;
-			attitude.z() = imuSample->imu_quat_z;
-
-			euler.x() = imuSample->imu_euler_roll;
-			euler.y() = imuSample->imu_euler_pitch;
-			euler.z() = imuSample->imu_euler_yaw;
+			if (useEuler_)
+			{
+				euler.x() = imuSample->imu_euler_roll;
+				euler.y() = imuSample->imu_euler_pitch;
+				euler.z() = imuSample->imu_euler_yaw;
+			}
+			else
+			{
+				attitude.w() = imuSample->imu_quat_w;
+				attitude.x() = imuSample->imu_quat_x;
+				attitude.y() = imuSample->imu_quat_y;
+				attitude.z() = imuSample->imu_quat_z;
+			}
 
 			//Acceleration
 			acceleration[0] = imuSample->imu_accel_x;
@@ -147,10 +153,19 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 		else
 		{
 			//Attitude
-			attitude.w() = imuSample->imu_quat_w;
-			attitude.x() = imuSample->imu_quat_x;
-			attitude.y() = imuSample->imu_quat_y;
-			attitude.z() = imuSample->imu_quat_z;
+			if (useEuler_)
+			{
+				euler.x() = imuSample->imu_euler_roll;
+				euler.y() = imuSample->imu_euler_pitch;
+				euler.z() = imuSample->imu_euler_yaw;
+			}
+			else
+			{
+				attitude.w() = imuSample->imu_quat_w;
+				attitude.x() = imuSample->imu_quat_x;
+				attitude.y() = imuSample->imu_quat_y;
+				attitude.z() = imuSample->imu_quat_z;
+			}
 
 			//Acceleration
 			acceleration[0] = imuSample->imu_accel_x;
@@ -199,7 +214,14 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 
 	sens.angularRate = angularRate;
 
-	sens.attitude = quaternionToEuler(attitude);
+	if (useEuler_)
+	{
+		sens.attitude = degToRad(euler);
+	}
+	else
+	{
+		sens.attitude = quaternionToEuler(attitude);
+	}
 
 	sens.attitude[2] = boundAngleRad(-(sens.attitude[2] - M_PI/2));
 

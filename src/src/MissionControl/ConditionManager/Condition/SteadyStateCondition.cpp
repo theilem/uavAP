@@ -31,7 +31,8 @@
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 
 SteadyStateCondition::SteadyStateCondition() :
-		connection_(), steadyState_(true), event_(), minimumDuration_(Milliseconds(500)), trigger_(), afterMinimumDuration_(false)
+		connection_(), steadyState_(true), trigger_(), event_(), minimumDuration_(
+				Milliseconds(500)), afterMinimumDuration_(false)
 {
 }
 
@@ -60,7 +61,8 @@ SteadyStateCondition::configure(const boost::property_tree::ptree& config)
 }
 
 void
-SteadyStateCondition::activate(ConditionManager* conditionManager, const ConditionTrigger& conditionTrigger)
+SteadyStateCondition::activate(ConditionManager* conditionManager,
+		const ConditionTrigger& conditionTrigger)
 {
 	deactivate();
 	auto scheduler = conditionManager->getScheduler().lock();
@@ -71,10 +73,11 @@ SteadyStateCondition::activate(ConditionManager* conditionManager, const Conditi
 		return;
 	}
 
-	event_ = scheduler->schedule(std::bind(&SteadyStateCondition::minDuration, this), minimumDuration_);
+	event_ = scheduler->schedule(std::bind(&SteadyStateCondition::minDuration, this),
+			minimumDuration_);
 
 	connection_ = conditionManager->subscribeOnSteadyState(
-		std::bind(&SteadyStateCondition::onSteadyState, this, std::placeholders::_1));
+			std::bind(&SteadyStateCondition::onSteadyState, this, std::placeholders::_1));
 	trigger_ = conditionTrigger;
 }
 
