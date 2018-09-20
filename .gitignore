@@ -3,3 +3,6 @@
 
 # Ignoring Qt User Profiles
 *.user
+*.pb.cc
+*.pb.h
+

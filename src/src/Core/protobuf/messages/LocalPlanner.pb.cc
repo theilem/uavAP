@@ -13,6 +13,10 @@
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/reflection_ops.h>
 #include <google/protobuf/wire_format.h>
+// This is a temporary google only hack
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+#include "third_party/protobuf/version.h"
+#endif
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 
@@ -189,72 +193,72 @@ void InitDefaults_LocalPlanner_2eproto() {
 constexpr ::google::protobuf::EnumDescriptor const** file_level_enum_descriptors_LocalPlanner_2eproto = nullptr;
 constexpr ::google::protobuf::ServiceDescriptor const** file_level_service_descriptors_LocalPlanner_2eproto = nullptr;
 
-const ::google::protobuf::uint32 TableStruct_LocalPlanner_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+const ::google::protobuf::uint32 TableStruct_LocalPlanner_2eproto::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::AirplaneLinearLocalPlannerStatus, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::AirplaneLinearLocalPlannerStatus, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::AirplaneLinearLocalPlannerStatus, heading_target_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::AirplaneLinearLocalPlannerStatus, heading_target_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerStatus, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerStatus, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerStatus, airplane_status_),
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerStatus, current_path_section_),
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerStatus, velocity_target_),
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerStatus, yaw_rate_target_),
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerStatus, is_in_approach_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerStatus, airplane_status_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerStatus, current_path_section_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerStatus, velocity_target_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerStatus, yaw_rate_target_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerStatus, is_in_approach_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerStatus, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerStatus, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerStatus, current_path_section_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerStatus, velocity_target_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerStatus, yaw_rate_target_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerStatus, climb_angle_target_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerStatus, heading_target_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerStatus, is_in_approach_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerStatus, current_path_section_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerStatus, velocity_target_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerStatus, yaw_rate_target_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerStatus, climb_angle_target_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerStatus, heading_target_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerStatus, is_in_approach_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::LocalPlannerStatus, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LocalPlannerStatus, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::LocalPlannerStatus, linear_status_),
-  PROTOBUF_FIELD_OFFSET(::LocalPlannerStatus, maneuver_status_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LocalPlannerStatus, linear_status_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LocalPlannerStatus, maneuver_status_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, k_altitude_),
-  PROTOBUF_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, k_heading_),
-  PROTOBUF_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, k_yaw_rate_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, k_altitude_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, k_heading_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::AirplaneLinearLocalPlannerParams, k_yaw_rate_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerParams, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerParams, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::LinearLocalPlannerParams, airplane_params_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LinearLocalPlannerParams, airplane_params_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerParams, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerParams, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerParams, k_altitude_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerParams, k_convergence_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverLocalPlannerParams, k_yaw_rate_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerParams, k_altitude_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerParams, k_convergence_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverLocalPlannerParams, k_yaw_rate_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::LocalPlannerParams, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LocalPlannerParams, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::LocalPlannerParams, linear_params_),
-  PROTOBUF_FIELD_OFFSET(::LocalPlannerParams, maneuver_params_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LocalPlannerParams, linear_params_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::LocalPlannerParams, maneuver_params_),
 };
-static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::AirplaneLinearLocalPlannerStatus)},
   { 6, -1, sizeof(::LinearLocalPlannerStatus)},
   { 16, -1, sizeof(::ManeuverLocalPlannerStatus)},
@@ -392,8 +396,9 @@ const char* AirplaneLinearLocalPlannerStatus::_InternalParse(const char* begin, 
   while (ptr < end) {
     ::google::protobuf::uint32 tag;
     ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    if (!ptr) goto error;
     switch (tag >> 3) {
+      case 0: goto error;
       // double heading_target = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) != 9) goto handle_unusual;
@@ -405,9 +410,8 @@ const char* AirplaneLinearLocalPlannerStatus::_InternalParse(const char* begin, 
       }
       default: {
       handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if ((tag & 7) == 4) {
+          if (!ctx->ValidEndGroup(tag)) goto error;
           return ptr;
         }
         auto res = UnknownFieldParse(tag, {_InternalParse, msg},
@@ -418,6 +422,8 @@ const char* AirplaneLinearLocalPlannerStatus::_InternalParse(const char* begin, 
     }  // switch
   }  // while
   return ptr;
+error:
+  return nullptr;
 len_delim_till_end: (void)&&len_delim_till_end;
   return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
                                  {parser_till_end, object}, size);
@@ -429,7 +435,7 @@ group_continues: (void)&&group_continues;
 #else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool AirplaneLinearLocalPlannerStatus::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:AirplaneLinearLocalPlannerStatus)
   for (;;) {
@@ -712,20 +718,19 @@ const char* LinearLocalPlannerStatus::_InternalParse(const char* begin, const ch
   while (ptr < end) {
     ::google::protobuf::uint32 tag;
     ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    if (!ptr) goto error;
     switch (tag >> 3) {
+      case 0: goto error;
       // .AirplaneLinearLocalPlannerStatus airplane_status = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
         ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         parser_till_end = ::AirplaneLinearLocalPlannerStatus::_InternalParse;
         object = msg->mutable_airplane_status();
         if (size > end - ptr) goto len_delim_till_end;
         auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if (!ctx->ParseExactRange({parser_till_end, object}, ptr, newend)) goto error;
         ptr = newend;
         break;
       }
@@ -734,7 +739,7 @@ const char* LinearLocalPlannerStatus::_InternalParse(const char* begin, const ch
         if (static_cast<::google::protobuf::uint8>(tag) != 16) goto handle_unusual;
         ::google::protobuf::uint64 val;
         ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         ::google::protobuf::uint32 value = val;
         msg->set_current_path_section(value);
         break;
@@ -743,14 +748,12 @@ const char* LinearLocalPlannerStatus::_InternalParse(const char* begin, const ch
       case 3: {
         if (static_cast<::google::protobuf::uint8>(tag) != 26) goto handle_unusual;
         ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         parser_till_end = ::VelocityBody::_InternalParse;
         object = msg->mutable_velocity_target();
         if (size > end - ptr) goto len_delim_till_end;
         auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if (!ctx->ParseExactRange({parser_till_end, object}, ptr, newend)) goto error;
         ptr = newend;
         break;
       }
@@ -768,16 +771,15 @@ const char* LinearLocalPlannerStatus::_InternalParse(const char* begin, const ch
         if (static_cast<::google::protobuf::uint8>(tag) != 40) goto handle_unusual;
         ::google::protobuf::uint64 val;
         ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         bool value = val;
         msg->set_is_in_approach(value);
         break;
       }
       default: {
       handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if ((tag & 7) == 4) {
+          if (!ctx->ValidEndGroup(tag)) goto error;
           return ptr;
         }
         auto res = UnknownFieldParse(tag, {_InternalParse, msg},
@@ -788,6 +790,8 @@ const char* LinearLocalPlannerStatus::_InternalParse(const char* begin, const ch
     }  // switch
   }  // while
   return ptr;
+error:
+  return nullptr;
 len_delim_till_end: (void)&&len_delim_till_end;
   return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
                                  {parser_till_end, object}, size);
@@ -799,7 +803,7 @@ group_continues: (void)&&group_continues;
 #else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool LinearLocalPlannerStatus::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:LinearLocalPlannerStatus)
   for (;;) {
@@ -1177,14 +1181,15 @@ const char* ManeuverLocalPlannerStatus::_InternalParse(const char* begin, const 
   while (ptr < end) {
     ::google::protobuf::uint32 tag;
     ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    if (!ptr) goto error;
     switch (tag >> 3) {
+      case 0: goto error;
       // uint32 current_path_section = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) != 8) goto handle_unusual;
         ::google::protobuf::uint64 val;
         ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         ::google::protobuf::uint32 value = val;
         msg->set_current_path_section(value);
         break;
@@ -1230,16 +1235,15 @@ const char* ManeuverLocalPlannerStatus::_InternalParse(const char* begin, const 
         if (static_cast<::google::protobuf::uint8>(tag) != 48) goto handle_unusual;
         ::google::protobuf::uint64 val;
         ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         bool value = val;
         msg->set_is_in_approach(value);
         break;
       }
       default: {
       handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if ((tag & 7) == 4) {
+          if (!ctx->ValidEndGroup(tag)) goto error;
           return ptr;
         }
         auto res = UnknownFieldParse(tag, {_InternalParse, msg},
@@ -1250,6 +1254,8 @@ const char* ManeuverLocalPlannerStatus::_InternalParse(const char* begin, const 
     }  // switch
   }  // while
   return ptr;
+error:
+  return nullptr;
 len_delim_till_end: (void)&&len_delim_till_end;
   return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
                                  {parser_till_end, object}, size);
@@ -1261,7 +1267,7 @@ group_continues: (void)&&group_continues;
 #else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool ManeuverLocalPlannerStatus::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:ManeuverLocalPlannerStatus)
   for (;;) {
@@ -1691,20 +1697,19 @@ const char* LocalPlannerStatus::_InternalParse(const char* begin, const char* en
   while (ptr < end) {
     ::google::protobuf::uint32 tag;
     ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    if (!ptr) goto error;
     switch (tag >> 3) {
+      case 0: goto error;
       // .LinearLocalPlannerStatus linear_status = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
         ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         parser_till_end = ::LinearLocalPlannerStatus::_InternalParse;
         object = msg->mutable_linear_status();
         if (size > end - ptr) goto len_delim_till_end;
         auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if (!ctx->ParseExactRange({parser_till_end, object}, ptr, newend)) goto error;
         ptr = newend;
         break;
       }
@@ -1712,22 +1717,19 @@ const char* LocalPlannerStatus::_InternalParse(const char* begin, const char* en
       case 2: {
         if (static_cast<::google::protobuf::uint8>(tag) != 18) goto handle_unusual;
         ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         parser_till_end = ::ManeuverLocalPlannerStatus::_InternalParse;
         object = msg->mutable_maneuver_status();
         if (size > end - ptr) goto len_delim_till_end;
         auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if (!ctx->ParseExactRange({parser_till_end, object}, ptr, newend)) goto error;
         ptr = newend;
         break;
       }
       default: {
       handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if ((tag & 7) == 4) {
+          if (!ctx->ValidEndGroup(tag)) goto error;
           return ptr;
         }
         auto res = UnknownFieldParse(tag, {_InternalParse, msg},
@@ -1738,6 +1740,8 @@ const char* LocalPlannerStatus::_InternalParse(const char* begin, const char* en
     }  // switch
   }  // while
   return ptr;
+error:
+  return nullptr;
 len_delim_till_end: (void)&&len_delim_till_end;
   return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
                                  {parser_till_end, object}, size);
@@ -1749,7 +1753,7 @@ group_continues: (void)&&group_continues;
 #else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool LocalPlannerStatus::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:LocalPlannerStatus)
   for (;;) {
@@ -2026,8 +2030,9 @@ const char* AirplaneLinearLocalPlannerParams::_InternalParse(const char* begin, 
   while (ptr < end) {
     ::google::protobuf::uint32 tag;
     ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    if (!ptr) goto error;
     switch (tag >> 3) {
+      case 0: goto error;
       // double k_altitude = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) != 9) goto handle_unusual;
@@ -2057,9 +2062,8 @@ const char* AirplaneLinearLocalPlannerParams::_InternalParse(const char* begin, 
       }
       default: {
       handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if ((tag & 7) == 4) {
+          if (!ctx->ValidEndGroup(tag)) goto error;
           return ptr;
         }
         auto res = UnknownFieldParse(tag, {_InternalParse, msg},
@@ -2070,6 +2074,8 @@ const char* AirplaneLinearLocalPlannerParams::_InternalParse(const char* begin, 
     }  // switch
   }  // while
   return ptr;
+error:
+  return nullptr;
 len_delim_till_end: (void)&&len_delim_till_end;
   return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
                                  {parser_till_end, object}, size);
@@ -2081,7 +2087,7 @@ group_continues: (void)&&group_continues;
 #else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool AirplaneLinearLocalPlannerParams::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:AirplaneLinearLocalPlannerParams)
   for (;;) {
@@ -2393,28 +2399,26 @@ const char* LinearLocalPlannerParams::_InternalParse(const char* begin, const ch
   while (ptr < end) {
     ::google::protobuf::uint32 tag;
     ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    if (!ptr) goto error;
     switch (tag >> 3) {
+      case 0: goto error;
       // .AirplaneLinearLocalPlannerParams airplane_params = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
         ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         parser_till_end = ::AirplaneLinearLocalPlannerParams::_InternalParse;
         object = msg->mutable_airplane_params();
         if (size > end - ptr) goto len_delim_till_end;
         auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if (!ctx->ParseExactRange({parser_till_end, object}, ptr, newend)) goto error;
         ptr = newend;
         break;
       }
       default: {
       handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if ((tag & 7) == 4) {
+          if (!ctx->ValidEndGroup(tag)) goto error;
           return ptr;
         }
         auto res = UnknownFieldParse(tag, {_InternalParse, msg},
@@ -2425,6 +2429,8 @@ const char* LinearLocalPlannerParams::_InternalParse(const char* begin, const ch
     }  // switch
   }  // while
   return ptr;
+error:
+  return nullptr;
 len_delim_till_end: (void)&&len_delim_till_end;
   return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
                                  {parser_till_end, object}, size);
@@ -2436,7 +2442,7 @@ group_continues: (void)&&group_continues;
 #else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool LinearLocalPlannerParams::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:LinearLocalPlannerParams)
   for (;;) {
@@ -2678,8 +2684,9 @@ const char* ManeuverLocalPlannerParams::_InternalParse(const char* begin, const 
   while (ptr < end) {
     ::google::protobuf::uint32 tag;
     ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    if (!ptr) goto error;
     switch (tag >> 3) {
+      case 0: goto error;
       // double k_altitude = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) != 9) goto handle_unusual;
@@ -2709,9 +2716,8 @@ const char* ManeuverLocalPlannerParams::_InternalParse(const char* begin, const 
       }
       default: {
       handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if ((tag & 7) == 4) {
+          if (!ctx->ValidEndGroup(tag)) goto error;
           return ptr;
         }
         auto res = UnknownFieldParse(tag, {_InternalParse, msg},
@@ -2722,6 +2728,8 @@ const char* ManeuverLocalPlannerParams::_InternalParse(const char* begin, const 
     }  // switch
   }  // while
   return ptr;
+error:
+  return nullptr;
 len_delim_till_end: (void)&&len_delim_till_end;
   return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
                                  {parser_till_end, object}, size);
@@ -2733,7 +2741,7 @@ group_continues: (void)&&group_continues;
 #else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool ManeuverLocalPlannerParams::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:ManeuverLocalPlannerParams)
   for (;;) {
@@ -3065,20 +3073,19 @@ const char* LocalPlannerParams::_InternalParse(const char* begin, const char* en
   while (ptr < end) {
     ::google::protobuf::uint32 tag;
     ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    if (!ptr) goto error;
     switch (tag >> 3) {
+      case 0: goto error;
       // .LinearLocalPlannerParams linear_params = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
         ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         parser_till_end = ::LinearLocalPlannerParams::_InternalParse;
         object = msg->mutable_linear_params();
         if (size > end - ptr) goto len_delim_till_end;
         auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if (!ctx->ParseExactRange({parser_till_end, object}, ptr, newend)) goto error;
         ptr = newend;
         break;
       }
@@ -3086,22 +3093,19 @@ const char* LocalPlannerParams::_InternalParse(const char* begin, const char* en
       case 2: {
         if (static_cast<::google::protobuf::uint8>(tag) != 18) goto handle_unusual;
         ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         parser_till_end = ::ManeuverLocalPlannerParams::_InternalParse;
         object = msg->mutable_maneuver_params();
         if (size > end - ptr) goto len_delim_till_end;
         auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if (!ctx->ParseExactRange({parser_till_end, object}, ptr, newend)) goto error;
         ptr = newend;
         break;
       }
       default: {
       handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if ((tag & 7) == 4) {
+          if (!ctx->ValidEndGroup(tag)) goto error;
           return ptr;
         }
         auto res = UnknownFieldParse(tag, {_InternalParse, msg},
@@ -3112,6 +3116,8 @@ const char* LocalPlannerParams::_InternalParse(const char* begin, const char* en
     }  // switch
   }  // while
   return ptr;
+error:
+  return nullptr;
 len_delim_till_end: (void)&&len_delim_till_end;
   return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
                                  {parser_till_end, object}, size);
@@ -3123,7 +3129,7 @@ group_continues: (void)&&group_continues;
 #else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool LocalPlannerParams::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:LocalPlannerParams)
   for (;;) {
@@ -3328,32 +3334,31 @@ void LocalPlannerParams::InternalSwap(LocalPlannerParams* other) {
 // @@protoc_insertion_point(namespace_scope)
 namespace google {
 namespace protobuf {
-template<> PROTOBUF_NOINLINE ::AirplaneLinearLocalPlannerStatus* Arena::CreateMaybeMessage< ::AirplaneLinearLocalPlannerStatus >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::AirplaneLinearLocalPlannerStatus* Arena::CreateMaybeMessage< ::AirplaneLinearLocalPlannerStatus >(Arena* arena) {
   return Arena::CreateInternal< ::AirplaneLinearLocalPlannerStatus >(arena);
 }
-template<> PROTOBUF_NOINLINE ::LinearLocalPlannerStatus* Arena::CreateMaybeMessage< ::LinearLocalPlannerStatus >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::LinearLocalPlannerStatus* Arena::CreateMaybeMessage< ::LinearLocalPlannerStatus >(Arena* arena) {
   return Arena::CreateInternal< ::LinearLocalPlannerStatus >(arena);
 }
-template<> PROTOBUF_NOINLINE ::ManeuverLocalPlannerStatus* Arena::CreateMaybeMessage< ::ManeuverLocalPlannerStatus >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::ManeuverLocalPlannerStatus* Arena::CreateMaybeMessage< ::ManeuverLocalPlannerStatus >(Arena* arena) {
   return Arena::CreateInternal< ::ManeuverLocalPlannerStatus >(arena);
 }
-template<> PROTOBUF_NOINLINE ::LocalPlannerStatus* Arena::CreateMaybeMessage< ::LocalPlannerStatus >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::LocalPlannerStatus* Arena::CreateMaybeMessage< ::LocalPlannerStatus >(Arena* arena) {
   return Arena::CreateInternal< ::LocalPlannerStatus >(arena);
 }
-template<> PROTOBUF_NOINLINE ::AirplaneLinearLocalPlannerParams* Arena::CreateMaybeMessage< ::AirplaneLinearLocalPlannerParams >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::AirplaneLinearLocalPlannerParams* Arena::CreateMaybeMessage< ::AirplaneLinearLocalPlannerParams >(Arena* arena) {
   return Arena::CreateInternal< ::AirplaneLinearLocalPlannerParams >(arena);
 }
-template<> PROTOBUF_NOINLINE ::LinearLocalPlannerParams* Arena::CreateMaybeMessage< ::LinearLocalPlannerParams >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::LinearLocalPlannerParams* Arena::CreateMaybeMessage< ::LinearLocalPlannerParams >(Arena* arena) {
   return Arena::CreateInternal< ::LinearLocalPlannerParams >(arena);
 }
-template<> PROTOBUF_NOINLINE ::ManeuverLocalPlannerParams* Arena::CreateMaybeMessage< ::ManeuverLocalPlannerParams >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::ManeuverLocalPlannerParams* Arena::CreateMaybeMessage< ::ManeuverLocalPlannerParams >(Arena* arena) {
   return Arena::CreateInternal< ::ManeuverLocalPlannerParams >(arena);
 }
-template<> PROTOBUF_NOINLINE ::LocalPlannerParams* Arena::CreateMaybeMessage< ::LocalPlannerParams >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::LocalPlannerParams* Arena::CreateMaybeMessage< ::LocalPlannerParams >(Arena* arena) {
   return Arena::CreateInternal< ::LocalPlannerParams >(arena);
 }
 }  // namespace protobuf
 }  // namespace google
 
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>

@@ -13,6 +13,10 @@
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/reflection_ops.h>
 #include <google/protobuf/wire_format.h>
+// This is a temporary google only hack
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+#include "third_party/protobuf/version.h"
+#endif
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 
@@ -63,27 +67,27 @@ void InitDefaults_ManeuverPlanner_2eproto() {
 constexpr ::google::protobuf::EnumDescriptor const** file_level_enum_descriptors_ManeuverPlanner_2eproto = nullptr;
 constexpr ::google::protobuf::ServiceDescriptor const** file_level_service_descriptors_ManeuverPlanner_2eproto = nullptr;
 
-const ::google::protobuf::uint32 TableStruct_ManeuverPlanner_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+const ::google::protobuf::uint32 TableStruct_ManeuverPlanner_2eproto::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::ManeuverPlannerParams, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverPlannerParams, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::ManeuverPlannerParams, safety_bounds_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverPlannerParams, return_velocity_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverPlannerParams, manual_restart_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverPlannerParams, maneuver_restart_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverPlannerParams, use_safety_bounds_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverPlannerParams, perform_in_safety_bounds_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverPlannerParams, safety_bounds_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverPlannerParams, return_velocity_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverPlannerParams, manual_restart_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverPlannerParams, maneuver_restart_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverPlannerParams, use_safety_bounds_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverPlannerParams, perform_in_safety_bounds_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::ManeuverPlannerStatus, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverPlannerStatus, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::ManeuverPlannerStatus, maneuver_set_active_),
-  PROTOBUF_FIELD_OFFSET(::ManeuverPlannerStatus, manual_override_active_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverPlannerStatus, maneuver_set_active_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ManeuverPlannerStatus, manual_override_active_),
 };
-static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::ManeuverPlannerParams)},
   { 11, -1, sizeof(::ManeuverPlannerStatus)},
 };
@@ -228,20 +232,19 @@ const char* ManeuverPlannerParams::_InternalParse(const char* begin, const char*
   while (ptr < end) {
     ::google::protobuf::uint32 tag;
     ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    if (!ptr) goto error;
     switch (tag >> 3) {
+      case 0: goto error;
       // .Rectanguloid safety_bounds = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
         ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         parser_till_end = ::Rectanguloid::_InternalParse;
         object = msg->mutable_safety_bounds();
         if (size > end - ptr) goto len_delim_till_end;
         auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if (!ctx->ParseExactRange({parser_till_end, object}, ptr, newend)) goto error;
         ptr = newend;
         break;
       }
@@ -259,7 +262,7 @@ const char* ManeuverPlannerParams::_InternalParse(const char* begin, const char*
         if (static_cast<::google::protobuf::uint8>(tag) != 24) goto handle_unusual;
         ::google::protobuf::uint64 val;
         ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         bool value = val;
         msg->set_manual_restart(value);
         break;
@@ -269,7 +272,7 @@ const char* ManeuverPlannerParams::_InternalParse(const char* begin, const char*
         if (static_cast<::google::protobuf::uint8>(tag) != 32) goto handle_unusual;
         ::google::protobuf::uint64 val;
         ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         bool value = val;
         msg->set_maneuver_restart(value);
         break;
@@ -279,7 +282,7 @@ const char* ManeuverPlannerParams::_InternalParse(const char* begin, const char*
         if (static_cast<::google::protobuf::uint8>(tag) != 40) goto handle_unusual;
         ::google::protobuf::uint64 val;
         ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         bool value = val;
         msg->set_use_safety_bounds(value);
         break;
@@ -289,16 +292,15 @@ const char* ManeuverPlannerParams::_InternalParse(const char* begin, const char*
         if (static_cast<::google::protobuf::uint8>(tag) != 48) goto handle_unusual;
         ::google::protobuf::uint64 val;
         ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         bool value = val;
         msg->set_perform_in_safety_bounds(value);
         break;
       }
       default: {
       handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if ((tag & 7) == 4) {
+          if (!ctx->ValidEndGroup(tag)) goto error;
           return ptr;
         }
         auto res = UnknownFieldParse(tag, {_InternalParse, msg},
@@ -309,6 +311,8 @@ const char* ManeuverPlannerParams::_InternalParse(const char* begin, const char*
     }  // switch
   }  // while
   return ptr;
+error:
+  return nullptr;
 len_delim_till_end: (void)&&len_delim_till_end;
   return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
                                  {parser_till_end, object}, size);
@@ -320,7 +324,7 @@ group_continues: (void)&&group_continues;
 #else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool ManeuverPlannerParams::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:ManeuverPlannerParams)
   for (;;) {
@@ -721,14 +725,15 @@ const char* ManeuverPlannerStatus::_InternalParse(const char* begin, const char*
   while (ptr < end) {
     ::google::protobuf::uint32 tag;
     ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    if (!ptr) goto error;
     switch (tag >> 3) {
+      case 0: goto error;
       // bool maneuver_set_active = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) != 8) goto handle_unusual;
         ::google::protobuf::uint64 val;
         ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         bool value = val;
         msg->set_maneuver_set_active(value);
         break;
@@ -738,16 +743,15 @@ const char* ManeuverPlannerStatus::_InternalParse(const char* begin, const char*
         if (static_cast<::google::protobuf::uint8>(tag) != 16) goto handle_unusual;
         ::google::protobuf::uint64 val;
         ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         bool value = val;
         msg->set_manual_override_active(value);
         break;
       }
       default: {
       handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if ((tag & 7) == 4) {
+          if (!ctx->ValidEndGroup(tag)) goto error;
           return ptr;
         }
         auto res = UnknownFieldParse(tag, {_InternalParse, msg},
@@ -758,6 +762,8 @@ const char* ManeuverPlannerStatus::_InternalParse(const char* begin, const char*
     }  // switch
   }  // while
   return ptr;
+error:
+  return nullptr;
 len_delim_till_end: (void)&&len_delim_till_end;
   return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
                                  {parser_till_end, object}, size);
@@ -769,7 +775,7 @@ group_continues: (void)&&group_continues;
 #else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool ManeuverPlannerStatus::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:ManeuverPlannerStatus)
   for (;;) {
@@ -968,14 +974,13 @@ void ManeuverPlannerStatus::InternalSwap(ManeuverPlannerStatus* other) {
 // @@protoc_insertion_point(namespace_scope)
 namespace google {
 namespace protobuf {
-template<> PROTOBUF_NOINLINE ::ManeuverPlannerParams* Arena::CreateMaybeMessage< ::ManeuverPlannerParams >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::ManeuverPlannerParams* Arena::CreateMaybeMessage< ::ManeuverPlannerParams >(Arena* arena) {
   return Arena::CreateInternal< ::ManeuverPlannerParams >(arena);
 }
-template<> PROTOBUF_NOINLINE ::ManeuverPlannerStatus* Arena::CreateMaybeMessage< ::ManeuverPlannerStatus >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::ManeuverPlannerStatus* Arena::CreateMaybeMessage< ::ManeuverPlannerStatus >(Arena* arena) {
   return Arena::CreateInternal< ::ManeuverPlannerStatus >(arena);
 }
 }  // namespace protobuf
 }  // namespace google
 
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>

@@ -13,6 +13,10 @@
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/reflection_ops.h>
 #include <google/protobuf/wire_format.h>
+// This is a temporary google only hack
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+#include "third_party/protobuf/version.h"
+#endif
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 
@@ -82,33 +86,33 @@ void InitDefaults_Positions_2eproto() {
 const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors_Positions_2eproto[1];
 constexpr ::google::protobuf::ServiceDescriptor const** file_level_service_descriptors_Positions_2eproto = nullptr;
 
-const ::google::protobuf::uint32 TableStruct_Positions_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+const ::google::protobuf::uint32 TableStruct_Positions_2eproto::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::PositionENU, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENU, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::PositionENU, east_),
-  PROTOBUF_FIELD_OFFSET(::PositionENU, north_),
-  PROTOBUF_FIELD_OFFSET(::PositionENU, up_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENU, east_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENU, north_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENU, up_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::PositionENUAdvanced, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENUAdvanced, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::PositionENUAdvanced, position_enu_),
-  PROTOBUF_FIELD_OFFSET(::PositionENUAdvanced, zone_),
-  PROTOBUF_FIELD_OFFSET(::PositionENUAdvanced, hemisphere_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENUAdvanced, position_enu_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENUAdvanced, zone_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionENUAdvanced, hemisphere_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::PositionWgs84, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionWgs84, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::PositionWgs84, longitude_),
-  PROTOBUF_FIELD_OFFSET(::PositionWgs84, latitude_),
-  PROTOBUF_FIELD_OFFSET(::PositionWgs84, altitude_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionWgs84, longitude_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionWgs84, latitude_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::PositionWgs84, altitude_),
 };
-static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::PositionENU)},
   { 8, -1, sizeof(::PositionENUAdvanced)},
   { 16, -1, sizeof(::PositionWgs84)},
@@ -239,8 +243,9 @@ const char* PositionENU::_InternalParse(const char* begin, const char* end, void
   while (ptr < end) {
     ::google::protobuf::uint32 tag;
     ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    if (!ptr) goto error;
     switch (tag >> 3) {
+      case 0: goto error;
       // double east = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) != 9) goto handle_unusual;
@@ -270,9 +275,8 @@ const char* PositionENU::_InternalParse(const char* begin, const char* end, void
       }
       default: {
       handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if ((tag & 7) == 4) {
+          if (!ctx->ValidEndGroup(tag)) goto error;
           return ptr;
         }
         auto res = UnknownFieldParse(tag, {_InternalParse, msg},
@@ -283,6 +287,8 @@ const char* PositionENU::_InternalParse(const char* begin, const char* end, void
     }  // switch
   }  // while
   return ptr;
+error:
+  return nullptr;
 len_delim_till_end: (void)&&len_delim_till_end;
   return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
                                  {parser_till_end, object}, size);
@@ -294,7 +300,7 @@ group_continues: (void)&&group_continues;
 #else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool PositionENU::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:PositionENU)
   for (;;) {
@@ -616,20 +622,19 @@ const char* PositionENUAdvanced::_InternalParse(const char* begin, const char* e
   while (ptr < end) {
     ::google::protobuf::uint32 tag;
     ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    if (!ptr) goto error;
     switch (tag >> 3) {
+      case 0: goto error;
       // .PositionENU position_enu = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
         ptr = Varint::Parse32Inline(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         parser_till_end = ::PositionENU::_InternalParse;
         object = msg->mutable_position_enu();
         if (size > end - ptr) goto len_delim_till_end;
         auto newend = ptr + size;
-        bool ok = ctx->ParseExactRange({parser_till_end, object},
-                                       ptr, newend);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if (!ctx->ParseExactRange({parser_till_end, object}, ptr, newend)) goto error;
         ptr = newend;
         break;
       }
@@ -638,7 +643,7 @@ const char* PositionENUAdvanced::_InternalParse(const char* begin, const char* e
         if (static_cast<::google::protobuf::uint8>(tag) != 16) goto handle_unusual;
         ::google::protobuf::uint64 val;
         ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         ::google::protobuf::int32 value = val;
         msg->set_zone(value);
         break;
@@ -648,16 +653,15 @@ const char* PositionENUAdvanced::_InternalParse(const char* begin, const char* e
         if (static_cast<::google::protobuf::uint8>(tag) != 24) goto handle_unusual;
         ::google::protobuf::uint64 val;
         ptr = Varint::Parse64(ptr, &val);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        if (!ptr) goto error;
         ::Hemisphere value = static_cast<::Hemisphere>(val);
         msg->set_hemisphere(value);
         break;
       }
       default: {
       handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if ((tag & 7) == 4) {
+          if (!ctx->ValidEndGroup(tag)) goto error;
           return ptr;
         }
         auto res = UnknownFieldParse(tag, {_InternalParse, msg},
@@ -668,6 +672,8 @@ const char* PositionENUAdvanced::_InternalParse(const char* begin, const char* e
     }  // switch
   }  // while
   return ptr;
+error:
+  return nullptr;
 len_delim_till_end: (void)&&len_delim_till_end;
   return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
                                  {parser_till_end, object}, size);
@@ -679,7 +685,7 @@ group_continues: (void)&&group_continues;
 #else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool PositionENUAdvanced::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:PositionENUAdvanced)
   for (;;) {
@@ -991,8 +997,9 @@ const char* PositionWgs84::_InternalParse(const char* begin, const char* end, vo
   while (ptr < end) {
     ::google::protobuf::uint32 tag;
     ptr = Varint::Parse32Inline(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    if (!ptr) goto error;
     switch (tag >> 3) {
+      case 0: goto error;
       // double longitude = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) != 9) goto handle_unusual;
@@ -1022,9 +1029,8 @@ const char* PositionWgs84::_InternalParse(const char* begin, const char* end, vo
       }
       default: {
       handle_unusual: (void)&&handle_unusual;
-        if ((tag & 7) == 4 || tag == 0) {
-          bool ok = ctx->ValidEndGroup(tag);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ok);
+        if ((tag & 7) == 4) {
+          if (!ctx->ValidEndGroup(tag)) goto error;
           return ptr;
         }
         auto res = UnknownFieldParse(tag, {_InternalParse, msg},
@@ -1035,6 +1041,8 @@ const char* PositionWgs84::_InternalParse(const char* begin, const char* end, vo
     }  // switch
   }  // while
   return ptr;
+error:
+  return nullptr;
 len_delim_till_end: (void)&&len_delim_till_end;
   return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
                                  {parser_till_end, object}, size);
@@ -1046,7 +1054,7 @@ group_continues: (void)&&group_continues;
 #else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
 bool PositionWgs84::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:PositionWgs84)
   for (;;) {
@@ -1277,17 +1285,16 @@ void PositionWgs84::InternalSwap(PositionWgs84* other) {
 // @@protoc_insertion_point(namespace_scope)
 namespace google {
 namespace protobuf {
-template<> PROTOBUF_NOINLINE ::PositionENU* Arena::CreateMaybeMessage< ::PositionENU >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::PositionENU* Arena::CreateMaybeMessage< ::PositionENU >(Arena* arena) {
   return Arena::CreateInternal< ::PositionENU >(arena);
 }
-template<> PROTOBUF_NOINLINE ::PositionENUAdvanced* Arena::CreateMaybeMessage< ::PositionENUAdvanced >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::PositionENUAdvanced* Arena::CreateMaybeMessage< ::PositionENUAdvanced >(Arena* arena) {
   return Arena::CreateInternal< ::PositionENUAdvanced >(arena);
 }
-template<> PROTOBUF_NOINLINE ::PositionWgs84* Arena::CreateMaybeMessage< ::PositionWgs84 >(Arena* arena) {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::PositionWgs84* Arena::CreateMaybeMessage< ::PositionWgs84 >(Arena* arena) {
   return Arena::CreateInternal< ::PositionWgs84 >(arena);
 }
 }  // namespace protobuf
 }  // namespace google
 
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
