@@ -16,31 +16,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * SchedulerFactory.h
- *
- *  Created on: Jul 26, 2017
- *      Author: mircot
+/**
+ * @file TestEvaluation.h
+ * @date Sep 24, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#ifndef UAVAP_CORE_SCHEDULER_SCHEDULERFACTORY_H_
-#define UAVAP_CORE_SCHEDULER_SCHEDULERFACTORY_H_
-#include <uavAP/Core/Scheduler/MicroSimulator.h>
-#include "uavAP/Core/Framework/Factory.h"
-#include "uavAP/Core/Scheduler/IScheduler.h"
-#include "uavAP/Core/Scheduler/MultiThreadingScheduler.h"
+#ifndef TEST_PLUGIN_ITESTEVALUATION_H_
+#define TEST_PLUGIN_ITESTEVALUATION_H_
 
-class SchedulerFactory: public Factory<IScheduler>
+class ITestEvaluation
 {
 public:
-	SchedulerFactory()
-	{
-		setDefault<MultiThreadingScheduler>();
-		addCreator<MicroSimulator>();
-	}
 
-	static constexpr TypeId typeId = "scheduler";
+	virtual
+	~ITestEvaluation() = default;
+
+	virtual int
+	evaluateCounter() = 0;
 
 };
 
-#endif /* UAVAP_CORE_SCHEDULER_SCHEDULERFACTORY_H_ */
+#endif /* TEST_PLUGIN_ITESTEVALUATION_H_ */

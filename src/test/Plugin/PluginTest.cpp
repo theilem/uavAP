@@ -25,14 +25,28 @@
 
 
 #include <boost/test/unit_test.hpp>
-#include <uavAP/FlightControl/FlightControlHelper.h>
+#include <uavAP/Core/Runner/SimpleRunner.h>
+
+#include "TestHelper.h"
+#include "ITestEvaluation.h"
 
 BOOST_AUTO_TEST_SUITE(PluginTest)
 
 BOOST_AUTO_TEST_CASE(Test1)
 {
-	FlightControlHelper helper;
-	Aggregator agg = helper.createAggregation("./Plugin/flight_control.json");
+	TestHelper helper;
+	Aggregator agg = helper.createAggregation("./Plugin/test_config.json");
+
+	SimpleRunner runner(agg);
+
+	BOOST_REQUIRE(!runner.runAllStages());
+
+	auto sched = agg.getOne<MicroSimulator>();
+	sched->simulate(Seconds(1));
+
+	auto test = agg.getOne<ITestEvaluation>();
+	BOOST_CHECK_EQUAL(test->evaluateCounter(), 11);
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()

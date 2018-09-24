@@ -49,8 +49,11 @@ set (TEST_DEPENDENCIES 	boost_system
         		
 add_subdirectory(Plugin)
 
+
 add_executable (tests EXCLUDE_FROM_ALL ${TEST_SOURCES})
 target_link_libraries (tests ${TEST_DEPENDENCIES})
+
+add_dependencies(tests test_plugin)
 
 add_executable(testman EXCLUDE_FROM_ALL TestRunner.cpp
 										TestMan.cpp)
@@ -69,7 +72,7 @@ configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/PI_Hel
 
 configure_file(${PROJECT_SOURCE_DIR}/test/Core/config/pm_test.json ${CMAKE_BINARY_DIR}/test/Core/config/pm_test.json COPYONLY)
 
-configure_file(${PROJECT_SOURCE_DIR}/test/Plugin/flight_control.json ${CMAKE_BINARY_DIR}/test/Plugin/flight_control.json COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/test/Plugin/test_config.json ${CMAKE_BINARY_DIR}/test/Plugin/test_config.json COPYONLY)
 
 
 #Real Time tests

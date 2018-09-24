@@ -16,31 +16,31 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * SchedulerFactory.h
- *
- *  Created on: Jul 26, 2017
- *      Author: mircot
+/**
+ * @file TestHelper.h
+ * @date Sep 24, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#ifndef UAVAP_CORE_SCHEDULER_SCHEDULERFACTORY_H_
-#define UAVAP_CORE_SCHEDULER_SCHEDULERFACTORY_H_
-#include <uavAP/Core/Scheduler/MicroSimulator.h>
-#include "uavAP/Core/Framework/Factory.h"
-#include "uavAP/Core/Scheduler/IScheduler.h"
-#include "uavAP/Core/Scheduler/MultiThreadingScheduler.h"
+#ifndef TEST_PLUGIN_TESTHELPER_H_
+#define TEST_PLUGIN_TESTHELPER_H_
+#include <uavAP/Core/Framework/Helper.h>
+#include <uavAP/Core/Scheduler/SchedulerFactory.h>
+#include <uavAP/Core/TimeProvider/TimeProviderFactory.h>
+#include <uavAP/FlightControl/Controller/ControllerFactory.h>
 
-class SchedulerFactory: public Factory<IScheduler>
+class TestHelper: public Helper
 {
 public:
-	SchedulerFactory()
+	TestHelper()
 	{
-		setDefault<MultiThreadingScheduler>();
-		addCreator<MicroSimulator>();
-	}
+		addFactory<ControllerFactory>(PluginRestriction::ALLOWED);
 
-	static constexpr TypeId typeId = "scheduler";
+		addDefault<SchedulerFactory>();
+		addDefault<TimeProviderFactory>();
+	}
 
 };
 
-#endif /* UAVAP_CORE_SCHEDULER_SCHEDULERFACTORY_H_ */
+#endif /* TEST_PLUGIN_TESTHELPER_H_ */

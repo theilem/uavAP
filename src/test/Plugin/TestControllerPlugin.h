@@ -25,22 +25,22 @@
 
 #ifndef TEST_PLUGIN_TESTCONTROLLERPLUGIN_H_
 #define TEST_PLUGIN_TESTCONTROLLERPLUGIN_H_
+#include "ITestEvaluation.h"
+
 #include <uavAP/Core/Object/IAggregatableObject.h>
+#include <uavAP/Core/Object/ObjectHandle.h>
+#include <uavAP/Core/Runner/IRunnableObject.h>
 #include <uavAP/FlightControl/Controller/IController.h>
 
-extern "C"
-{
-void
-register_plugin();
-}
+class IScheduler;
 
-class TestControllerPlugin: public IAggregatableObject, public IController
+class TestControllerPlugin: public IAggregatableObject, public IController, public IRunnableObject, public ITestEvaluation
 {
 public:
 
 	static constexpr TypeId typeId = "test_controller";
 
-	TestControllerPlugin() = default;
+	TestControllerPlugin();
 
 	ADD_CREATE_WITHOUT_CONFIG(TestControllerPlugin)
 
@@ -49,6 +49,21 @@ public:
 
 	void
 	setControllerTarget(const ControllerTarget& target) override;
+
+	bool
+	run(RunStage stage) override;
+
+	int
+	evaluateCounter() override;
+
+private:
+
+	void
+	testSchedule();
+
+	ObjectHandle<IScheduler> scheduler_;
+
+	int counter_;
 
 };
 

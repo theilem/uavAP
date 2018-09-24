@@ -63,6 +63,9 @@ Helper::createAggregation(const boost::property_tree::ptree& conf)
 
 	for (auto& it : conf)
 	{
+		// Ignore plugin manager
+		if (it.first.compare("plugin_manager") == 0)
+			continue;
 
 		//Remove from default factories
 		defaultCreators_.erase(it.first);

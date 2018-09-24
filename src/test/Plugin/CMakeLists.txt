@@ -3,7 +3,9 @@ set(TEST_SOURCES 	${TEST_SOURCES}
 					PARENT_SCOPE)
 
 
-add_library(test_plugin SHARED TestControllerPlugin.cpp)
+add_library(test_plugin SHARED EXCLUDE_FROM_ALL 	TestControllerPlugin.cpp
+								PluginRegistration.cpp)
 
 target_link_libraries(test_plugin 	uavap_core
 									uavap_flight_control)
+									

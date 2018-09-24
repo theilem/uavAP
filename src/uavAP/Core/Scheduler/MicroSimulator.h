@@ -45,6 +45,8 @@ public:
 
 	MicroSimulator();
 
+	ADD_CREATE_WITHOUT_CONFIG(MicroSimulator)
+
 	Event
 	schedule(const std::function<void
 	()>& task, Duration initialFromNow) override;

@@ -24,24 +24,61 @@
  */
 
 #include "TestControllerPlugin.h"
-#include <uavAP/FlightControl/Controller/ControllerFactory.h>
+#include <uavAP/Core/Scheduler/IScheduler.h>
 
-extern "C"
+TestControllerPlugin::TestControllerPlugin() :
+		counter_(0)
 {
-void
-register_plugin()
-{
-	ControllerFactory::registerExternalCreator<TestControllerPlugin>();
-}
 }
 
 void
 TestControllerPlugin::notifyAggregationOnUpdate(const Aggregator& agg)
 {
-	APLOG_ERROR << "TEST";
+	scheduler_.setFromAggregationIfNotSet(agg);
 }
 
 void
 TestControllerPlugin::setControllerTarget(const ControllerTarget& target)
 {
+}
+
+bool
+TestControllerPlugin::run(RunStage stage)
+{
+	switch (stage)
+	{
+	case RunStage::INIT:
+	{
+		if (!scheduler_.isSet())
+		{
+			APLOG_ERROR << "Scheduler missing";
+			return true;
+		}
+		break;
+	}
+	case RunStage::NORMAL:
+	{
+		auto scheduler = scheduler_.get();
+
+		scheduler->schedule(std::bind(&TestControllerPlugin::testSchedule, this), Milliseconds(0),
+				Milliseconds(100));
+		break;
+	}
+	default:
+		break;
+	}
+
+	return false;
+}
+
+void
+TestControllerPlugin::testSchedule()
+{
+	counter_++;
+}
+
+int
+TestControllerPlugin::evaluateCounter()
+{
+	return counter_;
 }

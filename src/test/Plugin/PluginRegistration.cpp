@@ -16,31 +16,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * SchedulerFactory.h
- *
- *  Created on: Jul 26, 2017
- *      Author: mircot
+/**
+ * @file PluginRegistration.cpp
+ * @date Sep 24, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#ifndef UAVAP_CORE_SCHEDULER_SCHEDULERFACTORY_H_
-#define UAVAP_CORE_SCHEDULER_SCHEDULERFACTORY_H_
-#include <uavAP/Core/Scheduler/MicroSimulator.h>
-#include "uavAP/Core/Framework/Factory.h"
-#include "uavAP/Core/Scheduler/IScheduler.h"
-#include "uavAP/Core/Scheduler/MultiThreadingScheduler.h"
+#include <uavAP/FlightControl/Controller/ControllerFactory.h>
+#include <uavAP/FlightControl/LocalPlanner/ILocalPlanner.h>
 
-class SchedulerFactory: public Factory<IScheduler>
+#include "TestControllerPlugin.h"
+
+extern "C"
 {
-public:
-	SchedulerFactory()
-	{
-		setDefault<MultiThreadingScheduler>();
-		addCreator<MicroSimulator>();
-	}
+void
+register_plugin()
+{
+	Factory<IController>::registerExternalCreator<TestControllerPlugin>();
+//	Factory<ILocalPlanner>::registerExternalCreator<TestControllerPlugin>();
+}
+}
 
-	static constexpr TypeId typeId = "scheduler";
-
-};
-
-#endif /* UAVAP_CORE_SCHEDULER_SCHEDULERFACTORY_H_ */
