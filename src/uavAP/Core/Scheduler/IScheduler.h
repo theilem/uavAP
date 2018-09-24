@@ -39,13 +39,13 @@ public:
 	{
 	}
 
-	virtual Event
-	schedule(const std::function<void
-	()>& task, Duration initialFromNow) = 0;
+	using TaskHandle = std::function<void()>;
 
 	virtual Event
-	schedule(const std::function<void
-	()>& task, Duration initialFromNow, Duration period) = 0;
+	schedule(const TaskHandle& task, Duration initialFromNow) = 0;
+
+	virtual Event
+	schedule(const TaskHandle& task, Duration initialFromNow, Duration period) = 0;
 
 	virtual void
 	stop() = 0;
