@@ -24,6 +24,7 @@
  */
 #include <boost/optional/optional.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include "uavAP/Core/Framework/PluginManager.h"
 #include "uavAP/Core/Framework/Helper.h"
 #include "uavAP/Core/Object/Aggregator.h"
 
@@ -53,8 +54,18 @@ Helper::createAggregation(const boost::property_tree::ptree& conf)
 {
 	Aggregator agg;
 
+	PluginManager plugin;
+	auto child = conf.get_child_optional("plugin_manager");
+	if (child)
+	{
+		plugin.configure(*child);
+	}
+
 	for (auto& it : conf)
 	{
+		// Ignore plugin manager
+		if (it.first.compare("plugin_manager") == 0)
+			continue;
 
 		//Remove from default factories
 		defaultCreators_.erase(it.first);

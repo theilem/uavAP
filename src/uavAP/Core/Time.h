@@ -20,7 +20,7 @@
  * @file Time.h
  * @brief Typedefs for usage of time in uavAP based on boost posix_time
  * @date Jun 25, 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 
 #ifndef UAVAP_CORE_TIME_H_

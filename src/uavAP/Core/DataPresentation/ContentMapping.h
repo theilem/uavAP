@@ -20,7 +20,7 @@
  * @file Content.h
  * @brief Definitions of possible data contents of packets.
  * @date Aug 8, 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 
 #ifndef UAVAP_CORE_DATAPRESENTATION_CONTENTMAPPING_H_

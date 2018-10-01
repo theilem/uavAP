@@ -20,7 +20,7 @@
  * @file Packet.h
  * @brief Defines the packet class
  * @date Jul 17, 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 
 #ifndef UAVAP_CORE_DATAPRESENTATION_PACKET_H_

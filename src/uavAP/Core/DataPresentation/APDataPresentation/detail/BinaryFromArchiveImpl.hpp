@@ -20,7 +20,7 @@
  * @file BinaryFromArchiveImpl.hpp
  * @brief Implementation of the template functions in BinaryFromArchive.h
  * @date Nov 14, 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 
 #ifndef UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_DETAIL_BINARYFROMARCHIVEIMPL_HPP_

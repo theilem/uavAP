@@ -20,7 +20,7 @@
  * @file IDataPresentation.h
  * @brief Definition of the Data presentation interface
  * @date 28 July 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 
 #ifndef UAVAP_CORE_DATAPRESENTATION_IDATAPRESENTATION_H_

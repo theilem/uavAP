@@ -18,5 +18,6 @@
 #-------------------------------------------------------------------------------
 set(CORE_SRC 	${CORE_SRC}
 				${CMAKE_CURRENT_SOURCE_DIR}/Helper.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/PluginManager.cpp
 				PARENT_SCOPE)
 

@@ -16,45 +16,39 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * IScheduler.h
- *
- *  Created on: Jun 29, 2017
- *      Author: mircot
+/**
+ * @file PluginTest.cpp
+ * @date Sep 20, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#ifndef UAVAP_CORE_SCHEDULER_ISCHEDULER_H_
-#define UAVAP_CORE_SCHEDULER_ISCHEDULER_H_
 
-#include "uavAP/Core/Scheduler/Event.h"
-#include "uavAP/Core/Time.h"
-#include <functional>
+#include <boost/test/unit_test.hpp>
+#include <uavAP/Core/Runner/SimpleRunner.h>
 
-class IScheduler
+#include "TestHelper.h"
+#include "ITestEvaluation.h"
+
+BOOST_AUTO_TEST_SUITE(PluginTest)
+
+BOOST_AUTO_TEST_CASE(Test1)
 {
-public:
+	TestHelper helper;
+	Aggregator agg = helper.createAggregation("./Plugin/test_config.json");
 
-	virtual
-	~IScheduler()
-	{
-	}
+	SimpleRunner runner(agg);
 
-	using TaskHandle = std::function<void()>;
+	BOOST_REQUIRE(!runner.runAllStages());
 
-	virtual Event
-	schedule(const TaskHandle& task, Duration initialFromNow) = 0;
+	auto sched = agg.getOne<MicroSimulator>();
+	sched->simulate(Seconds(1));
 
-	virtual Event
-	schedule(const TaskHandle& task, Duration initialFromNow, Duration period) = 0;
+	auto test = agg.getOne<ITestEvaluation>();
+	BOOST_CHECK_EQUAL(test->evaluateCounter(), 11);
 
-	virtual void
-	stop() = 0;
+}
 
-	virtual void
-	setMainThread() = 0;
+BOOST_AUTO_TEST_SUITE_END()
 
-	virtual void
-	startSchedule() = 0;
-};
 
-#endif /* UAVAP_CORE_SCHEDULER_ISCHEDULER_H_ */

@@ -20,7 +20,7 @@
  * @file APDataPresentation.h
  * @brief File defining the APDataPresentation and Macros for serialization and deseralization.
  * @date Aug 22, 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 
 #ifndef UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_APDATAPRESENTATION_H_

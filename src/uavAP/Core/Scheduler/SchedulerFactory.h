@@ -25,6 +25,7 @@
 
 #ifndef UAVAP_CORE_SCHEDULER_SCHEDULERFACTORY_H_
 #define UAVAP_CORE_SCHEDULER_SCHEDULERFACTORY_H_
+#include <uavAP/Core/Scheduler/MicroSimulator.h>
 #include "uavAP/Core/Framework/Factory.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/Scheduler/MultiThreadingScheduler.h"
@@ -35,6 +36,7 @@ public:
 	SchedulerFactory()
 	{
 		setDefault<MultiThreadingScheduler>();
+		addCreator<MicroSimulator>();
 	}
 
 	static constexpr TypeId typeId = "scheduler";

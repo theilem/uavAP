@@ -20,7 +20,7 @@
  * @file IDCFactory.h
  * @brief Defines the IDCFactory
  * @date Jul 31, 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 
 #ifndef UAVAP_CORE_IDC_NETWORKFACTORY_H_
