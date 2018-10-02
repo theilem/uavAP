@@ -34,7 +34,10 @@
 
 class IScheduler;
 
-class TestControllerPlugin: public IAggregatableObject, public IController, public IRunnableObject, public ITestEvaluation
+class TestControllerPlugin: public IAggregatableObject,
+		public IController,
+		public IRunnableObject,
+		public ITestEvaluation
 {
 public:
 

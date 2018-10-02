@@ -65,6 +65,6 @@ static inline std::shared_ptr<obj> \
 create(const boost::property_tree::ptree& config) \
 {\
 	return std::make_shared<obj>();\
-}\
+}
 
 #endif /* UAVAP_CORE_OBJECT_IAGGREGATABLEOBJECT_H_ */

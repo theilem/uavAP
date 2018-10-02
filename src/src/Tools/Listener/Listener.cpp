@@ -60,8 +60,6 @@ dispSens(const SensorData& sd)
 			<< sd.attitude.z() * 180 / M_PI << "]" << std::endl;
 	std::cout << "AngularRate: 	[" << sd.angularRate.x() << "; 	" << sd.angularRate.y() << "; 	"
 			<< sd.angularRate.z() << "]" << std::endl;
-	std::cout << "AngularAcc: 	[" << sd.angularAcc.x() << "; 	" << sd.angularAcc.y() << "; 	"
-			<< sd.angularAcc.z() << "]" << std::endl;
 	std::cout << "Airspeed: 	" << sd.airSpeed << std::endl;
 	std::cout << "Groundspeed: 	" << sd.groundSpeed << std::endl << std::endl;
 
