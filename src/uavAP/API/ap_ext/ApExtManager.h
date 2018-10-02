@@ -80,6 +80,7 @@ private:
 	bool internalImu_;
 	bool externalGps_;
 	bool useAirspeed_;
+	bool useEuler_;
 	bool traceSeqNr_;
 	bool courseAsHeading_;
 	Duration gpsTimeout_;

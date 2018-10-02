@@ -19,5 +19,6 @@
 
 set(MISSION_CONTROL_SRC ${MISSION_CONTROL_SRC}
 						${CMAKE_CURRENT_SOURCE_DIR}/ConstRollRateModel.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/DirectRollModel.cpp
 						${CMAKE_CURRENT_SOURCE_DIR}/Geofencing.cpp
 						PARENT_SCOPE)

@@ -36,6 +36,7 @@
 class IPC;
 class IScheduler;
 class ManeuverPlanner;
+class IGeofencingModel;
 
 class Geofencing: public IAggregatableObject, public IRunnableObject
 {
@@ -77,8 +78,8 @@ private:
 	ObjectHandle<IPC> ipc_;
 	ObjectHandle<IScheduler> scheduler_;
 	ObjectHandle<ManeuverPlanner> maneuverPlanner_;
+	ObjectHandle<IGeofencingModel> geofencingModel_;
 
-	ConstRollRateModel model_;
 	double rollMax_;
 
 	Polygon geoFence_;

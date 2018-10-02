@@ -173,10 +173,8 @@ MissionControlDataHandling::collectAndSend()
 	auto geo = geofencing_.get();
 	if (!geo)
 	{
-		APLOG_WARN << "No geo";
 		return;
 	}
-
 
 	Packet misPack = dp->serialize(geo->criticalPoints(), Content::MISSION);
 	publisher_.publish(misPack);

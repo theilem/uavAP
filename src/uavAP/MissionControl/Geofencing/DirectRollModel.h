@@ -25,13 +25,49 @@
 
 #ifndef UAVAP_MISSIONCONTROL_GEOFENCING_DIRECTROLLMODEL_H_
 #define UAVAP_MISSIONCONTROL_GEOFENCING_DIRECTROLLMODEL_H_
-#include <uavAP/MissionControl/Geofencing/IGeofencingModel.h>
 
+#include <acb.h>
+#include <boost/property_tree/ptree.hpp>
 
-class DirectRollModel : public IGeofencingModel
+#include "uavAP/Core/SensorData.h"
+#include "uavAP/Core/LinearAlgebra.h"
+#include "uavAP/Core/Frames/VehicleOneFrame.h"
+#include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/MissionControl/Geofencing/IGeofencingModel.h"
+#include "uavAP/MissionControl/Polygon.h"
+
+class DirectRollModel: public IGeofencingModel, public IAggregatableObject
 {
+public:
 
+	static constexpr const char* const typeId = "direct_roll";
+
+	DirectRollModel();
+
+	static std::shared_ptr<DirectRollModel>
+	create(const boost::property_tree::ptree& config);
+
+	bool
+	configure(const boost::property_tree::ptree& config);
+
+	void
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
+
+	bool
+	updateModel(const SensorData& data) override;
+
+	std::vector<Vector3>
+	getCriticalPoints(const Edge& edge, RollDirection dir) override;
+
+private:
+
+	double rollMax_;
+	double g_;
+
+	Vector3 centerOrbitLeft_;
+	Vector3 centerOrbitRight_;
+	double radiusOrbit_;
+	std::mutex queryMutex_;
 };
-
 
 #endif /* UAVAP_MISSIONCONTROL_GEOFENCING_DIRECTROLLMODEL_H_ */
