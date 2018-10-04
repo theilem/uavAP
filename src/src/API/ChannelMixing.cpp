@@ -52,11 +52,11 @@ ChannelMixing::configure(const boost::property_tree::ptree& config)
 
 	if (!pm.map())
 	{
-		APLOG_ERROR << "ChannelMixing configuration failed.";
+		APLOG_ERROR << "Failed to Configure ChannelMixing.";
 		return false;
 	}
-	//Create mixing matrix
 
+	/* Create mixing matrix */
 	PropertyMapper pmMix(channelMixing);
 	Eigen::VectorXd roll, pitch, yaw, throttle;
 	pmMix.add("roll_out", roll, true);
@@ -70,49 +70,57 @@ ChannelMixing::configure(const boost::property_tree::ptree& config)
 	mixingMatrix_.col(2) = yaw;
 	mixingMatrix_.col(3) = throttle;
 
-	//Load mappings
+	/* Load mappings */
 	for (const auto& it : channelMapping)
 	{
-		auto throws = ThrowsBimapRight.find(it.first);
-		if (throws == ThrowsBimapRight.end())
+		auto throwsEnum = EnumMap<ThrowsControl>::convert(it.first);
+
+		if (throwsEnum == ThrowsControl::INVALID)
 		{
-			APLOG_ERROR << "Throws naming not found: " << it.first;
+			APLOG_ERROR << "Invalid Throws Control " << it.first;
 			continue;
 		}
-		mapping_.insert(std::make_pair(throws->second, getMapping(it.second)));
+
+		mapping_.insert(std::make_pair(throwsEnum, getMapping(it.second)));
 	}
 
-	//Load camber
+	/* Load camber */
 	PropertyMapper camberPm(camberOffset);
+
 	for (const auto& it : camberOffset)
 	{
-		auto camber = CamberBimapRight.find(it.first);
-		if (camber == CamberBimapRight.end())
+		auto camberEnum = EnumMap<CamberControl>::convert(it.first);
+
+		if (camberEnum == CamberControl::INVALID)
 		{
-			APLOG_ERROR << "Camber naming not found: " << it.first;
+			APLOG_ERROR << "Invalid Camber Control " << it.first;
 			continue;
 		}
+
 		Eigen::ArrayXd offset;
 		camberPm.add(it.first, offset, true);
-		camberOffsets_.insert(std::make_pair(camber->second, offset));
+		camberOffsets_.insert(std::make_pair(camberEnum, offset));
 	}
 
-	//Load special
+	/* Load special */
 	PropertyMapper specialPm(specialOffset);
+
 	for (const auto& it : specialOffset)
 	{
-		auto special = SpecialControlBimapRight.find(it.first);
-		if (special == SpecialControlBimapRight.end())
+		auto specialEnum = EnumMap<SpecialControl>::convert(it.first);
+
+		if (specialEnum == SpecialControl::INVALID)
 		{
-			APLOG_ERROR << "special naming not found: " << it.first;
+			APLOG_ERROR << "Invalid Special Control " << it.first;
 			continue;
 		}
+
 		Eigen::ArrayXd offset;
 		specialPm.add(it.first, offset, true);
-		specialOffsets_.insert(std::make_pair(special->second, offset));
+		specialOffsets_.insert(std::make_pair(specialEnum, offset));
 	}
 
-	//Load constraints
+	/* Load constraints */
 	PropertyMapper constraintPm(channelContraints);
 	constraintPm.add("min", channelMin_, true);
 	constraintPm.add("max", channelMax_, true);
@@ -132,7 +140,6 @@ ChannelMixing::mixChannels(const ControllerOutput& out)
 std::vector<unsigned int>
 ChannelMixing::mapChannels(const ControllerOutput& out, const AdvancedControl& advanced)
 {
-
 	auto mix = mixChannels(out);
 
 	auto throws = mapping_.find(advanced.throwsSelection);

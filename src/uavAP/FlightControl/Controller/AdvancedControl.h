@@ -16,6 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
+
 /*
  * SpecialControl.h
  *
@@ -25,73 +26,52 @@
 
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_ADVANCEDCONTROL_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_ADVANCEDCONTROL_H_
+
 #include <map>
+
+#include "uavAP/Core/EnumMap.hpp"
 
 /**
  * Special Control
  */
-
 enum class SpecialControl
 {
-	NONE, FLAP, CROW
+	INVALID, NONE, FLAP, CROW, NUM_SPECIAL_CONTROL
 };
 
-const static std::map<SpecialControl, std::string> SpecialControlBimapLeft =
-{
-{ SpecialControl::NONE, "none" },
-{ SpecialControl::FLAP, "flap" },
-{ SpecialControl::CROW, "crow" } };
-
-const static std::map<std::string, SpecialControl> SpecialControlBimapRight =
-{
-{ "none", SpecialControl::NONE },
-{ "flap", SpecialControl::FLAP },
-{ "crow", SpecialControl::CROW } };
+ENUMMAP_INIT(SpecialControl,
+		{{SpecialControl::NONE, "none"},
+		{SpecialControl::FLAP, "flap"},
+		{SpecialControl::CROW, "crow"}});
 
 /**
  * Camber Control
  */
-
 enum class CamberControl
 {
-	NORMAL, THERMAL, CRUISE
+	INVALID, NORMAL, THERMAL, CRUISE, NUM_CAMBER_CONTROL
 };
 
-const static std::map<CamberControl, std::string> CamberBimapLeft =
-{
-{ CamberControl::NORMAL, "normal" },
-{ CamberControl::THERMAL, "thermal" },
-{ CamberControl::CRUISE, "cruise" } };
-
-const static std::map<std::string, CamberControl> CamberBimapRight =
-{
-{ "normal", CamberControl::NORMAL },
-{ "thermal", CamberControl::THERMAL },
-{ "cruise", CamberControl::CRUISE } };
+ENUMMAP_INIT(CamberControl,
+		{{CamberControl::NORMAL, "normal"},
+		{CamberControl::THERMAL, "thermal"},
+		{CamberControl::CRUISE, "cruise"}});
 
 /**
  * Throws Control
  */
-
 enum class ThrowsControl
 {
-	NORMAL, CRUISE
+	INVALID, NORMAL, CRUISE, NUM_THROWSCONTROL
 };
 
-const static std::map<ThrowsControl, std::string> ThrowsBimapLeft =
-{
-{ ThrowsControl::NORMAL, "normal" },
-{ ThrowsControl::CRUISE, "cruise" } };
-
-const static std::map<std::string, ThrowsControl> ThrowsBimapRight =
-{
-{ "normal", ThrowsControl::NORMAL },
-{ "cruise", ThrowsControl::CRUISE } };
+ENUMMAP_INIT(ThrowsControl,
+		{{ThrowsControl::NORMAL, "normal"},
+		{ThrowsControl::CRUISE, "cruise"}});
 
 /**
  * Advanced Control
  */
-
 struct AdvancedControl
 {
 	ThrowsControl throwsSelection = ThrowsControl::NORMAL;
@@ -100,7 +80,6 @@ struct AdvancedControl
 	double camberValue = 0.0;
 	double specialValue = 0.0;
 };
-
 
 namespace dp
 {
@@ -115,7 +94,5 @@ serialize(Archive& ar, AdvancedControl& t)
 	ar & t.specialValue;
 }
 }
-
-
 
 #endif /* UAVAP_FLIGHTCONTROL_CONTROLLER_ADVANCEDCONTROL_H_ */
