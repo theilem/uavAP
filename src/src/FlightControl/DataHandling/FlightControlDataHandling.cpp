@@ -25,8 +25,6 @@
  *  Description
  */
 
-#include <uavAP/Core/DataPresentation/Content.h>
-#include <uavAP/FlightControl/Controller/AdvancedControl.h>
 #include <memory>
 
 #include "uavAP/Core/DataPresentation/IDataPresentation.h"
@@ -34,6 +32,8 @@
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/LockTypes.h"
+#include <uavAP/Core/DataPresentation/Content.h>
+#include <uavAP/FlightControl/Controller/AdvancedControl.h>
 #include "uavAP/FlightControl/Controller/IController.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/DataHandling/FlightControlDataHandling.h"
@@ -207,13 +207,11 @@ FlightControlDataHandling::receiveAndDistribute(const Packet& packet)
 	{
 		auto advanced = boost::any_cast<AdvancedControl>(any);
 
-		/* TEST */
-		APLOG_ERROR << "Current Throw Control: " << EnumMap<ThrowsControl>::convert(advanced.throwsSelection);
-		APLOG_ERROR << "Current Camber Control: " << EnumMap<CamberControl>::convert(advanced.camberSelection);
-		APLOG_ERROR << "Current Special Control: " << EnumMap<SpecialControl>::convert(advanced.specialSelection);
-		APLOG_ERROR << "Current Camber Value: " << advanced.camberValue;
-		APLOG_ERROR << "Current Special Value: " << advanced.specialValue;
-		/* TEST */
+		APLOG_TRACE << "Current Camber Control: " << EnumMap<CamberControl>::convert(advanced.camberSelection);
+		APLOG_TRACE << "Current Special Control: " << EnumMap<SpecialControl>::convert(advanced.specialSelection);
+		APLOG_TRACE << "Current Throw Control: " << EnumMap<ThrowsControl>::convert(advanced.throwsSelection);
+		APLOG_TRACE << "Current Camber Value: " << advanced.camberValue;
+		APLOG_TRACE << "Current Special Value: " << advanced.specialValue;
 
 		advancedControlPublisher_.publish(advanced);
 		break;
