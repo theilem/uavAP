@@ -16,45 +16,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * IScheduler.h
- *
- *  Created on: Jun 29, 2017
- *      Author: mircot
+/**
+ * @file PluginRegistration.cpp
+ * @date Sep 24, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#ifndef UAVAP_CORE_SCHEDULER_ISCHEDULER_H_
-#define UAVAP_CORE_SCHEDULER_ISCHEDULER_H_
+#include <uavAP/FlightControl/Controller/ControllerFactory.h>
+#include <uavAP/FlightControl/LocalPlanner/ILocalPlanner.h>
 
-#include "uavAP/Core/Scheduler/Event.h"
-#include "uavAP/Core/Time.h"
-#include <functional>
+#include "TestControllerPlugin.h"
 
-class IScheduler
+extern "C"
 {
-public:
+void
+register_plugin()
+{
+	Factory<IController>::registerExternalCreator<TestControllerPlugin>();
+//	Factory<ILocalPlanner>::registerExternalCreator<TestControllerPlugin>();
+}
+}
 
-	virtual
-	~IScheduler()
-	{
-	}
-
-	using TaskHandle = std::function<void()>;
-
-	virtual Event
-	schedule(const TaskHandle& task, Duration initialFromNow) = 0;
-
-	virtual Event
-	schedule(const TaskHandle& task, Duration initialFromNow, Duration period) = 0;
-
-	virtual void
-	stop() = 0;
-
-	virtual void
-	setMainThread() = 0;
-
-	virtual void
-	startSchedule() = 0;
-};
-
-#endif /* UAVAP_CORE_SCHEDULER_ISCHEDULER_H_ */

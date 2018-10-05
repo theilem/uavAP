@@ -34,7 +34,7 @@ public:
 
 	VehicleOneFrame();
 
-	VehicleOneFrame(double yaw, const Vector3& origin = Vector3());
+	VehicleOneFrame(double yaw, const Vector3& origin = Vector3(0, 0, 0));
 
 	Vector3
 	toInertialFramePosition(const Vector3& pos) const override;

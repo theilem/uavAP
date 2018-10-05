@@ -20,7 +20,7 @@
  * @file SerializeCustom.h
  * @brief Defines the SerializeCustom struct
  * @date Sep 17, 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 
 #ifndef UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_SERIALIZECUSTOM_H_

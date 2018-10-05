@@ -16,45 +16,40 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * IScheduler.h
- *
- *  Created on: Jun 29, 2017
- *      Author: mircot
+/**
+ * @file PluginManager.h
+ * @date Sep 20, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#ifndef UAVAP_CORE_SCHEDULER_ISCHEDULER_H_
-#define UAVAP_CORE_SCHEDULER_ISCHEDULER_H_
+#ifndef UAVAP_CORE_FRAMEWORK_PLUGINMANAGER_H_
+#define UAVAP_CORE_FRAMEWORK_PLUGINMANAGER_H_
 
-#include "uavAP/Core/Scheduler/Event.h"
-#include "uavAP/Core/Time.h"
+#include <boost/property_tree/ptree.hpp>
 #include <functional>
 
-class IScheduler
+class PluginManager
 {
 public:
 
-	virtual
-	~IScheduler()
-	{
-	}
+	PluginManager() = default;
 
-	using TaskHandle = std::function<void()>;
+	bool
+	configure(const boost::property_tree::ptree& config);
 
-	virtual Event
-	schedule(const TaskHandle& task, Duration initialFromNow) = 0;
+	using PluginHandle = void*;
+	using FunctionPtr = void (*)();
 
-	virtual Event
-	schedule(const TaskHandle& task, Duration initialFromNow, Duration period) = 0;
+private:
 
-	virtual void
-	stop() = 0;
+	PluginHandle
+	loadPlugin(const std::string& path);
 
-	virtual void
-	setMainThread() = 0;
+	bool
+	registerCreators(PluginHandle handle);
 
-	virtual void
-	startSchedule() = 0;
+
 };
 
-#endif /* UAVAP_CORE_SCHEDULER_ISCHEDULER_H_ */
+#endif /* UAVAP_CORE_FRAMEWORK_PLUGINMANAGER_H_ */

@@ -22,7 +22,7 @@
  *
  * The factory is templated and based on different implementations of Content and Target enums.
  * @date 30 July 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 
 #ifndef UAVAP_CORE_DATAPRESENTATION_DATAPRESENTATIONFACTORY_H_

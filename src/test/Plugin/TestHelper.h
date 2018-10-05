@@ -16,45 +16,31 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * IScheduler.h
- *
- *  Created on: Jun 29, 2017
- *      Author: mircot
+/**
+ * @file TestHelper.h
+ * @date Sep 24, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#ifndef UAVAP_CORE_SCHEDULER_ISCHEDULER_H_
-#define UAVAP_CORE_SCHEDULER_ISCHEDULER_H_
+#ifndef TEST_PLUGIN_TESTHELPER_H_
+#define TEST_PLUGIN_TESTHELPER_H_
+#include <uavAP/Core/Framework/Helper.h>
+#include <uavAP/Core/Scheduler/SchedulerFactory.h>
+#include <uavAP/Core/TimeProvider/TimeProviderFactory.h>
+#include <uavAP/FlightControl/Controller/ControllerFactory.h>
 
-#include "uavAP/Core/Scheduler/Event.h"
-#include "uavAP/Core/Time.h"
-#include <functional>
-
-class IScheduler
+class TestHelper: public Helper
 {
 public:
-
-	virtual
-	~IScheduler()
+	TestHelper()
 	{
+		addFactory<ControllerFactory>(PluginRestriction::ALLOWED);
+
+		addDefault<SchedulerFactory>();
+		addDefault<TimeProviderFactory>();
 	}
 
-	using TaskHandle = std::function<void()>;
-
-	virtual Event
-	schedule(const TaskHandle& task, Duration initialFromNow) = 0;
-
-	virtual Event
-	schedule(const TaskHandle& task, Duration initialFromNow, Duration period) = 0;
-
-	virtual void
-	stop() = 0;
-
-	virtual void
-	setMainThread() = 0;
-
-	virtual void
-	startSchedule() = 0;
 };
 
-#endif /* UAVAP_CORE_SCHEDULER_ISCHEDULER_H_ */
+#endif /* TEST_PLUGIN_TESTHELPER_H_ */

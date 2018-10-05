@@ -22,7 +22,7 @@
  *
  * Defines SensorData and SensorDataLight and provides conversions between float and double datatypes
  * @date 23 June 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 #ifndef UAVAP_CORE_SENSORDATA_H_
 #define UAVAP_CORE_SENSORDATA_H_
@@ -41,7 +41,6 @@ struct SensorData
 	Vector3 acceleration; //!< Body Frame
 	Vector3 attitude; //!< [X: Roll, Y: Pitch, Z: Yaw]
 	Vector3 angularRate; //!< [X: Roll, Y: Pitch, Z: Yaw]
-	Vector3 angularAcc;  //!< [X: Roll, Y: Pitch, Z: Yaw]
 	TimePoint timestamp; //!< Timestamp of this sensor data struct
 	double airSpeed; //!< total velocity w.r.t. wind
 	double groundSpeed; //!< total velocity w.r.t. ground
@@ -58,7 +57,7 @@ struct SensorData
 
 	SensorData() :
 			position(0, 0, 0), velocity(0, 0, 0), acceleration(0, 0, 0), attitude(0, 0, 0), angularRate(
-					0, 0, 0), angularAcc(0, 0, 0), airSpeed(0), groundSpeed(0), hasGPSFix(false), autopilotActive(
+					0, 0, 0), airSpeed(0), groundSpeed(0), hasGPSFix(false), autopilotActive(
 					false), angleOfAttack(0), propulsionPower(0), consumedEnergy(0), sequenceNr(0), batteryVoltage(
 					0)
 	{
@@ -79,7 +78,6 @@ serialize(Archive& ar, SensorData& t)
 	ar & t.acceleration;
 	ar & t.attitude;
 	ar & t.angularRate;
-	ar & t.angularAcc;
 	ar & t.timestamp;
 	ar & t.airSpeed;
 	ar & t.groundSpeed;

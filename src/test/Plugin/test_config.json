@@ -1,0 +1,13 @@
+{
+	"plugin_manager": {
+		"plugins": [
+			"./Plugin/libtest_plugin.so"
+		]
+	},
+	"controller": {
+		"type": "test_controller"
+	},
+	"scheduler": {
+		"type": "micro_sim"
+	}
+}

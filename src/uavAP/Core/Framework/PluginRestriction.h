@@ -16,45 +16,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * IScheduler.h
- *
- *  Created on: Jun 29, 2017
- *      Author: mircot
+/**
+ * @file PluginRestriction.h
+ * @date Sep 20, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#ifndef UAVAP_CORE_SCHEDULER_ISCHEDULER_H_
-#define UAVAP_CORE_SCHEDULER_ISCHEDULER_H_
+#ifndef UAVAP_CORE_FRAMEWORK_PLUGINRESTRICTION_H_
+#define UAVAP_CORE_FRAMEWORK_PLUGINRESTRICTION_H_
 
-#include "uavAP/Core/Scheduler/Event.h"
-#include "uavAP/Core/Time.h"
-#include <functional>
+#include "uavAP/Core/EnumMap.hpp"
 
-class IScheduler
+enum class PluginRestriction
 {
-public:
-
-	virtual
-	~IScheduler()
-	{
-	}
-
-	using TaskHandle = std::function<void()>;
-
-	virtual Event
-	schedule(const TaskHandle& task, Duration initialFromNow) = 0;
-
-	virtual Event
-	schedule(const TaskHandle& task, Duration initialFromNow, Duration period) = 0;
-
-	virtual void
-	stop() = 0;
-
-	virtual void
-	setMainThread() = 0;
-
-	virtual void
-	startSchedule() = 0;
+	DEFAULT, ALLOWED, NOT_ALLOWED
 };
 
-#endif /* UAVAP_CORE_SCHEDULER_ISCHEDULER_H_ */
+ENUMMAP_INIT(PluginRestriction,
+		{
+			{	PluginRestriction::DEFAULT, "default"},
+			{	PluginRestriction::ALLOWED, "allowed"},
+			{	PluginRestriction::NOT_ALLOWED, "not_allowed"}});
+
+#endif /* UAVAP_CORE_FRAMEWORK_PLUGINRESTRICTION_H_ */

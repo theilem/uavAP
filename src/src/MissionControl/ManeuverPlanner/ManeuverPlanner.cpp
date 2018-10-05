@@ -220,7 +220,7 @@ ManeuverPlanner::resumeOverride()
 		return;
 	}
 
-	APLOG_DEBUG << "Override enabled.";
+	APLOG_DEBUG << "Resume Override.";
 
 	if (lastManualActive_ && manualRestart_)
 	{
@@ -460,7 +460,11 @@ ManeuverPlanner::safetyTrigger(int trigger)
 	if ((trigger == RectanguloidCondition::ENTER_RECTANGULOID && params_.perform_in_safety_bounds())
 			|| (trigger == RectanguloidCondition::EXIT_RECTANGULOID
 					&& !params_.perform_in_safety_bounds()))
+	{
 		resumeOverride();
+	}
 	else
+	{
 		interruptOverride();
+	}
 }

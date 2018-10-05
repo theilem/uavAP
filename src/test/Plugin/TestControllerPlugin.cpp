@@ -17,61 +17,68 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * @file FrameworkExceptions.h
- * @brief Defines the exceptions that can be thrown by the Framework helpers and factories
- * @date Jul 26, 2017
+ * @file TestControllerPlugin.cpp
+ * @date Sep 20, 2018
  * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#ifndef UAVAP_CORE_FRAMEWORK_FRAMEWORKEXCEPTIONS_H_
-#define UAVAP_CORE_FRAMEWORK_FRAMEWORKEXCEPTIONS_H_
-#include <string>
+#include "TestControllerPlugin.h"
+#include <uavAP/Core/Scheduler/IScheduler.h>
 
-/**
- * @brief general framework error
- */
-class FrameworkError
+TestControllerPlugin::TestControllerPlugin() :
+		counter_(0)
 {
-public:
+}
 
-	FrameworkError(const std::string& what) :
-			what_(what)
-	{
-	}
-
-	std::string
-	what()
-	{
-		return what_;
-	}
-
-private:
-
-	std::string what_;
-};
-
-/**
- * @brief Data type invalid error
- */
-class InvalidTypeError: public FrameworkError
+void
+TestControllerPlugin::notifyAggregationOnUpdate(const Aggregator& agg)
 {
-public:
-	InvalidTypeError(const std::string& what) :
-			FrameworkError(what)
-	{
-	}
-};
+	scheduler_.setFromAggregationIfNotSet(agg);
+}
 
-/**
- * @brief Error in the factory initialization
- */
-class FactoryInitializationError: public FrameworkError
+void
+TestControllerPlugin::setControllerTarget(const ControllerTarget& target)
 {
-public:
-	FactoryInitializationError(const std::string& what) :
-			FrameworkError(what)
-	{
-	}
-};
+}
 
-#endif /* UAVAP_CORE_FRAMEWORK_FRAMEWORKEXCEPTIONS_H_ */
+bool
+TestControllerPlugin::run(RunStage stage)
+{
+	switch (stage)
+	{
+	case RunStage::INIT:
+	{
+		if (!scheduler_.isSet())
+		{
+			APLOG_ERROR << "Scheduler missing";
+			return true;
+		}
+		break;
+	}
+	case RunStage::NORMAL:
+	{
+		auto scheduler = scheduler_.get();
+
+		scheduler->schedule(std::bind(&TestControllerPlugin::testSchedule, this), Milliseconds(0),
+				Milliseconds(100));
+		break;
+	}
+	default:
+		break;
+	}
+
+	return false;
+}
+
+void
+TestControllerPlugin::testSchedule()
+{
+	counter_++;
+}
+
+int
+TestControllerPlugin::evaluateCounter()
+{
+	return counter_;
+}

@@ -20,7 +20,7 @@
  * @file LockTypes.h
  * @brief Standard lock typedefs
  * @date Jun 27, 2017
- * @author Mirco Theile, mircot@illinois.edu
+ * @author Mirco Theile, mirco.theile@tum.de
  */
 
 #ifndef UAVAP_CORE_LOCKTYPES_H_
