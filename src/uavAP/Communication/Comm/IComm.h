@@ -31,6 +31,9 @@
 class IComm
 {
 public:
+
+	static constexpr const char* const typeId = "comm";
+
 	virtual
 	~IComm() = default;
 };

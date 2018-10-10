@@ -32,6 +32,9 @@
 class ILocalPlanner
 {
 public:
+
+	static constexpr const char* const typeId = "local_planner";
+
 	virtual
 	~ILocalPlanner() = default;
 

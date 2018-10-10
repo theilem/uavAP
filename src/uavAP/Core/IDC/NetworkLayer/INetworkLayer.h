@@ -42,6 +42,8 @@ class INetworkLayer
 {
 public:
 
+	static constexpr const char* const typeId = "network";
+
 	virtual
 	~INetworkLayer() = default;
 

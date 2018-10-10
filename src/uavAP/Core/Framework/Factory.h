@@ -66,6 +66,9 @@ public:
 
 	using TypeId = const char* const;
 
+	static TypeId
+	typeId();
+
 	template<class SpecificType>
 	static void
 	registerExternalCreator();
@@ -104,8 +107,7 @@ private:
 };
 
 template<class Type>
-std::map<std::string, typename Factory<Type>::Creator>
-Factory<Type>::pluginMap_;
+std::map<std::string, typename Factory<Type>::Creator> Factory<Type>::pluginMap_;
 
 template<class Type>
 inline std::shared_ptr<Type>
@@ -195,6 +197,13 @@ inline void
 Factory<Type>::setPluginRestriction(PluginRestriction plug)
 {
 	pluginRestriction_ = plug;
+}
+
+template<class Type>
+inline const char* const
+Factory<Type>::typeId()
+{
+	return Type::typeId;
 }
 
 #endif /* UAVAP_CORE_FRAMEWORK_FACTORY_H_ */

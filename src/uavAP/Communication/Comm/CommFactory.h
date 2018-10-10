@@ -41,8 +41,6 @@ public:
 		addCreator<IDCComm>();
 		addCreator<MessageQueueComm>();
 	}
-
-	static constexpr TypeId typeId = "comm";
 };
 
 #endif /* UAVAP_COMMUNICATION_COMM_COMMFACTORY_H_ */

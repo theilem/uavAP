@@ -41,6 +41,8 @@ class IDataPresentation
 {
 public:
 
+	static constexpr const char* const typeId = "data_presentation";
+
 	/**
 	 * @brief virtual default destructor
 	 */

@@ -34,6 +34,8 @@ class IScheduler
 {
 public:
 
+	static constexpr const char* const typeId = "scheduler";
+
 	virtual
 	~IScheduler()
 	{

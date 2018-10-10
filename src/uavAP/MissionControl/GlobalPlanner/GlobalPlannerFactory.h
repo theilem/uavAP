@@ -42,9 +42,6 @@ public:
 		addCreator<FilletGlobalPlanner>();
 		addCreator<SplineGlobalPlanner>();
 	}
-
-
-	static constexpr TypeId typeId = "global_planner";
 };
 
 #endif /* FLIGHTPLANNER_FLIGHTPLANNERFACTORY_H_ */

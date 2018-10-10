@@ -29,6 +29,9 @@
 class ISensingActuationIO
 {
 public:
+
+	static constexpr const char* const typeId = "sens_act_io";
+
 	virtual
 	~ISensingActuationIO() = default;
 };

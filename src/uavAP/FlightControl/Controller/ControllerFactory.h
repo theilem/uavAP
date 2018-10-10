@@ -43,8 +43,6 @@ public:
 		addCreator<ManeuverPIDController>();
 		addCreator<RatePIDController>();
 	}
-
-	static constexpr TypeId typeId = "controller";
 };
 
 #endif /* FLIGHTCONTROLLER_FLIGHTCONTROLLERFACTORY_H_ */

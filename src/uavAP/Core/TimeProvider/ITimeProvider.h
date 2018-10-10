@@ -33,6 +33,8 @@ class ITimeProvider
 {
 public:
 
+	static constexpr const char* const typeId = "time_provider";
+
 	virtual
 	~ITimeProvider() = default;
 

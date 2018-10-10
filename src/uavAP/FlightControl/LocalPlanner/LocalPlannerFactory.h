@@ -41,8 +41,6 @@ public:
 		addCreator<ManeuverLocalPlanner>();
 	}
 
-	static constexpr TypeId typeId = "local_planner";
-
 };
 
 #endif /* UAVAP_FLIGHTCONTROL_LOCALPLANNER_LOCALPLANNERFACTORY_H_ */
