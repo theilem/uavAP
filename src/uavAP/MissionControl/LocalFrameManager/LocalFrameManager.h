@@ -25,13 +25,15 @@
 
 #ifndef UAVAP_MISSIONCONTROL_LOCALFRAMEMANAGER_LOCALFRAMEMANAGER_H_
 #define UAVAP_MISSIONCONTROL_LOCALFRAMEMANAGER_LOCALFRAMEMANAGER_H_
-#include <uavAP/Core/Frames/VehicleOneFrame.h>
-#include <uavAP/Core/IPC/Publisher.h>
-#include <uavAP/Core/Object/IAggregatableObject.h>
-#include <uavAP/Core/Runner/IRunnableObject.h>
 
-#include <uavAP/Core/Logging/APLogger.h>
-#include <uavAP/Core/Object/ObjectHandle.h>
+#include <mutex>
+
+#include "uavAP/Core/Frames/VehicleOneFrame.h"
+#include "uavAP/Core/IPC/Publisher.h"
+#include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/Core/Runner/IRunnableObject.h"
+#include "uavAP/Core/Logging/APLogger.h"
+#include "uavAP/Core/Object/ObjectHandle.h"
 
 class IPC;
 class IScheduler;
@@ -59,6 +61,9 @@ public:
 	const VehicleOneFrame&
 	getFrame() const;
 
+	void
+	setFrame(VehicleOneFrame frame);
+
 private:
 
 	void
@@ -66,10 +71,9 @@ private:
 
 	ObjectHandle<IPC> ipc_;
 	ObjectHandle<IScheduler> scheduler_;
-
 	Publisher framePublisher_;
-
 	VehicleOneFrame frame_;
+	mutable std::mutex frameMutex_;
 };
 
 #endif /* UAVAP_MISSIONCONTROL_LOCALFRAMEMANAGER_LOCALFRAMEMANAGER_H_ */

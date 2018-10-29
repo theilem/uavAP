@@ -88,14 +88,25 @@ LocalFrameManager::run(RunStage stage)
 	return false;
 }
 
+void
+LocalFrameManager::publishFrame()
+{
+	std::unique_lock<std::mutex> lock(frameMutex_);
+	framePublisher_.publish(frame_);
+	lock.unlock();
+}
+
 const VehicleOneFrame&
 LocalFrameManager::getFrame() const
 {
+	std::lock_guard<std::mutex> lg(frameMutex_);
 	return frame_;
 }
 
 void
-LocalFrameManager::publishFrame()
+LocalFrameManager::setFrame(VehicleOneFrame frame)
 {
-	framePublisher_.publish(frame_);
+	std::unique_lock<std::mutex> lock(frameMutex_);
+	frame_ = frame;
+	lock.unlock();
 }

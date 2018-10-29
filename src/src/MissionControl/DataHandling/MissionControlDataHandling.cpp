@@ -254,6 +254,18 @@ MissionControlDataHandling::receiveAndDistribute(const Packet& packet)
 		mp->missionRequest(mission);
 		break;
 	}
+	case Content::LOCAL_FRAME:
+	{
+		auto frame = boost::any_cast<VehicleOneFrame>(any);
+		auto lfm = localFrameManager_.get();
+		if (!lfm)
+		{
+			APLOG_ERROR << "Maneuver Planner Not Found. Cannot Set Local Frame.";
+			break;
+		}
+		lfm->setFrame(frame);
+		break;
+	}
 	default:
 	{
 		APLOG_ERROR << "Unspecified Content: " << static_cast<int>(content);
