@@ -90,7 +90,7 @@ ManeuverPlanner::configure(const Configuration& config)
 				{
 					auto controllerOutputsEnum = EnumMap<ControllerOutputs>::convert(
 							freezeIt.first);
-					ControlOutFreezing_.insert(std::make_pair(controllerOutputsEnum, freeze));
+					controlOutFreezing_.insert(std::make_pair(controllerOutputsEnum, freeze));
 				}
 			}
 		}
@@ -154,6 +154,16 @@ ManeuverPlanner::run(RunStage stage)
 	}
 	case RunStage::NORMAL:
 	{
+		auto ipc = ipc_.get();
+
+		controllerOutputSubscription_ = ipc->subscribeOnPacket("controller_output",
+				std::bind(&ManeuverPlanner::onControllerOutputPacket, this, std::placeholders::_1));
+
+		if (!controllerOutputSubscription_.connected())
+		{
+			APLOG_DEBUG << "ManeuverPlanner: Controller Output Subscription Missing.";
+		}
+
 		if (params_.use_safety_bounds())
 		{
 			auto conditionManager = conditionManager_.get();
@@ -165,7 +175,6 @@ ManeuverPlanner::run(RunStage stage)
 			}
 			conditionManager->activateCondition(safetyCondition_,
 					std::bind(&ManeuverPlanner::safetyTrigger, this, std::placeholders::_1));
-
 		}
 
 		break;
@@ -429,7 +438,53 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 		conditionManager->activateCondition(currentManeuver->condition, conditionTrigger);
 	}
 
-	const Override& override = currentManeuver->override;
+	Override override = currentManeuver->override;
+
+	if (enableControlOutFreezing_)
+	{
+		ControllerOutput controllerOutput;
+
+		std::unique_lock<std::mutex> lock(controllerOutputMutex_);
+		controllerOutput = controllerOutput_;
+		lock.unlock();
+
+		for (auto& it : controlOutFreezing_)
+		{
+			if (it.second)
+			{
+				if (auto pair = findInMap(override.output, it.first))
+				{
+					switch (it.first)
+					{
+					case ControllerOutputs::ROLL:
+					{
+						pair->second = controllerOutput.rollOutput;
+						break;
+					}
+					case ControllerOutputs::PITCH:
+					{
+						pair->second = controllerOutput.pitchOutput;
+						break;
+					}
+					case ControllerOutputs::YAW:
+					{
+						pair->second = controllerOutput.yawOutput;
+						break;
+					}
+					case ControllerOutputs::THROTTLE:
+					{
+						pair->second = controllerOutput.throttleOutput;
+						break;
+					}
+					default:
+					{
+						break;
+					}
+					}
+				}
+			}
+		}
+	}
 
 	std::unique_lock<std::mutex> overrideLock(overrideMutex_);
 	override_ = override;
@@ -501,4 +556,14 @@ ManeuverPlanner::safetyTrigger(int trigger)
 	{
 		interruptOverride();
 	}
+}
+
+void
+ManeuverPlanner::onControllerOutputPacket(const Packet& packet)
+{
+	auto controllerOutput = dp::deserialize<ControllerOutput>(packet);
+
+	std::unique_lock<std::mutex> lock(controllerOutputMutex_);
+	controllerOutput_ = controllerOutput;
+	lock.unlock();
 }

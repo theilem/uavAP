@@ -86,6 +86,7 @@ private:
 	Vector3 accelerationInertial_;
 	ControllerOutput controllerOutput_;
 
+	Publisher controllerOutputPublisher_;
 	Subscription overrideSubscription_;
 
 	std::shared_ptr<ManeuverCascade> pidCascade_;

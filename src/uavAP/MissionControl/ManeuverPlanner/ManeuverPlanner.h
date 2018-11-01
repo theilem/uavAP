@@ -108,6 +108,9 @@ private:
 	void
 	safetyTrigger(int trigger);
 
+	void
+	onControllerOutputPacket(const Packet& packet);
+
 	using ManeuverSetMap = std::unordered_map<std::string, ManeuverSet>;
 
 	ManeuverPlannerParams params_;
@@ -115,6 +118,9 @@ private:
 
 	Override override_;
 	mutable std::mutex overrideMutex_;
+
+	ControllerOutput controllerOutput_;
+	mutable std::mutex controllerOutputMutex_;
 
 	ManeuverSetMap maneuverSetMap_;
 	ManeuverSetMap::const_iterator currentManeuverSet_;
@@ -135,7 +141,7 @@ private:
 	bool maneuverRestart_;
 
 	bool enableControlOutFreezing_;
-	std::map<ControllerOutputs, bool> ControlOutFreezing_;
+	std::map<ControllerOutputs, bool> controlOutFreezing_;
 
 	unsigned int overrideSeqNr_;
 	mutable std::mutex overrideSeqNrMutex_;
@@ -144,7 +150,7 @@ private:
 
 	Publisher overridePublisher_;
 	Publisher maneuverAnalysisPublisher_;
-	Subscription sensorDataSubscription_;
+	Subscription controllerOutputSubscription_;
 
 	ObjectHandle<IPC> ipc_;
 	ObjectHandle<ConditionManager> conditionManager_;

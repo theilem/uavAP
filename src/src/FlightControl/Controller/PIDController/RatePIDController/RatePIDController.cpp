@@ -73,6 +73,10 @@ RatePIDController::run(RunStage stage)
 			return true;
 		}
 
+		auto ipc = ipc_.get();
+
+		controllerOutputPublisher_ = ipc->publishPackets("controller_output");
+
 		break;
 	}
 	case RunStage::NORMAL:
@@ -167,6 +171,7 @@ RatePIDController::calculateControl()
 	targetLock.unlock();
 
 	sensAct->setControllerOutput(controllerOutput_);
+	controllerOutputPublisher_.publish(dp::serialize(controllerOutput_));
 }
 
 void
