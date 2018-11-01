@@ -29,12 +29,13 @@
 #include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
+#include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 
 ManeuverPlanner::ManeuverPlanner() :
 		analysis_(), overrideInterrupted_(false), manualActive_(false), maneuverActive_(false), lastManualActive_(
-				false), lastManeuverActive_(false), manualRestart_(false), maneuverRestart_(false), overrideSeqNr_(
-				0)
+				false), lastManeuverActive_(false), manualRestart_(false), maneuverRestart_(false), enableControlOutFreezing_(
+				false), overrideSeqNr_(0)
 {
 }
 
@@ -52,35 +53,68 @@ ManeuverPlanner::create(const boost::property_tree::ptree& config)
 }
 
 bool
-ManeuverPlanner::configure(const boost::property_tree::ptree& config)
+ManeuverPlanner::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
-	boost::property_tree::ptree maneuverSetTree;
+	Configuration freezeControlOutTree;
+	Configuration maneuverSetTree;
 
-	pm.configure(params_, true);
-	pm.add("maneuvers", maneuverSetTree, false);
-
-	for (auto& setIt : maneuverSetTree)
+	if (pm.configure(params_, true))
 	{
-		ManeuverSet maneuverSet;
+		manualRestart_ = params_.manual_restart();
+		maneuverRestart_ = params_.maneuver_restart();
 
-		for (auto& manIt : setIt.second)
-		{
-			Maneuver maneuver;
-			maneuver.configure(manIt.second);
-			maneuverSet.push_back(maneuver);
-		}
-
-		maneuverSetMap_.insert(std::make_pair(setIt.first, maneuverSet));
+		safetyCondition_ = std::make_shared<RectanguloidCondition>(params_.safety_bounds());
 	}
 
-	currentManeuverSet_ = maneuverSetMap_.end();
-	currentManeuver_ = boost::none;
+	if (pm.add("freeze_controller_outputs", freezeControlOutTree, false))
+	{
+		PropertyMapper freezeControlOutPm(freezeControlOutTree);
 
-	manualRestart_ = params_.manual_restart();
-	maneuverRestart_ = params_.maneuver_restart();
+		for (auto& freezeIt : freezeControlOutTree)
+		{
+			if (freezeIt.first == "enable")
+			{
+				freezeControlOutPm.add<bool>(freezeIt.first, enableControlOutFreezing_, true);
+			}
+			else
+			{
+				if (!enableControlOutFreezing_)
+				{
+					break;
+				}
 
-	safetyCondition_ = std::make_shared<RectanguloidCondition>(params_.safety_bounds());
+				bool freeze = false;
+
+				if (freezeControlOutPm.add<bool>(freezeIt.first, freeze, true))
+				{
+					auto controllerOutputsEnum = EnumMap<ControllerOutputs>::convert(
+							freezeIt.first);
+					ControlOutFreezing_.insert(std::make_pair(controllerOutputsEnum, freeze));
+				}
+			}
+		}
+	}
+
+	if (pm.add("maneuvers", maneuverSetTree, false))
+	{
+		for (auto& setIt : maneuverSetTree)
+		{
+			ManeuverSet maneuverSet;
+
+			for (auto& manIt : setIt.second)
+			{
+				Maneuver maneuver;
+				maneuver.configure(manIt.second);
+				maneuverSet.push_back(maneuver);
+			}
+
+			maneuverSetMap_.insert(std::make_pair(setIt.first, maneuverSet));
+		}
+
+		currentManeuverSet_ = maneuverSetMap_.end();
+		currentManeuver_ = boost::none;
+	}
 
 	return pm.map();
 }

@@ -134,6 +134,9 @@ private:
 	bool manualRestart_;
 	bool maneuverRestart_;
 
+	bool enableControlOutFreezing_;
+	std::map<ControllerOutputs, bool> ControlOutFreezing_;
+
 	unsigned int overrideSeqNr_;
 	mutable std::mutex overrideSeqNrMutex_;
 
