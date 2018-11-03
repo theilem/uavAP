@@ -635,7 +635,7 @@ ManeuverPlanner::onControllerOutputPacket(const Packet& packet)
 void
 ManeuverPlanner::onAdvancedControl(const AdvancedControl& advanced)
 {
-	if (!maneuverActive_ && !overrideInterrupted_)
+	if (!maneuverActive_)
 	{
 		advancedControlPublisher_.publish(advanced);
 	}
