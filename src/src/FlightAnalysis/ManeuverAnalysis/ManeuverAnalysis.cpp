@@ -54,11 +54,14 @@ ManeuverAnalysis::configure(const boost::property_tree::ptree& config)
 	std::string maneuver;
 
 	pm.add("log_path", logPath_, true);
-	pm.add("maneuver", maneuver, false);
+
+	if (pm.add("maneuver", maneuver, false))
+	{
+		maneuver_ = EnumMap<Maneuvers>::convert(maneuver);
+	}
 
 	collectInit_ = false;
 	counter_ = 0;
-	maneuver_ = EnumMap<Maneuvers>::convert(maneuver);
 
 	return pm.map();
 }
@@ -207,8 +210,6 @@ ManeuverAnalysis::collectStateNormal(const SensorData& data)
 		return;
 	}
 
-	logFile_ << "collectStateNormal:" << std::endl;
-
 	switch (maneuver_)
 	{
 	case Maneuvers::GEOFENCING:
@@ -274,9 +275,12 @@ ManeuverAnalysis::collectGeofencing(const SensorData& data, const CollectStates&
 		logFile_ << "Position E (m)" << "	" << "Position N (m)" << "	" << "Roll Angle (Rad)" << "	"
 				<< "Yaw Angle (Rad)" << "	" << "Ground Speed (m/s)" << "	" << "Roll Rate (Rad/s)"
 				<< std::endl;
+
 		logFile_ << data.position.x() << "	" << data.position.y() << "	" << data.attitude.x() << "	"
 				<< data.attitude.z() << "	" << data.groundSpeed << "	" << data.angularRate.x()
 				<< std::endl;
+
+		logFile_ << "collectStateNormal:" << std::endl;
 
 		break;
 	}
@@ -310,10 +314,13 @@ ManeuverAnalysis::collectAdvancedControl(const SensorData& data, const CollectSt
 				<< "	" << "Roll Angle (Rad)" << "	" << "Pitch Angle (Rad)" << "	"
 				<< "Yaw Angle (Rad)" << "	" << "Battery Voltage (V)" << "	" << "Battery Current (A)"
 				<< "	" << "Throttle Level (%)" << "	" << "Motor Speed (RPM)" << std::endl;
+
 		logFile_ << data.velocity.x() << "	" << data.velocity.y() << "	" << data.velocity.z() << "	"
 				<< data.attitude.x() << "	" << data.attitude.y() << "	" << data.attitude.z() << "	"
 				<< data.batteryVoltage << "	" << data.batteryCurrent << "	" << data.throttle << "	"
 				<< data.rpm << std::endl;
+
+		logFile_ << "collectStateNormal:" << std::endl;
 
 		break;
 	}
