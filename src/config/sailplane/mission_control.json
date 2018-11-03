@@ -3,7 +3,7 @@
 		"origin": [
 			367836.57,
 			4435383.06,
-			168
+			200
 		],
 		"yaw": 47
 	},
@@ -28,112 +28,188 @@
 		"maneuver_restart": false,
 		"use_safety_bounds": true,
 		"perform_in_safety_bounds": true,
+		"freeze_controller_outputs": {
+			"enable": true,
+			"roll": true,
+			"pitch": true,
+			"yaw": true,
+			"throttle": true
+		},
 		"maneuvers": {
 			"default": [
 				{
 					"override": {
-						"local_planner/velocity": 15.0,
+						"local_planner/position_z": 100,
+						"local_planner/velocity": 12.0,
 						"pids/roll": 0.0
 					},
 					"condition": {
-						"type": "duration_condition",
+						"type": "duration",
 						"duration": 8000000
 					},
 					"analysis": false
 				}
 			],
-			"roll_right_maneuver": [
+			"vel10_camT1.0_speF1.0_throC": [
 				{
 					"override": {
-						"local_planner/velocity": 15.0,
-						"pids/roll": 0.0
+						"local_planner/velocity": 10.0,
+						"pids/roll": 0.0,
+						"pids/climb_angle": 0.0
 					},
 					"condition": {
-						"type": "steady_state_condition",
+						"type": "steady_state",
 						"steady_state": true
 					},
 					"analysis": false
 				},
 				{
 					"override": {
-						"local_planner/velocity": 15.0,
-						"pids/roll": 45.0
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0,
+						"controller_outputs/throttle": 0.0
 					},
 					"condition": {
-						"type": "duration_condition",
-						"duration": 15000
+						"type": "duration",
+						"duration": 10000
+					},
+					"advanced_control": {
+						"camber_control": {
+							"control": "thermal",
+							"value": 1.0
+						},
+						"special_control": {
+							"control": "flap",
+							"value": 1.0
+						},
+						"throws_control": "cruise"
 					},
 					"analysis": true
 				}
 			],
-			"roll_left_maneuver": [
+			"vel12_camT1.0_speF1.0_throC": [
 				{
 					"override": {
-						"local_planner/velocity": 15.0,
-						"pids/roll": 0.0
+						"local_planner/velocity": 12.0,
+						"pids/roll": 0.0,
+						"pids/climb_angle": 0.0
 					},
 					"condition": {
-						"type": "steady_state_condition",
+						"type": "steady_state",
 						"steady_state": true
 					},
 					"analysis": false
 				},
 				{
 					"override": {
-						"local_planner/velocity": 15.0,
-						"pids/roll": -45.0
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0,
+						"controller_outputs/throttle": 0.0
 					},
 					"condition": {
-						"type": "duration_condition",
-						"duration": 15000
+						"type": "duration",
+						"duration": 10000
+					},
+					"advanced_control": {
+						"camber_control": {
+							"control": "thermal",
+							"value": 1.0
+						},
+						"special_control": {
+							"control": "flap",
+							"value": 1.0
+						},
+						"throws_control": "cruise"
 					},
 					"analysis": true
 				}
 			],
-			"roll_right_left_maneuver": [
+			"vel15_camT1.0_speF1.0_throC": [
 				{
 					"override": {
-						"local_planner/velocity": 20.0,
-						"pids/roll": 30.0
+						"local_planner/velocity": 15.0,
+						"pids/roll": 0.0,
+						"pids/climb_angle": 0.0
 					},
 					"condition": {
-						"type": "steady_state_condition",
+						"type": "steady_state",
 						"steady_state": true
 					},
 					"analysis": false
 				},
 				{
 					"override": {
-						"local_planner/velocity": 20.0,
-						"pids/roll": -45.0
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0,
+						"controller_outputs/throttle": 0.0
 					},
 					"condition": {
-						"type": "duration_condition",
-						"duration": 15000
+						"type": "duration",
+						"duration": 10000
+					},
+					"advanced_control": {
+						"camber_control": {
+							"control": "thermal",
+							"value": 1.0
+						},
+						"special_control": {
+							"control": "flap",
+							"value": 1.0
+						},
+						"throws_control": "cruise"
 					},
 					"analysis": true
 				}
 			],
-			"roll_left_right_maneuver": [
+			"control_freeze_test": [
 				{
 					"override": {
-						"local_planner/velocity": 20.0,
-						"pids/roll": -30.0
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0,
+						"controller_outputs/throttle": 0.0
 					},
 					"condition": {
-						"type": "steady_state_condition",
-						"steady_state": true
+						"type": "duration",
+						"duration": 5000
 					},
 					"analysis": false
-				},
+				}
+			],
+			"advanced_control_test": [
 				{
 					"override": {
-						"local_planner/velocity": 20.0,
-						"pids/roll": 45.0
+						"local_planner/velocity": 0.0
 					},
 					"condition": {
-						"type": "duration_condition",
-						"duration": 15000
+						"type": "duration",
+						"duration": 5000
+					},
+					"advanced_control": {
+						"camber_control": {
+							"control": "thermal",
+							"value": 1.0
+						},
+						"special_control": {
+							"control": "flap",
+							"value": 1.0
+						},
+						"throws_control": "cruise"
+					},
+					"analysis": false
+				}
+			],
+			"maneuver_analysis_test": [
+				{
+					"override": {
+						"local_planner/velocity": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 5000
 					},
 					"analysis": true
 				}
@@ -145,7 +221,7 @@
 		"use_approach": false,
 		"default_velocity": 12,
 		"missions": {
-			"simple_mission": {
+			"simple": {
 				"velocity": 12,
 				"infinite": true,
 				"offset": {
@@ -176,7 +252,7 @@
 					}
 				]
 			},
-			"validation_mission": {
+			"validation": {
 				"velocity": 12,
 				"infinite": true,
 				"offset": {
@@ -223,6 +299,159 @@
 					{
 						"e": 150,
 						"n": 150,
+						"u": 0
+					}
+				]
+			},
+			"validation_300": {
+				"velocity": 12,
+				"infinite": true,
+				"offset": {
+					"e": 0,
+					"n": 0,
+					"u": 100
+				},
+				"waypoints": [
+					{
+						"e": 250,
+						"n": 75,
+						"u": 0
+					},
+					{
+						"e": 250,
+						"n": -75,
+						"u": 0
+					},
+					{
+						"e": 150,
+						"n": -75,
+						"u": 0
+					},
+					{
+						"e": -150,
+						"n": -75,
+						"u": 0
+					},
+					{
+						"e": -250,
+						"n": -75,
+						"u": 0
+					},
+					{
+						"e": -250,
+						"n": 75,
+						"u": 0
+					},
+					{
+						"e": -150,
+						"n": 75,
+						"u": 0
+					},
+					{
+						"e": 150,
+						"n": 75,
+						"u": 0
+					}
+				]
+			},
+			"validation_350": {
+				"velocity": 12,
+				"infinite": true,
+				"offset": {
+					"e": 0,
+					"n": 0,
+					"u": 100
+				},
+				"waypoints": [
+					{
+						"e": 275,
+						"n": 75,
+						"u": 0
+					},
+					{
+						"e": 275,
+						"n": -75,
+						"u": 0
+					},
+					{
+						"e": 175,
+						"n": -75,
+						"u": 0
+					},
+					{
+						"e": -175,
+						"n": -75,
+						"u": 0
+					},
+					{
+						"e": -275,
+						"n": -75,
+						"u": 0
+					},
+					{
+						"e": -275,
+						"n": 75,
+						"u": 0
+					},
+					{
+						"e": -175,
+						"n": 75,
+						"u": 0
+					},
+					{
+						"e": 175,
+						"n": 75,
+						"u": 0
+					}
+				]
+			},
+			"validation_400": {
+				"velocity": 12,
+				"infinite": true,
+				"offset": {
+					"e": 0,
+					"n": 0,
+					"u": 100
+				},
+				"waypoints": [
+					{
+						"e": 300,
+						"n": 75,
+						"u": 0
+					},
+					{
+						"e": 300,
+						"n": -75,
+						"u": 0
+					},
+					{
+						"e": 200,
+						"n": -75,
+						"u": 0
+					},
+					{
+						"e": -200,
+						"n": -75,
+						"u": 0
+					},
+					{
+						"e": -300,
+						"n": -75,
+						"u": 0
+					},
+					{
+						"e": -300,
+						"n": 75,
+						"u": 0
+					},
+					{
+						"e": -200,
+						"n": 75,
+						"u": 0
+					},
+					{
+						"e": 200,
+						"n": 75,
 						"u": 0
 					}
 				]

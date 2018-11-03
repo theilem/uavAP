@@ -4,7 +4,7 @@
 		"num_output_channel":7,
 		"trace_seq_nr":false,
 		"internal_imu":true,
-		"use_airspeed":true,
+		"use_airspeed":false,
 		"external_gps":true,
 		"course_as_heading":true,
 		"rotation_offset":
@@ -48,11 +48,13 @@
 		},
 		"camber_offset":
 		{
+			"normal":		[   0,   0, 0,   0, 0,    0,   0],
 			"thermal":		[-116, -64, 0,  80, 0,  132,   0],
 			"cruise":		[ 124,  76, 0, -64, 0, -116, -32]
 		},
 		"special_control":
 		{
+			"none":			[    0,   0, 0,   0,  0,    0,    0],
 			"flap": 		[-1344,   0, 0,    0, 0, 1344,    0],
 			"crow": 		[-1268, 424, 0, -432, 0, 1272, -420]
 		},
