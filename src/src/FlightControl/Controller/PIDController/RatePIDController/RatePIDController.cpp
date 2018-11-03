@@ -177,6 +177,7 @@ RatePIDController::calculateControl()
 	APLOG_TRACE << "Pitch Output: " << controllerOutput_.pitchOutput;
 	APLOG_TRACE << "Yaw Output: " << controllerOutput_.yawOutput;
 	APLOG_TRACE << "Throttle Output: " << controllerOutput_.throttleOutput;
+	APLOG_TRACE << " ";
 }
 
 void
