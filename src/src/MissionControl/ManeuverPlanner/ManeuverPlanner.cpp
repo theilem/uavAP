@@ -490,6 +490,15 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 
 	AdvancedControl advancedControl = currentManeuver->advancedControl;
 
+	APLOG_TRACE << "Maneuver Camber Control: "
+			<< EnumMap<CamberControl>::convert(advancedControl.camberSelection);
+	APLOG_TRACE << "Maneuver Special Control: "
+			<< EnumMap<SpecialControl>::convert(advancedControl.specialSelection);
+	APLOG_TRACE << "Maneuver Throw Control: "
+			<< EnumMap<ThrowsControl>::convert(advancedControl.throwsSelection);
+	APLOG_TRACE << "Maneuver Camber Value: " << advancedControl.camberValue;
+	APLOG_TRACE << "Maneuver Special Value: " << advancedControl.specialValue;
+
 	std::unique_lock<std::mutex> analysisLock(analysisMutex_);
 	analysis_.maneuver = maneuverSet_;
 	analysis_.analysis = currentManeuver->analysis;

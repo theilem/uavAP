@@ -207,11 +207,11 @@ FlightControlDataHandling::receiveAndDistribute(const Packet& packet)
 	{
 		auto advanced = boost::any_cast<AdvancedControl>(any);
 
-		APLOG_TRACE << "Current Camber Control: " << EnumMap<CamberControl>::convert(advanced.camberSelection);
-		APLOG_TRACE << "Current Special Control: " << EnumMap<SpecialControl>::convert(advanced.specialSelection);
-		APLOG_TRACE << "Current Throw Control: " << EnumMap<ThrowsControl>::convert(advanced.throwsSelection);
-		APLOG_TRACE << "Current Camber Value: " << advanced.camberValue;
-		APLOG_TRACE << "Current Special Value: " << advanced.specialValue;
+		APLOG_TRACE << "Camber Control: " << EnumMap<CamberControl>::convert(advanced.camberSelection);
+		APLOG_TRACE << "Special Control: " << EnumMap<SpecialControl>::convert(advanced.specialSelection);
+		APLOG_TRACE << "Throw Control: " << EnumMap<ThrowsControl>::convert(advanced.throwsSelection);
+		APLOG_TRACE << "Camber Value: " << advanced.camberValue;
+		APLOG_TRACE << "Special Value: " << advanced.specialValue;
 
 		advancedControlPublisher_.publish(advanced);
 		break;
