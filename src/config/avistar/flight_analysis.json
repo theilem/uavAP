@@ -4,7 +4,7 @@
 			"local_planner/position_x": 5.0,
 			"local_planner/position_y": 5.0,
 			"local_planner/position_z": 5.0,
-			"local_planner/velocity": 0.5,
+			"local_planner/velocity": 5.0,
 			"local_planner/heading": 5.0,
 			"local_planner/climb_rate": 5.0,
 			"controller_targets/velocity": 5.0,
@@ -15,11 +15,11 @@
 			"pids/velocity_y": 5.0,
 			"pids/rudder": 0.1,
 			"pids/climb_angle": 5.0,
-			"pids/climb_rate": 0.1,
-			"pids/pitch": 2.0,
+			"pids/climb_rate": 5.0,
+			"pids/pitch": 5.0,
 			"pids/pitch_rate": 5.0,
 			"pids/yaw_rate": 1.0,
-			"pids/roll": 2.0,
+			"pids/roll": 5.0,
 			"pids/roll_rate": 5.0
 		},
 		"in_tolerance_duration": 5000

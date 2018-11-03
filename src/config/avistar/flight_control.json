@@ -3,22 +3,22 @@
 		"type": "rate",
 		"hard_roll_constraint": 45.0,
 		"hard_roll_rate_constraint": 30.0,
-		"hard_pitch_constraint": 30.0,
-		"hard_pitch_rate_constraint": 30.0,
+		"hard_pitch_constraint": 20.0,
+		"hard_pitch_rate_constraint": 1000.0,
 		"pids": {
 			"climb_angle": {
 				"ff": 1,
 				"imax": 0.2,
 				"kd": 0,
-				"ki": 0.5,
-				"kp": 2
+				"ki": 0.1,
+				"kp": 0.5
 			},
 			"pitch": {
 				"ff": 0,
-				"imax": 0.2,
-				"kd": 0.2,
-				"ki": 1,
-				"kp": 0.8
+				"imax": 0.4,
+				"kd": 0.1,
+				"ki": 0.4,
+				"kp": 1.2
 			},
 			"pitch_rate": {
 				"ff": 1,
@@ -32,38 +32,38 @@
 				"imax": 0,
 				"kd": 0,
 				"ki": 0,
-				"kp": 6
+				"kp": 3
 			},
 			"roll_rate": {
-				"ff": 0.25,
+				"ff": 0.3,
 				"imax": 0.2,
 				"kd": 0,
-				"ki": 0.2,
-				"kp": 0.1
+				"ki": 0.1,
+				"kp": 0.05
 			},
 			"rudder": {
 				"ff": 0,
 				"imax": 1,
 				"kd": 0,
-				"ki": 0.5,
-				"kp": 0
+				"ki": 0,
+				"kp": 0.2
 			},
 			"velocity": {
-				"ff": 0,
-				"imax": 10,
+				"ff": 0.04,
+				"imax": 0.4,
 				"kd": 0,
-				"ki": 0.2,
-				"kp": 1
+				"ki": 0.4,
+				"kp": 0.4
 			}
 		}
 	},
 	"local_planner": {
 		"type": "maneuver",
 		"period": 0,
-		"safety_velocity": 15,
-		"k_altitude": 1.0,
-		"k_convergence": 0.02,
-		"k_yaw_rate": 1.0
+		"safety_velocity": 18,
+		"k_altitude": 0.8,
+		"k_convergence": 0.01,
+		"k_yaw_rate": 0.65
 	},
 	"fc_data_handling": {
 		"compress_sensor_data": true,

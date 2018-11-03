@@ -46,6 +46,8 @@ endif(CMAKE_COMPILER_IS_GNUCC)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -std=c++11 -fPIC -Wall")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
+message(INFO ${LIBRARY_ROOT_DIR})
+
 include_directories(	${CMAKE_SOURCE_DIR}
 						${Boost_INCLUDE_DIRS}
 						${EIGEN_INCLUDE_DIRS}
@@ -64,6 +66,10 @@ if(LINK_STATIC)
 				libboost_chrono.a
 				)
 	set(PROTOBUF libprotobuf.a)
+	set(ARB 	libarb.a
+				libmpfr.a
+				libgmp.a
+				libflint.a)
 else(LINK_STATIC)
 	set(BOOST 	boost_filesystem
 				boost_thread
@@ -72,6 +78,10 @@ else(LINK_STATIC)
 				boost_chrono
 				)
 	set(PROTOBUF protobuf)
+	set(ARB 	arb
+				mpfr
+				gmp
+				flint)
 endif(LINK_STATIC)
 
 if(NODEBUG)

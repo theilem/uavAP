@@ -68,7 +68,8 @@ private:
 	void
 	evaluateSafety();
 
-	Vector3 position_;
+	SensorData sensorData_;
+	std::mutex sensorDataMutex_;
 
 	bool leftSafe_;
 	bool rightSafe_;

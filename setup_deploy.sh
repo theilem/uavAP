@@ -45,6 +45,39 @@ cmake ../eigen-eigen-5a0156e40feb
 make DESTDIR=$INSTALL_DIR install -j$CORES
 cd $INSTALL_DIR
 
+#Get arb and its dependencies
+#GMP
+wget "https://gmplib.org/download/gmp/gmp-6.1.2.tar.xz"
+tar -xf gmp-6.1.2.tar.xz
+cd gmp-6.1.2
+./configure CFLAGS="-fPIC -m32" CXXFLAGS="-fPIC -m32" ABI=32 --disable-shared --prefix=$INSTALL_DIR/usr/local/
+make -j$CORES
+make install -j$CORES
+
+#MPFR
+wget "https://www.mpfr.org/mpfr-current/mpfr-4.0.1.tar.xz"
+tar -xf mpfr-4.0.1.tar.xz
+cd mpfr-4.0.1
+./configure CFLAGS="-fPIC -m32" CXXFLAGS="-fPIC -m32" --with-gmp=$INSTALL_DIR/usr/local/ --prefix=$INSTALL_DIR/usr/local/
+make -j$CORES
+make install -j$CORES
+
+#FLINT
+wget "http://www.flintlib.org/flint-2.5.2.tar.gz"
+tar -xf flint-2.5.2.tar.gz
+cd flint-2.5.2
+./configure CFLAGS="-fPIC -m32" CXXFLAGS="-fPIC -m32" --with-gmp=$INSTALL_DIR/usr/local/ --with-mpfr=$INSTALL_DIR/usr/local/ --prefix=$INSTALL_DIR/usr/local/ ABI=32
+make -j$CORES
+make install -j$CORES
+
+#ARB
+git clone https://github.com/fredrik-johansson/arb.git
+cd arb
+./configure CFLAGS="-fPIC -m32" CXXFLAGS="-fPIC -m32" --with-gmp=$INSTALL_DIR/usr/local/ --with-mpfr=$INSTALL_DIR/usr/local/ --prefix=$INSTALL_DIR/usr/local/ ABI=32
+make -j$CORES
+make install -j$CORES
+
+
 #Create bld paths
 if [ -d "bld" ]; then
 	rm -rf bld

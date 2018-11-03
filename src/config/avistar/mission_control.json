@@ -3,9 +3,18 @@
 		"origin": [
 			367836.57,
 			4435383.06,
-			200
+			168
 		],
 		"yaw": 47
+	},
+	"geofencing": {
+		"type":"roll_rate",
+		"roll_rate":20,
+		"roll_max":45,
+		"evaluation_threshold":150,
+		"distance_threshold":15,
+		"precision":32,
+		"period":50
 	},
 	"global_planner": {
 		"type": "spline",
@@ -18,12 +27,12 @@
 				"east": 0,
 				"up": 120
 			},
-			"major_side_length": 800,
-			"minor_side_length": 400,
+			"major_side_length": 600,
+			"minor_side_length": 300,
 			"major_side_orientation": 0,
 			"height": 120
 		},
-		"return_velocity": 15,
+		"return_velocity": 22,
 		"manual_restart": false,
 		"maneuver_restart": false,
 		"use_safety_bounds": true,
@@ -36,7 +45,7 @@
 						"pids/roll": 0.0
 					},
 					"condition": {
-						"type": "duration_condition",
+						"type": "duration",
 						"duration": 8000000
 					},
 					"analysis": false
@@ -45,22 +54,24 @@
 			"roll_right_maneuver": [
 				{
 					"override": {
-						"local_planner/velocity": 15.0,
+						"local_planner/position_z": 100.0,						
+						"local_planner/velocity": 18.0,
 						"pids/roll": 0.0
 					},
 					"condition": {
-						"type": "steady_state_condition",
+						"type": "steady_state",
 						"steady_state": true
 					},
 					"analysis": false
 				},
 				{
 					"override": {
-						"local_planner/velocity": 15.0,
+						"local_planner/position_z": 100.0,	
+						"local_planner/velocity": 18.0,
 						"pids/roll": 45.0
 					},
 					"condition": {
-						"type": "duration_condition",
+						"type": "duration",
 						"duration": 15000
 					},
 					"analysis": true
@@ -69,22 +80,24 @@
 			"roll_left_maneuver": [
 				{
 					"override": {
-						"local_planner/velocity": 15.0,
+						"local_planner/position_z": 100.0,	
+						"local_planner/velocity": 18.0,
 						"pids/roll": 0.0
 					},
 					"condition": {
-						"type": "steady_state_condition",
+						"type": "steady_state",
 						"steady_state": true
 					},
 					"analysis": false
 				},
 				{
 					"override": {
-						"local_planner/velocity": 15.0,
+						"local_planner/position_z": 100.0,	
+						"local_planner/velocity": 18.0,
 						"pids/roll": -45.0
 					},
 					"condition": {
-						"type": "duration_condition",
+						"type": "duration",
 						"duration": 15000
 					},
 					"analysis": true
@@ -93,22 +106,24 @@
 			"roll_right_left_maneuver": [
 				{
 					"override": {
-						"local_planner/velocity": 20.0,
+						"local_planner/position_z": 100.0,	
+						"local_planner/velocity": 18.0,
 						"pids/roll": 30.0
 					},
 					"condition": {
-						"type": "steady_state_condition",
+						"type": "steady_state",
 						"steady_state": true
 					},
 					"analysis": false
 				},
 				{
 					"override": {
-						"local_planner/velocity": 20.0,
+						"local_planner/position_z": 100.0,	
+						"local_planner/velocity": 18.0,
 						"pids/roll": -45.0
 					},
 					"condition": {
-						"type": "duration_condition",
+						"type": "duration",
 						"duration": 15000
 					},
 					"analysis": true
@@ -117,22 +132,24 @@
 			"roll_left_right_maneuver": [
 				{
 					"override": {
-						"local_planner/velocity": 20.0,
+						"local_planner/position_z": 100.0,	
+						"local_planner/velocity": 18.0,
 						"pids/roll": -30.0
 					},
 					"condition": {
-						"type": "steady_state_condition",
+						"type": "steady_state",
 						"steady_state": true
 					},
 					"analysis": false
 				},
 				{
 					"override": {
-						"local_planner/velocity": 20.0,
+						"local_planner/position_z": 100.0,	
+						"local_planner/velocity": 18.0,
 						"pids/roll": 45.0
 					},
 					"condition": {
-						"type": "duration_condition",
+						"type": "duration",
 						"duration": 15000
 					},
 					"analysis": true
@@ -143,10 +160,10 @@
 	"mission_planner": {
 		"type": "custom",
 		"use_approach": false,
-		"default_velocity": 15,
+		"default_velocity": 22,
 		"missions": {
 			"simple_mission": {
-				"velocity": 15,
+				"velocity": 22,
 				"infinite": true,
 				"offset": {
 					"e": 0,
@@ -177,7 +194,7 @@
 				]
 			},
 			"validation_mission": {
-				"velocity": 15,
+				"velocity": 22,
 				"infinite": true,
 				"offset": {
 					"e": 0,

@@ -130,7 +130,7 @@ Geofencing::criticalPoints()
 
 	for (const auto& it : geoFence_.getEdges())
 	{
-		if (it.getDistanceAbs(position_.head(2)) > evaluationThreshold_)
+		if (it.getDistanceAbs(sensorData_.position.head(2)) > evaluationThreshold_)
 			continue;
 		for (const auto& points : geofencingModel->getCriticalPoints(it,
 				IGeofencingModel::RollDirection::LEFT))
@@ -150,7 +150,16 @@ Geofencing::criticalPoints()
 void
 Geofencing::onSensorData(const SensorData& data)
 {
-	auto geofencingModel = geofencingModel_.get();
+	std::unique_lock<std::mutex> lock(sensorDataMutex_, std::try_to_lock);
+	if (!lock.owns_lock())
+		return;
+	sensorData_ = data;
+}
+
+void
+Geofencing::evaluateSafety()
+{
+  	auto geofencingModel = geofencingModel_.get();
 
 	if (!geofencingModel)
 	{
@@ -158,13 +167,11 @@ Geofencing::onSensorData(const SensorData& data)
 		return;
 	}
 
-	geofencingModel->updateModel(data);
-	position_ = data.position;
-}
+	std::unique_lock<std::mutex> lock(sensorDataMutex_);
+	geofencingModel->updateModel(sensorData_);
+	Vector3 position = sensorData_.position;
+	lock.unlock();
 
-void
-Geofencing::evaluateSafety()
-{
 	auto mp = maneuverPlanner_.get();
 
 	if (!mp)
@@ -173,18 +180,10 @@ Geofencing::evaluateSafety()
 		return;
 	}
 
-	auto geofencingModel = geofencingModel_.get();
-
-	if (!geofencingModel)
-	{
-		APLOG_ERROR << "Geofencing: Geofencing Model Missing.";
-		return;
-	}
-
 	bool leftSafe = true, rightSafe = true;
 	for (const auto& it : geoFence_.getEdges())
 	{
-		if (it.getDistanceAbs(position_.head(2)) > evaluationThreshold_)
+		if (it.getDistanceAbs(position.head(2)) > evaluationThreshold_)
 			continue;
 		for (const auto& points : geofencingModel->getCriticalPoints(it,
 				IGeofencingModel::RollDirection::LEFT))

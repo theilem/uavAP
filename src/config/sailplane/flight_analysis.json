@@ -25,7 +25,7 @@
 		"in_tolerance_duration": 5000
 	},
 	"maneuver_analysis": {
-		"log_path": "/usr/local/"
+		"log_path": "/usr/local/logs/"
 	},
 	"data_presentation": {
 		"compress_double": true
