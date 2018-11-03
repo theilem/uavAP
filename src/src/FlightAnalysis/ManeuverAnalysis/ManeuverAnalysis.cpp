@@ -30,7 +30,7 @@
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 
 ManeuverAnalysis::ManeuverAnalysis() :
-		collectInit_(false), counter_(0)
+		collectInit_(false), counter_(0), maneuver_(Maneuvers::GEOFENCING)
 {
 }
 
@@ -51,11 +51,14 @@ bool
 ManeuverAnalysis::configure(const boost::property_tree::ptree& config)
 {
 	PropertyMapper pm(config);
+	std::string maneuver;
 
 	pm.add("log_path", logPath_, true);
+	pm.add("maneuver", maneuver, false);
 
 	collectInit_ = false;
 	counter_ = 0;
+	maneuver_ = EnumMap<Maneuvers>::convert(maneuver);
 
 	return pm.map();
 }
@@ -124,7 +127,7 @@ ManeuverAnalysis::onSensorData(const SensorData& data)
 
 	if (analysis.analysis && !collectInit_)
 	{
-		collectStateInit(analysis.maneuver, analysis_.interrupted, data);
+		collectStateInit(data, analysis.maneuver, analysis_.interrupted);
 	}
 	else if (analysis.analysis && collectInit_)
 	{
@@ -132,7 +135,7 @@ ManeuverAnalysis::onSensorData(const SensorData& data)
 	}
 	else if (!analysis.analysis && collectInit_)
 	{
-		collectStateFinal();
+		collectStateFinal(data);
 	}
 }
 
@@ -145,8 +148,8 @@ ManeuverAnalysis::onManeuverAnalysisStatus(const Packet& status)
 }
 
 void
-ManeuverAnalysis::collectStateInit(const std::string& maneuver, const bool& interrupted,
-		const SensorData& data)
+ManeuverAnalysis::collectStateInit(const SensorData& data, const std::string& maneuver,
+		const bool& interrupted)
 {
 	APLOG_DEBUG << "ManeuverAnalysis::collectStateInit.";
 
@@ -171,10 +174,24 @@ ManeuverAnalysis::collectStateInit(const std::string& maneuver, const bool& inte
 	logFile_ << maneuverName << std::endl;
 	logFile_ << time << std::endl;
 	logFile_ << "collectStateInit:" << std::endl;
-	logFile_ << data.position.x() << "	" << data.position.y() << "	" << data.attitude.x() << "	"
-			<< data.attitude.z() << "	" << data.groundSpeed << "	" << data.angularRate.x()
-			<< std::endl;
-	logFile_ << "collectStateNormal:" << std::endl;
+
+	switch (maneuver_)
+	{
+	case Maneuvers::GEOFENCING:
+	{
+		collectGeofencing(data, CollectStates::INIT);
+		break;
+	}
+	case Maneuvers::ADVANCED_CONTROL:
+	{
+		collectAdvancedControl(data, CollectStates::INIT);
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
 
 	collectInit_ = true;
 }
@@ -190,13 +207,29 @@ ManeuverAnalysis::collectStateNormal(const SensorData& data)
 		return;
 	}
 
-	logFile_ << data.position.x() << "	" << data.position.y() << "	" << data.attitude.x() << "	"
-			<< data.attitude.z() << "	" << data.groundSpeed << "	" << data.angularRate.x()
-			<< std::endl;
+	logFile_ << "collectStateNormal:" << std::endl;
+
+	switch (maneuver_)
+	{
+	case Maneuvers::GEOFENCING:
+	{
+		collectGeofencing(data, CollectStates::NORMAL);
+		break;
+	}
+	case Maneuvers::ADVANCED_CONTROL:
+	{
+		collectAdvancedControl(data, CollectStates::NORMAL);
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
 }
 
 void
-ManeuverAnalysis::collectStateFinal()
+ManeuverAnalysis::collectStateFinal(const SensorData& data)
 {
 	APLOG_DEBUG << "ManeuverAnalysis::collectStateFinal.";
 
@@ -208,9 +241,98 @@ ManeuverAnalysis::collectStateFinal()
 
 	logFile_ << "collectStateFinal:" << std::endl;
 
-	velocity_.clear();
-	rollRate_.clear();
+	switch (maneuver_)
+	{
+	case Maneuvers::GEOFENCING:
+	{
+		collectGeofencing(data, CollectStates::FINAL);
+		break;
+	}
+	case Maneuvers::ADVANCED_CONTROL:
+	{
+		collectAdvancedControl(data, CollectStates::FINAL);
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
+
 	logFile_.close();
 
 	collectInit_ = false;
+}
+
+void
+ManeuverAnalysis::collectGeofencing(const SensorData& data, const CollectStates& states)
+{
+	switch (states)
+	{
+	case CollectStates::INIT:
+	{
+		logFile_ << "Position E (m)" << "	" << "Position N (m)" << "	" << "Roll Angle (Rad)" << "	"
+				<< "Yaw Angle (Rad)" << "	" << "Ground Speed (m/s)" << "	" << "Roll Rate (Rad/s)"
+				<< std::endl;
+		logFile_ << data.position.x() << "	" << data.position.y() << "	" << data.attitude.x() << "	"
+				<< data.attitude.z() << "	" << data.groundSpeed << "	" << data.angularRate.x()
+				<< std::endl;
+
+		break;
+	}
+	case CollectStates::NORMAL:
+	{
+		logFile_ << data.position.x() << "	" << data.position.y() << "	" << data.attitude.x() << "	"
+				<< data.attitude.z() << "	" << data.groundSpeed << "	" << data.angularRate.x()
+				<< std::endl;
+
+		break;
+	}
+	case CollectStates::FINAL:
+	{
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
+}
+
+void
+ManeuverAnalysis::collectAdvancedControl(const SensorData& data, const CollectStates& states)
+{
+	switch (states)
+	{
+	case CollectStates::INIT:
+	{
+		logFile_ << "Velocity E (m/s)" << "	" << "Velocity N (m/s)" << "	" << "Velocity U (m/s)"
+				<< "	" << "Roll Angle (Rad)" << "	" << "Pitch Angle (Rad)" << "	"
+				<< "Yaw Angle (Rad)" << "	" << "Battery Voltage (V)" << "	" << "Battery Current (A)"
+				<< "	" << "Throttle Level (%)" << "	" << "Motor Speed (RPM)" << std::endl;
+		logFile_ << data.velocity.x() << "	" << data.velocity.y() << "	" << data.velocity.z() << "	"
+				<< data.attitude.x() << "	" << data.attitude.y() << "	" << data.attitude.z() << "	"
+				<< data.batteryVoltage << "	" << data.batteryCurrent << "	" << data.throttle << "	"
+				<< data.rpm << std::endl;
+
+		break;
+	}
+	case CollectStates::NORMAL:
+	{
+		logFile_ << data.velocity.x() << "	" << data.velocity.y() << "	" << data.velocity.z() << "	"
+				<< data.attitude.x() << "	" << data.attitude.y() << "	" << data.attitude.z() << "	"
+				<< data.batteryVoltage << "	" << data.batteryCurrent << "	" << data.throttle << "	"
+				<< data.rpm << std::endl;
+
+		break;
+	}
+	case CollectStates::FINAL:
+	{
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
 }

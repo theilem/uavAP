@@ -370,6 +370,9 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	if (slink)
 	{
 		sens.batteryVoltage = slink->volt;
+		sens.batteryCurrent = slink->current;
+		sens.throttle = slink->throttle;
+		sens.rpm = slink->rpm;
 	}
 
 	//************************

@@ -54,12 +54,15 @@ struct SensorData
 	uint32_t sequenceNr; //!< Sequence number of the struct
 
 	double batteryVoltage;
+	double batteryCurrent;
+	double throttle;
+	double rpm;
 
 	SensorData() :
 			position(0, 0, 0), velocity(0, 0, 0), acceleration(0, 0, 0), attitude(0, 0, 0), angularRate(
-					0, 0, 0), airSpeed(0), groundSpeed(0), hasGPSFix(false), autopilotActive(
-					false), angleOfAttack(0), propulsionPower(0), consumedEnergy(0), sequenceNr(0), batteryVoltage(
-					0)
+					0, 0, 0), airSpeed(0), groundSpeed(0), hasGPSFix(false), autopilotActive(false), angleOfAttack(
+					0), propulsionPower(0), consumedEnergy(0), sequenceNr(0), batteryVoltage(0), batteryCurrent(
+					0), throttle(0), rpm(0)
 	{
 	}
 };
@@ -85,8 +88,12 @@ serialize(Archive& ar, SensorData& t)
 	ar & t.consumedEnergy;
 	ar & t.hasGPSFix;
 	ar & t.autopilotActive;
+	ar & t.angleOfAttack;
 	ar & t.sequenceNr;
 	ar & t.batteryVoltage;
+	ar & t.batteryCurrent;
+	ar & t.throttle;
+	ar & t.rpm;
 }
 }
 

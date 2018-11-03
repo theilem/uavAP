@@ -30,12 +30,33 @@
 #include <iostream>
 #include <fstream>
 
+#include "uavAP/Core/EnumMap.hpp"
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightAnalysis/ManeuverAnalysis/ManeuverAnalysisStatus.h"
+
+enum class Maneuvers
+{
+	INVALID,
+	GEOFENCING,
+	ADVANCED_CONTROL,
+	NUM_MANEUVERS
+};
+
+enum class CollectStates
+{
+	INVALID,
+	INIT,
+	NORMAL,
+	FINAL,
+	NUM_STATES
+};
+
+ENUMMAP_INIT(Maneuvers, { {Maneuvers::GEOFENCING, "geofencing"},
+		{Maneuvers::ADVANCED_CONTROL, "advanced_control"} });
 
 class ManeuverAnalysis: public IAggregatableObject, public IRunnableObject
 {
@@ -66,13 +87,19 @@ private:
 	onManeuverAnalysisStatus(const Packet& status);
 
 	void
-	collectStateInit(const std::string& maneuver, const bool& interrupted, const SensorData& data);
+	collectStateInit(const SensorData& data, const std::string& maneuver, const bool& interrupted);
 
 	void
 	collectStateNormal(const SensorData& data);
 
 	void
-	collectStateFinal();
+	collectStateFinal(const SensorData& data);
+
+	void
+	collectGeofencing(const SensorData& data, const CollectStates& states);
+
+	void
+	collectAdvancedControl(const SensorData& data, const CollectStates& states);
 
 	Subscription sensorDataSubscription_;
 	Subscription maneuverAnalysisSubscription_;
@@ -84,11 +111,10 @@ private:
 
 	bool collectInit_;
 	unsigned counter_;
+	Maneuvers maneuver_;
 
 	std::string logPath_;
 	std::ofstream logFile_;
-	std::vector<double> velocity_;
-	std::vector<double> rollRate_;
 };
 
 #endif /* UAVAP_FLIGHTANALYSIS_MANEUVERANALYSIS_MANEUVERANALYSIS_H_ */
