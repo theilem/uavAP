@@ -50,7 +50,7 @@
 					"analysis": false
 				}
 			],
-			"vel10_camT1.0_speF1.0_throC": [
+			"vel10_camT1.0_speF1.0_thrC": [
 				{
 					"override": {
 						"local_planner/velocity": 10.0,
@@ -61,6 +61,17 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
+					"advanced_control": {
+						"camber_control": {
+							"control": "thermal",
+							"value": 1.0
+						},
+						"special_control": {
+							"control": "flap",
+							"value": 1.0
+						},
+						"throws_control": "cruise"
+					},
 					"analysis": false
 				},
 				{
@@ -74,21 +85,10 @@
 						"type": "duration",
 						"duration": 10000
 					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "thermal",
-							"value": 1.0
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 1.0
-						},
-						"throws_control": "cruise"
-					},
 					"analysis": true
 				}
 			],
-			"vel12_camT1.0_speF1.0_throC": [
+			"vel12_camT1.0_speF1.0_thrC": [
 				{
 					"override": {
 						"local_planner/velocity": 12.0,
@@ -99,6 +99,17 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
+					"advanced_control": {
+						"camber_control": {
+							"control": "thermal",
+							"value": 1.0
+						},
+						"special_control": {
+							"control": "flap",
+							"value": 1.0
+						},
+						"throws_control": "cruise"
+					},
 					"analysis": false
 				},
 				{
@@ -112,21 +123,10 @@
 						"type": "duration",
 						"duration": 10000
 					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "thermal",
-							"value": 1.0
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 1.0
-						},
-						"throws_control": "cruise"
-					},
 					"analysis": true
 				}
 			],
-			"vel15_camT1.0_speF1.0_throC": [
+			"vel15_camT1.0_speF1.0_thrC": [
 				{
 					"override": {
 						"local_planner/velocity": 15.0,
@@ -137,6 +137,17 @@
 						"type": "steady_state",
 						"steady_state": true
 					},
+					"advanced_control": {
+						"camber_control": {
+							"control": "thermal",
+							"value": 1.0
+						},
+						"special_control": {
+							"control": "flap",
+							"value": 1.0
+						},
+						"throws_control": "cruise"
+					},
 					"analysis": false
 				},
 				{
@@ -149,17 +160,6 @@
 					"condition": {
 						"type": "duration",
 						"duration": 10000
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "thermal",
-							"value": 1.0
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 1.0
-						},
-						"throws_control": "cruise"
 					},
 					"analysis": true
 				}
@@ -179,7 +179,7 @@
 					"analysis": false
 				}
 			],
-			"advanced_control_test": [
+			"advanced_camT1.0_test": [
 				{
 					"override": {
 						"local_planner/velocity": 0.0
@@ -194,8 +194,54 @@
 							"value": 1.0
 						},
 						"special_control": {
+							"control": "none",
+							"value": 0.0
+						},
+						"throws_control": "normal"
+					},
+					"analysis": false
+				}
+			],
+			"advanced_speF1.0_test": [
+				{
+					"override": {
+						"local_planner/velocity": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 5000
+					},
+					"advanced_control": {
+						"camber_control": {
+							"control": "normal",
+							"value": 0.0
+						},
+						"special_control": {
 							"control": "flap",
 							"value": 1.0
+						},
+						"throws_control": "normal"
+					},
+					"analysis": false
+				}
+			],
+			"advanced_thrC_test": [
+				{
+					"override": {
+						"local_planner/velocity": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 5000
+					},
+					"advanced_control": {
+						"camber_control": {
+							"control": "normal",
+							"value": 0.0
+						},
+						"special_control": {
+							"control": "none",
+							"value": 0.0
 						},
 						"throws_control": "cruise"
 					},
