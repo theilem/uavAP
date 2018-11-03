@@ -172,6 +172,11 @@ RatePIDController::calculateControl()
 
 	sensAct->setControllerOutput(controllerOutput_);
 	controllerOutputPublisher_.publish(dp::serialize(controllerOutput_));
+
+	APLOG_TRACE << "Current Roll Output: " << controllerOutput_.rollOutput;
+	APLOG_TRACE << "Current Pitch Output: " << controllerOutput_.pitchOutput;
+	APLOG_TRACE << "Current Yaw Output: " << controllerOutput_.yawOutput;
+	APLOG_TRACE << "Current Throttle Output: " << controllerOutput_.throttleOutput;
 }
 
 void

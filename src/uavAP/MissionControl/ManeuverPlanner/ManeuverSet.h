@@ -29,6 +29,7 @@
 #include <vector>
 #include <boost/property_tree/ptree.hpp>
 
+#include "uavAP/FlightControl/Controller/AdvancedControl.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionFactory.h"
 #include "uavAP/MissionControl/ConditionManager/ICondition.h"
 #include "uavAP/MissionControl/ManeuverPlanner/Override.h"
@@ -36,6 +37,7 @@
 struct Maneuver
 {
 	Override override;
+	AdvancedControl advancedControl;
 	std::shared_ptr<ICondition> condition;
 	bool analysis;
 
@@ -48,6 +50,7 @@ struct Maneuver
 
 		pm.add<Override>("override", override, true);
 		pm.add("condition", conditionTree, true);
+		pm.add<AdvancedControl>("advanced_control", advancedControl, false);
 		pm.add<bool>("analysis", analysis, false);
 
 		condition = factory.create(conditionTree);

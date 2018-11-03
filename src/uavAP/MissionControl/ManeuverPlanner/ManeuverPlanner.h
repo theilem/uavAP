@@ -36,6 +36,7 @@
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightAnalysis/ManeuverAnalysis/ManeuverAnalysisStatus.h"
+#include "uavAP/FlightControl/Controller/AdvancedControl.h"
 #include "uavAP/MissionControl/ManeuverPlanner/ManeuverSet.h"
 #include "uavAP/MissionControl/ManeuverPlanner/Override.h"
 
@@ -109,15 +110,26 @@ private:
 	safetyTrigger(int trigger);
 
 	void
+	freezeControllerOutput(Override& override);
+
+	void
 	onControllerOutputPacket(const Packet& packet);
+
+	void
+	onAdvancedControl(const AdvancedControl& advanced);
 
 	using ManeuverSetMap = std::unordered_map<std::string, ManeuverSet>;
 
 	ManeuverPlannerParams params_;
-	ManeuverAnalysisStatus analysis_;
 
 	Override override_;
 	mutable std::mutex overrideMutex_;
+
+	AdvancedControl advancedControl_;
+	mutable std::mutex advancedControlMutex_;
+
+	ManeuverAnalysisStatus analysis_;
+	mutable std::mutex analysisMutex_;
 
 	ControllerOutput controllerOutput_;
 	mutable std::mutex controllerOutputMutex_;
@@ -150,7 +162,9 @@ private:
 
 	Publisher overridePublisher_;
 	Publisher maneuverAnalysisPublisher_;
+	Publisher advancedControlPublisher_;
 	Subscription controllerOutputSubscription_;
+	Subscription advancedControlSubscription_;
 
 	ObjectHandle<IPC> ipc_;
 	ObjectHandle<ConditionManager> conditionManager_;

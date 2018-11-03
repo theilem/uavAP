@@ -28,21 +28,10 @@
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_ADVANCEDCONTROL_H_
 
 #include <map>
+#include <boost/property_tree/ptree.hpp>
 
+#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/EnumMap.hpp"
-
-/**
- * Special Control
- */
-enum class SpecialControl
-{
-	INVALID, NONE, FLAP, CROW, NUM_SPECIAL_CONTROL
-};
-
-ENUMMAP_INIT(SpecialControl,
-		{{SpecialControl::NONE, "none"},
-		{SpecialControl::FLAP, "flap"},
-		{SpecialControl::CROW, "crow"}});
 
 /**
  * Camber Control
@@ -52,22 +41,41 @@ enum class CamberControl
 	INVALID, NORMAL, THERMAL, CRUISE, NUM_CAMBER_CONTROL
 };
 
-ENUMMAP_INIT(CamberControl,
-		{{CamberControl::NORMAL, "normal"},
-		{CamberControl::THERMAL, "thermal"},
+ENUMMAP_INIT(CamberControl, {{CamberControl::NORMAL, "normal"}, {CamberControl::THERMAL, "thermal"},
 		{CamberControl::CRUISE, "cruise"}});
+
+/**
+ * Special Control
+ */
+enum class SpecialControl
+{
+	INVALID, NONE, FLAP, CROW, NUM_SPECIAL_CONTROL
+};
+
+ENUMMAP_INIT(SpecialControl, {{SpecialControl::NONE, "none"}, {SpecialControl::FLAP, "flap"},
+		{SpecialControl::CROW, "crow"}});
 
 /**
  * Throws Control
  */
 enum class ThrowsControl
 {
-	INVALID, NORMAL, CRUISE, NUM_THROWSCONTROL
+	INVALID, NORMAL, CRUISE, NUM_THROWS_CONTROL
 };
 
-ENUMMAP_INIT(ThrowsControl,
-		{{ThrowsControl::NORMAL, "normal"},
-		{ThrowsControl::CRUISE, "cruise"}});
+ENUMMAP_INIT(ThrowsControl, {{ThrowsControl::NORMAL, "normal"}, {ThrowsControl::CRUISE, "cruise"}});
+
+/**
+ * Advanced Controls
+ */
+enum class AdvancedControls
+{
+	INVALID, CAMBER_CONTROL, SPECIAL_CONTROL, THROWS_CONTROL, NUM_ADVANCED_CONTROLS
+};
+
+ENUMMAP_INIT(AdvancedControls, {{AdvancedControls::CAMBER_CONTROL, "camber_control"},
+		{AdvancedControls::SPECIAL_CONTROL, "special_control"}, {AdvancedControls::THROWS_CONTROL,
+		"throws_control"}});
 
 /**
  * Advanced Control
@@ -79,12 +87,74 @@ struct AdvancedControl
 	SpecialControl specialSelection = SpecialControl::NONE;
 	double camberValue = 0.0;
 	double specialValue = 0.0;
+
+	bool
+	configure(const boost::property_tree::ptree& config)
+	{
+		PropertyMapper pm(config);
+
+		for (auto& it : config)
+		{
+			auto advancedControlEnum = EnumMap<AdvancedControls>::convert(it.first);
+
+			switch (advancedControlEnum)
+			{
+			case AdvancedControls::CAMBER_CONTROL:
+			{
+				boost::property_tree::ptree camberConfig;
+
+				if (pm.add(it.first, camberConfig, true))
+				{
+					PropertyMapper camberPm(camberConfig);
+					std::string camberString;
+
+					camberPm.add("control", camberString, true);
+					camberPm.add<double>("value", camberValue, true);
+					camberSelection = EnumMap<CamberControl>::convert(camberString);
+				}
+
+				break;
+			}
+			case AdvancedControls::SPECIAL_CONTROL:
+			{
+				boost::property_tree::ptree specialConfig;
+
+				if (pm.add(it.first, specialConfig, true))
+				{
+					PropertyMapper specialPm(specialConfig);
+					std::string specialString;
+
+					specialPm.add("control", specialString, true);
+					specialPm.add<double>("value", specialValue, true);
+					specialSelection = EnumMap<SpecialControl>::convert(specialString);
+				}
+
+				break;
+			}
+			case AdvancedControls::THROWS_CONTROL:
+			{
+				std::string throwsString;
+
+				pm.add(it.first, throwsString, true);
+				throwsSelection = EnumMap<ThrowsControl>::convert(throwsString);
+
+				break;
+			}
+			default:
+			{
+				break;
+			}
+			}
+		}
+
+		return pm.map();
+	}
 };
 
 namespace dp
 {
 template<class Archive, typename Type>
-void
+inline void
 serialize(Archive& ar, AdvancedControl& t)
 {
 	ar & t.throwsSelection;
@@ -93,6 +163,6 @@ serialize(Archive& ar, AdvancedControl& t)
 	ar & t.camberValue;
 	ar & t.specialValue;
 }
-}
+} /* dp */
 
 #endif /* UAVAP_FLIGHTCONTROL_CONTROLLER_ADVANCEDCONTROL_H_ */

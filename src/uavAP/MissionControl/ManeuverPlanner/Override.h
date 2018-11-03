@@ -51,7 +51,8 @@ enum class OverrideGroup
 	CONTROLLER_TARGETS,
 	PIDS,
 	CONTROLLER_OUTPUTS,
-	CUSTOM
+	CUSTOM,
+	NUM_GROUP
 };
 
 ENUMMAP_INIT(CustomOverrideIDs, { {CustomOverrideIDs::CUSTOM_1, "custom_1"},

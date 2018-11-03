@@ -148,6 +148,8 @@ ManeuverPlanner::run(RunStage stage)
 		auto ipc = ipc_.get();
 
 		overridePublisher_ = ipc->publishPackets("override");
+		advancedControlPublisher_ = ipc->publishOnSharedMemory<AdvancedControl>(
+				"advanced_control_maneuver");
 		maneuverAnalysisPublisher_ = ipc->publishPackets("maneuver_analysis_status");
 
 		break;
@@ -162,6 +164,17 @@ ManeuverPlanner::run(RunStage stage)
 		if (!controllerOutputSubscription_.connected())
 		{
 			APLOG_DEBUG << "ManeuverPlanner: Controller Output Subscription Missing.";
+			return true;
+		}
+
+		advancedControlSubscription_ = ipc->subscribeOnSharedMemory<AdvancedControl>(
+				"advanced_control",
+				std::bind(&ManeuverPlanner::onAdvancedControl, this, std::placeholders::_1));
+
+		if (!advancedControlSubscription_.connected())
+		{
+			APLOG_DEBUG << "ManeuverPlanner: Advanced Control Subscription Missing.";
+			return true;
 		}
 
 		if (params_.use_safety_bounds())
@@ -181,7 +194,11 @@ ManeuverPlanner::run(RunStage stage)
 	}
 	case RunStage::FINAL:
 	{
-		maneuverAnalysisPublisher_.publish(dp::serialize(analysis_));
+		std::unique_lock<std::mutex> analysisLock(analysisMutex_);
+		ManeuverAnalysisStatus analysis = analysis_;
+		analysisLock.unlock();
+
+		maneuverAnalysisPublisher_.publish(dp::serialize(analysis));
 
 		break;
 	}
@@ -227,9 +244,10 @@ ManeuverPlanner::setManeuverOverride(const std::string& maneuverSet)
 		return;
 	}
 
+	stopOverride();
+
 	currentManeuver_ = currentManeuverSet_->second.begin();
 
-	stopOverride();
 	setOverride(maneuverSet, false, true);
 	startOverride();
 }
@@ -246,7 +264,10 @@ ManeuverPlanner::interruptOverride()
 
 	APLOG_DEBUG << "Interrupt Override.";
 
+	std::unique_lock<std::mutex> overrideLock(overrideMutex_);
 	lastManualOverride_ = override_;
+	overrideLock.unlock();
+
 	lastManeuver_ = currentManeuver_;
 	lastManeuverSet_ = maneuverSet_;
 	lastManualActive_ = manualActive_;
@@ -328,10 +349,17 @@ ManeuverPlanner::startOverride()
 	{
 		APLOG_DEBUG << "Start Manual Override.";
 
-		analysis_.reset();
+		std::unique_lock<std::mutex> overrideLock(overrideMutex_);
+		Override override = override_;
+		overrideLock.unlock();
 
-		overridePublisher_.publish(dp::serialize(override_));
-		maneuverAnalysisPublisher_.publish(dp::serialize(analysis_));
+		std::unique_lock<std::mutex> analysisLock(analysisMutex_);
+		analysis_.reset();
+		ManeuverAnalysisStatus analysis = analysis_;
+		analysisLock.unlock();
+
+		overridePublisher_.publish(dp::serialize(override));
+		maneuverAnalysisPublisher_.publish(dp::serialize(analysis));
 
 		std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
 		overrideSeqNr_++;
@@ -364,12 +392,23 @@ ManeuverPlanner::stopOverride()
 
 	setOverride("", false, false);
 
+	std::unique_lock<std::mutex> overrideLock(overrideMutex_);
 	Override override;
 	override_ = override;
-	analysis_.reset();
+	overrideLock.unlock();
 
-	overridePublisher_.publish(dp::serialize(override_));
-	maneuverAnalysisPublisher_.publish(dp::serialize(analysis_));
+	std::unique_lock<std::mutex> advancedControlLock(advancedControlMutex_);
+	AdvancedControl advancedControl = advancedControl_;
+	advancedControlLock.unlock();
+
+	std::unique_lock<std::mutex> analysisLock(analysisMutex_);
+	analysis_.reset();
+	ManeuverAnalysisStatus analysis = analysis_;
+	analysisLock.unlock();
+
+	overridePublisher_.publish(dp::serialize(override));
+	advancedControlPublisher_.publish(advancedControl);
+	maneuverAnalysisPublisher_.publish(dp::serialize(analysis));
 
 	std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
 	overrideSeqNr_++;
@@ -442,60 +481,25 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 
 	if (enableControlOutFreezing_)
 	{
-		ControllerOutput controllerOutput;
-
-		std::unique_lock<std::mutex> lock(controllerOutputMutex_);
-		controllerOutput = controllerOutput_;
-		lock.unlock();
-
-		for (auto& it : controlOutFreezing_)
-		{
-			if (it.second)
-			{
-				if (auto pair = findInMap(override.output, it.first))
-				{
-					switch (it.first)
-					{
-					case ControllerOutputs::ROLL:
-					{
-						pair->second = controllerOutput.rollOutput;
-						break;
-					}
-					case ControllerOutputs::PITCH:
-					{
-						pair->second = controllerOutput.pitchOutput;
-						break;
-					}
-					case ControllerOutputs::YAW:
-					{
-						pair->second = controllerOutput.yawOutput;
-						break;
-					}
-					case ControllerOutputs::THROTTLE:
-					{
-						pair->second = controllerOutput.throttleOutput;
-						break;
-					}
-					default:
-					{
-						break;
-					}
-					}
-				}
-			}
-		}
+		freezeControllerOutput(override);
 	}
 
 	std::unique_lock<std::mutex> overrideLock(overrideMutex_);
 	override_ = override;
 	overrideLock.unlock();
 
+	AdvancedControl advancedControl = currentManeuver->advancedControl;
+
+	std::unique_lock<std::mutex> analysisLock(analysisMutex_);
 	analysis_.maneuver = maneuverSet_;
 	analysis_.analysis = currentManeuver->analysis;
 	analysis_.interrupted = overrideInterrupted_;
+	ManeuverAnalysisStatus analysis = analysis_;
+	analysisLock.unlock();
 
-	overridePublisher_.publish(dp::serialize(override_));
-	maneuverAnalysisPublisher_.publish(dp::serialize(analysis_));
+	overridePublisher_.publish(dp::serialize(override));
+	advancedControlPublisher_.publish(advancedControl);
+	maneuverAnalysisPublisher_.publish(dp::serialize(analysis));
 
 	std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
 	overrideSeqNr_++;
@@ -539,8 +543,12 @@ ManeuverPlanner::deactivateManeuverOverride()
 		conditionManager->deactivateCondition(currentManeuver->condition);
 	}
 
+	std::unique_lock<std::mutex> analysisLock(analysisMutex_);
 	analysis_.analysis = false;
-	maneuverAnalysisPublisher_.publish(dp::serialize(analysis_));
+	ManeuverAnalysisStatus analysis = analysis_;
+	analysisLock.unlock();
+
+	maneuverAnalysisPublisher_.publish(dp::serialize(analysis));
 }
 
 void
@@ -559,6 +567,53 @@ ManeuverPlanner::safetyTrigger(int trigger)
 }
 
 void
+ManeuverPlanner::freezeControllerOutput(Override& override)
+{
+	ControllerOutput controllerOutput;
+
+	std::unique_lock<std::mutex> lock(controllerOutputMutex_);
+	controllerOutput = controllerOutput_;
+	lock.unlock();
+
+	for (auto& it : controlOutFreezing_)
+	{
+		if (it.second)
+		{
+			if (auto pair = findInMap(override.output, it.first))
+			{
+				switch (it.first)
+				{
+				case ControllerOutputs::ROLL:
+				{
+					pair->second = controllerOutput.rollOutput;
+					break;
+				}
+				case ControllerOutputs::PITCH:
+				{
+					pair->second = controllerOutput.pitchOutput;
+					break;
+				}
+				case ControllerOutputs::YAW:
+				{
+					pair->second = controllerOutput.yawOutput;
+					break;
+				}
+				case ControllerOutputs::THROTTLE:
+				{
+					pair->second = controllerOutput.throttleOutput;
+					break;
+				}
+				default:
+				{
+					break;
+				}
+				}
+			}
+		}
+	}
+}
+
+void
 ManeuverPlanner::onControllerOutputPacket(const Packet& packet)
 {
 	auto controllerOutput = dp::deserialize<ControllerOutput>(packet);
@@ -566,4 +621,19 @@ ManeuverPlanner::onControllerOutputPacket(const Packet& packet)
 	std::unique_lock<std::mutex> lock(controllerOutputMutex_);
 	controllerOutput_ = controllerOutput;
 	lock.unlock();
+}
+
+void
+ManeuverPlanner::onAdvancedControl(const AdvancedControl& advanced)
+{
+	if (!maneuverActive_ && !overrideInterrupted_)
+	{
+		advancedControlPublisher_.publish(advanced);
+	}
+	else
+	{
+		std::unique_lock<std::mutex> lock(advancedControlMutex_);
+		advancedControl_ = advanced;
+		lock.unlock();
+	}
 }

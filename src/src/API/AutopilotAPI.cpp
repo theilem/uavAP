@@ -89,7 +89,7 @@ void
 AutopilotAPI::tryConnectAdvancedControl()
 {
 	auto ipc = aggregator_.getOne<IPC>();
-	advancedControlSubscription_ = ipc->subscribeOnSharedMemory<AdvancedControl>("advanced_control",
+	advancedControlSubscription_ = ipc->subscribeOnSharedMemory<AdvancedControl>("advanced_control_maneuver",
 			std::bind(&AutopilotAPI::onAdvancedControl, this, std::placeholders::_1));
 	if (!advancedControlSubscription_.connected())
 	{
