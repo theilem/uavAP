@@ -5,6 +5,7 @@
 		"trace_seq_nr":false,
 		"internal_imu":true,
 		"use_airspeed":false,
+		"use_euler":false,
 		"external_gps":true,
 		"course_as_heading":true,
 		"rotation_offset":
