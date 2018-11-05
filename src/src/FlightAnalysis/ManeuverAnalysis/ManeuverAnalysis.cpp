@@ -158,7 +158,7 @@ ManeuverAnalysis::collectStateInit(const SensorData& data, const std::string& ma
 
 	if (!interrupted)
 	{
-		counter_ ++;
+		counter_++;
 	}
 
 	std::string maneuverName = std::to_string(counter_) + "_" + maneuver;
@@ -311,14 +311,15 @@ ManeuverAnalysis::collectAdvancedControl(const SensorData& data, const CollectSt
 	case CollectStates::INIT:
 	{
 		logFile_ << "Velocity E (m/s)" << "	" << "Velocity N (m/s)" << "	" << "Velocity U (m/s)"
-				<< "	" << "Roll Angle (Rad)" << "	" << "Pitch Angle (Rad)" << "	"
-				<< "Yaw Angle (Rad)" << "	" << "Battery Voltage (V)" << "	" << "Battery Current (A)"
-				<< "	" << "Throttle Level (%)" << "	" << "Motor Speed (RPM)" << std::endl;
+				<< "	" << "Air Speed (m/s)" << "	" << "Roll Angle (Rad)" << "	"
+				<< "Pitch Angle (Rad)" << "	" << "Yaw Angle (Rad)" << "	" << "Battery Voltage (V)"
+				<< "	" << "Battery Current (A)" << "	" << "Throttle Level (%)" << "	"
+				<< "Motor Speed (RPM)" << std::endl;
 
 		logFile_ << data.velocity.x() << "	" << data.velocity.y() << "	" << data.velocity.z() << "	"
-				<< data.attitude.x() << "	" << data.attitude.y() << "	" << data.attitude.z() << "	"
-				<< data.batteryVoltage << "	" << data.batteryCurrent << "	" << data.throttle << "	"
-				<< data.rpm << std::endl;
+				<< data.airSpeed << "	" << data.attitude.x() << "	" << data.attitude.y() << "	"
+				<< data.attitude.z() << "	" << data.batteryVoltage << "	" << data.batteryCurrent
+				<< "	" << data.throttle << "	" << data.rpm << std::endl;
 
 		logFile_ << "collectStateNormal:" << std::endl;
 
@@ -327,9 +328,9 @@ ManeuverAnalysis::collectAdvancedControl(const SensorData& data, const CollectSt
 	case CollectStates::NORMAL:
 	{
 		logFile_ << data.velocity.x() << "	" << data.velocity.y() << "	" << data.velocity.z() << "	"
-				<< data.attitude.x() << "	" << data.attitude.y() << "	" << data.attitude.z() << "	"
-				<< data.batteryVoltage << "	" << data.batteryCurrent << "	" << data.throttle << "	"
-				<< data.rpm << std::endl;
+				<< data.airSpeed << "	" << data.attitude.x() << "	" << data.attitude.y() << "	"
+				<< data.attitude.z() << "	" << data.batteryVoltage << "	" << data.batteryCurrent
+				<< "	" << data.throttle << "	" << data.rpm << std::endl;
 
 		break;
 	}
