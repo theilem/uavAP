@@ -40,6 +40,8 @@
 
 class BinaryFromArchive;
 class BinaryToArchive;
+class FileFromArchive;
+class FileToArchive;
 
 namespace dp
 {
@@ -63,6 +65,24 @@ void
 store(BinaryToArchive& ar, char* val, unsigned long bytes);
 
 /**
+ * @brief General method to load a number of characters from a BinaryFromArchive
+ * @param ar Archive containing the characters to be loaded
+ * @param val Extracted characters
+ * @param bytes Number of characters to be extracted
+ */
+void
+load(FileFromArchive& ar, char* val, unsigned long bytes);
+
+/**
+ * @brief General method to store a number of characters to a BinaryToArchive
+ * @param ar Archive into which the characters will be added
+ * @param val Ptr to characters to be added
+ * @param bytes Number of characters
+ */
+void
+store(FileToArchive& ar, char* val, unsigned long bytes);
+
+/**
  * @brief General split functionality for loading
  * @param ar From archive
  * @param val any value to be loaded differently than it is stored
@@ -81,11 +101,29 @@ void
 split(BinaryToArchive& ar, Type& val);
 
 /**
+ * @brief General split functionality for loading
+ * @param ar From archive
+ * @param val any value to be loaded differently than it is stored
+ */
+template<class Type>
+void
+split(FileFromArchive& ar, Type& val);
+
+/**
+ * @brief General split functionality for storing
+ * @param ar To archive
+ * @param val any value to be stored differently than it is loaded
+ */
+template<class Type>
+void
+split(FileToArchive& ar, Type& val);
+
+/**
  * @brief Load function for POD types that are not enum or SerializeCustom objects.
  */
 template<class Archive, typename PODType>
 void
-load(BinaryFromArchive& ar,
+load(Archive& ar,
 		typename std::enable_if<
 				std::is_pod<PODType>::value && !std::is_enum<PODType>::value
 						&& !std::is_base_of<SerializeCustom, PODType>::value, PODType>::type& val);
@@ -95,7 +133,7 @@ load(BinaryFromArchive& ar,
  */
 template<class Archive, typename PODType>
 void
-store(BinaryToArchive& ar,
+store(Archive& ar,
 		typename std::enable_if<
 				std::is_pod<PODType>::value && !std::is_enum<PODType>::value
 						&& !std::is_base_of<SerializeCustom, PODType>::value, PODType>::type& val);
@@ -115,7 +153,7 @@ serialize(Archive& ar,
  */
 template<class Archive, typename EnumType>
 void
-load(BinaryFromArchive& ar,
+load(Archive& ar,
 		typename std::enable_if<std::is_enum<EnumType>::value, EnumType>::type& val);
 
 /**
@@ -123,7 +161,7 @@ load(BinaryFromArchive& ar,
  */
 template<class Archive, typename EnumType>
 void
-store(BinaryToArchive& ar,
+store(Archive& ar,
 		typename std::enable_if<std::is_enum<EnumType>::value, EnumType>::type& val);
 
 /**
@@ -154,14 +192,14 @@ struct is_vector<std::vector<T, A>> : public std::true_type
  */
 template<class Archive, typename Type>
 void
-load(BinaryFromArchive& ar, typename std::enable_if<is_vector<Type>::value, Type>::type& val);
+load(Archive& ar, typename std::enable_if<is_vector<Type>::value, Type>::type& val);
 
 /**
  * @brief Store function for any vector
  */
 template<class Archive, typename Type>
 void
-store(BinaryToArchive& ar, typename std::enable_if<is_vector<Type>::value, Type>::type& val);
+store(Archive& ar, typename std::enable_if<is_vector<Type>::value, Type>::type& val);
 
 /**
  * @brief Serialize function for any vector
@@ -191,14 +229,14 @@ struct is_map<std::map<K, T, C, A>> : public std::true_type
  */
 template<class Archive, typename Type>
 void
-load(BinaryFromArchive& ar, typename std::enable_if<is_map<Type>::value, Type>::type& val);
+load(Archive& ar, typename std::enable_if<is_map<Type>::value, Type>::type& val);
 
 /**
  * @brief Store function for any map
  */
 template<class Archive, typename Type>
 void
-store(BinaryToArchive& ar, typename std::enable_if<is_map<Type>::value, Type>::type& val);
+store(Archive& ar, typename std::enable_if<is_map<Type>::value, Type>::type& val);
 
 /**
  * @brief Serialize function for any map
@@ -212,7 +250,7 @@ serialize(Archive& ar, typename std::enable_if<is_map<Type>::value, Type>::type&
  */
 template<class Archive, typename Type>
 void
-load(BinaryFromArchive& ar,
+load(Archive& ar,
 		typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val);
 
 /**
@@ -220,7 +258,7 @@ load(BinaryFromArchive& ar,
  */
 template<class Archive, typename Type>
 void
-store(BinaryToArchive& ar,
+store(Archive& ar,
 		typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val);
 
 /**
@@ -250,16 +288,16 @@ struct is_optional<boost::optional<T>> : public std::true_type
 /**
  * @brief Load function for boost optionals
  */
-template<typename Type>
+template<class Archive, typename Type>
 void
-load(BinaryFromArchive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val);
+load(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val);
 
 /**
  * @brief Store function for boost optionals
  */
-template<typename Type>
+template<class Archive, typename Type>
 void
-store(BinaryToArchive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val);
+store(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val);
 
 /**
  * @brief Serialize function for boost optionals

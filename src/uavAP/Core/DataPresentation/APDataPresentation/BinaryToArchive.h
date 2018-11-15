@@ -28,6 +28,8 @@
 #include <google/protobuf/message.h>
 #include <string>
 
+#include "uavAP/Core/DataPresentation/APDataPresentation/ArchiveOptions.h"
+
 /**
  * @brief Archive wrapper around a string to serialize data
  */
@@ -39,10 +41,10 @@ public:
 	 * @brief Constructor wrapping around a string
 	 * @param str String to be wrapped around and filled with serialization
 	 */
-	BinaryToArchive(std::string& str);
+	BinaryToArchive(std::string& str, const ArchiveOptions& opts = ArchiveOptions());
 
 	void
-	compressDouble(bool compress);
+	setOptions(const ArchiveOptions& opts);
 
 	/**
 	 * @brief Append the string with length characters from c
@@ -104,7 +106,7 @@ public:
 
 private:
 
-	bool compressDouble_;
+	ArchiveOptions options_;
 
 	std::string& string_; //!< String that is wrapped around and filled with serialized data.
 };

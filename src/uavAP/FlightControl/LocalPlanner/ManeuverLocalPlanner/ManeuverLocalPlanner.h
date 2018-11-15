@@ -42,7 +42,7 @@
 class Packet;
 struct SensorData;
 
-class SensingActuationIO;
+class ISensingActuationIO;
 class IController;
 class IScheduler;
 class IPC;
@@ -104,7 +104,7 @@ private:
 	void
 	update();
 
-	ObjectHandle<SensingActuationIO> sensing_;
+	ObjectHandle<ISensingActuationIO> sensing_;
 	ObjectHandle<IController> controller_;
 	ObjectHandle<IScheduler> scheduler_;
 	ObjectHandle<IPC> ipc_;

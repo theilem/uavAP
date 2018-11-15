@@ -48,8 +48,6 @@ private:
 
 	bool
 	registerCreators(PluginHandle handle);
-
-
 };
 
 #endif /* UAVAP_CORE_FRAMEWORK_PLUGINMANAGER_H_ */

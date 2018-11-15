@@ -27,6 +27,7 @@
 #define UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BINARYFROMARCHIVE_H_
 
 #include <google/protobuf/message.h>
+#include <uavAP/Core/DataPresentation/APDataPresentation/ArchiveOptions.h>
 #include <stdexcept>
 #include <string>
 
@@ -54,10 +55,10 @@ public:
 	 * @brief Contructor wrapping around a string
 	 * @param str String to be read from
 	 */
-	BinaryFromArchive(const std::string& str);
+	BinaryFromArchive(const std::string& str, const ArchiveOptions& opts = ArchiveOptions());
 
 	void
-	compressDouble(bool compress);
+	setOptions(const ArchiveOptions& opts);
 
 	/**
 	 * @return return current first character of the string.
@@ -123,7 +124,7 @@ public:
 	getConsumed();
 private:
 
-	bool compressDouble_;
+	ArchiveOptions options_;
 
 	const std::string& string_; //!< String to be parsed, but not modified
 
