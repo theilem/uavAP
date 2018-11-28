@@ -37,20 +37,29 @@ PluginManager::configure(const boost::property_tree::ptree& config)
 	for (const auto& it : plugins)
 	{
 		auto path = it.second.get_value<std::string>();
-		auto handle = loadPlugin(path);
-
-		if (!handle)
-		{
-			APLOG_ERROR << "Cannot load shared object at: " << path;
-			continue;
-		}
-
-		if (!registerCreators(handle))
-		{
-			APLOG_ERROR << "Cannot register creators for shared object at: " << path;
-		}
+		addPlugin(path);
 	}
 	return pm.map();
+}
+
+bool
+PluginManager::addPlugin(const std::string& path)
+{
+	auto handle = loadPlugin(path);
+
+	if (!handle)
+	{
+		APLOG_ERROR << "Cannot load shared object at: " << path;
+		return false;
+	}
+
+	if (!registerCreators(handle))
+	{
+		APLOG_ERROR << "Cannot register creators for shared object at: " << path;
+		return false;
+	}
+
+	return true;
 }
 
 PluginManager::PluginHandle

@@ -41,6 +41,9 @@ public:
 	using PluginHandle = void*;
 	using FunctionPtr = void (*)();
 
+	bool
+	addPlugin(const std::string& path);
+
 private:
 
 	PluginHandle
