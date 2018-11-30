@@ -26,17 +26,22 @@
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_MANEUVERPIDCONTROLLER_MANEUVERPIDCONTROLLER_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_MANEUVERPIDCONTROLLER_MANEUVERPIDCONTROLLER_H_
 
-#include <uavAP/MissionControl/ManeuverPlanner/Override.h>
-#include "uavAP/Core/IPC/IPC.h"
+#include "uavAP/Core/IPC/Subscription.h"
+#include "uavAP/Core/SensorData.h"
+#include "uavAP/Core/Object/ObjectHandle.h"
+#include "uavAP/MissionControl/ManeuverPlanner/Override.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDController.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDCascade.h"
-#include "uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h"
 
 class ManeuverCascade;
+class ISensingActuationIO;
+class IScheduler;
+class IPC;
+class Packet;
 
 class ManeuverPIDController: public IPIDController, public IAggregatableObject, public IRunnableObject
 {
@@ -75,7 +80,7 @@ private:
 	void
 	onOverridePacket(const Packet& packet);
 
-	ObjectHandle<SensingActuationIO> sensAct_;
+	ObjectHandle<ISensingActuationIO> sensAct_;
 	ObjectHandle<IScheduler> scheduler_;
 	ObjectHandle<IPC> ipc_;
 

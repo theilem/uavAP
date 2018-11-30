@@ -22,6 +22,7 @@
  *  Created on: Jul 26, 2017
  *      Author: mircot
  */
+#include <uavAP/Core/LockTypes.h>
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h"
@@ -90,8 +91,8 @@ SensingActuationIO::setControllerOutput(const ControllerOutput& out)
 void
 SensingActuationIO::onSensorData(const SensorData& data)
 {
-	boost::unique_lock<boost::shared_mutex> lock(mutex);
-	sensorData = data;
+	boost::unique_lock<boost::shared_mutex> lock(mutex_);
+	sensorData_ = data;
 	lock.unlock();
 	onSensorData_(data);
 }
@@ -100,4 +101,11 @@ boost::signals2::connection
 SensingActuationIO::subscribeOnSensorData(const OnSensorData::slot_type& slot)
 {
 	return onSensorData_.connect(slot);
+}
+
+SensorData
+SensingActuationIO::getSensorData() const
+{
+	SharedLockGuard lock(mutex_);
+	return sensorData_;
 }

@@ -17,31 +17,26 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * @file BinaryToArchive.h
- * @brief Defines the BinaryRoArchive
- * @date Aug 22, 2017
+ * @file FileToArchive.h
+ * @date Nov 13, 2018
  * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#ifndef UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BINARYTOARCHIVE_H_
-#define UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BINARYTOARCHIVE_H_
+#ifndef UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_FILETOARCHIVE_H_
+#define UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_FILETOARCHIVE_H_
 #include <google/protobuf/message.h>
+#include <uavAP/Core/DataPresentation/APDataPresentation/ArchiveOptions.h>
 #include <string>
 
-#include "uavAP/Core/DataPresentation/APDataPresentation/ArchiveOptions.h"
-
-/**
- * @brief Archive wrapper around a string to serialize data
- */
-class BinaryToArchive
+class FileToArchive
 {
 public:
-
 	/**
 	 * @brief Constructor wrapping around a string
 	 * @param str String to be wrapped around and filled with serialization
 	 */
-	BinaryToArchive(std::string& str, const ArchiveOptions& opts = ArchiveOptions());
+	FileToArchive(std::ofstream& str, const ArchiveOptions& opts = ArchiveOptions());
 
 	void
 	setOptions(const ArchiveOptions& opts);
@@ -63,8 +58,7 @@ public:
 	 * @return The archive itself
 	 */
 	template<typename Type>
-	typename std::enable_if<!std::is_base_of<google::protobuf::Message, Type>::value,
-			BinaryToArchive>::type&
+	typename std::enable_if<!std::is_base_of<google::protobuf::Message, Type>::value, FileToArchive>::type&
 	operator <<(const Type& cval);
 
 	/**
@@ -76,7 +70,7 @@ public:
 	 * @return The archive itself
 	 */
 	template<class Type>
-	typename std::enable_if<std::is_base_of<google::protobuf::Message, Type>::value, BinaryToArchive>::type&
+	typename std::enable_if<std::is_base_of<google::protobuf::Message, Type>::value, FileToArchive>::type&
 	operator <<(const Type& message);
 
 	/**
@@ -84,7 +78,7 @@ public:
 	 * @param doub
 	 * @return
 	 */
-	BinaryToArchive&
+	FileToArchive&
 	operator <<(const double& doub);
 
 	/**
@@ -101,14 +95,14 @@ public:
 	 * @return The archive itself
 	 */
 	template<class Type>
-	BinaryToArchive&
+	FileToArchive&
 	operator >>(const Type& val);
 
 private:
 
 	ArchiveOptions options_;
 
-	std::string& string_; //!< String that is wrapped around and filled with serialized data.
+	std::ofstream& file_;
 };
 
-#endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BINARYTOARCHIVE_H_ */
+#endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_FILETOARCHIVE_H_ */

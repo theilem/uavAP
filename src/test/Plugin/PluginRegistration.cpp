@@ -27,6 +27,7 @@
 #include <uavAP/FlightControl/LocalPlanner/ILocalPlanner.h>
 
 #include "TestControllerPlugin.h"
+#include <uavAP/Core/Framework/PluginAPI.h>
 
 extern "C"
 {

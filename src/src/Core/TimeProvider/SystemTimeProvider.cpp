@@ -24,7 +24,6 @@
  */
 #include <boost/thread/pthread/thread_data.hpp>
 #include <boost/thread/thread_time.hpp>
-#include <boost/thread/v2/thread.hpp>
 #include "uavAP/Core/TimeProvider/SystemTimeProvider.h"
 
 SystemTimeProvider::SystemTimeProvider()

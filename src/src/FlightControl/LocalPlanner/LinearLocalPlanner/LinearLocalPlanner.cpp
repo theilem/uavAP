@@ -336,12 +336,6 @@ LinearLocalPlanner::update()
 		return;
 	}
 
-	SharedLock sensorLock(sensing->mutex);
-	Vector3 position = sensing->sensorData.position;
-	double heading = sensing->sensorData.attitude.z();
-	bool hasFix = sensing->sensorData.hasGPSFix;
-	uint32_t seq = sensing->sensorData.sequenceNr;
-	sensorLock.unlock();
-
-	createLocalPlan(position, heading, hasFix, seq);
+	SensorData data = sensing->getSensorData();
+	createLocalPlan(data.position, data.attitude.z(), data.hasGPSFix, data.sequenceNr);
 }

@@ -43,7 +43,7 @@ if(CMAKE_COMPILER_IS_GNUCC)
 
 endif(CMAKE_COMPILER_IS_GNUCC)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -std=c++11 -fPIC -Wall -Wno-int-in-bool-context")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -std=c++14 -fPIC -Wall -Wno-int-in-bool-context")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
 include_directories(	${CMAKE_SOURCE_DIR}

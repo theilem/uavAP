@@ -41,6 +41,9 @@ public:
 	using PluginHandle = void*;
 	using FunctionPtr = void (*)();
 
+	bool
+	addPlugin(const std::string& path);
+
 private:
 
 	PluginHandle
@@ -48,8 +51,6 @@ private:
 
 	bool
 	registerCreators(PluginHandle handle);
-
-
 };
 
 #endif /* UAVAP_CORE_FRAMEWORK_PLUGINMANAGER_H_ */

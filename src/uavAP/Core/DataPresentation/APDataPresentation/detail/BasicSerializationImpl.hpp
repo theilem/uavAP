@@ -42,9 +42,23 @@ dp::split(BinaryToArchive& ar, Type& val)
 	store<BinaryToArchive, Type>(ar, val);
 }
 
+template<class Type>
+inline void
+dp::split(FileFromArchive& ar, Type& val)
+{
+	load<FileFromArchive, Type>(ar, val);
+}
+
+template<class Type>
+inline void
+dp::split(FileToArchive& ar, Type& val)
+{
+	store<FileToArchive, Type>(ar, val);
+}
+
 template<class Archive, typename EnumType>
 void
-dp::load(BinaryFromArchive& ar,
+dp::load(Archive& ar,
 		typename std::enable_if<std::is_enum<EnumType>::value, EnumType>::type& val)
 {
 	uint8_t e;
@@ -54,7 +68,7 @@ dp::load(BinaryFromArchive& ar,
 
 template<class Archive, typename EnumType>
 void
-dp::store(BinaryToArchive& ar,
+dp::store(Archive& ar,
 		typename std::enable_if<std::is_enum<EnumType>::value, EnumType>::type& val)
 {
 	ar << static_cast<uint8_t>(val);
@@ -70,7 +84,7 @@ dp::serialize(Archive& ar,
 
 template<class Archive, typename PODType>
 inline void
-dp::load(BinaryFromArchive& ar,
+dp::load(Archive& ar,
 		typename std::enable_if<
 				std::is_pod<PODType>::value && !std::is_enum<PODType>::value
 						&& !std::is_base_of<SerializeCustom, PODType>::value, PODType>::type& val)
@@ -80,7 +94,7 @@ dp::load(BinaryFromArchive& ar,
 
 template<class Archive, typename PODType>
 inline void
-dp::store(BinaryToArchive& ar,
+dp::store(Archive& ar,
 		typename std::enable_if<
 				std::is_pod<PODType>::value && !std::is_enum<PODType>::value
 						&& !std::is_base_of<SerializeCustom, PODType>::value, PODType>::type& val)
@@ -100,7 +114,7 @@ dp::serialize(Archive& ar,
 
 template<class Archive, typename Type>
 inline void
-dp::load(BinaryFromArchive& ar, typename std::enable_if<is_vector<Type>::value, Type>::type& val)
+dp::load(Archive& ar, typename std::enable_if<is_vector<Type>::value, Type>::type& val)
 {
 	uint8_t size;
 	ar >> size;
@@ -114,7 +128,7 @@ dp::load(BinaryFromArchive& ar, typename std::enable_if<is_vector<Type>::value, 
 
 template<class Archive, typename Type>
 inline void
-dp::store(BinaryToArchive& ar, typename std::enable_if<is_vector<Type>::value, Type>::type& val)
+dp::store(Archive& ar, typename std::enable_if<is_vector<Type>::value, Type>::type& val)
 {
 	ar << static_cast<uint8_t>(val.size());
 	for (auto& it : val)
@@ -132,7 +146,7 @@ dp::serialize(Archive& ar, typename std::enable_if<is_vector<Type>::value, Type>
 
 template<class Archive, typename Type>
 inline void
-dp::load(BinaryFromArchive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
+dp::load(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
 {
 	bool init;
 	ar >> init;
@@ -146,7 +160,7 @@ dp::load(BinaryFromArchive& ar, typename std::enable_if<is_optional<Type>::value
 
 template<class Archive, typename Type>
 inline void
-dp::store(BinaryToArchive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
+dp::store(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
 {
 	ar << val.is_initialized();
 	if (val)
@@ -164,7 +178,7 @@ dp::serialize(Archive& ar, typename std::enable_if<is_optional<Type>::value, Typ
 
 template<class Archive, typename Type>
 inline void
-dp::load(BinaryFromArchive& ar, typename std::enable_if<is_map<Type>::value, Type>::type& val)
+dp::load(Archive& ar, typename std::enable_if<is_map<Type>::value, Type>::type& val)
 {
 	uint8_t size;
 	ar >> size;
@@ -179,7 +193,7 @@ dp::load(BinaryFromArchive& ar, typename std::enable_if<is_map<Type>::value, Typ
 
 template<class Archive, typename Type>
 inline void
-dp::store(BinaryToArchive& ar, typename std::enable_if<is_map<Type>::value, Type>::type& val)
+dp::store(Archive& ar, typename std::enable_if<is_map<Type>::value, Type>::type& val)
 {
 	ar << static_cast<uint8_t>(val.size());
 	for (auto& it : val)
@@ -198,7 +212,7 @@ dp::serialize(Archive& ar, typename std::enable_if<is_map<Type>::value, Type>::t
 
 template<class Archive, typename Type>
 inline void
-dp::load(BinaryFromArchive& ar,
+dp::load(Archive& ar,
 		typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val)
 {
 	uint16_t size;
@@ -209,7 +223,7 @@ dp::load(BinaryFromArchive& ar,
 
 template<class Archive, typename Type>
 inline void
-dp::store(BinaryToArchive& ar,
+dp::store(Archive& ar,
 		typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val)
 {
 	ar << static_cast<uint16_t>(val.size());

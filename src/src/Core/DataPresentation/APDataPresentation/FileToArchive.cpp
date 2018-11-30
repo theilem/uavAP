@@ -16,41 +16,49 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * PODSerialization.cpp
- *
- *  Created on: Aug 27, 2017
- *      Author: mircot
+/**
+ * @file FileToArchive.cpp
+ * @date Nov 13, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
-
-#include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
-#include "uavAP/Core/DataPresentation/APDataPresentation/BinaryFromArchive.h"
-#include "uavAP/Core/DataPresentation/APDataPresentation/BinaryToArchive.h"
-#include <uavAP/Core/DataPresentation/APDataPresentation/FileFromArchive.h>
 #include <uavAP/Core/DataPresentation/APDataPresentation/FileToArchive.h>
-#include <cstring>
+#include <uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h>
 
-void
-dp::load(BinaryFromArchive& ar, char* val, unsigned long bytes)
+#include <sstream>
+#include <iostream>
+#include <fstream>
+
+
+
+FileToArchive::FileToArchive(std::ofstream& file, const ArchiveOptions& opts):
+options_(opts), file_(file)
 {
-	memcpy(val, ar.begin(), bytes);
-	ar.consume(bytes);
 }
 
 void
-dp::store(BinaryToArchive& ar, char* val, unsigned long bytes)
+FileToArchive::setOptions(const ArchiveOptions& opts)
 {
-	ar.append(val, bytes);
+	options_ = opts;
 }
 
 void
-dp::load(FileFromArchive& ar, char* val, unsigned long bytes)
+FileToArchive::append(const char* c, size_t length)
 {
-	ar.read(val, bytes);
+	file_.write(c, length);
 }
 
-void
-dp::store(FileToArchive& ar, char* val, unsigned long bytes)
+FileToArchive&
+FileToArchive::operator <<(const double& doub)
 {
-	ar.append(val, bytes);
+	if (options_.compressDouble_)
+	{
+		float flo = static_cast<float>(doub);
+		dp::store(*this, reinterpret_cast<char*>(&flo), sizeof(float));
+	}
+	else
+	{
+		dp::store(*this, reinterpret_cast<char*>(&const_cast<double&>(doub)), sizeof(double));
+	}
+	return *this;
 }

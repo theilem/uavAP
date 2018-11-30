@@ -16,41 +16,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * PODSerialization.cpp
- *
- *  Created on: Aug 27, 2017
- *      Author: mircot
+/**
+ * @file PluginAPI.h
+ * @date Oct 10, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
-#include "uavAP/Core/DataPresentation/APDataPresentation/BinaryFromArchive.h"
-#include "uavAP/Core/DataPresentation/APDataPresentation/BinaryToArchive.h"
-#include <uavAP/Core/DataPresentation/APDataPresentation/FileFromArchive.h>
-#include <uavAP/Core/DataPresentation/APDataPresentation/FileToArchive.h>
-#include <cstring>
+#ifndef UAVAP_CORE_FRAMEWORK_PLUGINAPI_H_
+#define UAVAP_CORE_FRAMEWORK_PLUGINAPI_H_
 
-void
-dp::load(BinaryFromArchive& ar, char* val, unsigned long bytes)
+
+extern "C"
 {
-	memcpy(val, ar.begin(), bytes);
-	ar.consume(bytes);
+void
+register_plugin();
 }
 
-void
-dp::store(BinaryToArchive& ar, char* val, unsigned long bytes)
-{
-	ar.append(val, bytes);
-}
 
-void
-dp::load(FileFromArchive& ar, char* val, unsigned long bytes)
-{
-	ar.read(val, bytes);
-}
-
-void
-dp::store(FileToArchive& ar, char* val, unsigned long bytes)
-{
-	ar.append(val, bytes);
-}
+#endif /* UAVAP_CORE_FRAMEWORK_PLUGINAPI_H_ */

@@ -145,9 +145,7 @@ SimplePIDController::calculateControl()
 		return;
 	}
 
-	SharedLock sensorLock(sensAct->mutex);
-	sensorData_ = sensAct->sensorData;
-	sensorLock.unlock();
+	sensorData_ = sensAct->getSensorData();
 
 	Eigen::Matrix3d m;
 	m = Eigen::AngleAxisd(sensorData_.attitude.x(), Vector3::UnitX())

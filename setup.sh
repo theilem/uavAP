@@ -37,9 +37,9 @@ cd $SETUP_ROOT_DIR/tmp
 
 #Get Boost 1.68.0
 wget "https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz"
-printf "\nExtracting boost 1.64.0\n"
-tar -xzf boost_1_64_0.tar.gz
-cd boost_1_64_0
+printf "\nExtracting boost 1.68.0\n"
+tar -xzf boost_1_68_0.tar.gz
+cd boost_1_68_0
 ./bootstrap.sh --with-libraries=system,test,thread,filesystem,date_time,chrono
 sudo ./b2 -scxxflags=-fPIC -scflags=-fPIC -j$CORES install
 cd ${SETUP_ROOT_DIR}/tmp
@@ -115,6 +115,8 @@ cd ${SETUP_ROOT_DIR}/tmp
 cd ${SETUP_ROOT_DIR}
 sudo rm -rf tmp
 
+printf "\nGenerating protobuf files\n"
+./generate_proto.sh
 
 #Create bld paths
 if [ -d "bld" ]; then

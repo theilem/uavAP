@@ -25,8 +25,8 @@
 #include "uavAP/Core/DataPresentation/APDataPresentation/BinaryFromArchive.h"
 #include <uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h>
 
-BinaryFromArchive::BinaryFromArchive(const std::string& str) :
-		compressDouble_(false), string_(str), idx_(0)
+BinaryFromArchive::BinaryFromArchive(const std::string& str, const ArchiveOptions& opts) :
+		options_(opts), string_(str), idx_(0)
 {
 	static_assert(sizeof(double) == 8, "Double precision is not 8Byte");
 }
@@ -58,15 +58,15 @@ BinaryFromArchive::getConsumed()
 }
 
 void
-BinaryFromArchive::compressDouble(bool compress)
+BinaryFromArchive::setOptions(const ArchiveOptions& opts)
 {
-	compressDouble_ = compress;
+	options_ = opts;
 }
 
 BinaryFromArchive&
 BinaryFromArchive::operator >>(double& doub)
 {
-	if (compressDouble_)
+	if (options_.compressDouble_)
 	{
 		float flo;
 		dp::load(*this, reinterpret_cast<char*>(&flo), sizeof(float));
