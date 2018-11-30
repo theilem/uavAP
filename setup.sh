@@ -115,6 +115,8 @@ cd ${SETUP_ROOT_DIR}/tmp
 cd ${SETUP_ROOT_DIR}
 sudo rm -rf tmp
 
+printf "\nGenerating protobuf files\n"
+./generate_proto.sh
 
 #Create bld paths
 if [ -d "bld" ]; then
