@@ -14,6 +14,8 @@ The required operating system is a Linux distribution. The provided setup script
 For the setup of uavAP the setup.sh script can be executed. It installs necessary dependencies from the regular debian repository. Additionally, libraries (such as boost, eigen, protobuf etc.) are compiled from source and installed on the system. 
 The setup script adds the build folders as ./bld/Release and ./bld/Debug. Entering the required path and executing make and (sudo) make install, installs the libraries and executables of uavAP.
 
+If the .proto files are changed, the generate_proto.sh script in the repository root folder has to be executed.
+
 
 <b>Core Framework</b>
 
