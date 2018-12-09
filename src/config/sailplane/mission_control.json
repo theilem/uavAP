@@ -1,814 +1,3544 @@
 {
-	"local_frame": {
-		"origin": [
-			367836.57,
-			4435383.06,
-			200
-		],
-		"yaw": 47
-	},
-	"global_planner": {
-		"type": "spline",
-		"tau": 0.6
-	},
-	"maneuver_planner": {
-		"safety_bounds": {
-			"center": {
-				"north": 0,
-				"east": 0,
-				"up": 120
-			},
-			"major_side_length": 800,
-			"minor_side_length": 400,
-			"major_side_orientation": 0,
-			"height": 120
-		},
-		"return_velocity": 12,
-		"manual_restart": false,
-		"maneuver_restart": false,
-		"use_safety_bounds": true,
-		"perform_in_safety_bounds": true,
-		"freeze_controller_outputs": {
-			"enable": true,
-			"roll": true,
-			"pitch": true,
-			"yaw": true,
-			"throttle": true
-		},
-		"maneuvers": {
-			"default": [
-				{
-					"override": {
-						"local_planner/position_z": 100,
-						"local_planner/velocity": 12.0,
-						"pids/roll": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 8000000
-					},
-					"analysis": false
-				}
-			],
-			"vel12_camT1.0_speF0.0_thrC": [
-				{
-					"override": {
-						"local_planner/velocity": 12.0,
-						"pids/roll": 0.0,
-						"pids/climb_angle": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "thermal",
-							"value": 1.0
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 0.0
-						},
-						"throws_control": "cruise"
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				}
-			],
-			"vel12_camT0.8_speF0.0_thrC": [
-				{
-					"override": {
-						"local_planner/velocity": 12.0,
-						"pids/roll": 0.0,
-						"pids/climb_angle": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "thermal",
-							"value": 0.8
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 0.0
-						},
-						"throws_control": "cruise"
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				}
-			],
-			"vel12_camT0.6_speF0.0_thrC": [
-				{
-					"override": {
-						"local_planner/velocity": 12.0,
-						"pids/roll": 0.0,
-						"pids/climb_angle": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "thermal",
-							"value": 0.6
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 0.0
-						},
-						"throws_control": "cruise"
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				}
-			],
-			"vel12_camT0.4_speF0.0_thrC": [
-				{
-					"override": {
-						"local_planner/velocity": 12.0,
-						"pids/roll": 0.0,
-						"pids/climb_angle": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "thermal",
-							"value": 0.4
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 0.0
-						},
-						"throws_control": "cruise"
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				}
-			],
-			"vel12_camT0.2_speF0.0_thrC": [
-				{
-					"override": {
-						"local_planner/velocity": 12.0,
-						"pids/roll": 0.0,
-						"pids/climb_angle": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "thermal",
-							"value": 0.2
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 0.0
-						},
-						"throws_control": "cruise"
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				}
-			],
-			"vel12_camT0.0_speF0.0_thrC": [
-				{
-					"override": {
-						"local_planner/velocity": 12.0,
-						"pids/roll": 0.0,
-						"pids/climb_angle": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "thermal",
-							"value": 0.0
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 0.0
-						},
-						"throws_control": "cruise"
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				}
-			],
-			"vel12_camC0.2_speF0.0_thrC": [
-				{
-					"override": {
-						"local_planner/velocity": 12.0,
-						"pids/roll": 0.0,
-						"pids/climb_angle": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "cruise",
-							"value": 0.2
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 0.0
-						},
-						"throws_control": "cruise"
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				}
-			],
-			"vel12_camC0.4_speF0.0_thrC": [
-				{
-					"override": {
-						"local_planner/velocity": 12.0,
-						"pids/roll": 0.0,
-						"pids/climb_angle": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "cruise",
-							"value": 0.4
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 0.0
-						},
-						"throws_control": "cruise"
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				}
-			],
-			"vel12_camC0.6_speF0.0_thrC": [
-				{
-					"override": {
-						"local_planner/velocity": 12.0,
-						"pids/roll": 0.0,
-						"pids/climb_angle": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "cruise",
-							"value": 0.6
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 0.0
-						},
-						"throws_control": "cruise"
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				}
-			],
-			"vel12_camC0.8_speF0.0_thrC": [
-				{
-					"override": {
-						"local_planner/velocity": 12.0,
-						"pids/roll": 0.0,
-						"pids/climb_angle": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "cruise",
-							"value": 0.8
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 0.0
-						},
-						"throws_control": "cruise"
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				}
-			],
-			"vel12_camC1.0_speF0.0_thrC": [
-				{
-					"override": {
-						"local_planner/velocity": 12.0,
-						"pids/roll": 0.0,
-						"pids/climb_angle": 0.0
-					},
-					"condition": {
-						"type": "steady_state",
-						"steady_state": true
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "cruise",
-							"value": 1.0
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 0.0
-						},
-						"throws_control": "cruise"
-					},
-					"analysis": false
-				},
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 10000
-					},
-					"analysis": true
-				}
-			],
-			"control_freeze_test": [
-				{
-					"override": {
-						"controller_outputs/roll": 0.0,
-						"controller_outputs/pitch": 0.0,
-						"controller_outputs/yaw": 0.0,
-						"controller_outputs/throttle": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 5000
-					},
-					"analysis": false
-				}
-			],
-			"advanced_camT1.0_test": [
-				{
-					"override": {
-						"local_planner/velocity": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 5000
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "thermal",
-							"value": 1.0
-						},
-						"special_control": {
-							"control": "none",
-							"value": 0.0
-						},
-						"throws_control": "normal"
-					},
-					"analysis": false
-				}
-			],
-			"advanced_speF1.0_test": [
-				{
-					"override": {
-						"local_planner/velocity": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 5000
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "normal",
-							"value": 0.0
-						},
-						"special_control": {
-							"control": "flap",
-							"value": 1.0
-						},
-						"throws_control": "normal"
-					},
-					"analysis": false
-				}
-			],
-			"advanced_thrC_test": [
-				{
-					"override": {
-						"local_planner/velocity": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 5000
-					},
-					"advanced_control": {
-						"camber_control": {
-							"control": "normal",
-							"value": 0.0
-						},
-						"special_control": {
-							"control": "none",
-							"value": 0.0
-						},
-						"throws_control": "cruise"
-					},
-					"analysis": false
-				}
-			],
-			"maneuver_analysis_test": [
-				{
-					"override": {
-						"local_planner/velocity": 0.0
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 5000
-					},
-					"analysis": true
-				}
-			]
-		}
-	},
-	"mission_planner": {
-		"type": "custom",
-		"use_approach": false,
-		"default_velocity": 12,
-		"missions": {
-			"simple": {
-				"velocity": 12,
-				"infinite": true,
-				"offset": {
-					"e": 0,
-					"n": 0,
-					"u": 100
-				},
-				"waypoints": [
-					{
-						"e": 200,
-						"n": 100,
-						"u": 0
-					},
-					{
-						"e": 200,
-						"n": -100,
-						"u": 0
-					},
-					{
-						"e": -200,
-						"n": -100,
-						"u": 0
-					},
-					{
-						"e": -200,
-						"n": 100,
-						"u": 0
-					}
-				]
-			},
-			"validation": {
-				"velocity": 12,
-				"infinite": true,
-				"offset": {
-					"e": 0,
-					"n": 0,
-					"u": 100
-				},
-				"waypoints": [
-					{
-						"e": 300,
-						"n": 150,
-						"u": 0
-					},
-					{
-						"e": 300,
-						"n": -150,
-						"u": 0
-					},
-					{
-						"e": 150,
-						"n": -150,
-						"u": 0
-					},
-					{
-						"e": -150,
-						"n": -150,
-						"u": 50
-					},
-					{
-						"e": -300,
-						"n": -150,
-						"u": 50
-					},
-					{
-						"e": -300,
-						"n": 150,
-						"u": 50
-					},
-					{
-						"e": -150,
-						"n": 150,
-						"u": 50
-					},
-					{
-						"e": 150,
-						"n": 150,
-						"u": 0
-					}
-				]
-			},
-			"validation_300": {
-				"velocity": 12,
-				"infinite": true,
-				"offset": {
-					"e": 0,
-					"n": 0,
-					"u": 100
-				},
-				"waypoints": [
-					{
-						"e": 250,
-						"n": 75,
-						"u": 0
-					},
-					{
-						"e": 250,
-						"n": -75,
-						"u": 0
-					},
-					{
-						"e": 150,
-						"n": -75,
-						"u": 0
-					},
-					{
-						"e": -150,
-						"n": -75,
-						"u": 0
-					},
-					{
-						"e": -250,
-						"n": -75,
-						"u": 0
-					},
-					{
-						"e": -250,
-						"n": 75,
-						"u": 0
-					},
-					{
-						"e": -150,
-						"n": 75,
-						"u": 0
-					},
-					{
-						"e": 150,
-						"n": 75,
-						"u": 0
-					}
-				]
-			},
-			"validation_350": {
-				"velocity": 12,
-				"infinite": true,
-				"offset": {
-					"e": 0,
-					"n": 0,
-					"u": 100
-				},
-				"waypoints": [
-					{
-						"e": 275,
-						"n": 75,
-						"u": 0
-					},
-					{
-						"e": 275,
-						"n": -75,
-						"u": 0
-					},
-					{
-						"e": 175,
-						"n": -75,
-						"u": 0
-					},
-					{
-						"e": -175,
-						"n": -75,
-						"u": 0
-					},
-					{
-						"e": -275,
-						"n": -75,
-						"u": 0
-					},
-					{
-						"e": -275,
-						"n": 75,
-						"u": 0
-					},
-					{
-						"e": -175,
-						"n": 75,
-						"u": 0
-					},
-					{
-						"e": 175,
-						"n": 75,
-						"u": 0
-					}
-				]
-			},
-			"validation_400": {
-				"velocity": 12,
-				"infinite": true,
-				"offset": {
-					"e": 0,
-					"n": 0,
-					"u": 100
-				},
-				"waypoints": [
-					{
-						"e": 300,
-						"n": 75,
-						"u": 0
-					},
-					{
-						"e": 300,
-						"n": -75,
-						"u": 0
-					},
-					{
-						"e": 200,
-						"n": -75,
-						"u": 0
-					},
-					{
-						"e": -200,
-						"n": -75,
-						"u": 0
-					},
-					{
-						"e": -300,
-						"n": -75,
-						"u": 0
-					},
-					{
-						"e": -300,
-						"n": 75,
-						"u": 0
-					},
-					{
-						"e": -200,
-						"n": 75,
-						"u": 0
-					},
-					{
-						"e": 200,
-						"n": 75,
-						"u": 0
-					}
-				]
-			}
-		}
-	},
-	"data_presentation": {
-		"compress_double": true
-	}
+    "local_frame": {
+        "origin": [
+            367836.57,
+            4435383.06,
+            200
+        ],
+        "yaw": 47
+    },
+    "global_planner": {
+        "type": "spline",
+        "tau": 0.6
+    },
+    "maneuver_planner": {
+        "safety_bounds": {
+            "center": {
+                "north": 0,
+                "east": 0,
+                "up": 120
+            },
+            "major_side_length": 1000,
+            "minor_side_length": 400,
+            "major_side_orientation": 0,
+            "height": 120
+        },
+        "return_velocity": 12,
+        "manual_restart": false,
+        "maneuver_restart": false,
+        "use_safety_bounds": true,
+        "perform_in_safety_bounds": true,
+        "freeze_controller_outputs": {
+            "enable": false,
+            "roll": true,
+            "pitch": true,
+            "yaw": true,
+            "throttle": true
+        },
+        "maneuvers": {
+            "default": [
+                {
+                    "override": {
+                        "local_planner/position_z": 100,
+                        "local_planner/velocity": 12.0,
+                        "pids/roll": 0.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 8000000
+                    },
+                    "analysis": false
+                }
+            ],
+            "vel10_camT1.0_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 1.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camT0.9_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.9
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camT0.8_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.8
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camT0.7_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.7
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camT0.6_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.6
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camT0.5_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.5
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camT0.4_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.4
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camT0.3_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.3
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camT0.2_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.2
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camT0.1_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.1
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camT0.0_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camC0.1_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.1
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camC0.2_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.2
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camC0.3_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.3
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camC0.4_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.4
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camC0.5_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.5
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camC0.6_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.6
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camC0.7_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.7
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camC0.8_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.8
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camC0.9_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.9
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "controller_outputs/roll": 0.0,
+                        "controller_outputs/pitch": 0.0,
+                        "controller_outputs/yaw": 0.0,
+                        "controller_outputs/throttle": 0.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel10_camC1.0_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 1.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 10.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camT1.0_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 1.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 1.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camT0.9_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.9
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.9
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camT0.8_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.8
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.8
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camT0.7_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.7
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.7
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camT0.6_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.6
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.6
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camT0.5_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.5
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.5
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camT0.4_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.4
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.4
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camT0.3_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.3
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.3
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camT0.2_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.2
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.2
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camT0.1_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.1
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.1
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camT0.0_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camC0.1_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.1
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.1
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camC0.2_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.2
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.2
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camC0.3_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.3
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.3
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camC0.4_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.4
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.4
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camC0.5_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.5
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.5
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camC0.6_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.6
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.6
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camC0.7_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.7
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.7
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camC0.8_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.8
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.8
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camC0.9_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.9
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.9
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel12_camC1.0_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 1.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 12.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 1.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camT1.0_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 1.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camT0.9_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.9
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camT0.8_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.8
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camT0.7_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.7
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camT0.6_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.6
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camT0.5_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.5
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camT0.4_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.4
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camT0.3_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.3
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camT0.2_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.2
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camT0.1_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.1
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camT0.0_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camC0.1_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.1
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camC0.2_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.2
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camC0.3_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.3
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camC0.4_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.4
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camC0.5_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.5
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camC0.6_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.6
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camC0.7_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.7
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camC0.8_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.8
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camC0.9_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.9
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel14_camC1.0_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 1.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 14.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camT1.0_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 1.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camT0.9_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.9
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camT0.8_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.8
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camT0.7_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.7
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camT0.6_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.6
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camT0.5_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.5
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camT0.4_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.4
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camT0.3_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.3
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camT0.2_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.2
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camT0.1_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.1
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camT0.0_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 0.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camC0.1_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.1
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camC0.2_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.2
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camC0.3_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.3
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camC0.4_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.4
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camC0.5_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.5
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camC0.6_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.6
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camC0.7_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.7
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camC0.8_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.8
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camC0.9_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 0.9
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "vel16_camC1.0_speF0.0_thrC": [
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "steady_state",
+                        "steady_state": true
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "cruise",
+                            "value": 1.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                },
+                {
+                    "override": {
+                        "local_planner/velocity": 16.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ],
+            "control_freeze_test": [
+                {
+                    "override": {
+                        "controller_outputs/roll": 0.0,
+                        "controller_outputs/pitch": 0.0,
+                        "controller_outputs/yaw": 0.0,
+                        "controller_outputs/throttle": 0.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": false
+                }
+            ],
+            "advanced_camT1.0_test": [
+                {
+                    "override": {
+                        "local_planner/velocity": 0.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "thermal",
+                            "value": 1.0
+                        },
+                        "special_control": {
+                            "control": "none",
+                            "value": 0.0
+                        },
+                        "throws_control": "normal"
+                    },
+                    "analysis": false
+                }
+            ],
+            "advanced_speF1.0_test": [
+                {
+                    "override": {
+                        "local_planner/velocity": 0.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "normal",
+                            "value": 0.0
+                        },
+                        "special_control": {
+                            "control": "flap",
+                            "value": 1.0
+                        },
+                        "throws_control": "normal"
+                    },
+                    "analysis": false
+                }
+            ],
+            "advanced_thrC_test": [
+                {
+                    "override": {
+                        "local_planner/velocity": 0.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "advanced_control": {
+                        "camber_control": {
+                            "control": "normal",
+                            "value": 0.0
+                        },
+                        "special_control": {
+                            "control": "none",
+                            "value": 0.0
+                        },
+                        "throws_control": "cruise"
+                    },
+                    "analysis": false
+                }
+            ],
+            "maneuver_analysis_test": [
+                {
+                    "override": {
+                        "local_planner/velocity": 0.0
+                    },
+                    "condition": {
+                        "type": "duration",
+                        "duration": 10000
+                    },
+                    "analysis": true
+                }
+            ]
+        }
+    },
+    "mission_planner": {
+        "type": "custom",
+        "use_approach": false,
+        "default_velocity": 12,
+        "missions": {
+            "simple": {
+                "velocity": 12,
+                "infinite": true,
+                "offset": {
+                    "e": 0,
+                    "n": 0,
+                    "u": 100
+                },
+                "waypoints": [
+                    {
+                        "e": 200,
+                        "n": 100,
+                        "u": 0
+                    },
+                    {
+                        "e": 200,
+                        "n": -100,
+                        "u": 0
+                    },
+                    {
+                        "e": -200,
+                        "n": -100,
+                        "u": 0
+                    },
+                    {
+                        "e": -200,
+                        "n": 100,
+                        "u": 0
+                    }
+                ]
+            },
+            "energy": {
+                "velocity": 12,
+                "infinite": true,
+                "offset": {
+                    "e": 0,
+                    "n": 0,
+                    "u": 100
+                },
+                "waypoints": [
+                    {
+                        "e": 400,
+                        "n": 100,
+                        "u": 0
+                    },
+                    {
+                        "e": 400,
+                        "n": -100,
+                        "u": 0
+                    },
+                    {
+                        "e": 250,
+                        "n": -100,
+                        "u": 0
+                    },
+                    {
+                        "e": 75,
+                        "n": -100,
+                        "u": 0
+                    },
+                    {
+                        "e": -75,
+                        "n": -100,
+                        "u": 40
+                    },
+                    {
+                        "e": -250,
+                        "n": -100,
+                        "u": 40
+                    },
+                    {
+                        "e": -400,
+                        "n": -100,
+                        "u": 40
+                    },
+                    {
+                        "e": -400,
+                        "n": 100,
+                        "u": 40
+                    },
+                    {
+                        "e": -250,
+                        "n": 100,
+                        "u": 40
+                    },
+                    {
+                        "e": -75,
+                        "n": 100,
+                        "u": 40
+                    },
+                    {
+                        "e": 75,
+                        "n": 100,
+                        "u": 0
+                    },
+                    {
+                        "e": 250,
+                        "n": 100,
+                        "u": 0
+                    }
+                ]
+            },
+            "energy_flat": {
+                "velocity": 12,
+                "infinite": true,
+                "offset": {
+                    "e": 0,
+                    "n": 0,
+                    "u": 100
+                },
+                "waypoints": [
+                    {
+                        "e": 400,
+                        "n": 100,
+                        "u": 0
+                    },
+                    {
+                        "e": 400,
+                        "n": -100,
+                        "u": 0
+                    },
+                    {
+                        "e": 250,
+                        "n": -100,
+                        "u": 0
+                    },
+                    {
+                        "e": 75,
+                        "n": -100,
+                        "u": 0
+                    },
+                    {
+                        "e": -75,
+                        "n": -100,
+                        "u": 0
+                    },
+                    {
+                        "e": -250,
+                        "n": -100,
+                        "u": 0
+                    },
+                    {
+                        "e": -400,
+                        "n": -100,
+                        "u": 0
+                    },
+                    {
+                        "e": -400,
+                        "n": 100,
+                        "u": 0
+                    },
+                    {
+                        "e": -250,
+                        "n": 100,
+                        "u": 0
+                    },
+                    {
+                        "e": -75,
+                        "n": 100,
+                        "u": 0
+                    },
+                    {
+                        "e": 75,
+                        "n": 100,
+                        "u": 0
+                    },
+                    {
+                        "e": 250,
+                        "n": 100,
+                        "u": 0
+                    }
+                ]
+            },
+            "validation": {
+                "velocity": 12,
+                "infinite": true,
+                "offset": {
+                    "e": 0,
+                    "n": 0,
+                    "u": 100
+                },
+                "waypoints": [
+                    {
+                        "e": 300,
+                        "n": 150,
+                        "u": 0
+                    },
+                    {
+                        "e": 300,
+                        "n": -150,
+                        "u": 0
+                    },
+                    {
+                        "e": 150,
+                        "n": -150,
+                        "u": 0
+                    },
+                    {
+                        "e": -150,
+                        "n": -150,
+                        "u": 50
+                    },
+                    {
+                        "e": -300,
+                        "n": -150,
+                        "u": 50
+                    },
+                    {
+                        "e": -300,
+                        "n": 150,
+                        "u": 50
+                    },
+                    {
+                        "e": -150,
+                        "n": 150,
+                        "u": 50
+                    },
+                    {
+                        "e": 150,
+                        "n": 150,
+                        "u": 0
+                    }
+                ]
+            },
+            "validation_300": {
+                "velocity": 12,
+                "infinite": true,
+                "offset": {
+                    "e": 0,
+                    "n": 0,
+                    "u": 100
+                },
+                "waypoints": [
+                    {
+                        "e": 250,
+                        "n": 75,
+                        "u": 0
+                    },
+                    {
+                        "e": 250,
+                        "n": -75,
+                        "u": 0
+                    },
+                    {
+                        "e": 150,
+                        "n": -75,
+                        "u": 0
+                    },
+                    {
+                        "e": -150,
+                        "n": -75,
+                        "u": 0
+                    },
+                    {
+                        "e": -250,
+                        "n": -75,
+                        "u": 0
+                    },
+                    {
+                        "e": -250,
+                        "n": 75,
+                        "u": 0
+                    },
+                    {
+                        "e": -150,
+                        "n": 75,
+                        "u": 0
+                    },
+                    {
+                        "e": 150,
+                        "n": 75,
+                        "u": 0
+                    }
+                ]
+            },
+            "validation_350": {
+                "velocity": 12,
+                "infinite": true,
+                "offset": {
+                    "e": 0,
+                    "n": 0,
+                    "u": 100
+                },
+                "waypoints": [
+                    {
+                        "e": 275,
+                        "n": 75,
+                        "u": 0
+                    },
+                    {
+                        "e": 275,
+                        "n": -75,
+                        "u": 0
+                    },
+                    {
+                        "e": 175,
+                        "n": -75,
+                        "u": 0
+                    },
+                    {
+                        "e": -175,
+                        "n": -75,
+                        "u": 0
+                    },
+                    {
+                        "e": -275,
+                        "n": -75,
+                        "u": 0
+                    },
+                    {
+                        "e": -275,
+                        "n": 75,
+                        "u": 0
+                    },
+                    {
+                        "e": -175,
+                        "n": 75,
+                        "u": 0
+                    },
+                    {
+                        "e": 175,
+                        "n": 75,
+                        "u": 0
+                    }
+                ]
+            },
+            "validation_400": {
+                "velocity": 12,
+                "infinite": true,
+                "offset": {
+                    "e": 0,
+                    "n": 0,
+                    "u": 100
+                },
+                "waypoints": [
+                    {
+                        "e": 300,
+                        "n": 75,
+                        "u": 0
+                    },
+                    {
+                        "e": 300,
+                        "n": -75,
+                        "u": 0
+                    },
+                    {
+                        "e": 200,
+                        "n": -75,
+                        "u": 0
+                    },
+                    {
+                        "e": -200,
+                        "n": -75,
+                        "u": 0
+                    },
+                    {
+                        "e": -300,
+                        "n": -75,
+                        "u": 0
+                    },
+                    {
+                        "e": -300,
+                        "n": 75,
+                        "u": 0
+                    },
+                    {
+                        "e": -200,
+                        "n": 75,
+                        "u": 0
+                    },
+                    {
+                        "e": 200,
+                        "n": 75,
+                        "u": 0
+                    }
+                ]
+            }
+        }
+    },
+    "data_presentation": {
+        "compress_double": true
+    }
 }
