@@ -56,6 +56,14 @@ dp::split(FileToArchive& ar, Type& val)
 	store<FileToArchive, Type>(ar, val);
 }
 
+
+template<class Archive>
+inline void
+dp::serialize(Archive& ar, char* val, std::size_t size)
+{
+	split(ar, val, size);
+}
+
 template<class Archive, typename EnumType>
 void
 dp::load(Archive& ar,

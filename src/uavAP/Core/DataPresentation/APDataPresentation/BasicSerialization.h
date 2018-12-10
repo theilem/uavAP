@@ -65,7 +65,7 @@ void
 store(BinaryToArchive& ar, char* val, unsigned long bytes);
 
 /**
- * @brief General method to load a number of characters from a BinaryFromArchive
+ * @brief General method to load a number of characters from a FileFromArchive
  * @param ar Archive containing the characters to be loaded
  * @param val Extracted characters
  * @param bytes Number of characters to be extracted
@@ -74,7 +74,7 @@ void
 load(FileFromArchive& ar, char* val, unsigned long bytes);
 
 /**
- * @brief General method to store a number of characters to a BinaryToArchive
+ * @brief General method to store a number of characters to a FileToArchive
  * @param ar Archive into which the characters will be added
  * @param val Ptr to characters to be added
  * @param bytes Number of characters
@@ -118,6 +118,22 @@ template<class Type>
 void
 split(FileToArchive& ar, Type& val);
 
+void
+split(BinaryFromArchive& ar, char* val, std::size_t size);
+
+void
+split(BinaryToArchive& ar, char* val, std::size_t size);
+
+void
+split(FileFromArchive& ar, char* val, std::size_t size);
+
+void
+split(FileToArchive& ar, char* val, std::size_t size);
+
+template<class Archive>
+void
+serialize(Archive& ar, char* val, std::size_t size);
+
 /**
  * @brief Load function for POD types that are not enum or SerializeCustom objects.
  */
@@ -153,16 +169,14 @@ serialize(Archive& ar,
  */
 template<class Archive, typename EnumType>
 void
-load(Archive& ar,
-		typename std::enable_if<std::is_enum<EnumType>::value, EnumType>::type& val);
+load(Archive& ar, typename std::enable_if<std::is_enum<EnumType>::value, EnumType>::type& val);
 
 /**
  * @brief store function for all enum data types
  */
 template<class Archive, typename EnumType>
 void
-store(Archive& ar,
-		typename std::enable_if<std::is_enum<EnumType>::value, EnumType>::type& val);
+store(Archive& ar, typename std::enable_if<std::is_enum<EnumType>::value, EnumType>::type& val);
 
 /**
  * @brief Serialize function for all enum data types
@@ -250,8 +264,7 @@ serialize(Archive& ar, typename std::enable_if<is_map<Type>::value, Type>::type&
  */
 template<class Archive, typename Type>
 void
-load(Archive& ar,
-		typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val);
+load(Archive& ar, typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val);
 
 /**
  * @brief Store function for strings

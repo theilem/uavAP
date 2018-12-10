@@ -27,6 +27,9 @@
 #define UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_DETAIL_FILEFROMARCHIVEIMPL_HPP_
 #include "uavAP/Core/DataPresentation/APDataPresentation/FileFromArchive.h"
 #include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
+#include <iostream>
+#include <sstream>
+#include <fstream>
 
 template<class Type>
 typename std::enable_if<!std::is_base_of<google::protobuf::Message, Type>::value,
@@ -44,7 +47,9 @@ FileFromArchive::operator >>(Type& message)
 {
 	uint16_t size;
 	*this >> size;
-	message.ParseFromIstream(file_);
+	std::string input(' ', size);
+	read(&input[0], size);
+	message.ParseFromString(input);
 	return *this;
 }
 

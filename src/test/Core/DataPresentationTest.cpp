@@ -266,4 +266,70 @@ BOOST_AUTO_TEST_CASE(binary_serialization_002_serialize_file)
 	fileIn.close();
 }
 
+BOOST_AUTO_TEST_CASE(binary_serialization_003_serialize_file_proto_message)
+{
+	LinearLocalPlannerStatus status;
+	status.mutable_airplane_status()->set_heading_target(5);
+	status.set_current_path_section(32);
+
+	std::ofstream fileOut("test_proto", std::ofstream::out | std::ofstream::binary);
+
+	dp::serialize(status, fileOut);
+	fileOut.close();
+
+	std::ifstream fileIn("test_proto", std::ifstream::in | std::ifstream::binary);
+
+	auto statusRead = dp::deserialize<LinearLocalPlannerStatus>(fileIn);
+	BOOST_CHECK_EQUAL(statusRead.mutable_airplane_status()->heading_target(),
+			status.mutable_airplane_status()->heading_target());
+	BOOST_CHECK_EQUAL(statusRead.current_path_section(),
+			status.current_path_section());
+
+	fileIn.close();
+}
+
+BOOST_AUTO_TEST_CASE(binary_serialization_004_arrays)
+{
+	float test[] = { 1.2, 4.3, 5.2, 6.1 };
+	std::ofstream fileOut("test_array", std::ofstream::out | std::ofstream::binary);
+
+	FileToArchive to(fileOut);
+	dp::serialize(to, reinterpret_cast<char*>(test), sizeof(test));
+	fileOut.close();
+
+	float testRead[4];
+	std::ifstream fileIn("test_array", std::ifstream::in | std::ifstream::binary);
+
+	FileFromArchive from(fileIn);
+	dp::serialize(from, reinterpret_cast<char*>(testRead), sizeof(test));
+	fileIn.close();
+
+	BOOST_CHECK_EQUAL(test[0], testRead[0]);
+	BOOST_CHECK_EQUAL(test[1], testRead[1]);
+	BOOST_CHECK_EQUAL(test[2], testRead[2]);
+	BOOST_CHECK_EQUAL(test[3], testRead[3]);
+}
+
+BOOST_AUTO_TEST_CASE(binary_serialization_005_int_arrays)
+{
+	int test[] = { 12, 13, 5, 10 };
+	std::ofstream fileOut("test_array", std::ofstream::out | std::ofstream::binary);
+
+	FileToArchive to(fileOut);
+	dp::serialize(to, reinterpret_cast<char*>(test), sizeof(test));
+	fileOut.close();
+
+	int testRead[4];
+	std::ifstream fileIn("test_array", std::ifstream::in | std::ifstream::binary);
+
+	FileFromArchive from(fileIn);
+	dp::serialize(from, reinterpret_cast<char*>(testRead), sizeof(test));
+	fileIn.close();
+
+	BOOST_CHECK_EQUAL(test[0], testRead[0]);
+	BOOST_CHECK_EQUAL(test[1], testRead[1]);
+	BOOST_CHECK_EQUAL(test[2], testRead[2]);
+	BOOST_CHECK_EQUAL(test[3], testRead[3]);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

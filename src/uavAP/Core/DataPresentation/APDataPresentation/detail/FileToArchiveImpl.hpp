@@ -25,11 +25,8 @@
 
 #ifndef UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_DETAIL_FILETOARCHIVEIMPL_HPP_
 #define UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_DETAIL_FILETOARCHIVEIMPL_HPP_
-#include <uavAP/Core/DataPresentation/APDataPresentation/FileToArchive.h>
+#include "uavAP/Core/DataPresentation/APDataPresentation/FileToArchive.h"
 #include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
-
-
-
 
 template<typename Type>
 inline typename std::enable_if<!std::is_base_of<google::protobuf::Message, Type>::value,
@@ -46,8 +43,9 @@ inline typename std::enable_if<std::is_base_of<google::protobuf::Message, Type>:
 FileToArchive::operator <<(const Type& message)
 {
 	std::string s;
+	message.SerializeToString(&s);
 	*this << static_cast<uint16_t>(s.size());
-	message.SerializeToOstream(&file_);
+	file_.write(s.c_str(), s.size());
 	return *this;
 }
 
@@ -64,6 +62,5 @@ FileToArchive::operator >>(const Type& val)
 {
 	return *this;
 }
-
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_DETAIL_FILETOARCHIVEIMPL_HPP_ */
