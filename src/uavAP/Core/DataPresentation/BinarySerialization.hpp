@@ -46,6 +46,7 @@ deserialize(const Packet& packet, const ArchiveOptions& options = ArchiveOptions
 {
 	if (packet.getSize() == 0)
 	{
+		APLOG_WARN << "packet empty";
 		return T();
 	}
 	BinaryFromArchive archive(packet.getBuffer(), options);

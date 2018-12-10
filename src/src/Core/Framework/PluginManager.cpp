@@ -77,7 +77,7 @@ PluginManager::registerCreators(PluginHandle handle)
 	if (registerPlugin == nullptr)
 		return false;
 
-	FunctionPtr func = reinterpret_cast<FunctionPtr>(registerPlugin);
+	auto func = reinterpret_cast<FunctionPtr>(registerPlugin);
 	func();
 
 	return true;
