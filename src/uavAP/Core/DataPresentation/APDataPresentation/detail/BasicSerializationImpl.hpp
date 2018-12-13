@@ -56,7 +56,6 @@ dp::split(FileToArchive& ar, Type& val)
 	store<FileToArchive, Type>(ar, val);
 }
 
-
 template<class Archive>
 inline void
 dp::serialize(Archive& ar, char* val, std::size_t size)
@@ -66,8 +65,7 @@ dp::serialize(Archive& ar, char* val, std::size_t size)
 
 template<class Archive, typename EnumType>
 void
-dp::load(Archive& ar,
-		typename std::enable_if<std::is_enum<EnumType>::value, EnumType>::type& val)
+dp::load(Archive& ar, typename std::enable_if<std::is_enum<EnumType>::value, EnumType>::type& val)
 {
 	uint8_t e;
 	ar >> e;
@@ -76,8 +74,7 @@ dp::load(Archive& ar,
 
 template<class Archive, typename EnumType>
 void
-dp::store(Archive& ar,
-		typename std::enable_if<std::is_enum<EnumType>::value, EnumType>::type& val)
+dp::store(Archive& ar, typename std::enable_if<std::is_enum<EnumType>::value, EnumType>::type& val)
 {
 	ar << static_cast<uint8_t>(val);
 }
@@ -250,8 +247,8 @@ template<class Archive, typename Type>
 inline void
 dp::serialize(Archive& ar, typename std::enable_if<is_pair<Type>::value, Type>::type& val)
 {
-	ar &val.first;
-	ar  & val.second;
+	ar & val.first;
+	ar & val.second;
 }
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_DETAIL_BASICSERIALIZATIONIMPL_HPP_ */
