@@ -33,7 +33,7 @@ add_subdirectory(Frames)
 
 set(CORE_SRC 	${CORE_SRC}
 				${CMAKE_CURRENT_SOURCE_DIR}/LinearAlgebra.cpp
-                                ${CMAKE_CURRENT_SOURCE_DIR}/SensorData.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/SensorData.cpp
 				)
 				
 				

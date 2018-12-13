@@ -61,15 +61,13 @@ public:
 	run(RunStage stage) override;
 
 	void
-	setControllerOutput(const ControllerOutput& out);
+	setControllerOutput(const ControllerOutput& out) override;
 
-	using OnSensorData = boost::signals2::signal<void(const SensorData&)>;
+	SensorData
+	getSensorData() const override;
 
 	boost::signals2::connection
-	subscribeOnSensorData(const OnSensorData::slot_type& slot);
-
-	boost::shared_mutex mutex;
-	SensorData sensorData;
+	subscribeOnSensorData(const OnSensorData::slot_type& slot) override;
 
 private:
 
@@ -82,6 +80,9 @@ private:
 	Publisher actuationPublisher_;
 
 	OnSensorData onSensorData_;
+
+	mutable boost::shared_mutex mutex_;
+	SensorData sensorData_;
 
 };
 

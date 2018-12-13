@@ -40,8 +40,6 @@ public:
 		addCreator<ConstRollRateModel>();
 		addCreator<DirectRollModel>();
 	}
-
-	static constexpr TypeId typeId = "geofencing_model";
 };
 
 #endif /* UAVAP_MISSIONCONTROL_GEOFENCING_GEOFENCINGMODELFACTORY_H_ */

@@ -16,41 +16,45 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * ITimeProvider.h
- *
- *  Created on: Jul 19, 2017
- *      Author: mircot
+/**
+ * @file FileFromArchive.cpp
+ * @date Nov 13, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
+#include "uavAP/Core/DataPresentation/APDataPresentation/FileFromArchive.h"
+#include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
+#include <fstream>
 
-#ifndef UAVAP_CORE_TIMEPROVIDER_ITIMEPROVIDER_H_
-#define UAVAP_CORE_TIMEPROVIDER_ITIMEPROVIDER_H_
-#include <boost/thread/lock_types.hpp>
-#include <boost/thread/pthread/condition_variable.hpp>
-#include "uavAP/Core/Time.h"
-
-class ITimeProvider
+FileFromArchive::FileFromArchive(std::ifstream& file, const ArchiveOptions& opts) :
+		options_(opts), file_(file)
 {
-public:
+}
 
-	static constexpr const char* const typeId = "time_provider";
+void
+FileFromArchive::setOptions(const ArchiveOptions& opts)
+{
+	options_ = opts;
+}
 
-	virtual
-	~ITimeProvider() = default;
+FileFromArchive&
+FileFromArchive::operator >>(double& doub)
+{
+	if (options_.compressDouble_)
+	{
+		float flo;
+		dp::load(*this, reinterpret_cast<char*>(&flo), sizeof(float));
+		doub = static_cast<double>(flo);
+	}
+	else
+	{
+		dp::load(*this, reinterpret_cast<char*>(&doub), sizeof(double));
+	}
+	return *this;
+}
 
-	virtual TimePoint
-	now() = 0;
-
-	virtual bool
-	waitFor(Duration duration, boost::condition_variable& interrupt,
-			boost::unique_lock<boost::mutex>& lock) = 0;
-
-	virtual bool
-	waitUntil(TimePoint timePoint, boost::condition_variable& interrupt,
-			boost::unique_lock<boost::mutex>& lock) = 0;
-
-private:
-
-};
-
-#endif /* UAVAP_CORE_TIMEPROVIDER_ITIMEPROVIDER_H_ */
+void
+FileFromArchive::read(char* val, unsigned long bytes)
+{
+	file_.read(val, bytes);
+}

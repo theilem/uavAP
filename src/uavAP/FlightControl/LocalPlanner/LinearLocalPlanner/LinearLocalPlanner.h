@@ -44,7 +44,7 @@ class FlightControlData;
 class IScheduler;
 class IController;
 class IPC;
-class SensingActuationIO;
+class ISensingActuationIO;
 class Packet;
 struct SensorData;
 struct ControllerTarget;
@@ -103,7 +103,7 @@ private:
 	void
 	update();
 
-	ObjectHandle<SensingActuationIO> sensing_;
+	ObjectHandle<ISensingActuationIO> sensing_;
 	ObjectHandle<IController> controller_;
 	ObjectHandle<IScheduler> scheduler_;
 	ObjectHandle<IPC> ipc_;

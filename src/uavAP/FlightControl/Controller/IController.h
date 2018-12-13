@@ -26,16 +26,15 @@
 #ifndef FLIGHTCONTROLLER_IFLIGHTCONTROLLER_H_
 #define FLIGHTCONTROLLER_IFLIGHTCONTROLLER_H_
 
-#include <unordered_map>
-
-#include "uavAP/FlightControl/Controller/ControlElements/Control.h"
 
 struct ControllerTarget;
-struct ControllerOutput;
 
 class IController
 {
 public:
+
+	static constexpr const char* const typeId = "controller";
+
 	virtual
 	~IController() = default;
 

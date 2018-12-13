@@ -72,10 +72,7 @@ public:
 	/**
 	 * @brief Default constructor
 	 */
-	APDataPresentation() :
-			compressDouble_(false)
-	{
-	}
+	APDataPresentation() = default;
 
 	/**
 	 * @brief Create a APDataPresentation shared_ptr.
@@ -99,7 +96,7 @@ public:
 	configure(const boost::property_tree::ptree& config)
 	{
 		PropertyMapper pm(config);
-		pm.add<bool>("compress_double", compressDouble_, false);
+		pm.add<bool>("compress_double", options_.compressDouble_, false);
 		return pm.map();
 	}
 
@@ -153,7 +150,7 @@ public:
 	{
 		std::string str;
 		BinaryToArchive archive(str);
-		archive.compressDouble(compressDouble_);
+		archive.setOptions(options_);
 		try
 		{
 			archive << content;
@@ -181,7 +178,7 @@ public:
 			return boost::any();
 		}
 		BinaryFromArchive archive(packet.getBuffer());
-		archive.compressDouble(compressDouble_);
+		archive.setOptions(options_);
 		try
 		{
 			uint8_t c;
@@ -200,7 +197,8 @@ public:
 
 private:
 
-	bool compressDouble_;
+	ArchiveOptions options_;
+
 };
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_APDATAPRESENTATION_H_ */

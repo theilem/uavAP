@@ -139,7 +139,7 @@ template<class FactoryType>
 inline void
 Helper::addFactory(PluginRestriction restriction)
 {
-	std::string type = FactoryType::typeId;
+	std::string type = FactoryType::typeId();
 	if (creators_.find(type) != creators_.end())
 	{
 		APLOG_ERROR << "Same id for different factory added. Ignore.";
@@ -160,7 +160,7 @@ template<class FactoryType>
 inline void
 Helper::addDefault(PluginRestriction restriction)
 {
-	std::string type = FactoryType::typeId;
+	std::string type = FactoryType::typeId();
 	if (defaultCreators_.find(type) != defaultCreators_.end())
 	{
 		APLOG_ERROR << "Same id for different default factory added. Ignore.";

@@ -54,11 +54,11 @@ public:
 
 	template<class Type>
 	std::shared_ptr<Type>
-	getOne() const;
+	getOne(Type* self = nullptr) const;
 
 	template<class Type>
 	std::vector<std::shared_ptr<Type> >
-	getAll() const;
+	getAll(Type* self = nullptr) const;
 
 	static Aggregator
 	aggregate(std::vector<std::shared_ptr<IAggregatableObject> > aggregation);
@@ -97,12 +97,14 @@ Aggregator::add(std::shared_ptr<Type> obj)
 
 template<class Type>
 inline std::shared_ptr<Type>
-Aggregator::getOne() const
+Aggregator::getOne(Type* self) const
 {
 	for (auto it : container_)
 	{
 		if (auto ret = std::dynamic_pointer_cast<Type>(it))
 		{
+			if (ret.get() == self)
+				continue;
 			return ret;
 		}
 	}
@@ -111,13 +113,15 @@ Aggregator::getOne() const
 
 template<class Type>
 inline std::vector<std::shared_ptr<Type> >
-Aggregator::getAll() const
+Aggregator::getAll(Type* self) const
 {
 	std::vector<std::shared_ptr<Type> > vec;
 	for (auto it : container_)
 	{
 		if (auto ret = std::dynamic_pointer_cast<Type>(it))
 		{
+			if (ret.get() == self)
+				continue;
 			vec.push_back(ret);
 		}
 	}

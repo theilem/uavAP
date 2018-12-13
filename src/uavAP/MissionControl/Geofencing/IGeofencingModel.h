@@ -35,6 +35,8 @@ class IGeofencingModel
 
 public:
 
+	static constexpr const char* const typeId = "geofencing_model";
+
 	virtual
 	~IGeofencingModel() = default;
 

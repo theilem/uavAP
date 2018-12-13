@@ -25,12 +25,29 @@
 
 #ifndef UAVAP_FLIGHTCONTROL_IO_SENSINGACTUATIONIO_ISENSINGACTUATIONIO_H_
 #define UAVAP_FLIGHTCONTROL_IO_SENSINGACTUATIONIO_ISENSINGACTUATIONIO_H_
+#include "uavAP/Core/SensorData.h"
+
+struct ControllerOutput;
 
 class ISensingActuationIO
 {
 public:
+
+	static constexpr const char* const typeId = "sens_act_io";
+
 	virtual
 	~ISensingActuationIO() = default;
+
+	virtual void
+	setControllerOutput(const ControllerOutput& out) = 0;
+
+	virtual SensorData
+	getSensorData() const = 0;
+
+	using OnSensorData = boost::signals2::signal<void(const SensorData&)>;
+
+	virtual boost::signals2::connection
+	subscribeOnSensorData(const OnSensorData::slot_type& slot) = 0;
 };
 
 #endif /* UAVAP_FLIGHTCONTROL_IO_SENSINGACTUATIONIO_ISENSINGACTUATIONIO_H_ */

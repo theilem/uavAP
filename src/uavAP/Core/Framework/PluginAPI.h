@@ -16,41 +16,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * ITimeProvider.h
- *
- *  Created on: Jul 19, 2017
- *      Author: mircot
+/**
+ * @file PluginAPI.h
+ * @date Oct 10, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
 
-#ifndef UAVAP_CORE_TIMEPROVIDER_ITIMEPROVIDER_H_
-#define UAVAP_CORE_TIMEPROVIDER_ITIMEPROVIDER_H_
-#include <boost/thread/lock_types.hpp>
-#include <boost/thread/pthread/condition_variable.hpp>
-#include "uavAP/Core/Time.h"
+#ifndef UAVAP_CORE_FRAMEWORK_PLUGINAPI_H_
+#define UAVAP_CORE_FRAMEWORK_PLUGINAPI_H_
 
-class ITimeProvider
+
+extern "C"
 {
-public:
+void
+register_plugin();
+}
 
-	static constexpr const char* const typeId = "time_provider";
 
-	virtual
-	~ITimeProvider() = default;
-
-	virtual TimePoint
-	now() = 0;
-
-	virtual bool
-	waitFor(Duration duration, boost::condition_variable& interrupt,
-			boost::unique_lock<boost::mutex>& lock) = 0;
-
-	virtual bool
-	waitUntil(TimePoint timePoint, boost::condition_variable& interrupt,
-			boost::unique_lock<boost::mutex>& lock) = 0;
-
-private:
-
-};
-
-#endif /* UAVAP_CORE_TIMEPROVIDER_ITIMEPROVIDER_H_ */
+#endif /* UAVAP_CORE_FRAMEWORK_PLUGINAPI_H_ */

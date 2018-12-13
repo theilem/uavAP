@@ -31,6 +31,7 @@
 #include "uavAP/Core/Logging/APLogger.h"
 #include <map>
 #include <memory>
+#include <vector>
 
 /**
  * @brief Template class for of a typical factory.
@@ -66,9 +67,15 @@ public:
 
 	using TypeId = const char* const;
 
+	static TypeId
+	typeId();
+
 	template<class SpecificType>
 	static void
 	registerExternalCreator();
+
+	std::vector<std::string>
+	getTypeIds() const;
 
 protected:
 
@@ -104,8 +111,7 @@ private:
 };
 
 template<class Type>
-std::map<std::string, typename Factory<Type>::Creator>
-Factory<Type>::pluginMap_;
+std::map<std::string, typename Factory<Type>::Creator> Factory<Type>::pluginMap_;
 
 template<class Type>
 inline std::shared_ptr<Type>
@@ -195,6 +201,27 @@ inline void
 Factory<Type>::setPluginRestriction(PluginRestriction plug)
 {
 	pluginRestriction_ = plug;
+}
+
+template<class Type>
+inline const char* const
+Factory<Type>::typeId()
+{
+	return Type::typeId;
+}
+
+template<class Type>
+inline std::vector<std::string>
+Factory<Type>::getTypeIds() const
+{
+	std::vector<std::string> typeIds;
+
+	for (const auto& it : creatorMap_)
+		typeIds.push_back(it.first);
+	for (const auto& it : pluginMap_)
+		typeIds.push_back(it.first);
+
+	return typeIds;
 }
 
 #endif /* UAVAP_CORE_FRAMEWORK_FACTORY_H_ */

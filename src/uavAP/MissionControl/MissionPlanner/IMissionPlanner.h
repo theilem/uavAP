@@ -29,6 +29,9 @@
 class IMissionPlanner
 {
 public:
+
+	static constexpr const char* const typeId = "mission_planner";
+
 	virtual
 	~IMissionPlanner() = default;
 

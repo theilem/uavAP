@@ -37,8 +37,6 @@ public:
 		setDefault<SensingActuationIO>();
 	}
 
-	static constexpr TypeId typeId = "sens_act_io";
-
 };
 
 #endif /* UAVAP_FLIGHTCONTROL_IO_SENSINGACTUATIONIO_SENSINGACTUATIONIOFACTORY_H_ */

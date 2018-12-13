@@ -44,8 +44,6 @@ public:
 		this->template setDefault<APDataPresentation<Content, Target> >();
 	}
 
-	static constexpr typename Factory<IDataPresentation<Content, Target>>::TypeId typeId = "data_presentation";
-
 };
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_DATAPRESENTATIONFACTORY_H_ */

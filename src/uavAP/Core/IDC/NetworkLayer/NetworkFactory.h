@@ -40,8 +40,6 @@ public:
 		addCreator<SerialNetworkLayer>();
 	}
 
-	static constexpr TypeId typeId = "network";
-
 };
 
 #endif /* UAVAP_CORE_IDC_NETWORKFACTORY_H_ */

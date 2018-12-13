@@ -246,11 +246,7 @@ FlightControlDataHandling::collectAndSendSensorData(
 		return;
 	}
 
-	SensorData sensData;
-	{
-		SharedLockGuard lock(sens->mutex);
-		sensData = sens->sensorData;
-	}
+	SensorData sensData = sens->getSensorData();
 
 	Packet sensorPacket;
 	sensorPacket = dp->serialize(sensData, Content::SENSOR_DATA);

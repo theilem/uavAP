@@ -33,6 +33,9 @@ class SharedMemoryHandler;
 class IGlobalPlanner
 {
 public:
+
+	static constexpr const char* const typeId = "global_planner";
+
 	virtual
 	~IGlobalPlanner() = default;
 

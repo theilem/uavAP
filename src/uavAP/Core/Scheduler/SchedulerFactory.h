@@ -39,8 +39,6 @@ public:
 		addCreator<MicroSimulator>();
 	}
 
-	static constexpr TypeId typeId = "scheduler";
-
 };
 
 #endif /* UAVAP_CORE_SCHEDULER_SCHEDULERFACTORY_H_ */

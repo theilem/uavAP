@@ -36,12 +36,12 @@ class ObjectHandle
 public:
 
 	inline void
-	setFromAggregationIfNotSet(const Aggregator& agg)
+	setFromAggregationIfNotSet(const Aggregator& agg, Handle* self = nullptr)
 	{
 		if (handle_.lock())
 			return; //Already set
 
-		handle_ = agg.getOne<Handle>();
+		handle_ = agg.getOne<Handle>(self);
 	}
 
 	inline std::shared_ptr<Handle>

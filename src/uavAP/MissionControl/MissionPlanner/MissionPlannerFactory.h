@@ -39,8 +39,6 @@ public:
 		addCreator<CustomPlanner>();
 	}
 
-	static constexpr TypeId typeId = "mission_planner";
-
 };
 
 #endif /* UAVAP_MISSIONCONTROL_MISSIONPLANNER_MISSIONPLANNERFACTORY_H_ */

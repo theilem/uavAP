@@ -26,6 +26,9 @@
 #include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
 #include "uavAP/Core/DataPresentation/APDataPresentation/BinaryFromArchive.h"
 #include "uavAP/Core/DataPresentation/APDataPresentation/BinaryToArchive.h"
+#include <uavAP/Core/DataPresentation/APDataPresentation/FileFromArchive.h>
+#include <uavAP/Core/DataPresentation/APDataPresentation/FileToArchive.h>
+#include <uavAP/Core/Logging/APLogger.h>
 #include <cstring>
 
 void
@@ -39,4 +42,40 @@ void
 dp::store(BinaryToArchive& ar, char* val, unsigned long bytes)
 {
 	ar.append(val, bytes);
+}
+
+void
+dp::load(FileFromArchive& ar, char* val, unsigned long bytes)
+{
+	ar.read(val, bytes);
+}
+
+void
+dp::store(FileToArchive& ar, char* val, unsigned long bytes)
+{
+	ar.append(val, bytes);
+}
+
+void
+dp::split(BinaryFromArchive& ar, char* val, std::size_t size)
+{
+	load(ar, val, size);
+}
+
+void
+dp::split(BinaryToArchive& ar, char* val, std::size_t size)
+{
+	store(ar, val, size);
+}
+
+void
+dp::split(FileFromArchive& ar, char* val, std::size_t size)
+{
+	load(ar, val, size);
+}
+
+void
+dp::split(FileToArchive& ar, char* val, std::size_t size)
+{
+	store(ar, val, size);
 }

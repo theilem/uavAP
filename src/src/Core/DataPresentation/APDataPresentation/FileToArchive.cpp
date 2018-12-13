@@ -16,65 +16,49 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * BinaryInArchive.cpp
- *
- *  Created on: Aug 24, 2017
- *      Author: mircot
+/**
+ * @file FileToArchive.cpp
+ * @date Nov 13, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief
  */
-#include "uavAP/Core/DataPresentation/APDataPresentation/BinaryFromArchive.h"
+#include <uavAP/Core/DataPresentation/APDataPresentation/FileToArchive.h>
 #include <uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h>
 
-BinaryFromArchive::BinaryFromArchive(const std::string& str, const ArchiveOptions& opts) :
-		options_(opts), string_(str), idx_(0)
-{
-	static_assert(sizeof(double) == 8, "Double precision is not 8Byte");
-}
+#include <sstream>
+#include <iostream>
+#include <fstream>
 
-const char*
-BinaryFromArchive::begin()
+
+
+FileToArchive::FileToArchive(std::ofstream& file, const ArchiveOptions& opts):
+options_(opts), file_(file)
 {
-	if (idx_ >= string_.size())
-		throw ArchiveError("Archive idx too large.");
-	return &string_[idx_];
 }
 
 void
-BinaryFromArchive::consume(unsigned long bytes)
-{
-	idx_ += bytes;
-}
-
-std::string
-BinaryFromArchive::getRemaining()
-{
-	return string_.substr(idx_, string_.size() - 1);
-}
-
-std::size_t
-BinaryFromArchive::getConsumed()
-{
-	return idx_;
-}
-
-void
-BinaryFromArchive::setOptions(const ArchiveOptions& opts)
+FileToArchive::setOptions(const ArchiveOptions& opts)
 {
 	options_ = opts;
 }
 
-BinaryFromArchive&
-BinaryFromArchive::operator >>(double& doub)
+void
+FileToArchive::append(const char* c, size_t length)
+{
+	file_.write(c, length);
+}
+
+FileToArchive&
+FileToArchive::operator <<(const double& doub)
 {
 	if (options_.compressDouble_)
 	{
-		float flo;
-		dp::load(*this, reinterpret_cast<char*>(&flo), sizeof(float));
-		doub = static_cast<double>(flo);
+		float flo = static_cast<float>(doub);
+		dp::store(*this, reinterpret_cast<char*>(&flo), sizeof(float));
 	}
 	else
 	{
-		dp::load(*this, reinterpret_cast<char*>(&doub), sizeof(double));
+		dp::store(*this, reinterpret_cast<char*>(&const_cast<double&>(doub)), sizeof(double));
 	}
 	return *this;
 }

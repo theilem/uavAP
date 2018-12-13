@@ -25,8 +25,8 @@
 #include "uavAP/Core/DataPresentation/APDataPresentation/BinaryToArchive.h"
 #include <uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h>
 
-BinaryToArchive::BinaryToArchive(std::string& str) :
-		compressDouble_(false), string_(str)
+BinaryToArchive::BinaryToArchive(std::string& str, const ArchiveOptions& opts) :
+options_(opts), string_(str)
 {
 }
 
@@ -37,15 +37,15 @@ BinaryToArchive::append(const char* c, size_t length)
 }
 
 void
-BinaryToArchive::compressDouble(bool compress)
+BinaryToArchive::setOptions(const ArchiveOptions& opts)
 {
-	compressDouble_ = compress;
+	options_ = opts;
 }
 
 BinaryToArchive&
 BinaryToArchive::operator <<(const double& doub)
 {
-	if (compressDouble_)
+	if (options_.compressDouble_)
 	{
 		float flo = static_cast<float>(doub);
 		dp::store(*this, reinterpret_cast<char*>(&flo), sizeof(float));

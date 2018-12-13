@@ -31,6 +31,7 @@
 #include <uavAP/Core/Object/ObjectHandle.h>
 #include <uavAP/Core/Runner/IRunnableObject.h>
 #include <uavAP/FlightControl/Controller/IController.h>
+#include <uavAP/Core/Logging/APLogger.h>
 
 class IScheduler;
 

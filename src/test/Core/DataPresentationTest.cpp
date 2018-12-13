@@ -34,6 +34,15 @@
 
 #include "uavAP/Core/Logging/APLogger.h"
 
+#include "uavAP/Core/DataPresentation/APDataPresentation/FileFromArchive.h"
+#include "uavAP/Core/DataPresentation/APDataPresentation/FileToArchive.h"
+#include "uavAP/Core/DataPresentation/APDataPresentation/detail/FileFromArchiveImpl.hpp"
+#include "uavAP/Core/DataPresentation/APDataPresentation/detail/FileToArchiveImpl.hpp"
+#include <sstream>
+#include <fstream>
+
+#include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+
 BOOST_AUTO_TEST_SUITE(DataPresentationTest)
 
 void
@@ -131,7 +140,7 @@ BOOST_AUTO_TEST_CASE(ap_data_presentation_test_004_string)
 BOOST_AUTO_TEST_CASE(ap_data_presentation_test_005_compress_double)
 {
 	SensorData sd;
-	sd.position = Vector3(M_PI, 2*M_PI, 0.5*M_PI);
+	sd.position = Vector3(M_PI, 2 * M_PI, 0.5 * M_PI);
 	APDataPresentation<Content, Target> dp;
 	Packet packet1 = dp.serialize(sd, Content::SENSOR_DATA);
 
@@ -156,6 +165,171 @@ BOOST_AUTO_TEST_CASE(ap_data_presentation_test_005_compress_double)
 	BOOST_CHECK_CLOSE(sdDes.position.x(), sd.position.x(), 1e-4);
 	BOOST_CHECK_CLOSE(sdDes.position.y(), sd.position.y(), 1e-4);
 	BOOST_CHECK_CLOSE(sdDes.position.z(), sd.position.z(), 1e-4);
+}
+
+BOOST_AUTO_TEST_CASE(ap_data_presentation_test_006_file_archive)
+{
+	SensorData sd;
+	sd.position = Vector3(M_PI, 2 * M_PI, 0.5 * M_PI);
+	SensorData sd2;
+	sd2.position = Vector3(3, 2, 0.5);
+
+	std::ofstream fileOut;
+	fileOut.open("test", std::ofstream::out | std::ofstream::binary);
+
+	FileToArchive toArchive(fileOut);
+	toArchive << sd << sd2 << sd << sd2;
+	fileOut.close();
+
+	SensorData sdRead;
+
+	std::ifstream fileIn;
+	fileIn.open("test", std::ifstream::in | std::ifstream::binary);
+
+	FileFromArchive fromArchive(fileIn);
+	fromArchive >> sdRead;
+	BOOST_CHECK_EQUAL(sdRead.position, sd.position);
+	fromArchive >> sdRead;
+	BOOST_CHECK_EQUAL(sdRead.position, sd2.position);
+	fromArchive >> sdRead;
+	BOOST_CHECK_EQUAL(sdRead.position, sd.position);
+	fromArchive >> sdRead;
+	BOOST_CHECK_EQUAL(sdRead.position, sd2.position);
+
+	fileIn.close();
+
+	//Compressed double
+	fileOut.open("test_compressed", std::ofstream::out | std::ofstream::binary);
+
+	FileToArchive toArchive2(fileOut, ArchiveOptions().compressDouble(true));
+	toArchive2 << sd << sd2 << sd << sd2;
+	fileOut.close();
+
+	fileIn.open("test_compressed", std::ifstream::in | std::ifstream::binary);
+
+	FileFromArchive fromArchive2(fileIn, ArchiveOptions().compressDouble(true));
+	fromArchive2 >> sdRead;
+	BOOST_CHECK_CLOSE(sdRead.position.x(), sd.position.x(), 1e-4);
+	BOOST_CHECK_CLOSE(sdRead.position.y(), sd.position.y(), 1e-4);
+	BOOST_CHECK_CLOSE(sdRead.position.z(), sd.position.z(), 1e-4);
+	fromArchive2 >> sdRead;
+	BOOST_CHECK_CLOSE(sdRead.position.x(), sd2.position.x(), 1e-4);
+	BOOST_CHECK_CLOSE(sdRead.position.y(), sd2.position.y(), 1e-4);
+	BOOST_CHECK_CLOSE(sdRead.position.z(), sd2.position.z(), 1e-4);
+	fromArchive2 >> sdRead;
+	BOOST_CHECK_CLOSE(sdRead.position.x(), sd.position.x(), 1e-4);
+	BOOST_CHECK_CLOSE(sdRead.position.y(), sd.position.y(), 1e-4);
+	BOOST_CHECK_CLOSE(sdRead.position.z(), sd.position.z(), 1e-4);
+	fromArchive2 >> sdRead;
+	BOOST_CHECK_CLOSE(sdRead.position.x(), sd2.position.x(), 1e-4);
+	BOOST_CHECK_CLOSE(sdRead.position.y(), sd2.position.y(), 1e-4);
+	BOOST_CHECK_CLOSE(sdRead.position.z(), sd2.position.z(), 1e-4);
+
+	fileIn.close();
+}
+
+BOOST_AUTO_TEST_CASE(binary_serialization_001_archive_options)
+{
+	SensorData sd;
+	sd.position = Vector3(M_PI, 2 * M_PI, 0.5 * M_PI);
+
+	Packet packet = dp::serialize(sd);
+	auto sdDes = dp::deserialize<SensorData>(packet);
+	BOOST_CHECK_EQUAL(sdDes.position, sd.position);
+
+	packet = dp::serialize(sd, ArchiveOptions().compressDouble(true));
+	sdDes = dp::deserialize<SensorData>(packet, ArchiveOptions().compressDouble(true));
+	BOOST_CHECK_CLOSE(sdDes.position.x(), sd.position.x(), 1e-4);
+	BOOST_CHECK_CLOSE(sdDes.position.y(), sd.position.y(), 1e-4);
+	BOOST_CHECK_CLOSE(sdDes.position.z(), sd.position.z(), 1e-4);
+}
+
+BOOST_AUTO_TEST_CASE(binary_serialization_002_serialize_file)
+{
+	SensorData sd;
+	sd.position = Vector3(M_PI, 2 * M_PI, 0.5 * M_PI);
+
+	std::ofstream fileOut;
+	fileOut.open("test", std::ofstream::out | std::ofstream::binary);
+
+	dp::serialize(sd, fileOut);
+	fileOut.close();
+
+	SensorData sdRead;
+
+	std::ifstream fileIn;
+	fileIn.open("test", std::ifstream::in | std::ifstream::binary);
+
+	sdRead = dp::deserialize<SensorData>(fileIn);
+	BOOST_CHECK_EQUAL(sdRead.position, sd.position);
+
+	fileIn.close();
+}
+
+BOOST_AUTO_TEST_CASE(binary_serialization_003_serialize_file_proto_message)
+{
+	LinearLocalPlannerStatus status;
+	status.mutable_airplane_status()->set_heading_target(5);
+	status.set_current_path_section(32);
+
+	std::ofstream fileOut("test_proto", std::ofstream::out | std::ofstream::binary);
+
+	dp::serialize(status, fileOut);
+	fileOut.close();
+
+	std::ifstream fileIn("test_proto", std::ifstream::in | std::ifstream::binary);
+
+	auto statusRead = dp::deserialize<LinearLocalPlannerStatus>(fileIn);
+	BOOST_CHECK_EQUAL(statusRead.mutable_airplane_status()->heading_target(),
+			status.mutable_airplane_status()->heading_target());
+	BOOST_CHECK_EQUAL(statusRead.current_path_section(),
+			status.current_path_section());
+
+	fileIn.close();
+}
+
+BOOST_AUTO_TEST_CASE(binary_serialization_004_arrays)
+{
+	float test[] = { 1.2, 4.3, 5.2, 6.1 };
+	std::ofstream fileOut("test_array", std::ofstream::out | std::ofstream::binary);
+
+	FileToArchive to(fileOut);
+	dp::serialize(to, reinterpret_cast<char*>(test), sizeof(test));
+	fileOut.close();
+
+	float testRead[4];
+	std::ifstream fileIn("test_array", std::ifstream::in | std::ifstream::binary);
+
+	FileFromArchive from(fileIn);
+	dp::serialize(from, reinterpret_cast<char*>(testRead), sizeof(test));
+	fileIn.close();
+
+	BOOST_CHECK_EQUAL(test[0], testRead[0]);
+	BOOST_CHECK_EQUAL(test[1], testRead[1]);
+	BOOST_CHECK_EQUAL(test[2], testRead[2]);
+	BOOST_CHECK_EQUAL(test[3], testRead[3]);
+}
+
+BOOST_AUTO_TEST_CASE(binary_serialization_005_int_arrays)
+{
+	int test[] = { 12, 13, 5, 10 };
+	std::ofstream fileOut("test_array", std::ofstream::out | std::ofstream::binary);
+
+	FileToArchive to(fileOut);
+	dp::serialize(to, reinterpret_cast<char*>(test), sizeof(test));
+	fileOut.close();
+
+	int testRead[4];
+	std::ifstream fileIn("test_array", std::ifstream::in | std::ifstream::binary);
+
+	FileFromArchive from(fileIn);
+	dp::serialize(from, reinterpret_cast<char*>(testRead), sizeof(test));
+	fileIn.close();
+
+	BOOST_CHECK_EQUAL(test[0], testRead[0]);
+	BOOST_CHECK_EQUAL(test[1], testRead[1]);
+	BOOST_CHECK_EQUAL(test[2], testRead[2]);
+	BOOST_CHECK_EQUAL(test[3], testRead[3]);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

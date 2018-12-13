@@ -37,8 +37,6 @@ public:
 		setDefault<SystemTimeProvider>();
 	}
 
-	static constexpr TypeId typeId = "time_provider";
-
 };
 
 #endif /* UAVAP_CORE_TIMEPROVIDER_TIMEPROVIDERFACTORY_H_ */
