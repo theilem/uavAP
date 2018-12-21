@@ -56,8 +56,9 @@ if [ `cat /proc/version | grep -c "ARCH"` -gt 0 ]; then
 fi
 
 #Get Protobuf
-git clone "https://github.com/google/protobuf.git" protobuf_install
-cd protobuf_install
+wget "https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-all-3.6.1.tar.gz"
+tar -xzf protobuf-all-3.6.1.tar.gz
+cd protobuf-3.6.1
 ./autogen.sh
 ./configure CFLAGS="-fPIC" CXXFLAGS="-fPIC"
 make -j$CORES
