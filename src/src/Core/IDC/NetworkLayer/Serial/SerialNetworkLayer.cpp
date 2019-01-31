@@ -26,7 +26,6 @@
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 
-
 std::shared_ptr<INetworkLayer>
 SerialNetworkLayer::create(const boost::property_tree::ptree& config)
 {
@@ -47,8 +46,6 @@ SerialNetworkLayer::configure(const boost::property_tree::ptree& config)
 		SerialNetworkParams params;
 		if (!params.configure(it.second))
 			return false;
-
-
 
 		handler_.emplace(it.first, std::make_shared<SerialHandler>(params));
 	}

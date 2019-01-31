@@ -37,7 +37,8 @@ PluginManager::configure(const boost::property_tree::ptree& config)
 	for (const auto& it : plugins)
 	{
 		auto path = it.second.get_value<std::string>();
-		addPlugin(path);
+		if (!addPlugin(path))
+			APLOG_ERROR << "Plugin cannot be loaded.";
 	}
 	return pm.map();
 }
@@ -49,15 +50,17 @@ PluginManager::addPlugin(const std::string& path)
 
 	if (!handle)
 	{
-		APLOG_ERROR << "Cannot load shared object at: " << path;
+		APLOG_ERROR << "Cannot load shared object at: " << path << ": " << dlerror();
 		return false;
 	}
+	APLOG_TRACE << "Handle found";
 
 	if (!registerCreators(handle))
 	{
 		APLOG_ERROR << "Cannot register creators for shared object at: " << path;
 		return false;
 	}
+	APLOG_TRACE << "Creators registered";
 
 	return true;
 }
@@ -65,8 +68,8 @@ PluginManager::addPlugin(const std::string& path)
 PluginManager::PluginHandle
 PluginManager::loadPlugin(const std::string& path)
 {
-	APLOG_DEBUG << "Opening shared object from: " << path;
-	return dlopen(path.data() , RTLD_NOW);
+	APLOG_TRACE << "Opening shared object from: " << path;
+	return dlopen(path.c_str() , RTLD_NOW);
 }
 
 bool
@@ -75,7 +78,10 @@ PluginManager::registerCreators(PluginHandle handle)
 	void* registerPlugin = dlsym(handle, "register_plugin");
 
 	if (registerPlugin == nullptr)
+	{
+		APLOG_ERROR << "Cannot register creators, 'register_plugin' handle not found";
 		return false;
+	}
 
 	auto func = reinterpret_cast<FunctionPtr>(registerPlugin);
 	func();

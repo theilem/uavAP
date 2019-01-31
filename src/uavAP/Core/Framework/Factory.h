@@ -145,7 +145,16 @@ Factory<Type>::create(const boost::property_tree::ptree& config)
 		{
 			auto plugIt = pluginMap_.find(type);
 			if (plugIt != creatorMap_.end())
-				return plugIt->second(config);
+			{
+				if (plugIt->second)
+					return plugIt->second(config);
+				else
+				{
+					APLOG_ERROR << "Create function in plugin " << type << " not set";
+					throw FactoryInitializationError("Plugin invalid");
+				}
+			}
+
 		}
 		throw InvalidTypeError(
 				"Unknown Type " + type + " in Factory. Plugins are "
@@ -192,6 +201,7 @@ Factory<Type>::registerExternalCreator()
 		APLOG_ERROR << "Same id for different plugin added. Ignore.";
 		return;
 	}
+	APLOG_DEBUG << "Registering creator '" << type << "' for '" << Type::typeId << "'";
 
 	pluginMap_.insert(std::make_pair(type, &SpecificType::create));
 }
