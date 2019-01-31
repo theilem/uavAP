@@ -43,6 +43,7 @@ add_library(uavap_core SHARED ${CORE_SRC})
 
 target_link_libraries(uavap_core 	${BOOST}
 									${PROTOBUF}
+									${REDIS}
 									pthread
 									rt
 									dl									

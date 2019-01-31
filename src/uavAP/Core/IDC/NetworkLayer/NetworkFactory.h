@@ -25,6 +25,8 @@
 
 #ifndef UAVAP_CORE_IDC_NETWORKFACTORY_H_
 #define UAVAP_CORE_IDC_NETWORKFACTORY_H_
+
+#include "uavAP/Core/IDC/NetworkLayer/Redis/RedisNetworkLayer.h"
 #include "uavAP/Core/IDC/NetworkLayer/INetworkLayer.h"
 #include "uavAP/Core/IDC/NetworkLayer/Serial/SerialNetworkLayer.h"
 #include "uavAP/Core/Framework/Factory.h"
@@ -38,6 +40,7 @@ public:
 	NetworkFactory()
 	{
 		addCreator<SerialNetworkLayer>();
+		addCreator<RedisNetworkLayer>();
 	}
 
 };

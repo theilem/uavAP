@@ -82,6 +82,10 @@ else(LINK_STATIC)
 				flint)
 endif(LINK_STATIC)
 
+set(REDIS 	cpp_redis
+			tacopie
+			)
+
 if(NODEBUG)
 	add_definitions(-DNODEBUG)
 endif(NODEBUG)
