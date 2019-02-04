@@ -1,0 +1,7 @@
+{
+	"network":
+	{
+		"type" : "serial",
+		"ports":{}
+	}	
+}

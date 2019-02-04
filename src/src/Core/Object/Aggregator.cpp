@@ -104,3 +104,9 @@ Aggregator::mergeInto(Aggregator& agg)
 	agg.add(container_);
 	container_.clear();
 }
+
+void
+Aggregator::clear()
+{
+	container_.clear();
+}

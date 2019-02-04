@@ -77,6 +77,12 @@ public:
 	void
 	mergeInto(Aggregator& agg);
 
+	/**
+	 * @brief Clear the container. Will destroy all the objects.
+	 */
+	void
+	clear();
+
 private:
 
 	std::vector<std::shared_ptr<IAggregatableObject> > container_;

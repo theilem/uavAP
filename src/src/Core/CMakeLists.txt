@@ -50,7 +50,7 @@ target_link_libraries(uavap_core 	${BOOST}
 									)
 									
 									
-install(TARGETS uavap_core 
+install(TARGETS uavap_core
 		RUNTIME DESTINATION bin
 		LIBRARY DESTINATION lib
 		ARCHIVE DESTINATION lib)
