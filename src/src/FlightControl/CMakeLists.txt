@@ -37,6 +37,7 @@ add_executable(FlightControl    FlightControl.cpp
 
 target_link_libraries(FlightControl	uavap_flight_analysis
 									uavap_flight_control
+									uavap_core_proto
 									)
 
 install(TARGETS FlightControl uavap_flight_control 

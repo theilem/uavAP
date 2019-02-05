@@ -26,7 +26,7 @@
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"
 
 #include "uavAP/Core/Logging/APLogger.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
+#include "uavAP/Core/PropertyMapper/PropertyMapperProto.h"
 
 AirplaneLocalPlannerImpl::AirplaneLocalPlannerImpl() :
 		headingTarget_(0)
@@ -36,7 +36,7 @@ AirplaneLocalPlannerImpl::AirplaneLocalPlannerImpl() :
 bool
 AirplaneLocalPlannerImpl::configure(const boost::property_tree::ptree& config)
 {
-	return PropertyMapper::configure(params_, config);
+	return PropertyMapperProto::configure(params_, config);
 }
 
 bool

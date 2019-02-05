@@ -23,9 +23,9 @@
  *      Author: simonyu
  */
 
-#include "uavAP/Core/LinearAlgebra.h"
+#include "uavAP/Core/LinearAlgebraProto.h"
 #include "uavAP/Core/Logging/APLogger.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
+#include "uavAP/Core/PropertyMapper/PropertyMapperProto.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
 
@@ -58,9 +58,9 @@ RectanguloidCondition::create(const boost::property_tree::ptree& config)
 bool
 RectanguloidCondition::configure(const boost::property_tree::ptree& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapperProto pm(config);
 
-	pm.add("rectanguloid", rectanguloid_, true);
+	pm.addProto("rectanguloid", rectanguloid_, true);
 
 	if (!rectanguloid_.has_center())
 	{

@@ -27,12 +27,6 @@
 
 #include "uavAP/Core/LinearAlgebra.h"
 
-Vector3
-toVector(const PositionENU& pos)
-{
-	return Vector3(pos.east(), pos.north(), pos.up());
-}
-
 Vector2
 rotate2Drad(const Vector2& vec, const double& rad)
 {
@@ -41,14 +35,6 @@ rotate2Drad(const Vector2& vec, const double& rad)
 	double x = vec.x() * c - vec.y() * s;
 	double y = vec.x() * s + vec.y() * c;
 	return Vector2(x, y);
-}
-
-Vector3
-rotate3Drad(const Vector3& vector, const AttitudeEuler& attitude)
-{
-	return Eigen::AngleAxisd(attitude.roll(), Vector3::UnitX())
-			* Eigen::AngleAxisd(attitude.pitch(), Vector3::UnitY())
-			* Eigen::AngleAxisd(attitude.yaw(), Vector3::UnitZ()) * vector;
 }
 
 std::istream&

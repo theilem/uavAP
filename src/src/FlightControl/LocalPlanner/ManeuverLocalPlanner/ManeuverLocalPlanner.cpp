@@ -24,7 +24,7 @@
  */
 #include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/Core/LockTypes.h>
-#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
+#include <uavAP/Core/PropertyMapper/PropertyMapperProto.h>
 #include <uavAP/Core/Scheduler/IScheduler.h>
 #include <uavAP/FlightControl/Controller/IController.h>
 #include <uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h>
@@ -40,9 +40,9 @@ ManeuverLocalPlanner::ManeuverLocalPlanner() :
 bool
 ManeuverLocalPlanner::configure(const boost::property_tree::ptree& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapperProto pm(config);
 	pm.add<unsigned int>("period", period_, false);
-	pm.add("", params_, true);
+	pm.addProto("", params_, true);
 	pm.add<double>("safety_velocity", safetyTarget_.velocity, true);
 	pm.add<double>("safety_yaw_rate", safetyTarget_.yawRate, false);
 	return pm.map();

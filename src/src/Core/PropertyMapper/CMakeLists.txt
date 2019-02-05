@@ -19,4 +19,9 @@
 set(CORE_SRC 	${CORE_SRC}
 				${CMAKE_CURRENT_SOURCE_DIR}/PropertyMapper.cpp
 				PARENT_SCOPE)
+				
+				
 
+set(CORE_PROTO_SRC	${CORE_PROTO_SRC}
+					${CMAKE_CURRENT_SOURCE_DIR}/PropertyMapperProto.cpp
+					PARENT_SCOPE)

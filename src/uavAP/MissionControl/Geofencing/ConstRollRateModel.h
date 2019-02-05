@@ -33,6 +33,7 @@
 #include "uavAP/Core/Frames/VehicleOneFrame.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/MissionControl/Geofencing/IGeofencingModel.h"
+#include <mutex>
 
 class ConstRollRateModel: public IGeofencingModel, public IAggregatableObject
 {

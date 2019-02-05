@@ -37,6 +37,7 @@
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDController.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDCascade.h"
+#include <mutex>
 
 class ManeuverCascade;
 class ISensingActuationIO;

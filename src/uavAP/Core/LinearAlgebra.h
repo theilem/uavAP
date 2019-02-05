@@ -31,8 +31,6 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-#include "uavAP/Core/protobuf/messages/Attitudes.pb.h"
-#include "uavAP/Core/protobuf/messages/Positions.pb.h"
 #include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
 
 using Vector2 = Eigen::Vector2d;
@@ -42,16 +40,6 @@ using EigenLine = Eigen::ParametrizedLine<double, 3>;
 using EigenLine2 = Eigen::ParametrizedLine<double, 2>;
 using EigenHyperplane = Eigen::Hyperplane<double, 3, Eigen::DontAlign>;
 
-class PositionENU;
-
-/**
- * @brief Convert protobuf ENUPosition into Eigen::Vector3d
- * @param position Position in ENU
- * @return Position as Eigen::Vector3d
- */
-Vector3
-toVector(const PositionENU& position);
-
 /**
  * @brief Rotate 2D vector counter clockwise
  * @param vec Vector to be rotated
@@ -60,15 +48,6 @@ toVector(const PositionENU& position);
  */
 Vector2
 rotate2Drad(const Vector2& vec, const double& rad);
-
-/**
- * @brief Rotate 3D vector counter clockwise
- * @param vector Vector to be rotated
- * @param attitude Euler attitude angles in radians
- * @return Rotated vector
- */
-Vector3
-rotate3Drad(const Vector3& vector, const AttitudeEuler& attitude);
 
 /**
  * @brief Caculate the Heading from a Vector3 in ENU

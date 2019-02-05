@@ -18,4 +18,4 @@
 #-------------------------------------------------------------------------------
 add_executable(MemoryCleanup MemoryCleanup)
 
-target_link_libraries(MemoryCleanup  uavap_core)
+target_link_libraries(MemoryCleanup  uavap_core uavap_core_proto)

@@ -23,14 +23,12 @@
  *      Author: mircot
  */
 
-#ifndef UTIL_PROPERTYMAPPER_H_
-#define UTIL_PROPERTYMAPPER_H_
+#ifndef UAVAP_CORE_PROPERTYMAPPER_PROPERTYMAPPER_H_
+#define UAVAP_CORE_PROPERTYMAPPER_PROPERTYMAPPER_H_
 
 #include <boost/property_tree/ptree.hpp>
-#include <google/protobuf/message.h>
 #include <uavAP/Core/EnumMap.hpp>
 #include <uavAP/Core/LinearAlgebra.h>
-#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include "uavAP/Core/Logging/APLogger.h"
 #include <Eigen/Core>
 #include <type_traits>
@@ -81,9 +79,6 @@ public:
 	bool
 	add(const std::string& key, boost::property_tree::ptree& val, bool mandatory);
 
-	bool
-	add(const std::string& key, google::protobuf::Message& val, bool mandatory);
-
 	template <typename Type>
 	bool
 	add(const std::string& key, Eigen::Matrix<Type, Eigen::Dynamic, 1>& val, bool mandatory);
@@ -103,23 +98,18 @@ public:
 	bool
 	map();
 
-	bool
-	configure(google::protobuf::Message& message, bool mandatory);
-
-	static bool
-	configure(google::protobuf::Message& message, const boost::property_tree::ptree& config);
-
 	PropertyMapper
 	getChild(const std::string& key, bool mandatory);
 
 	bool
 	isEmpty() const;
 
-private:
 
-	const boost::property_tree::ptree& p_;
+protected:
 
 	bool mandatoryCheck_;
+	const boost::property_tree::ptree& p_;
+
 
 };
 
@@ -296,4 +286,4 @@ PropertyMapper::addEnumVector(const std::string& key, std::vector<Enum>& e, bool
 	return false;
 }
 
-#endif /* UTIL_PROPERTYMAPPER_H_ */
+#endif /* UAVAP_CORE_PROPERTYMAPPER_PROPERTYMAPPER_H_ */

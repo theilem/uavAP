@@ -31,6 +31,7 @@
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/PropertyMapper/PropertyMapperProto.h"
 
 ManeuverPlanner::ManeuverPlanner() :
 		analysis_(), overrideInterrupted_(false), manualActive_(false), maneuverActive_(false), lastManualActive_(
@@ -55,7 +56,7 @@ ManeuverPlanner::create(const boost::property_tree::ptree& config)
 bool
 ManeuverPlanner::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapperProto pm(config);
 	Configuration freezeControlOutTree;
 	Configuration maneuverSetTree;
 
