@@ -1,0 +1,170 @@
+{
+	"controller": {
+		"type": "rate",
+		"hard_roll_constraint": 45.0,
+		"hard_roll_rate_constraint": 30.0,
+		"hard_pitch_constraint": 30.0,
+		"hard_pitch_rate_constraint": 30.0,
+		"pids": {
+			"climb_angle": {
+				"ff": 0,
+				"imax": 1,
+				"kd": 0,
+				"ki": 0.5,
+				"kp": 2
+			},
+			"pitch": {
+				"ff": 0,
+				"imax": 2,
+				"kd": 0.2,
+				"ki": 0.4,
+				"kp": 2.4
+			},
+			"pitch_rate": {
+				"ff": 1,
+				"imax": 0,
+				"kd": 0,
+				"ki": 0,
+				"kp": 0
+			},
+			"roll": {
+				"ff": 0,
+				"imax": 1,
+				"kd": 0.6,
+				"ki": 0.2,
+				"kp": 3.2
+			},
+			"roll_rate": {
+				"ff": 0.3,
+				"imax": 1,
+				"kd": 0,
+				"ki": 0.5,
+				"kp": 2
+			},
+			"rudder": {
+				"ff": 0,
+				"imax": 0,
+				"kd": 0.3,
+				"ki": 0.0,
+				"kp": 1
+			},
+			"velocity": {
+				"ff": 0,
+				"imax": 10,
+				"kd": 0,
+				"ki": 0.2,
+				"kp": 1
+			}
+		}
+	},
+	"local_planner": {
+		"type": "maneuver",
+		"period": 0,
+		"safety_velocity": 18,
+		"k_altitude": 0.8,
+		"k_convergence": 0.01,
+		"k_yaw_rate": 0.65
+	},
+	"local_frame": {
+		"origin": [
+			367836.57,
+			4435383.06,
+			168
+		],
+		"yaw": 47
+	},
+	"global_planner": {
+		"type": "spline",
+		"tau": 0.6
+	},
+	"mission_planner": {
+		"type": "custom",
+		"use_approach": false,
+		"default_velocity": 50,
+		"default_mission": "validation_mission",
+		"missions": {
+			"simple_mission": {
+				"velocity": 22,
+				"infinite": true,
+				"offset": {
+					"e": 0,
+					"n": 0,
+					"u": 100
+				},
+				"waypoints": [
+					{
+						"e": 200,
+						"n": 100,
+						"u": 0
+					},
+					{
+						"e": 200,
+						"n": -100,
+						"u": 0
+					},
+					{
+						"e": -200,
+						"n": -100,
+						"u": 0
+					},
+					{
+						"e": -200,
+						"n": 100,
+						"u": 0
+					}
+				]
+			},
+			"validation_mission": {
+				"velocity": 50,
+				"infinite": true,
+				"offset": {
+					"e": 0,
+					"n": 0,
+					"u": 200
+				},
+				"waypoints": [
+					{
+						"e": 3000,
+						"n": 1500,
+						"u": 0
+					},
+					{
+						"e": 3000,
+						"n": -1500,
+						"u": 0
+					},
+					{
+						"e": 1500,
+						"n": -1500,
+						"u": 0
+					},
+					{
+						"e": -1500,
+						"n": -1500,
+						"u": 50
+					},
+					{
+						"e": -3000,
+						"n": -1500,
+						"u": 50
+					},
+					{
+						"e": -3000,
+						"n": 1500,
+						"u": 50
+					},
+					{
+						"e": -1500,
+						"n": 1500,
+						"u": 50
+					},
+					{
+						"e": 1500,
+						"n": 1500,
+						"u": 0
+					}
+				]
+			}
+		}
+	}
+}

@@ -17,32 +17,48 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
 /*
- * IFlightPlanner.h
+ * Control.cpp
  *
- *  Created on: Jun 2, 2017
+ *  Created on: Jun 23, 2017
  *      Author: mircot
  */
 
-#ifndef FLIGHTPLANNER_IFLIGHTPLANNER_H_
-#define FLIGHTPLANNER_IFLIGHTPLANNER_H_
+#include <boost/property_tree/json_parser.hpp>
+#include <test/FullAutopilot/AutopilotHelper.h>
+#include "uavAP/Core/Runner/SimpleRunner.h"
+#include "uavAP/Core/Runner/SynchronizedRunner.h"
 
-#include "uavAP/MissionControl/MissionPlanner/Mission.h"
+#include "uavAP/Core/Logging/APLogger.h"
 
-class IGlobalPlanner
+/**
+ * @brief
+ * @param argc
+ * @param argv
+ * @return
+ */
+int
+main(int argc, char** argv)
 {
-public:
+	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
+	APLogger::instance()->setModuleName("Auotpilot");
+	std::string configPath;
+	if (argc == 2)
+	{
+		configPath = argv[1];
+	}
 
-	static constexpr const char* const typeId = "global_planner";
+	AutopilotHelper helper;
+	Aggregator aggregator = helper.createAggregation(configPath);
+	auto sched = aggregator.getOne<IScheduler>();
+	sched->setMainThread();
 
-	virtual
-	~IGlobalPlanner() = default;
+	SimpleRunner runner(aggregator);
+	if (runner.runAllStages())
+	{
+		return 1;
+	}
 
-	virtual void
-	setMission(const Mission& mission) = 0;
+	sched->startSchedule();
 
-	virtual Mission
-	getMission() const = 0;
-
-};
-
-#endif /* FLIGHTPLANNER_IFLIGHTPLANNER_H_ */
+	return 0;
+}

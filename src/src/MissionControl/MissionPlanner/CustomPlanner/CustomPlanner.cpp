@@ -61,7 +61,15 @@ CustomPlanner::configure(const boost::property_tree::ptree& config)
 		missionMap_.insert(std::make_pair(it.first, mis));
 	}
 
-	currentMission_ = missionMap_.find("default");
+	std::string defMission;
+	if (pm.add("default_mission", defMission, false))
+	{
+		currentMission_ = missionMap_.find(defMission);
+	}
+	else
+	{
+		currentMission_ = missionMap_.find("default");
+	}
 
 	return pm.map();
 }

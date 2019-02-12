@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
 
-set(MISSION_CONTROL_SRC ${MISSION_CONTROL_SRC}
+set(MISSION_CONTROL_GEO_SRC ${MISSION_CONTROL_GEO_SRC}
 						${CMAKE_CURRENT_SOURCE_DIR}/ConstRollRateModel.cpp
 						${CMAKE_CURRENT_SOURCE_DIR}/DirectRollModel.cpp
 						${CMAKE_CURRENT_SOURCE_DIR}/Geofencing.cpp

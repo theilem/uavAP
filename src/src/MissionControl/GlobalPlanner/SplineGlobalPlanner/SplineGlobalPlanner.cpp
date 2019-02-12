@@ -26,6 +26,7 @@
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/Orbit.h"
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 #include "uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlanner.h"
+#include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
@@ -62,6 +63,10 @@ SplineGlobalPlanner::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
+		if (localPlanner_.isSet())
+		{
+			break;
+		}
 		if (!ipc_.isSet())
 		{
 			APLOG_ERROR << "GlobalPlanner: IPC missing.";
@@ -87,6 +92,7 @@ void
 SplineGlobalPlanner::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	ipc_.setFromAggregationIfNotSet(agg);
+	localPlanner_.setFromAggregationIfNotSet(agg);
 }
 
 void
@@ -113,7 +119,13 @@ SplineGlobalPlanner::setMission(const Mission& mission)
 		traj = createCatmulRomSplines(mission);
 	}
 
-	APLOG_DEBUG << "Send Trajectory";
+	if (auto lp = localPlanner_.get())
+	{
+		APLOG_DEBUG << "Send Trajectory locally";
+		lp->setTrajectory(traj);
+		return;
+	}
+	APLOG_DEBUG << "Send Trajectory via IPC";
 	auto packet = dp::serialize(traj);
 	trajectoryPublisher_.publish(packet);
 }

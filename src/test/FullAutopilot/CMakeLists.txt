@@ -16,7 +16,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-#set(MISSION_CONTROL_SRC ${MISSION_CONTROL_SRC}
-#						${CMAKE_CURRENT_SOURCE_DIR}/MissionControlDataHandling.cpp
-#						PARENT_SCOPE)
 
+add_executable(autopilot    Autopilot.cpp
+                                )
+
+target_link_libraries(autopilot	uavap_flight_analysis
+									uavap_flight_control
+									uavap_core_proto
+									)
+
+install(TARGETS autopilot  
+		RUNTIME DESTINATION bin/uavAP
+		LIBRARY DESTINATION lib)
+		
+install(FILES autopilot.json DESTINATION config) 
+
+		
+configure_file(${PROJECT_SOURCE_DIR}/test/FullAutopilot/autopilot.json ${CMAKE_BINARY_DIR}/test/FullAutopilot/autopilot.json COPYONLY)

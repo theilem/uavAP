@@ -91,8 +91,8 @@ RatePIDController::run(RunStage stage)
 
 		if (!overrideSubscription_.connected())
 		{
-			APLOG_ERROR << "PIDController: maneuver activation subscription failed";
-			return true;
+			APLOG_WARN << "PIDController: maneuver activation subscription failed";
+//			return true;
 		}
 
 

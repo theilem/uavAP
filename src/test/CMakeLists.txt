@@ -49,6 +49,7 @@ set (TEST_DEPENDENCIES 	boost_system
         		)
         		
 add_subdirectory(Plugin)
+add_subdirectory(FullAutopilot)
 
 
 add_executable (tests EXCLUDE_FROM_ALL ${TEST_SOURCES})

@@ -33,6 +33,7 @@
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 
 class IPC;
+class ILocalPlanner;
 
 class SplineGlobalPlanner: public IGlobalPlanner, public IAggregatableObject, public IRunnableObject
 {
@@ -76,6 +77,7 @@ private:
 	Mission mission_;
 
 	ObjectHandle<IPC> ipc_;
+	ObjectHandle<ILocalPlanner> localPlanner_;
 
 	Publisher trajectoryPublisher_;
 
