@@ -39,7 +39,7 @@
 int
 main(int argc, char** argv)
 {
-	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
+	APLogger::instance()->setLogLevel(LogLevel::ERROR);
 	APLogger::instance()->setModuleName("Auotpilot");
 	std::string configPath;
 	if (argc == 2)
