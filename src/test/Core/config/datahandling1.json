@@ -1,0 +1,7 @@
+{
+	"data_handling":
+	{
+		"target":"flight_control",
+		"period":100
+	}
+}
