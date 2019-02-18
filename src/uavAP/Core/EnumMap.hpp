@@ -110,4 +110,23 @@ findInMap(const std::map<First,Second>& map, const First& arg)
 
 #define ENUMMAP_INIT(e, ...)	const EnumInitializer<e> initializer_##e(__VA_ARGS__)
 
+
+template <class T, typename E>
+struct TypeToEnum {
+};
+
+template <typename E, E VALUE>
+struct EnumToType {};
+
+#define MATCH_TYPE_AND_ENUM(TYPE, ENUM)                 	\
+  template <>                                           	\
+  struct TypeToEnum<TYPE, decltype(ENUM)> {					\
+    static decltype(ENUM) v() { return ENUM; }          	\
+    static constexpr decltype(ENUM) value = ENUM;       	\
+  };                                                    	\
+  template <>                                           	\
+  struct EnumToType<decltype(ENUM), ENUM> {             	\
+    typedef TYPE Type;                                  	\
+  }
+
 #endif /* UAVAP_CORE_ENUMMAP_HPP_ */

@@ -41,6 +41,10 @@ enum class Target
 	API             //!< Forward to API
 };
 
+ENUMMAP_INIT(Target, {{Target::FLIGHT_ANALYSIS, "flight_analysis"}, {Target::FLIGHT_CONTROL,
+		"flight_control"}, {Target::MISSION_CONTROL, "mission_control"}, {Target::COMMUNICATION,
+		"communication"}, {Target::API, "api"}});
+
 /**
  * @brief Content definitions.
  */

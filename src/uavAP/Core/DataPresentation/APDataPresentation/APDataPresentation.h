@@ -79,7 +79,7 @@ public:
 	 * @param config configuration for the data presentation
 	 * @return Shared ptr to a new object
 	 */
-	static std::shared_ptr<IDataPresentation<Content, Target>>
+	static std::shared_ptr<APDataPresentation<Content, Target>>
 	create(const boost::property_tree::ptree& config)
 	{
 		auto dp = std::make_shared<APDataPresentation<Content, Target>>();
