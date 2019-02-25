@@ -43,6 +43,7 @@
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 #include "uavAP/MissionControl/MissionPlanner/Mission.h"
 #include "uavAP/Core/Frames/VehicleOneFrame.h"
+#include "uavAP/FlightAnalysis/WindEstimation/WindInfo.h"
 
 /**
  * Defines how to write the case labels in the switch case of the data presentation.
@@ -73,6 +74,7 @@
 							MAP(SELECT_MANEUVER_SET, std::string, FUNC)										\
 							MAP(SELECT_MISSION, std::string, FUNC)											\
 							MAP(SELECT_INSPECTING_METRICS, InspectingMetricsPair, FUNC)						\
+							MAP(WIND_INFO, WindInfo, FUNC)													\
 
 
 
@@ -94,5 +96,6 @@ MATCH_TYPE_AND_ENUM(AdvancedControl, Content::ADVANCED_CONTROL);
 MATCH_TYPE_AND_ENUM(Override, Content::OVERRIDE);
 MATCH_TYPE_AND_ENUM(std::string, Content::SELECT_MANEUVER_SET);
 MATCH_TYPE_AND_ENUM(InspectingMetricsPair, Content::SELECT_INSPECTING_METRICS);
+MATCH_TYPE_AND_ENUM(WindInfo, Content::WIND_INFO);
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_CONTENTMAPPING_H_ */

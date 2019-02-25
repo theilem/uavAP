@@ -22,6 +22,7 @@
  *  Created on: Aug 2, 2018
  *      Author: mircot
  */
+#include <uavAP/Core/DataHandling/DataHandling.h>
 #include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/Core/LockTypes.h>
 #include <uavAP/Core/PropertyMapper/PropertyMapperProto.h>
@@ -125,6 +126,10 @@ ManeuverLocalPlanner::run(RunStage stage)
 			APLOG_ERROR << "LinearLocalPlanner: IPC missing";
 			return true;
 		}
+		if (!dataHandling_.isSet())
+		{
+			APLOG_DEBUG << "ManeuverLocalPlanner: DataHandling not set. Debugging disabled.";
+		}
 
 		break;
 	}
@@ -155,6 +160,17 @@ ManeuverLocalPlanner::run(RunStage stage)
 		ipc->subscribeOnPacket("override",
 				std::bind(&ManeuverLocalPlanner::onOverridePacket, this, std::placeholders::_1));
 
+		if (auto dh = dataHandling_.get())
+		{
+			dh->addStatusFunction<LocalPlannerStatus>(
+					std::bind(&ManeuverLocalPlanner::getStatus, this));
+			dh->subscribeOnCommand<LocalPlannerParams>(Content::TUNE_LOCAL_PLANNER,
+					std::bind(&ManeuverLocalPlanner::tune, this, std::placeholders::_1));
+			dh->addTriggeredStatusFunction<Trajectory, DataRequest>(
+					std::bind(&ManeuverLocalPlanner::trajectoryRequest, this,
+							std::placeholders::_1), Content::REQUEST_DATA);
+		}
+
 		break;
 	}
 	case RunStage::FINAL:
@@ -176,6 +192,7 @@ ManeuverLocalPlanner::notifyAggregationOnUpdate(const Aggregator& agg)
 	sensing_.setFromAggregationIfNotSet(agg);
 	scheduler_.setFromAggregationIfNotSet(agg);
 	ipc_.setFromAggregationIfNotSet(agg);
+	dataHandling_.setFromAggregationIfNotSet(agg);
 }
 
 void
@@ -427,4 +444,13 @@ ManeuverLocalPlanner::update()
 
 	SensorData data = sensing->getSensorData();
 	createLocalPlan(data.position, data.attitude.z(), data.hasGPSFix, data.sequenceNr);
+}
+
+boost::optional<Trajectory>
+ManeuverLocalPlanner::trajectoryRequest(const DataRequest& request)
+{
+	APLOG_DEBUG << "Called trajectoryRequest with " << (int)request;
+	if (request == DataRequest::TRAJECTORY)
+		return getTrajectory();
+	return boost::none;
 }

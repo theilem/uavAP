@@ -28,7 +28,9 @@
 #ifndef UAVAP_FLIGHTCONTROL_LOCALPLANNER_MANEUVERLOCALPLANNER_MANEUVERLOCALPLANNER_H_
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_MANEUVERLOCALPLANNER_MANEUVERLOCALPLANNER_H_
 
+#include <boost/optional/optional.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/DataPresentation/Content.h>
 
 #include <uavAP/Core/Object/IAggregatableObject.h>
 #include <uavAP/Core/Object/ObjectHandle.h>
@@ -46,6 +48,7 @@ class ISensingActuationIO;
 class IController;
 class IScheduler;
 class IPC;
+class DataHandling;
 
 class ManeuverLocalPlanner: public ILocalPlanner, public IRunnableObject, public IAggregatableObject
 {
@@ -92,6 +95,9 @@ private:
 	ControllerTarget
 	calculateControllerTarget(const Vector3& position, double heading, std::shared_ptr<IPathSection> section);
 
+	boost::optional<Trajectory>
+	trajectoryRequest(const DataRequest& request);
+
 	void
 	onTrajectoryPacket(const Packet& packet);
 
@@ -108,6 +114,7 @@ private:
 	ObjectHandle<IController> controller_;
 	ObjectHandle<IScheduler> scheduler_;
 	ObjectHandle<IPC> ipc_;
+	ObjectHandle<DataHandling> dataHandling_;
 
 	std::mutex paramsMutex_;
 	ManeuverLocalPlannerParams params_;

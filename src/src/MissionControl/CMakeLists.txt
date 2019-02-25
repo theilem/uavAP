@@ -50,9 +50,6 @@ target_link_libraries(MissionControl    uavap_flight_analysis
 										uavap_mission_control_geo
                                         )
                                         
-install(TARGETS uavap_mission_control 
-		RUNTIME DESTINATION bin/uavAP
-		LIBRARY DESTINATION lib)
 		
 install(TARGETS MissionControl uavap_mission_control uavap_mission_control_geo
 		RUNTIME DESTINATION bin/uavAP

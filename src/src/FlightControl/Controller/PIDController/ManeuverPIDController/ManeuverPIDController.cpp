@@ -22,6 +22,7 @@
  *  Created on: Sep 15, 2017
  *      Author: mircot
  */
+#include <uavAP/Core/DataHandling/DataHandling.h>
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/detail/ManeuverCascade.h"
@@ -74,6 +75,10 @@ ManeuverPIDController::run(RunStage stage)
 			APLOG_ERROR << "PIDController: ipc missing";
 			return true;
 		}
+		if (!dataHandling_.isSet())
+		{
+			APLOG_DEBUG << "ManeuverPIDController: DataHandling not set. Debugging disabled.";
+		}
 
 		auto ipc = ipc_.get();
 
@@ -95,6 +100,16 @@ ManeuverPIDController::run(RunStage stage)
 		auto scheduler = scheduler_.get();
 //		scheduler->schedule(std::bind(&ManeuverPIDController::calculateControl, this),
 //				Milliseconds(0), Milliseconds(10));
+
+
+
+		if (auto dh = dataHandling_.get())
+		{
+			dh->addStatusFunction<std::map<PIDs, PIDStatus>>(
+					std::bind(&IPIDCascade::getPIDStatus, pidCascade_));
+			dh->subscribeOnCommand<PIDTuning>(Content::TUNE_PID,
+					std::bind(&ManeuverPIDController::tunePID, this, std::placeholders::_1));
+		}
 
 		break;
 	}
@@ -131,6 +146,7 @@ ManeuverPIDController::notifyAggregationOnUpdate(const Aggregator& agg)
 	sensAct_.setFromAggregationIfNotSet(agg);
 	scheduler_.setFromAggregationIfNotSet(agg);
 	ipc_.setFromAggregationIfNotSet(agg);
+	dataHandling_.setFromAggregationIfNotSet(agg);
 }
 
 std::shared_ptr<IPIDCascade>
@@ -181,4 +197,10 @@ ManeuverPIDController::onOverridePacket(const Packet& packet)
 	auto override = dp::deserialize<Override>(packet);
 	LockGuard lock(controllerTargetMutex_);
 	pidCascade_->setManeuverOverride(override);
+}
+
+void
+ManeuverPIDController::tunePID(const PIDTuning& params)
+{
+	pidCascade_->tunePID(static_cast<PIDs>(params.pid), params.params);
 }

@@ -78,6 +78,8 @@ struct CubicSpline: public IPathSection
 
 		if (u < 0)
 			u = 0;
+		if (u > 1)
+			u = 1;
 		closestU_ = u;
 	}
 

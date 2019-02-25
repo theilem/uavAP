@@ -29,7 +29,10 @@ DataHandling::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 	pm.add("period", period_, true);
-	pm.addEnum("target", target_, true);
+
+	pm.add("target", targetName_, true);
+	target_ = EnumMap<Target>::convert(targetName_);
+
 	return pm.map();
 }
 
@@ -66,7 +69,7 @@ DataHandling::run(RunStage stage)
 			return true;
 		}
 
-		std::string publication = EnumMap<Target>::convert(target_) + "_to_comm";
+		std::string publication = targetName_ + "_to_comm";
 		APLOG_DEBUG << "Publishing to " << publication;
 		auto ipc = ipc_.get();
 
@@ -78,7 +81,7 @@ DataHandling::run(RunStage stage)
 		auto scheduler = scheduler_.get();
 		scheduler->schedule(std::bind(&DataHandling::sendStatus, this), Milliseconds(0), period_);
 
-		std::string subscription = "comm_to_" + EnumMap<Target>::convert(target_);
+		std::string subscription = "comm_to_" + targetName_;
 		auto ipc = ipc_.get();
 
 		ipc->subscribeOnPacket(subscription,

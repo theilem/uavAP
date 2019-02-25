@@ -34,6 +34,7 @@
 enum class Target
 {
 	INVALID,        //!< INVALID
+	BROADCAST,		//!< Broadcast to everyone
 	FLIGHT_ANALYSIS, //!< Forward to FlightAnalysis
 	FLIGHT_CONTROL, //!< Forward to FlightControl
 	MISSION_CONTROL, //!< Forward to MissionControl
@@ -41,7 +42,7 @@ enum class Target
 	API             //!< Forward to API
 };
 
-ENUMMAP_INIT(Target, {{Target::FLIGHT_ANALYSIS, "flight_analysis"}, {Target::FLIGHT_CONTROL,
+ENUMMAP_INIT(Target, {{Target::BROADCAST, "broadcast"}, {Target::FLIGHT_ANALYSIS, "flight_analysis"}, {Target::FLIGHT_CONTROL,
 		"flight_control"}, {Target::MISSION_CONTROL, "mission_control"}, {Target::COMMUNICATION,
 		"communication"}, {Target::API, "api"}});
 
@@ -76,7 +77,8 @@ enum class Content
 	SELECT_MISSION,         	//!< SELECT_MISSION
 
 	//GS to FlightAnalysis
-	SELECT_INSPECTING_METRICS 	//!< SELECT_INSPECTING_METRICS
+	SELECT_INSPECTING_METRICS, 	//!< SELECT_INSPECTING_METRICS
+	WIND_INFO
 };
 
 /**

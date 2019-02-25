@@ -22,7 +22,9 @@
  *  Created on: Jul 26, 2017
  *      Author: mircot
  */
+#include <uavAP/Core/DataHandling/DataHandling.h>
 #include <uavAP/Core/LockTypes.h>
+#include <uavAP/FlightControl/Controller/AdvancedControl.h>
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h"
@@ -35,6 +37,7 @@ void
 SensingActuationIO::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	ipc_.setFromAggregationIfNotSet(agg);
+	dataHandling_.setFromAggregationIfNotSet(agg);
 }
 
 bool
@@ -50,9 +53,14 @@ SensingActuationIO::run(RunStage stage)
 			APLOG_ERROR << "SensingActuationIO: IPC is missing.";
 			return true;
 		}
+		if (!dataHandling_.isSet())
+		{
+			APLOG_DEBUG << "SensingActuationIO: DataHandling not set. Debugging disabled.";
+		}
 		auto ipc = ipc_.get();
 
 		actuationPublisher_ = ipc->publishOnSharedMemory<ControllerOutput>("actuation");
+		advancedControlPublisher_ = ipc->publishOnSharedMemory<AdvancedControl>("advanced_control");
 
 		break;
 	}
@@ -65,6 +73,13 @@ SensingActuationIO::run(RunStage stage)
 		{
 			APLOG_ERROR << "SensorData in shared memory missing. Cannot continue.";
 			return true;
+		}
+		if (auto dh = dataHandling_.get())
+		{
+			dh->addStatusFunction<SensorData>(
+					std::bind(&SensingActuationIO::getSensorData, this));
+			dh->subscribeOnCommand<AdvancedControl>(Content::ADVANCED_CONTROL,
+					std::bind(&SensingActuationIO::onAdvancedControl, this, std::placeholders::_1));
 		}
 		break;
 	}
@@ -108,4 +123,15 @@ SensingActuationIO::getSensorData() const
 {
 	SharedLockGuard lock(mutex_);
 	return sensorData_;
+}
+
+void
+SensingActuationIO::onAdvancedControl(const AdvancedControl& control)
+{
+	APLOG_TRACE << "Camber Control: " << EnumMap<CamberControl>::convert(control.camberSelection);
+	APLOG_TRACE << "Special Control: " << EnumMap<SpecialControl>::convert(control.specialSelection);
+	APLOG_TRACE << "Throw Control: " << EnumMap<ThrowsControl>::convert(control.throwsSelection);
+	APLOG_TRACE << "Camber Value: " << control.camberValue;
+	APLOG_TRACE << "Special Value: " << control.specialValue;
+	advancedControlPublisher_.publish(control);
 }

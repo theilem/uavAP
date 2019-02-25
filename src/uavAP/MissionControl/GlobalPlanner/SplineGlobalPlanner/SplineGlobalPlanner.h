@@ -69,6 +69,7 @@ private:
 	Trajectory
 	createCatmulRomSplines(const Mission& mission);
 
+	double orbitRadius_;
 	double tau_;
 	uint8_t inclusionLength_;
 	bool smoothenZ_;

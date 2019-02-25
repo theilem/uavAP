@@ -26,6 +26,7 @@
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_MANEUVERPIDCONTROLLER_MANEUVERPIDCONTROLLER_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_MANEUVERPIDCONTROLLER_MANEUVERPIDCONTROLLER_H_
 
+#include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/SensorData.h"
@@ -43,6 +44,7 @@ class ManeuverCascade;
 class ISensingActuationIO;
 class IScheduler;
 class IPC;
+class DataHandling;
 class Packet;
 
 class ManeuverPIDController: public IPIDController, public IAggregatableObject, public IRunnableObject
@@ -82,8 +84,12 @@ private:
 	void
 	onOverridePacket(const Packet& packet);
 
+	void
+	tunePID(const PIDTuning& params);
+
 	ObjectHandle<ISensingActuationIO> sensAct_;
 	ObjectHandle<IScheduler> scheduler_;
+	ObjectHandle<DataHandling> dataHandling_;
 	ObjectHandle<IPC> ipc_;
 
 	std::mutex controllerTargetMutex_;
