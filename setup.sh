@@ -112,7 +112,7 @@ sudo make install -j$CORES
 cd ${SETUP_ROOT_DIR}/tmp
 
 #Redis
-git clone "https://github.com/cpp-redis/cpp_redis.git"
+git clone --recurse-submodules "https://github.com/cpp-redis/cpp_redis.git"
 cd cpp_redis
 mkdir bld
 cd bld
