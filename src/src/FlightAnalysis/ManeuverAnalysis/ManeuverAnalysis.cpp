@@ -190,11 +190,18 @@ ManeuverAnalysis::collectStateInit(const SensorData& data, const std::string& ma
 		collectAdvancedControl(data, CollectStates::INIT);
 		break;
 	}
+	case Maneuvers::SEQUENCE:
+	{
+		collectSequence(data, CollectStates::INIT);
+		break;
+	}
 	default:
 	{
 		break;
 	}
 	}
+
+	logFile_ << "collectStateNormal:" << std::endl;
 
 	collectInit_ = true;
 }
@@ -220,6 +227,11 @@ ManeuverAnalysis::collectStateNormal(const SensorData& data)
 	case Maneuvers::ADVANCED_CONTROL:
 	{
 		collectAdvancedControl(data, CollectStates::NORMAL);
+		break;
+	}
+	case Maneuvers::SEQUENCE:
+	{
+		collectSequence(data, CollectStates::NORMAL);
 		break;
 	}
 	default:
@@ -254,6 +266,11 @@ ManeuverAnalysis::collectStateFinal(const SensorData& data)
 		collectAdvancedControl(data, CollectStates::FINAL);
 		break;
 	}
+	case Maneuvers::SEQUENCE:
+	{
+		collectSequence(data, CollectStates::FINAL);
+		break;
+	}
 	default:
 	{
 		break;
@@ -279,8 +296,6 @@ ManeuverAnalysis::collectGeofencing(const SensorData& data, const CollectStates&
 		logFile_ << data.position.x() << "	" << data.position.y() << "	" << data.attitude.x() << "	"
 				<< data.attitude.z() << "	" << data.groundSpeed << "	" << data.angularRate.x()
 				<< std::endl;
-
-		logFile_ << "collectStateNormal:" << std::endl;
 
 		break;
 	}
@@ -321,8 +336,6 @@ ManeuverAnalysis::collectAdvancedControl(const SensorData& data, const CollectSt
 				<< data.attitude.z() << "	" << data.batteryVoltage << "	" << data.batteryCurrent
 				<< "	" << data.throttle << "	" << data.rpm << std::endl;
 
-		logFile_ << "collectStateNormal:" << std::endl;
-
 		break;
 	}
 	case CollectStates::NORMAL:
@@ -336,6 +349,46 @@ ManeuverAnalysis::collectAdvancedControl(const SensorData& data, const CollectSt
 	}
 	case CollectStates::FINAL:
 	{
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
+}
+
+void
+ManeuverAnalysis::collectSequence(const SensorData& data, const CollectStates& states)
+{
+	switch (states)
+	{
+	case CollectStates::INIT:
+	{
+		logFile_ << "Position E (m)" << "	" << "Position N (m)" << "	" << "Roll Angle (Rad)" << "	"
+				<< "Yaw Angle (Rad)" << "	" << "Ground Speed (m/s)" << "	" << "Roll Rate (Rad/s)"
+				<< "	" << "Time Stamp (YYYY-mmm-DD HH:MM:SS.fffffffff)" << std::endl;
+
+		logFile_ << data.position.x() << "	" << data.position.y() << "	" << data.attitude.x() << "	"
+				<< data.attitude.z() << "	" << data.groundSpeed << "	" << data.angularRate.x()
+				<< "	" << to_simple_string(data.timestamp) << std::endl;
+
+		break;
+	}
+	case CollectStates::NORMAL:
+	{
+		logFile_ << data.position.x() << "	" << data.position.y() << "	" << data.attitude.x() << "	"
+				<< data.attitude.z() << "	" << data.groundSpeed << "	" << data.angularRate.x()
+				<< "	" << to_simple_string(data.timestamp) << std::endl;
+
+		break;
+	}
+	case CollectStates::FINAL:
+	{
+		logFile_ << data.position.x() << "	" << data.position.y() << "	" << data.attitude.x() << "	"
+				<< data.attitude.z() << "	" << data.groundSpeed << "	" << data.angularRate.x()
+				<< "	" << to_simple_string(data.timestamp) << std::endl;
+
 		break;
 	}
 	default:

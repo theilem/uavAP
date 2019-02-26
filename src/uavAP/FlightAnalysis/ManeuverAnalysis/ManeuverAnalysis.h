@@ -43,6 +43,7 @@ enum class Maneuvers
 	INVALID,
 	GEOFENCING,
 	ADVANCED_CONTROL,
+	SEQUENCE,
 	NUM_MANEUVERS
 };
 
@@ -55,8 +56,10 @@ enum class CollectStates
 	NUM_STATES
 };
 
-ENUMMAP_INIT(Maneuvers, { {Maneuvers::GEOFENCING, "geofencing"},
-		{Maneuvers::ADVANCED_CONTROL, "advanced_control"} });
+ENUMMAP_INIT(Maneuvers,
+		{{Maneuvers::GEOFENCING, "geofencing"},
+		{Maneuvers::ADVANCED_CONTROL, "advanced_control"},
+		{Maneuvers::SEQUENCE, "sequence"}});
 
 class ManeuverAnalysis: public IAggregatableObject, public IRunnableObject
 {
@@ -100,6 +103,9 @@ private:
 
 	void
 	collectAdvancedControl(const SensorData& data, const CollectStates& states);
+
+	void
+	collectSequence(const SensorData& data, const CollectStates& states);
 
 	Subscription sensorDataSubscription_;
 	Subscription maneuverAnalysisSubscription_;
