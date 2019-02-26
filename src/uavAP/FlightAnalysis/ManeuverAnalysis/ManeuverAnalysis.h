@@ -87,6 +87,9 @@ private:
 	onSensorData(const SensorData& data);
 
 	void
+	logSensorData();
+
+	void
 	onManeuverAnalysisStatus(const Packet& status);
 
 	void
@@ -111,6 +114,7 @@ private:
 	Subscription maneuverAnalysisSubscription_;
 
 	ObjectHandle<IPC> ipcHandle_;
+	ObjectHandle<IScheduler> scheduler_;
 
 	ManeuverAnalysisStatus analysis_;
 	std::mutex maneuverAnalysisStatusMutex_;
@@ -121,6 +125,11 @@ private:
 
 	std::string logPath_;
 	std::ofstream logFile_;
+
+	SensorData sensorData_;
+	std::mutex sensorDataMutex_;
+
+	unsigned int loggingPeriod_;
 };
 
 #endif /* UAVAP_FLIGHTANALYSIS_MANEUVERANALYSIS_MANEUVERANALYSIS_H_ */

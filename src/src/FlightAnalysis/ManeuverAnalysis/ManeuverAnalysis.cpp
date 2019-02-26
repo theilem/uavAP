@@ -30,7 +30,7 @@
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 
 ManeuverAnalysis::ManeuverAnalysis() :
-		collectInit_(false), counter_(0), maneuver_(Maneuvers::GEOFENCING)
+		collectInit_(false), counter_(0), maneuver_(Maneuvers::GEOFENCING), loggingPeriod_(0)
 {
 }
 
@@ -54,6 +54,7 @@ ManeuverAnalysis::configure(const boost::property_tree::ptree& config)
 	std::string maneuver;
 
 	pm.add("log_path", logPath_, true);
+	pm.add<unsigned int>("logging_period", loggingPeriod_, false);
 
 	if (pm.add("maneuver", maneuver, false))
 	{
@@ -76,6 +77,11 @@ ManeuverAnalysis::run(RunStage stage)
 		if (!ipcHandle_.isSet())
 		{
 			APLOG_ERROR << "IPC Missing.";
+			return true;
+		}
+		if (!scheduler_.isSet())
+		{
+			APLOG_ERROR << "Scheduler Missing.";
 			return true;
 		}
 
@@ -104,6 +110,14 @@ ManeuverAnalysis::run(RunStage stage)
 			return true;
 		}
 
+		if (loggingPeriod_ > 0)
+		{
+			auto scheduler = scheduler_.get();
+
+			scheduler->schedule(std::bind(&ManeuverAnalysis::logSensorData, this),
+					Milliseconds(0), Milliseconds(loggingPeriod_));
+		}
+
 		break;
 	}
 	default:
@@ -119,26 +133,39 @@ void
 ManeuverAnalysis::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	ipcHandle_.setFromAggregationIfNotSet(agg);
+	scheduler_.setFromAggregationIfNotSet(agg);
 }
 
 void
 ManeuverAnalysis::onSensorData(const SensorData& data)
 {
+	std::unique_lock<std::mutex> lock(sensorDataMutex_);
+	sensorData_ = data;
+	lock.unlock();
+
+	if (loggingPeriod_ == 0)
+		logSensorData();
+}
+
+void
+ManeuverAnalysis::logSensorData()
+{
 	std::unique_lock<std::mutex> lock(maneuverAnalysisStatusMutex_);
 	ManeuverAnalysisStatus analysis = analysis_;
 	lock.unlock();
 
+	std::unique_lock<std::mutex> lockSensorData(sensorDataMutex_);
 	if (analysis.analysis && !collectInit_)
 	{
-		collectStateInit(data, analysis.maneuver, analysis_.interrupted);
+		collectStateInit(sensorData_, analysis.maneuver, analysis_.interrupted);
 	}
 	else if (analysis.analysis && collectInit_)
 	{
-		collectStateNormal(data);
+		collectStateNormal(sensorData_);
 	}
 	else if (!analysis.analysis && collectInit_)
 	{
-		collectStateFinal(data);
+		collectStateFinal(sensorData_);
 	}
 }
 
