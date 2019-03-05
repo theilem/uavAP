@@ -1,11 +1,9 @@
 # Ignoring Build Folder
 [Bb]ld*/
 
+# Ignoring generated protobuff headers
 *.pb.h
 *.pb.cc
 
 # Ignoring Qt User Profiles
 *.user
-*.pb.cc
-*.pb.h
-

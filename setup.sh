@@ -87,9 +87,9 @@ sudo make install -j$CORES
 cd ${SETUP_ROOT_DIR}/tmp
 
 #MPFR
-wget "https://www.mpfr.org/mpfr-current/mpfr-4.0.1.tar.xz"
-tar -xf mpfr-4.0.1.tar.xz
-cd mpfr-4.0.1
+wget "https://www.mpfr.org/mpfr-current/mpfr-4.0.2.tar.xz"
+tar -xf mpfr-4.0.2.tar.xz
+cd mpfr-4.0.2
 ./configure
 make -j$CORES
 sudo make install -j$CORES
