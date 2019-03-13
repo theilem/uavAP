@@ -34,6 +34,12 @@ public:
 	~IDataFilter() = default;
 
 	virtual void
+	initialize(double initialValue) = 0;
+
+	virtual void
+	tune(double parameter) = 0;
+
+	virtual void
 	filterData(double rawData) = 0;
 
 	virtual double

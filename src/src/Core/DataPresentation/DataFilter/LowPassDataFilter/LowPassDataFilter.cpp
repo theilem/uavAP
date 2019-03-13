@@ -23,17 +23,52 @@
  *      Author: simonyu
  */
 
+#include "uavAP/Core/Logging/APLogger.h"
+#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/DataPresentation/DataFilter/LowPassDataFilter/LowPassDataFilter.h"
+
+LowPassDataFilter::LowPassDataFilter() :
+		filteredData_(0), alpha_(1.0)
+{
+}
 
 LowPassDataFilter::LowPassDataFilter(double initialValue, double alpha) :
 		filteredData_(initialValue), alpha_(alpha)
 {
 }
 
+std::shared_ptr<LowPassDataFilter>
+LowPassDataFilter::create(const boost::property_tree::ptree& config)
+{
+	auto lowPassDataFilter = std::make_shared<LowPassDataFilter>();
+
+	if (!lowPassDataFilter->configure(config))
+	{
+		APLOG_ERROR << "LowPassDataFilter: Failed to Load Config.";
+	}
+
+	return lowPassDataFilter;
+}
+
+bool
+LowPassDataFilter::configure(const boost::property_tree::ptree& config)
+{
+	PropertyMapper pm(config);
+
+	pm.add<double>("alpha", alpha_, true);
+
+	return pm.map();
+}
+
 void
-LowPassDataFilter::initialize(double initialValue, double alpha)
+LowPassDataFilter::initialize(double initialValue)
 {
 	filteredData_ = initialValue;
+}
+
+void
+LowPassDataFilter::tune(double alpha)
+{
 	alpha_ = alpha;
 }
 
@@ -47,10 +82,4 @@ double
 LowPassDataFilter::getFilteredData()
 {
 	return filteredData_;
-}
-
-void
-LowPassDataFilter::setAlpha(double alpha)
-{
-	alpha_ = alpha;
 }

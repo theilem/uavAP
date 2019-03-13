@@ -22,4 +22,5 @@ set(MISSION_CONTROL_SRC ${MISSION_CONTROL_SRC}
 						${CMAKE_CURRENT_SOURCE_DIR}/Condition/DurationCondition.cpp
 						${CMAKE_CURRENT_SOURCE_DIR}/Condition/SteadyStateCondition.cpp
 						${CMAKE_CURRENT_SOURCE_DIR}/Condition/RectanguloidCondition.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/Condition/SensorDataCondition.cpp
 						PARENT_SCOPE)
