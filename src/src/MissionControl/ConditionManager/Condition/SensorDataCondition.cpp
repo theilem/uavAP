@@ -23,6 +23,7 @@
  *      Author: simonyu
  */
 
+#include "uavAP/Core/LinearAlgebra.h"
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/SensorDataCondition.h"
@@ -110,210 +111,226 @@ SensorDataCondition::onSensorData(const SensorData& data)
 	{
 	case Sensor::POSITION_X:
 	{
+		double filteredData = filterSensorData(data.position.x());
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.position.x()));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.position.x()));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::POSITION_Y:
 	{
+		double filteredData = filterSensorData(data.position.y());
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.position.y()));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.position.y()));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::POSITION_Z:
 	{
+		double filteredData = filterSensorData(data.position.z());
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.position.z()));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.position.z()));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::VELOCITY_X:
 	{
+		double filteredData = filterSensorData(data.velocity.x());
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.velocity.x()));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.velocity.x()));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::VELOCITY_Y:
 	{
+		double filteredData = filterSensorData(data.velocity.y());
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.velocity.y()));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.velocity.y()));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::VELOCITY_Z:
 	{
+		double filteredData = filterSensorData(data.velocity.z());
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.velocity.z()));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.velocity.z()));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::ACCELERATION_X:
 	{
+		double filteredData = filterSensorData(data.acceleration.x());
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.acceleration.x()));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.acceleration.x()));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::ACCELERATION_Y:
 	{
+		double filteredData = filterSensorData(data.acceleration.y());
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.acceleration.y()));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.acceleration.y()));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::ACCELERATION_Z:
 	{
+		double filteredData = filterSensorData(data.acceleration.z());
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.acceleration.z()));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.acceleration.z()));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::ATTITUDE_X:
 	{
+		double filteredDataDegrees = radToDeg(filterSensorData(data.attitude.x()));
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.attitude.x()));
+
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredDataDegrees);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.attitude.x()));
+			evaluation = evaluateSensorData<double>(filteredDataDegrees);
 		}
 
 		break;
 	}
 	case Sensor::ATTITUDE_Y:
 	{
+		double filteredDataDegrees = radToDeg(filterSensorData(data.attitude.y()));
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.attitude.y()));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredDataDegrees);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.attitude.y()));
+			evaluation = evaluateSensorData<double>(filteredDataDegrees);
 		}
 
 		break;
 	}
 	case Sensor::ATTITUDE_Z:
 	{
+		double filteredDataDegrees = radToDeg(filterSensorData(data.attitude.z()));
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.attitude.z()));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredDataDegrees);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.attitude.z()));
+			evaluation = evaluateSensorData<double>(filteredDataDegrees);
 		}
 
 		break;
 	}
 	case Sensor::ANGULAR_RATE_X:
 	{
+		double filteredDataDegrees = radToDeg(filterSensorData(data.angularRate.x()));
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.angularRate.x()));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredDataDegrees);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.angularRate.x()));
+			evaluation = evaluateSensorData<double>(filteredDataDegrees);
 		}
 
 		break;
 	}
 	case Sensor::ANGULAR_RATE_Y:
 	{
+		double filteredDataDegrees = radToDeg(filterSensorData(data.angularRate.y()));
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.angularRate.y()));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredDataDegrees);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.angularRate.y()));
+			evaluation = evaluateSensorData<double>(filteredDataDegrees);
 		}
 
 		break;
 	}
 	case Sensor::ANGULAR_RATE_Z:
 	{
+		double filteredDataDegrees = radToDeg(filterSensorData(data.angularRate.z()));
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.angularRate.z()));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredDataDegrees);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.angularRate.z()));
+			evaluation = evaluateSensorData<double>(filteredDataDegrees);
 		}
 
 		break;
@@ -346,123 +363,135 @@ SensorDataCondition::onSensorData(const SensorData& data)
 	}
 	case Sensor::AIR_SPEED:
 	{
+		double filteredData = filterSensorData(data.airSpeed);
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(filterSensorData(data.airSpeed));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.airSpeed));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::GROUND_SPEED:
 	{
+		double filteredData = filterSensorData(data.groundSpeed);
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.groundSpeed));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.groundSpeed));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::ANGLE_OF_ATTACK:
 	{
+		double filteredData = filterSensorData(data.angleOfAttack);
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.angleOfAttack));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.angleOfAttack));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::PROPULSION_POWER:
 	{
+		double filteredData = filterSensorData(data.propulsionPower);
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.propulsionPower));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.propulsionPower));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::CONSUMED_ENERGY:
 	{
+		double filteredData = filterSensorData(data.consumedEnergy);
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.consumedEnergy));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.consumedEnergy));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::BATTERY_VOLTAGE:
 	{
+		double filteredData = filterSensorData(data.batteryVoltage);
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.batteryVoltage));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.batteryVoltage));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::BATTERY_CURRENT:
 	{
+		double filteredData = filterSensorData(data.batteryCurrent);
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(
-					filterSensorData(data.batteryCurrent));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.batteryCurrent));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::THROTTLE:
 	{
+		double filteredData = filterSensorData(data.throttle);
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(filterSensorData(data.throttle));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.throttle));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
 	}
 	case Sensor::RPM:
 	{
+		double filteredData = filterSensorData(data.rpm);
+
 		if (useTolerance_)
 		{
-			evaluation = evaluateSensorDataWithTolerance<double>(filterSensorData(data.rpm));
+			evaluation = evaluateSensorDataWithTolerance<double>(filteredData);
 		}
 		else
 		{
-			evaluation = evaluateSensorData<double>(filterSensorData(data.rpm));
+			evaluation = evaluateSensorData<double>(filteredData);
 		}
 
 		break;
