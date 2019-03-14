@@ -29,6 +29,7 @@
 #include "uavAP/Core/Framework/Factory.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/DurationCondition.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/SteadyStateCondition.h"
+#include "uavAP/MissionControl/ConditionManager/Condition/SensorDataCondition.h"
 
 class ConditionFactory: public Factory<ICondition>
 {
@@ -38,6 +39,7 @@ public:
 	{
 		addCreator<DurationCondition>();
 		addCreator<SteadyStateCondition>();
+		addCreator<SensorDataCondition>();
 	}
 };
 
