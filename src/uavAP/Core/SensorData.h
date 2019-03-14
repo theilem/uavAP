@@ -109,7 +109,7 @@ struct SensorData
 	Vector3 acceleration; 	//!< Body Frame
 	Vector3 attitude; 		//!< [X: Roll, Y: Pitch, Z: Yaw]
 	Vector3 angularRate; 	//!< [X: Roll, Y: Pitch, Z: Yaw]
-	TimePoint timestamp; 	//!< Timestamp of this sensor data struct
+	TimePoint timestamp; 	//!< Timestamp of sensor data, Format: [2019-Mar-13 18:21:21.354043]
 	uint32_t sequenceNr; 	//!< Sequence number of the struct
 	bool hasGPSFix; 		//!< Shows whether the GPS has a fix
 	bool autopilotActive; 	//!< Shows if the autopilot is active, always true in simulation
