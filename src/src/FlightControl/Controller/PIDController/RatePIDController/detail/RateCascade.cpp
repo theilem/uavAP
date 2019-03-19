@@ -292,10 +292,11 @@ RateCascade::evaluate()
 
 	controlEnv_.evaluate();
 
-	APLOG_ERROR << "rollTargetConstraint_: " << rollTargetConstraint_->getValue();
-	APLOG_ERROR << "rollRateTargetConstraint_: " << rollRateTargetConstraint_->getValue();
-	APLOG_ERROR << "pitchTargetConstraint_: " << pitchTargetConstraint_->getValue();
-	APLOG_ERROR << "pitchRateTargetConstraint_: " << pitchRateTargetConstraint_->getValue();
+	APLOG_ERROR << "rollTargetConstraint_: " << radToDeg(rollTargetConstraint_->getValue());
+	APLOG_ERROR << "rollRateTargetConstraint_: " << radToDeg(rollRateTargetConstraint_->getValue());
+	APLOG_ERROR << "pitchTargetConstraint_: " << radToDeg(pitchTargetConstraint_->getValue());
+	APLOG_ERROR << "pitchRateTargetConstraint_: " << radToDeg(pitchRateTargetConstraint_->getValue());
+	APLOG_ERROR << "";
 }
 
 void
