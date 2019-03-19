@@ -342,7 +342,7 @@ RateCascade::setManeuverOverride(const Override& override)
 	{
 		if (auto constraint = findInMap(constraints_, it.first))
 		{
-			constraint->second->overrideContraintValue(degToRad(it.second));
+			constraint->second->overrideContraintValue(it.second);
 		}
 	}
 }
