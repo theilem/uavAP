@@ -118,6 +118,11 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 	outputs_.insert(std::make_pair(ControllerOutputs::THROTTLE, throttleOut));
 	outputs_.insert(std::make_pair(ControllerOutputs::YAW, yawOut));
 
+	constraints_.insert(std::make_pair(ControllerConstraints::ROLL, rollTargetConstraint_));
+	constraints_.insert(std::make_pair(ControllerConstraints::ROLL_RATE, rollRateTargetConstraint_));
+	constraints_.insert(std::make_pair(ControllerConstraints::PITCH, pitchTargetConstraint_));
+	constraints_.insert(std::make_pair(ControllerConstraints::PITCH_RATE, pitchRateTargetConstraint_));
+
 	pids_.insert(std::make_pair(PIDs::ROLL, rollPID));
 	pids_.insert(std::make_pair(PIDs::ROLL_RATE, rollRatePID));
 	pids_.insert(std::make_pair(PIDs::CLIMB_ANGLE, climbAnglePID));
@@ -286,26 +291,57 @@ RateCascade::evaluate()
 	rollTarget_ = -atan2(bigV * controllerTarget_->yawRate, 9.81);
 
 	controlEnv_.evaluate();
+
+	APLOG_ERROR << "rollTargetConstraint_: " << rollTargetConstraint_->getValue();
+	APLOG_ERROR << "rollRateTargetConstraint_: " << rollRateTargetConstraint_->getValue();
+	APLOG_ERROR << "pitchTargetConstraint_: " << pitchTargetConstraint_->getValue();
+	APLOG_ERROR << "pitchRateTargetConstraint_: " << pitchRateTargetConstraint_->getValue();
 }
 
 void
 RateCascade::setManeuverOverride(const Override& override)
 {
 	for (auto& it : pids_)
+	{
 		it.second->disableOverride();
+	}
 
 	for (auto& it : outputs_)
+	{
 		it.second->disableOverride();
+	}
+
+	for (auto& it : constraints_)
+	{
+		it.second->disableOverride();
+	}
+
+	if (override.isEmpty())
+	{
+		return;
+	}
 
 	for (const auto& it : override.pid)
 	{
 		if (auto pid = findInMap(pids_, it.first))
+		{
 			pid->second->overrideTarget(it.second);
+		}
 	}
 
 	for (const auto& it : override.output)
 	{
 		if (auto out = findInMap(outputs_, it.first))
+		{
 			out->second->overrideOutput(it.second);
+		}
+	}
+
+	for (const auto& it : override.constraint)
+	{
+		if (auto constraint = findInMap(constraints_, it.first))
+		{
+			constraint->second->overrideContraintValue(it.second);
+		}
 	}
 }

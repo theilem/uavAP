@@ -29,6 +29,7 @@
 #include <boost/property_tree/ptree.hpp>
 
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
+#include "uavAP/FlightControl/Controller/ControllerConstraint.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/LocalPlanner/LocalPlannerTargets.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
@@ -36,12 +37,7 @@
 
 enum class CustomOverrideIDs
 {
-	INVALID,
-	CUSTOM_1,
-	CUSTOM_2,
-	CUSTOM_3,
-	CUSTOM_4,
-	NUM_CUSTOM
+	INVALID, CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, NUM_CUSTOM
 };
 
 enum class OverrideGroup
@@ -51,6 +47,7 @@ enum class OverrideGroup
 	CONTROLLER_TARGETS,
 	PIDS,
 	CONTROLLER_OUTPUTS,
+	CONTROLLER_CONSTRAINTS,
 	CUSTOM,
 	NUM_GROUP
 };
@@ -61,7 +58,8 @@ ENUMMAP_INIT(CustomOverrideIDs, { {CustomOverrideIDs::CUSTOM_1, "custom_1"},
 
 ENUMMAP_INIT(OverrideGroup, { {OverrideGroup::LOCAL_PLANNER, "local_planner"},
 		{OverrideGroup::CONTROLLER_TARGETS, "controller_targets"}, {OverrideGroup::PIDS, "pids"},
-		{OverrideGroup::CONTROLLER_OUTPUTS, "controller_outputs"}, {OverrideGroup::CUSTOM,
+		{OverrideGroup::CONTROLLER_OUTPUTS, "controller_outputs"},
+		{OverrideGroup::CONTROLLER_CONSTRAINTS, "controller_constraints"}, {OverrideGroup::CUSTOM,
 		"custom"} });
 
 struct Override
@@ -70,12 +68,14 @@ struct Override
 	using ControllerTargetOverrides = std::map<ControllerTargets, double>;
 	using PIDOverrides = std::map<PIDs, double>;
 	using ControllerOutputOverrides = std::map<ControllerOutputs, double>;
+	using ControllerConstraintOverrides = std::map<ControllerConstraints, double>;
 	using CustomOverrides = std::map<CustomOverrideIDs, double>;
 
 	LocalPlannerOverrides localPlanner;
 	ControllerTargetOverrides controllerTarget;
 	PIDOverrides pid;
 	ControllerOutputOverrides output;
+	ControllerConstraintOverrides constraint;
 	CustomOverrides custom;
 
 	bool
@@ -98,6 +98,7 @@ serialize(Archive& ar, Override& t)
 	ar & t.controllerTarget;
 	ar & t.pid;
 	ar & t.output;
+	ar & t.constraint;
 	ar & t.custom;
 }
 } /* dp */

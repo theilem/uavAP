@@ -99,6 +99,13 @@ Override::configure(const boost::property_tree::ptree& config)
 
 			break;
 		}
+		case OverrideGroup::CONTROLLER_CONSTRAINTS:
+		{
+			mapOverrideValue<ControllerConstraintOverrides, ControllerConstraints>(pm, override,
+					overrideMember, constraint);
+
+			break;
+		}
 		case OverrideGroup::CUSTOM:
 		{
 			mapOverrideValue<CustomOverrides, CustomOverrideIDs>(pm, override, overrideMember,
@@ -127,7 +134,7 @@ bool
 Override::isEmpty() const
 {
 	return localPlanner.empty() && controllerTarget.empty() && pid.empty() && output.empty()
-			&& custom.empty();
+			&& constraint.empty() && custom.empty();
 }
 
 void
@@ -161,5 +168,17 @@ degreeToRadian(Override& override)
 		pair->second *= M_PI / 180.0;
 
 	if (auto pair = findInMap(override.pid, PIDs::YAW_RATE))
+		pair->second *= M_PI / 180.0;
+
+	if (auto pair = findInMap(override.constraint, ControllerConstraints::ROLL))
+		pair->second *= M_PI / 180.0;
+
+	if (auto pair = findInMap(override.constraint, ControllerConstraints::ROLL_RATE))
+		pair->second *= M_PI / 180.0;
+
+	if (auto pair = findInMap(override.constraint, ControllerConstraints::PITCH))
+		pair->second *= M_PI / 180.0;
+
+	if (auto pair = findInMap(override.constraint, ControllerConstraints::PITCH_RATE))
 		pair->second *= M_PI / 180.0;
 }

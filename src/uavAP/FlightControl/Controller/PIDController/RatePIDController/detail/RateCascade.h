@@ -26,7 +26,8 @@
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_RATEPIDCONTROLLER_DETAIL_RATECASCADE_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_RATEPIDCONTROLLER_DETAIL_RATECASCADE_H_
 
-#include <uavAP/MissionControl/ManeuverPlanner/Override.h>
+#include "uavAP/FlightControl/Controller/ControllerConstraint.h"
+#include "uavAP/MissionControl/ManeuverPlanner/Override.h"
 #include "uavAP/Core/LinearAlgebra.h"
 #include "uavAP/FlightControl/Controller/ControlElements/ControlEnvironment.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDCascade.h"
@@ -80,6 +81,7 @@ private:
 
 	std::map<PIDs, std::shared_ptr<Control::PID>> pids_;
 	std::map<ControllerOutputs, std::shared_ptr<Control::Output>> outputs_;
+	std::map<ControllerConstraints, std::shared_ptr<Control::Constraint>> constraints_;
 
 	std::shared_ptr<Control::Constraint> rollTargetConstraint_;
 	std::shared_ptr<Control::Constraint> rollRateTargetConstraint_;
