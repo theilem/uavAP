@@ -291,12 +291,6 @@ RateCascade::evaluate()
 	rollTarget_ = -atan2(bigV * controllerTarget_->yawRate, 9.81);
 
 	controlEnv_.evaluate();
-
-	APLOG_ERROR << "rollTargetConstraint_: " << radToDeg(rollTargetConstraint_->getValue());
-	APLOG_ERROR << "rollRateTargetConstraint_: " << radToDeg(rollRateTargetConstraint_->getValue());
-	APLOG_ERROR << "pitchTargetConstraint_: " << radToDeg(pitchTargetConstraint_->getValue());
-	APLOG_ERROR << "pitchRateTargetConstraint_: " << radToDeg(pitchRateTargetConstraint_->getValue());
-	APLOG_ERROR << "";
 }
 
 void
