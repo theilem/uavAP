@@ -41,30 +41,85 @@ Constant::getValue()
 }
 
 Constraint::Constraint(Element in, double min, double max) :
-		in_(in), min_(min), max_(max)
+		in_(in), override_(false), overrideMin_(0), overrideMax_(0)
 {
+	setHardContraintValue(min, max);
+	setContraintValue(min, max);
+}
+
+Constraint::Constraint(Element in, double min, double max, double hardMin, double hardMax) :
+		in_(in), override_(false), overrideMin_(0), overrideMax_(0)
+{
+	setHardContraintValue(hardMin, hardMax);
+	setContraintValue(min, max);
 }
 
 double
 Constraint::getValue()
 {
 	double val = in_->getValue();
-	double ret = val > max_ ? max_ : val < min_ ? min_ : val;
+	double ret = 0;
+
+	if (override_)
+	{
+		ret = val > overrideMax_ ? overrideMax_ : val < overrideMin_ ? overrideMin_ : val;
+	}
+	else
+	{
+		ret = val > max_ ? max_ : val < min_ ? min_ : val;
+	}
+
 	return std::isnan(ret) ? 0 : ret;
+}
+
+void
+Constraint::setHardContraintValue(double hardMinmax)
+{
+	hardMax_ = hardMinmax;
+	hardMin_ = -hardMinmax;
+}
+
+void
+Constraint::setHardContraintValue(double hardMin, double hardMax)
+{
+	hardMax_ = hardMax;
+	hardMin_ = -hardMin;
 }
 
 void
 Constraint::setContraintValue(double minmax)
 {
-	max_ = minmax;
-	min_ = -minmax;
+	max_ = minmax > hardMax_ ? hardMax_ : minmax;
+	min_ = -minmax < hardMin_ ? hardMin_ : -minmax;
 }
 
 void
 Constraint::setContraintValue(double min, double max)
 {
-	max_ = max;
-	min_ = -min;
+	max_ = max > hardMax_ ? hardMax_ : max;
+	min_ = -min < hardMin_ ? hardMin_ : -min;
+}
+
+void
+Constraint::overrideContraintValue(double overrideMinmax)
+{
+	overrideMax_ = overrideMinmax > hardMax_ ? hardMax_ : overrideMinmax;
+	overrideMin_ = -overrideMinmax < hardMin_ ? hardMin_ : -overrideMinmax;
+	override_ = true;
+}
+
+void
+Constraint::overrideContraintValue(double overrideMin, double overrideMax)
+{
+	overrideMax_ = overrideMax > hardMax_ ? hardMax_ : overrideMax;
+	overrideMin_ = -overrideMin < hardMin_ ? hardMin_ : -overrideMin;
+	override_ = true;
+}
+
+void
+Constraint::disableOverride()
+{
+	override_ = false;
 }
 
 Difference::Difference(Element in1, Element in2) :

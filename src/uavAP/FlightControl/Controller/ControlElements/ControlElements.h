@@ -51,8 +51,16 @@ public:
 
 	Constraint(Element in, double min, double max);
 
+	Constraint(Element in, double min, double max, double hardMin, double hardMax);
+
 	double
 	getValue() override;
+
+	void
+	setHardContraintValue(double hardMinmax);
+
+	void
+	setHardContraintValue(double hardMin, double hardMax);
 
 	void
 	setContraintValue(double minmax);
@@ -60,12 +68,25 @@ public:
 	void
 	setContraintValue(double min, double max);
 
+	void
+	overrideContraintValue(double overrideMinmax);
+
+	void
+	overrideContraintValue(double overrideMin, double overrideMax);
+
+	void
+	disableOverride();
+
 private:
 
 	Element in_;
 	double min_;
 	double max_;
-
+	double hardMin_;
+	double hardMax_;
+	bool override_;
+	double overrideMin_;
+	double overrideMax_;
 };
 
 class Difference: public IControlElement
