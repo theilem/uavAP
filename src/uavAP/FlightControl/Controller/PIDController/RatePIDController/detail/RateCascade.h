@@ -90,6 +90,10 @@ private:
 	double hardRollRateConstraint_;
 	double hardPitchConstraint_;
 	double hardPitchRateConstraint_;
+	double rollConstraint_;
+	double rollRateConstraint_;
+	double pitchConstraint_;
+	double pitchRateConstraint_;
 	double beta_;
 	double rollTarget_;
 };

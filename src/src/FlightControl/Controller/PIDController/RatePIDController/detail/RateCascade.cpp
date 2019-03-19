@@ -25,6 +25,7 @@
 
 #include <map>
 
+#include "uavAP/Core/LinearAlgebra.h"
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/SensorData.h"
@@ -36,6 +37,7 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 		ControllerTarget* target, ControllerOutput* output) :
 		sensorData_(sensorData), controllerTarget_(target), controlEnv_(&sensorData->timestamp), hardRollConstraint_(
 				30.0), hardRollRateConstraint_(30.0), hardPitchConstraint_(30.0), hardPitchRateConstraint_(
+				30.0), rollConstraint_(30.0), rollRateConstraint_(30.0), pitchConstraint_(30.0), pitchRateConstraint_(
 				30.0), rollTarget_(0)
 {
 	APLOG_TRACE << "Create RateCascade";
@@ -47,11 +49,14 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 	auto rollTarget = controlEnv_.addInput(&rollTarget_);
 	auto rollInput = controlEnv_.addInput(&sensorData->attitude[0]);
 	auto rollRateInput = controlEnv_.addInput(&sensorData->angularRate[0]);
-	rollTargetConstraint_ = controlEnv_.addConstraint(rollTarget,
-				-hardRollConstraint_ * M_PI / 180.0, hardRollConstraint_ * M_PI / 180.0);
-	auto rollPID = controlEnv_.addPID(rollTargetConstraint_, rollInput, rollRateInput, defaultParams);
-	rollRateTargetConstraint_ = controlEnv_.addConstraint(rollPID,
-			-hardRollRateConstraint_ * M_PI / 180.0, hardRollRateConstraint_ * M_PI / 180.0);
+	rollTargetConstraint_ = controlEnv_.addConstraint(rollTarget, degToRad(-rollConstraint_),
+			degToRad(rollConstraint_), degToRad(-hardRollConstraint_),
+			degToRad(hardRollConstraint_));
+	auto rollPID = controlEnv_.addPID(rollTargetConstraint_, rollInput, rollRateInput,
+			defaultParams);
+	rollRateTargetConstraint_ = controlEnv_.addConstraint(rollPID, degToRad(-rollRateConstraint_),
+			degToRad(rollRateConstraint_), degToRad(-hardRollRateConstraint_),
+			degToRad(hardRollRateConstraint_));
 
 	/* Roll Rate Control */
 	auto rollRatePID = controlEnv_.addPID(rollRateTargetConstraint_, rollRateInput, defaultParams);
@@ -66,17 +71,21 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 	auto climbAngle = controlEnv_.addDifference(pitchInput, aoaInput);
 	auto climbAngleTarget = controlEnv_.addInput(&target->climbAngle);
 	auto climbAnglePID = controlEnv_.addPID(climbAngleTarget, climbAngle, defaultParams);
-	pitchTargetConstraint_ = controlEnv_.addConstraint(climbAnglePID,
-			-hardPitchConstraint_ * M_PI / 180.0, hardPitchConstraint_ * M_PI / 180.0);
+	pitchTargetConstraint_ = controlEnv_.addConstraint(climbAnglePID, degToRad(-pitchConstraint_),
+			degToRad(pitchConstraint_), degToRad(-hardPitchConstraint_),
+			degToRad(hardPitchConstraint_));
 
 	/* Pitch Control */
 	auto pitchRateInput = controlEnv_.addInput(&sensorData->angularRate[1]);
-	auto pitchPID = controlEnv_.addPID(pitchTargetConstraint_, pitchInput, pitchRateInput, defaultParams);
+	auto pitchPID = controlEnv_.addPID(pitchTargetConstraint_, pitchInput, pitchRateInput,
+			defaultParams);
 	pitchRateTargetConstraint_ = controlEnv_.addConstraint(pitchPID,
-			-hardPitchRateConstraint_ * M_PI / 180.0, hardPitchRateConstraint_ * M_PI / 180.0);
+			degToRad(-pitchRateConstraint_), degToRad(pitchRateConstraint_),
+			degToRad(-hardPitchRateConstraint_), degToRad(hardPitchRateConstraint_));
 
 	/* Pitch Rate Control */
-	auto pitchRatePID = controlEnv_.addPID(pitchRateTargetConstraint_, pitchRateInput, defaultParams);
+	auto pitchRatePID = controlEnv_.addPID(pitchRateTargetConstraint_, pitchRateInput,
+			defaultParams);
 
 	/* Pitch Output */
 	auto pitchOutputConstraint = controlEnv_.addConstraint(pitchRatePID, -1, 1);
@@ -109,7 +118,6 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 	outputs_.insert(std::make_pair(ControllerOutputs::THROTTLE, throttleOut));
 	outputs_.insert(std::make_pair(ControllerOutputs::YAW, yawOut));
 
-
 	pids_.insert(std::make_pair(PIDs::ROLL, rollPID));
 	pids_.insert(std::make_pair(PIDs::ROLL_RATE, rollRatePID));
 	pids_.insert(std::make_pair(PIDs::CLIMB_ANGLE, climbAnglePID));
@@ -124,18 +132,29 @@ bool
 RateCascade::configure(const boost::property_tree::ptree& config)
 {
 	PropertyMapper pm(config);
+
 	pm.add<double>("hard_roll_constraint", hardRollConstraint_, false);
 	pm.add<double>("hard_pitch_constraint", hardPitchConstraint_, false);
 	pm.add<double>("hard_roll_rate_constraint", hardRollRateConstraint_, false);
 	pm.add<double>("hard_pitch_rate_constraint", hardPitchRateConstraint_, false);
 
+	pm.add<double>("roll_constraint", rollConstraint_, false);
+	pm.add<double>("pitch_constraint", pitchConstraint_, false);
+	pm.add<double>("roll_rate_constraint", rollRateConstraint_, false);
+	pm.add<double>("pitch_rate_constraint", pitchRateConstraint_, false);
+
 	boost::property_tree::ptree pidConfig;
 	pm.add("pids", pidConfig, false);
 
-	rollTargetConstraint_->setContraintValue(hardRollConstraint_ * M_PI / 180.0);
-	pitchTargetConstraint_->setContraintValue(hardPitchConstraint_ * M_PI / 180.0);
-	rollRateTargetConstraint_->setContraintValue(hardRollRateConstraint_ * M_PI / 180.0);
-	pitchRateTargetConstraint_->setContraintValue(hardPitchRateConstraint_ * M_PI / 180.0);
+	rollTargetConstraint_->setHardContraintValue(degToRad(hardRollConstraint_));
+	pitchTargetConstraint_->setHardContraintValue(degToRad(hardPitchConstraint_));
+	rollRateTargetConstraint_->setHardContraintValue(degToRad(hardRollRateConstraint_));
+	pitchRateTargetConstraint_->setHardContraintValue(degToRad(hardPitchRateConstraint_));
+
+	rollTargetConstraint_->setContraintValue(degToRad(rollConstraint_));
+	pitchTargetConstraint_->setContraintValue(degToRad(pitchConstraint_));
+	rollRateTargetConstraint_->setContraintValue(degToRad(rollRateConstraint_));
+	pitchRateTargetConstraint_->setContraintValue(degToRad(pitchRateConstraint_));
 
 	Control::PID::Parameters params;
 	for (auto it : pidConfig)
