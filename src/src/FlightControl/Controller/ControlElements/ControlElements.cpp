@@ -83,7 +83,7 @@ void
 Constraint::setHardContraintValue(double hardMin, double hardMax)
 {
 	hardMax_ = hardMax;
-	hardMin_ = -hardMin;
+	hardMin_ = hardMin;
 }
 
 void
@@ -97,7 +97,7 @@ void
 Constraint::setContraintValue(double min, double max)
 {
 	max_ = max > hardMax_ ? hardMax_ : max;
-	min_ = -min < hardMin_ ? hardMin_ : -min;
+	min_ = min < hardMin_ ? hardMin_ : min;
 }
 
 void
@@ -112,7 +112,7 @@ void
 Constraint::overrideContraintValue(double overrideMin, double overrideMax)
 {
 	overrideMax_ = overrideMax > hardMax_ ? hardMax_ : overrideMax;
-	overrideMin_ = -overrideMin < hardMin_ ? hardMin_ : -overrideMin;
+	overrideMin_ = overrideMin < hardMin_ ? hardMin_ : overrideMin;
 	override_ = true;
 }
 
