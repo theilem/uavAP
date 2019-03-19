@@ -72,6 +72,9 @@ public:
 	std::shared_ptr<Constraint>
 	addConstraint(Element in, double min, double max);
 
+	std::shared_ptr<Constraint>
+	addConstraint(Element in, double min, double max, double hardMin, double hardMax);
+
 	std::shared_ptr<PID>
 	addPID(Element target, Element current, const PID::Parameters& params);
 

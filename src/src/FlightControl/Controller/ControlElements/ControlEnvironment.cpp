@@ -119,6 +119,12 @@ ControlEnvironment::addConstraint(Element in, double min, double max)
 	return std::make_shared<Constraint>(in, min, max);
 }
 
+std::shared_ptr<Constraint>
+ControlEnvironment::addConstraint(Element in, double min, double max, double hardMin, double hardMax)
+{
+	return std::make_shared<Constraint>(in, min, max, hardMin, hardMax);
+}
+
 std::shared_ptr<PID>
 ControlEnvironment::addPID(Element target, Element current, const PID::Parameters& params)
 {
