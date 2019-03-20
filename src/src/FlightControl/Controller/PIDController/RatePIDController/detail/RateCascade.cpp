@@ -37,8 +37,9 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 		ControllerTarget* target, ControllerOutput* output) :
 		sensorData_(sensorData), controllerTarget_(target), controlEnv_(&sensorData->timestamp), hardRollConstraint_(
 				30.0), hardRollRateConstraint_(30.0), hardPitchConstraint_(30.0), hardPitchRateConstraint_(
-				30.0), rollConstraint_(30.0), rollRateConstraint_(30.0), pitchConstraint_(30.0), pitchRateConstraint_(
-				30.0), rollTarget_(0)
+				30.0), rollConstraint_(30.0), rollRateConstraint_(30.0), rollOutConstraint_(1.0), pitchConstraint_(
+				30.0), pitchRateConstraint_(30.0), pitchOutConstraint_(1.0), yawOutConstraint_(1.0), throttleOutConstraint_(
+				1.0), rollTarget_(0)
 {
 	APLOG_TRACE << "Create RateCascade";
 
@@ -62,8 +63,8 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 	auto rollRatePID = controlEnv_.addPID(rollRateTargetConstraint_, rollRateInput, defaultParams);
 
 	/* Roll Output */
-	auto rollOutputConstraint = controlEnv_.addConstraint(rollRatePID, -1, 1);
-	auto rollOut = controlEnv_.addOutput(rollOutputConstraint, &output->rollOutput);
+	rollOutputConstraint_ = controlEnv_.addConstraint(rollRatePID, -1, 1);
+	auto rollOut = controlEnv_.addOutput(rollOutputConstraint_, &output->rollOutput);
 
 	/* Climb Angle Control*/
 	auto aoaInput = controlEnv_.addInput(&sensorData->angleOfAttack);
@@ -88,8 +89,8 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 			defaultParams);
 
 	/* Pitch Output */
-	auto pitchOutputConstraint = controlEnv_.addConstraint(pitchRatePID, -1, 1);
-	auto pitchOut = controlEnv_.addOutput(pitchOutputConstraint, &output->pitchOutput);
+	pitchOutputConstraint_ = controlEnv_.addConstraint(pitchRatePID, -1, 1);
+	auto pitchOut = controlEnv_.addOutput(pitchOutputConstraint_, &output->pitchOutput);
 
 	/* Velocity Control */
 	auto velocityInput = controlEnv_.addInput(&sensorData->airSpeed);
@@ -101,8 +102,8 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 	/* Throttle Output */
 	auto velocityOffset = controlEnv_.addConstant(1);
 	auto velocityDifference = controlEnv_.addDifference(velocityPID, velocityOffset);
-	auto velocityOutputConstraint = controlEnv_.addConstraint(velocityDifference, -1, 1);
-	auto throttleOut = controlEnv_.addOutput(velocityOutputConstraint, &output->throttleOutput);
+	throttleOutputConstraint_ = controlEnv_.addConstraint(velocityDifference, -1, 1);
+	auto throttleOut = controlEnv_.addOutput(throttleOutputConstraint_, &output->throttleOutput);
 
 	/* Rudder Output */
 	auto rudderBeta = controlEnv_.addInput(&beta_);
@@ -110,8 +111,8 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 	auto rudderPID = controlEnv_.addPID(rudderTarget, rudderBeta, defaultParams);
 	auto invertedRudder = controlEnv_.addGain(rudderPID, -1);
 
-	auto yawOutputConstraint = controlEnv_.addConstraint(invertedRudder, -1, 1);
-	auto yawOut = controlEnv_.addOutput(yawOutputConstraint, &output->yawOutput);
+	yawOutputConstraint_ = controlEnv_.addConstraint(invertedRudder, -1, 1);
+	auto yawOut = controlEnv_.addOutput(yawOutputConstraint_, &output->yawOutput);
 
 	outputs_.insert(std::make_pair(ControllerOutputs::ROLL, rollOut));
 	outputs_.insert(std::make_pair(ControllerOutputs::PITCH, pitchOut));
@@ -119,9 +120,17 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 	outputs_.insert(std::make_pair(ControllerOutputs::YAW, yawOut));
 
 	constraints_.insert(std::make_pair(ControllerConstraints::ROLL, rollTargetConstraint_));
-	constraints_.insert(std::make_pair(ControllerConstraints::ROLL_RATE, rollRateTargetConstraint_));
+	constraints_.insert(
+			std::make_pair(ControllerConstraints::ROLL_RATE, rollRateTargetConstraint_));
+	constraints_.insert(std::make_pair(ControllerConstraints::ROLL_OUTPUT, rollOutputConstraint_));
 	constraints_.insert(std::make_pair(ControllerConstraints::PITCH, pitchTargetConstraint_));
-	constraints_.insert(std::make_pair(ControllerConstraints::PITCH_RATE, pitchRateTargetConstraint_));
+	constraints_.insert(
+			std::make_pair(ControllerConstraints::PITCH_RATE, pitchRateTargetConstraint_));
+	constraints_.insert(
+			std::make_pair(ControllerConstraints::PITCH_OUTPUT, pitchOutputConstraint_));
+	constraints_.insert(std::make_pair(ControllerConstraints::YAW_OUTPUT, yawOutputConstraint_));
+	constraints_.insert(
+			std::make_pair(ControllerConstraints::THROTTLE_OUTPUT, throttleOutputConstraint_));
 
 	pids_.insert(std::make_pair(PIDs::ROLL, rollPID));
 	pids_.insert(std::make_pair(PIDs::ROLL_RATE, rollRatePID));

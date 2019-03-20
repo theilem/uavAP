@@ -85,8 +85,12 @@ private:
 
 	std::shared_ptr<Control::Constraint> rollTargetConstraint_;
 	std::shared_ptr<Control::Constraint> rollRateTargetConstraint_;
+	std::shared_ptr<Control::Constraint> rollOutputConstraint_;
 	std::shared_ptr<Control::Constraint> pitchTargetConstraint_;
 	std::shared_ptr<Control::Constraint> pitchRateTargetConstraint_;
+	std::shared_ptr<Control::Constraint> pitchOutputConstraint_;
+	std::shared_ptr<Control::Constraint> yawOutputConstraint_;
+	std::shared_ptr<Control::Constraint> throttleOutputConstraint_;
 
 	double hardRollConstraint_;
 	double hardRollRateConstraint_;
@@ -94,8 +98,12 @@ private:
 	double hardPitchRateConstraint_;
 	double rollConstraint_;
 	double rollRateConstraint_;
+	double rollOutConstraint_;
 	double pitchConstraint_;
 	double pitchRateConstraint_;
+	double pitchOutConstraint_;
+	double yawOutConstraint_;
+	double throttleOutConstraint_;
 	double beta_;
 	double rollTarget_;
 };
