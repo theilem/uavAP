@@ -128,8 +128,8 @@ private:
 	AdvancedControl advancedControl_;
 	mutable std::mutex advancedControlMutex_;
 
-	ManeuverAnalysisStatus analysis_;
-	mutable std::mutex analysisMutex_;
+	ManeuverAnalysisStatus maneuverAnalysis_;
+	mutable std::mutex maneuverAnalysisMutex_;
 
 	ControllerOutput controllerOutput_;
 	mutable std::mutex controllerOutputMutex_;

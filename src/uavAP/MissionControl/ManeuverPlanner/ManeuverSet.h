@@ -39,7 +39,8 @@ struct Maneuver
 	Override override;
 	AdvancedControl advancedControl;
 	std::shared_ptr<ICondition> condition;
-	bool analysis;
+	bool analyze_maneuver;
+	bool analyze_trim;
 
 	bool
 	configure(const boost::property_tree::ptree& config)
@@ -51,7 +52,8 @@ struct Maneuver
 		pm.add<Override>("override", override, true);
 		pm.add("condition", conditionTree, true);
 		pm.add<AdvancedControl>("advanced_control", advancedControl, false);
-		pm.add<bool>("analysis", analysis, false);
+		pm.add<bool>("analyze_maneuver", analyze_maneuver, false);
+		pm.add<bool>("analyze_trim", analyze_trim, false);
 
 		condition = factory.create(conditionTree);
 

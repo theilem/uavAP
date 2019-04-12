@@ -33,9 +33,9 @@
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 
 ManeuverPlanner::ManeuverPlanner() :
-		analysis_(), overrideInterrupted_(false), manualActive_(false), maneuverActive_(false), lastManualActive_(
-				false), lastManeuverActive_(false), manualRestart_(false), maneuverRestart_(false), enableControlOutFreezing_(
-				false), overrideSeqNr_(0)
+		maneuverAnalysis_(), overrideInterrupted_(false), manualActive_(false), maneuverActive_(
+				false), lastManualActive_(false), lastManeuverActive_(false), manualRestart_(false), maneuverRestart_(
+				false), enableControlOutFreezing_(false), overrideSeqNr_(0)
 {
 }
 
@@ -194,11 +194,11 @@ ManeuverPlanner::run(RunStage stage)
 	}
 	case RunStage::FINAL:
 	{
-		std::unique_lock<std::mutex> analysisLock(analysisMutex_);
-		ManeuverAnalysisStatus analysis = analysis_;
-		analysisLock.unlock();
+		std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
+		ManeuverAnalysisStatus maneuverAnalysis = maneuverAnalysis_;
+		maneuverAnalysisLock.unlock();
 
-		maneuverAnalysisPublisher_.publish(dp::serialize(analysis));
+		maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
 
 		break;
 	}
@@ -353,13 +353,13 @@ ManeuverPlanner::startOverride()
 		Override override = override_;
 		overrideLock.unlock();
 
-		std::unique_lock<std::mutex> analysisLock(analysisMutex_);
-		analysis_.reset();
-		ManeuverAnalysisStatus analysis = analysis_;
-		analysisLock.unlock();
+		std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
+		maneuverAnalysis_.reset();
+		ManeuverAnalysisStatus maneuverAnalysis = maneuverAnalysis_;
+		maneuverAnalysisLock.unlock();
 
 		overridePublisher_.publish(dp::serialize(override));
-		maneuverAnalysisPublisher_.publish(dp::serialize(analysis));
+		maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
 
 		std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
 		overrideSeqNr_++;
@@ -401,14 +401,14 @@ ManeuverPlanner::stopOverride()
 	AdvancedControl advancedControl = advancedControl_;
 	advancedControlLock.unlock();
 
-	std::unique_lock<std::mutex> analysisLock(analysisMutex_);
-	analysis_.reset();
-	ManeuverAnalysisStatus analysis = analysis_;
-	analysisLock.unlock();
+	std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
+	maneuverAnalysis_.reset();
+	ManeuverAnalysisStatus maneuverAnalysis = maneuverAnalysis_;
+	maneuverAnalysisLock.unlock();
 
 	overridePublisher_.publish(dp::serialize(override));
 	advancedControlPublisher_.publish(advancedControl);
-	maneuverAnalysisPublisher_.publish(dp::serialize(analysis));
+	maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
 
 	std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
 	overrideSeqNr_++;
@@ -499,16 +499,16 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 	APLOG_TRACE << "Maneuver Camber Value: " << advancedControl.camberValue;
 	APLOG_TRACE << "Maneuver Special Value: " << advancedControl.specialValue;
 
-	std::unique_lock<std::mutex> analysisLock(analysisMutex_);
-	analysis_.maneuver = maneuverSet_;
-	analysis_.analysis = currentManeuver->analysis;
-	analysis_.interrupted = overrideInterrupted_;
-	ManeuverAnalysisStatus analysis = analysis_;
-	analysisLock.unlock();
+	std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
+	maneuverAnalysis_.maneuver = maneuverSet_;
+	maneuverAnalysis_.analysis = currentManeuver->analyze_maneuver;
+	maneuverAnalysis_.interrupted = overrideInterrupted_;
+	ManeuverAnalysisStatus maneuverAnalysis = maneuverAnalysis_;
+	maneuverAnalysisLock.unlock();
 
 	overridePublisher_.publish(dp::serialize(override));
 	advancedControlPublisher_.publish(advancedControl);
-	maneuverAnalysisPublisher_.publish(dp::serialize(analysis));
+	maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
 
 	std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
 	overrideSeqNr_++;
@@ -552,12 +552,12 @@ ManeuverPlanner::deactivateManeuverOverride()
 		conditionManager->deactivateCondition(currentManeuver->condition);
 	}
 
-	std::unique_lock<std::mutex> analysisLock(analysisMutex_);
-	analysis_.analysis = false;
-	ManeuverAnalysisStatus analysis = analysis_;
-	analysisLock.unlock();
+	std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
+	maneuverAnalysis_.analysis = false;
+	ManeuverAnalysisStatus maneuverAnalysis = maneuverAnalysis_;
+	maneuverAnalysisLock.unlock();
 
-	maneuverAnalysisPublisher_.publish(dp::serialize(analysis));
+	maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
 }
 
 void

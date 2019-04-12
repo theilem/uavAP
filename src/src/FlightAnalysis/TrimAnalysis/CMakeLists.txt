@@ -16,28 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-set(FLIGHT_ANALYSIS_SRC)
-
-add_subdirectory (StateAnalysis)
-add_subdirectory (ManeuverAnalysis)
-add_subdirectory (DataHandling)
-add_subdirectory (TrimAnalysis)
-
-add_library(uavap_flight_analysis SHARED ${FLIGHT_ANALYSIS_SRC})
-
-target_link_libraries(uavap_flight_analysis uavap_core
-											uavap_mission_control
-											)
-
-add_executable(FlightAnalysis	FlightAnalysis.cpp
-								)
-
-target_link_libraries(FlightAnalysis 	uavap_core
-										uavap_flight_analysis
-										uavap_mission_control
-										)
-
-install(TARGETS FlightAnalysis uavap_flight_analysis
-		RUNTIME DESTINATION bin/uavAP
-		LIBRARY DESTINATION lib)
-		
+set(FLIGHT_ANALYSIS_SRC		${FLIGHT_ANALYSIS_SRC}
+							${CMAKE_CURRENT_SOURCE_DIR}/TrimAnalysis.cpp
+							PARENT_SCOPE)
