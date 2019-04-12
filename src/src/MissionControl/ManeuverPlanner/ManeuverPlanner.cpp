@@ -169,6 +169,15 @@ ManeuverPlanner::run(RunStage stage)
 			return true;
 		}
 
+		controllerOutputTrimSubscription_ = ipc->subscribeOnPacket("controller_output_trim",
+				std::bind(&ManeuverPlanner::onControllerOutputTrimPacket, this, std::placeholders::_1));
+
+		if (!controllerOutputTrimSubscription_.connected())
+		{
+			APLOG_DEBUG << "ManeuverPlanner: Controller Output Trim Subscription Missing.";
+			return true;
+		}
+
 		advancedControlSubscription_ = ipc->subscribeOnSharedMemory<AdvancedControl>(
 				"advanced_control",
 				std::bind(&ManeuverPlanner::onAdvancedControl, this, std::placeholders::_1));
@@ -662,6 +671,16 @@ ManeuverPlanner::onControllerOutputPacket(const Packet& packet)
 
 	std::unique_lock<std::mutex> lock(controllerOutputMutex_);
 	controllerOutput_ = controllerOutput;
+	lock.unlock();
+}
+
+void
+ManeuverPlanner::onControllerOutputTrimPacket(const Packet& packet)
+{
+	auto controllerOutputTrim = dp::deserialize<ControllerOutput>(packet);
+
+	std::unique_lock<std::mutex> lock(controllerOutputTrimMutex_);
+	controllerOutputTrim_ = controllerOutputTrim;
 	lock.unlock();
 }
 

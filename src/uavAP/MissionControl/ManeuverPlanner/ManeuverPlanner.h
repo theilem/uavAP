@@ -116,6 +116,9 @@ private:
 	onControllerOutputPacket(const Packet& packet);
 
 	void
+	onControllerOutputTrimPacket(const Packet& packet);
+
+	void
 	onAdvancedControl(const AdvancedControl& advanced);
 
 	using ManeuverSetMap = std::unordered_map<std::string, ManeuverSet>;
@@ -136,6 +139,9 @@ private:
 
 	ControllerOutput controllerOutput_;
 	mutable std::mutex controllerOutputMutex_;
+
+	ControllerOutput controllerOutputTrim_;
+	mutable std::mutex controllerOutputTrimMutex_;
 
 	ManeuverSetMap maneuverSetMap_;
 	ManeuverSetMap::const_iterator currentManeuverSet_;
@@ -168,6 +174,7 @@ private:
 	Publisher trimAnalysisPublisher_;
 	Publisher advancedControlPublisher_;
 	Subscription controllerOutputSubscription_;
+	Subscription controllerOutputTrimSubscription_;
 	Subscription advancedControlSubscription_;
 
 	ObjectHandle<IPC> ipc_;
