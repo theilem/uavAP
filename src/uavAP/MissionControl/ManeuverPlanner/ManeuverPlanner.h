@@ -131,6 +131,9 @@ private:
 	ManeuverAnalysisStatus maneuverAnalysis_;
 	mutable std::mutex maneuverAnalysisMutex_;
 
+	bool trimAnalysis_;
+	mutable std::mutex trimAnalysisMutex_;
+
 	ControllerOutput controllerOutput_;
 	mutable std::mutex controllerOutputMutex_;
 
@@ -162,6 +165,7 @@ private:
 
 	Publisher overridePublisher_;
 	Publisher maneuverAnalysisPublisher_;
+	Publisher trimAnalysisPublisher_;
 	Publisher advancedControlPublisher_;
 	Subscription controllerOutputSubscription_;
 	Subscription advancedControlSubscription_;

@@ -26,16 +26,68 @@
 #ifndef UAVAP_FLIGHTANALYSIS_TRIMANALYSIS_TRIMANALYSIS_H_
 #define UAVAP_FLIGHTANALYSIS_TRIMANALYSIS_TRIMANALYSIS_H_
 
-class TrimAnalysis
+#include "uavAP/Core/DataPresentation/Packet.h"
+#include "uavAP/Core/Object/ObjectHandle.h"
+#include "uavAP/Core/IPC/Publisher.h"
+#include "uavAP/Core/IPC/Subscription.h"
+#include "uavAP/FlightControl/Controller/ControllerOutput.h"
+
+class IPC;
+
+class TrimAnalysis : public IAggregatableObject, public IRunnableObject
 {
 
 public:
 
+	static constexpr TypeId typeId = "trim_analysis";
 
+	TrimAnalysis();
+
+	static std::shared_ptr<TrimAnalysis>
+	create(const boost::property_tree::ptree& config);
+
+	bool
+	configure(const boost::property_tree::ptree& config);
+
+	bool
+	run(RunStage stage) override;
+
+	void
+	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 private:
 
+	void
+	onControllerOutput(const Packet& output);
 
+	void
+	onTrimAnalysis(const Packet& analysis);
+
+	void
+	analysisInit();
+
+	void
+	analysisNormal(const Packet& output);
+
+	void
+	analysisFinal();
+
+	void
+	analysisIdle();
+
+	ObjectHandle<IPC> ipc_;
+
+	ControllerOutput controllerOutputTrim_;
+	ControllerOutput controllerOutputCount_;
+	std::mutex controllerOutputMutex_;
+
+	bool trimAnalysis_;
+	bool trimAnalysisLast_;
+	std::mutex trimAnalysisMutex_;
+
+	Publisher controllerOutputTrimPublisher_;
+	Subscription controllerOutputSubscription_;
+	Subscription trimAnalysisSubscription_;
 
 };
 

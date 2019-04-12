@@ -34,6 +34,7 @@
 #include "uavAP/Core/Framework/Helper.h"
 #include "uavAP/FlightAnalysis/StateAnalysis/SteadyStateAnalysis.h"
 #include "uavAP/FlightAnalysis/ManeuverAnalysis/ManeuverAnalysis.h"
+#include "uavAP/FlightAnalysis/TrimAnalysis/TrimAnalysis.h"
 #include "uavAP/FlightAnalysis/DataHandling/FlightAnalysisDataHandling.h"
 
 class FlightAnalysisHelper : public Helper
@@ -47,6 +48,7 @@ public:
 		addDefaultCreator<IPC>();
 		addDefaultCreator<SteadyStateAnalysis>();
 		addDefaultCreator<ManeuverAnalysis>();
+		addDefaultCreator<TrimAnalysis>();
 		addDefaultCreator<FlightAnalysisDataHandling>();
 	}
 };
