@@ -119,8 +119,9 @@ TrimAnalysis::onControllerOutput(const Packet& output)
 {
 	std::unique_lock<std::mutex> trimAnalysisLock(trimAnalysisMutex_);
 	bool trimAnalysis = trimAnalysis_;
-	bool trimAnalysisLast = trimAnalysisLast_;
 	trimAnalysisLock.unlock();
+
+	bool trimAnalysisLast = trimAnalysisLast_;
 
 	std::unique_lock<std::mutex> controllerOutputLock(controllerOutputMutex_);
 	if (trimAnalysisLast == false && trimAnalysis == false)
@@ -153,9 +154,7 @@ TrimAnalysis::onControllerOutput(const Packet& output)
 	APLOG_ERROR << "";
 	controllerOutputLock.unlock();
 
-	std::unique_lock<std::mutex> trimAnalysisLock(trimAnalysisMutex_);
 	trimAnalysisLast_ = trimAnalysis;
-	trimAnalysisLock.unlock();
 }
 
 void
