@@ -64,6 +64,10 @@ TrimAnalysis::run(RunStage stage)
 			return true;
 		}
 
+		auto ipc = ipc_.get();
+
+		controllerOutputTrimPublisher_ = ipc->publishPackets("controller_output_trim");
+
 		break;
 	}
 	case RunStage::NORMAL:
@@ -88,6 +92,11 @@ TrimAnalysis::run(RunStage stage)
 			return true;
 		}
 
+		break;
+	}
+	case RunStage::FINAL:
+	{
+		analysisInit();
 		break;
 	}
 	default:
@@ -160,7 +169,7 @@ TrimAnalysis::analysisInit()
 	controllerOutputTrim_.rollOutput = 0;
 	controllerOutputTrim_.pitchOutput = 0;
 	controllerOutputTrim_.yawOutput = 0;
-	controllerOutputTrim_.throttleOutput = 0;
+	controllerOutputTrim_.throttleOutput = -1;
 	controllerOutputCount_.rollOutput = 0;
 	controllerOutputCount_.pitchOutput = 0;
 	controllerOutputCount_.yawOutput = 0;
