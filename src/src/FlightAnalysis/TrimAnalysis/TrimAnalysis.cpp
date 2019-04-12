@@ -140,18 +140,6 @@ TrimAnalysis::onControllerOutput(const Packet& output)
 	{
 		analysisFinal();
 	}
-
-	APLOG_ERROR << "trimAnalysis: " << trimAnalysis;
-	APLOG_ERROR << "trimAnalysisLast: " << trimAnalysisLast;
-	APLOG_ERROR << "rollOutput: " << controllerOutputTrim_.rollOutput;
-	APLOG_ERROR << "pitchOutput: " << controllerOutputTrim_.pitchOutput;
-	APLOG_ERROR << "yawOutput: " << controllerOutputTrim_.yawOutput;
-	APLOG_ERROR << "throttleOutput: " << controllerOutputTrim_.throttleOutput;
-	APLOG_ERROR << "rollOutputCount: " << controllerOutputCount_.rollOutput;
-	APLOG_ERROR << "pitchOutputCount: " << controllerOutputCount_.pitchOutput;
-	APLOG_ERROR << "yawOutputCount: " << controllerOutputCount_.yawOutput;
-	APLOG_ERROR << "throttleOutputCount: " << controllerOutputCount_.throttleOutput;
-	APLOG_ERROR << "";
 	controllerOutputLock.unlock();
 
 	trimAnalysisLast_ = trimAnalysis;
@@ -191,6 +179,16 @@ TrimAnalysis::analysisNormal(const Packet& output)
 	controllerOutputCount_.pitchOutput ++;
 	controllerOutputCount_.yawOutput ++;
 	controllerOutputCount_.throttleOutput ++;
+
+	APLOG_ERROR << "rollOutput: " << controllerOutputTrim_.rollOutput;
+	APLOG_ERROR << "pitchOutput: " << controllerOutputTrim_.pitchOutput;
+	APLOG_ERROR << "yawOutput: " << controllerOutputTrim_.yawOutput;
+	APLOG_ERROR << "throttleOutput: " << controllerOutputTrim_.throttleOutput;
+	APLOG_ERROR << "rollOutputCount: " << controllerOutputCount_.rollOutput;
+	APLOG_ERROR << "pitchOutputCount: " << controllerOutputCount_.pitchOutput;
+	APLOG_ERROR << "yawOutputCount: " << controllerOutputCount_.yawOutput;
+	APLOG_ERROR << "throttleOutputCount: " << controllerOutputCount_.throttleOutput;
+	APLOG_ERROR << "";
 }
 
 void
@@ -207,4 +205,14 @@ void
 TrimAnalysis::analysisIdle()
 {
 	controllerOutputTrimPublisher_.publish(dp::serialize(controllerOutputTrim_));
+
+	APLOG_ERROR << "rollOutput: " << controllerOutputTrim_.rollOutput;
+	APLOG_ERROR << "pitchOutput: " << controllerOutputTrim_.pitchOutput;
+	APLOG_ERROR << "yawOutput: " << controllerOutputTrim_.yawOutput;
+	APLOG_ERROR << "throttleOutput: " << controllerOutputTrim_.throttleOutput;
+	APLOG_ERROR << "rollOutputCount: " << controllerOutputCount_.rollOutput;
+	APLOG_ERROR << "pitchOutputCount: " << controllerOutputCount_.pitchOutput;
+	APLOG_ERROR << "yawOutputCount: " << controllerOutputCount_.yawOutput;
+	APLOG_ERROR << "throttleOutputCount: " << controllerOutputCount_.throttleOutput;
+	APLOG_ERROR << "";
 }
