@@ -152,13 +152,16 @@ TrimAnalysis::onControllerOutput(const Packet& output)
 	APLOG_ERROR << "throttleOutputCount: " << controllerOutputCount_.throttleOutput;
 	APLOG_ERROR << "";
 	controllerOutputLock.unlock();
+
+	std::unique_lock<std::mutex> trimAnalysisLock(trimAnalysisMutex_);
+	trimAnalysisLast_ = trimAnalysis;
+	trimAnalysisLock.unlock();
 }
 
 void
 TrimAnalysis::onTrimAnalysis(const Packet& analysis)
 {
 	std::unique_lock<std::mutex> lock(trimAnalysisMutex_);
-	trimAnalysisLast_ = trimAnalysis_;
 	trimAnalysis_ = dp::deserialize<bool>(analysis);
 	lock.unlock();
 }
