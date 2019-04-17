@@ -110,7 +110,8 @@ private:
 	safetyTrigger(int trigger);
 
 	void
-	freezeControllerOutput(Override& override);
+	overrideControllerOutput(Override& override,
+			const std::map<ControllerOutputs, bool>& overrideMap, const ControllerOutput& outputOverride);
 
 	void
 	onControllerOutputPacket(const Packet& packet);
@@ -160,9 +161,6 @@ private:
 
 	bool manualRestart_;
 	bool maneuverRestart_;
-
-	bool enableControlOutFreezing_;
-	std::map<ControllerOutputs, bool> controlOutFreezing_;
 
 	unsigned int overrideSeqNr_;
 	mutable std::mutex overrideSeqNrMutex_;

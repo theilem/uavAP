@@ -39,21 +39,61 @@ struct Maneuver
 	Override override;
 	AdvancedControl advancedControl;
 	std::shared_ptr<ICondition> condition;
-	bool analyze_maneuver;
-	bool analyze_trim;
+	std::map<ControllerOutputs, bool> controllerOutputOverrideMap;
+	ControllerOutputsOverrides controllerOutputOverrideType;
+	bool controllerOutputOverrideFlag;
+	bool analyzeManeuver;
+	bool analyzeTrim;
 
 	bool
 	configure(const boost::property_tree::ptree& config)
 	{
 		PropertyMapper pm(config);
 		boost::property_tree::ptree conditionTree;
+		boost::property_tree::ptree controllerOutputOverrideTree;
 		static ConditionFactory factory;
 
 		pm.add<Override>("override", override, true);
+
+		if (pm.add("override_controller_outputs", controllerOutputOverrideTree, false))
+		{
+			PropertyMapper controllerOutputOverridePm(controllerOutputOverrideTree);
+
+			controllerOutputOverridePm.addEnum<ControllerOutputsOverrides>("type",
+					controllerOutputOverrideType, true);
+
+			for (auto& overrideIt : controllerOutputOverrideTree)
+			{
+				if (overrideIt.first == "enable")
+				{
+					controllerOutputOverridePm.add<bool>(overrideIt.first,
+							controllerOutputOverrideFlag, true);
+				}
+				else
+				{
+					if (!controllerOutputOverrideFlag)
+					{
+						continue;
+					}
+
+					bool overrideOutput = false;
+
+					if (controllerOutputOverridePm.add<bool>(overrideIt.first, overrideOutput,
+							true))
+					{
+						auto controllerOutputsEnum = EnumMap<ControllerOutputs>::convert(
+								overrideIt.first);
+						controllerOutputOverrideMap.insert(
+								std::make_pair(controllerOutputsEnum, overrideOutput));
+					}
+				}
+			}
+		}
+
 		pm.add("condition", conditionTree, true);
 		pm.add<AdvancedControl>("advanced_control", advancedControl, false);
-		pm.add<bool>("analyze_maneuver", analyze_maneuver, false);
-		pm.add<bool>("analyze_trim", analyze_trim, false);
+		pm.add<bool>("analyze_maneuver", analyzeManeuver, false);
+		pm.add<bool>("analyze_trim", analyzeTrim, false);
 
 		condition = factory.create(conditionTree);
 

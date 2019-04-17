@@ -180,15 +180,15 @@ TrimAnalysis::analysisNormal(const Packet& output)
 	controllerOutputCount_.yawOutput ++;
 	controllerOutputCount_.throttleOutput ++;
 
-	APLOG_ERROR << "rollOutput: " << controllerOutputTrim_.rollOutput;
-	APLOG_ERROR << "pitchOutput: " << controllerOutputTrim_.pitchOutput;
-	APLOG_ERROR << "yawOutput: " << controllerOutputTrim_.yawOutput;
-	APLOG_ERROR << "throttleOutput: " << controllerOutputTrim_.throttleOutput;
-	APLOG_ERROR << "rollOutputCount: " << controllerOutputCount_.rollOutput;
-	APLOG_ERROR << "pitchOutputCount: " << controllerOutputCount_.pitchOutput;
-	APLOG_ERROR << "yawOutputCount: " << controllerOutputCount_.yawOutput;
-	APLOG_ERROR << "throttleOutputCount: " << controllerOutputCount_.throttleOutput;
-	APLOG_ERROR << "";
+	APLOG_DEBUG << "rollOutput: " << controllerOutputTrim_.rollOutput;
+	APLOG_DEBUG << "pitchOutput: " << controllerOutputTrim_.pitchOutput;
+	APLOG_DEBUG << "yawOutput: " << controllerOutputTrim_.yawOutput;
+	APLOG_DEBUG << "throttleOutput: " << controllerOutputTrim_.throttleOutput;
+	APLOG_DEBUG << "rollOutputCount: " << controllerOutputCount_.rollOutput;
+	APLOG_DEBUG << "pitchOutputCount: " << controllerOutputCount_.pitchOutput;
+	APLOG_DEBUG << "yawOutputCount: " << controllerOutputCount_.yawOutput;
+	APLOG_DEBUG << "throttleOutputCount: " << controllerOutputCount_.throttleOutput;
+	APLOG_DEBUG << "";
 }
 
 void
@@ -206,13 +206,13 @@ TrimAnalysis::analysisIdle()
 {
 	controllerOutputTrimPublisher_.publish(dp::serialize(controllerOutputTrim_));
 
-	APLOG_ERROR << "rollOutput: " << controllerOutputTrim_.rollOutput;
-	APLOG_ERROR << "pitchOutput: " << controllerOutputTrim_.pitchOutput;
-	APLOG_ERROR << "yawOutput: " << controllerOutputTrim_.yawOutput;
-	APLOG_ERROR << "throttleOutput: " << controllerOutputTrim_.throttleOutput;
-	APLOG_ERROR << "rollOutputCount: " << controllerOutputCount_.rollOutput;
-	APLOG_ERROR << "pitchOutputCount: " << controllerOutputCount_.pitchOutput;
-	APLOG_ERROR << "yawOutputCount: " << controllerOutputCount_.yawOutput;
-	APLOG_ERROR << "throttleOutputCount: " << controllerOutputCount_.throttleOutput;
-	APLOG_ERROR << "";
+	APLOG_DEBUG << "rollOutput: " << controllerOutputTrim_.rollOutput;
+	APLOG_DEBUG << "pitchOutput: " << controllerOutputTrim_.pitchOutput;
+	APLOG_DEBUG << "yawOutput: " << controllerOutputTrim_.yawOutput;
+	APLOG_DEBUG << "throttleOutput: " << controllerOutputTrim_.throttleOutput;
+	APLOG_DEBUG << "rollOutputCount: " << controllerOutputCount_.rollOutput;
+	APLOG_DEBUG << "pitchOutputCount: " << controllerOutputCount_.pitchOutput;
+	APLOG_DEBUG << "yawOutputCount: " << controllerOutputCount_.yawOutput;
+	APLOG_DEBUG << "throttleOutputCount: " << controllerOutputCount_.throttleOutput;
+	APLOG_DEBUG << "";
 }

@@ -35,8 +35,7 @@
 ManeuverPlanner::ManeuverPlanner() :
 		maneuverAnalysis_(), trimAnalysis_(false), overrideInterrupted_(false), manualActive_(
 				false), maneuverActive_(false), lastManualActive_(false), lastManeuverActive_(
-				false), manualRestart_(false), maneuverRestart_(false), enableControlOutFreezing_(
-				false), overrideSeqNr_(0)
+				false), manualRestart_(false), maneuverRestart_(false), overrideSeqNr_(0)
 {
 }
 
@@ -57,7 +56,6 @@ bool
 ManeuverPlanner::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
-	Configuration freezeControlOutTree;
 	Configuration maneuverSetTree;
 
 	if (pm.configure(params_, true))
@@ -66,35 +64,6 @@ ManeuverPlanner::configure(const Configuration& config)
 		maneuverRestart_ = params_.maneuver_restart();
 
 		safetyCondition_ = std::make_shared<RectanguloidCondition>(params_.safety_bounds());
-	}
-
-	if (pm.add("freeze_controller_outputs", freezeControlOutTree, false))
-	{
-		PropertyMapper freezeControlOutPm(freezeControlOutTree);
-
-		for (auto& freezeIt : freezeControlOutTree)
-		{
-			if (freezeIt.first == "enable")
-			{
-				freezeControlOutPm.add<bool>(freezeIt.first, enableControlOutFreezing_, true);
-			}
-			else
-			{
-				if (!enableControlOutFreezing_)
-				{
-					break;
-				}
-
-				bool freeze = false;
-
-				if (freezeControlOutPm.add<bool>(freezeIt.first, freeze, true))
-				{
-					auto controllerOutputsEnum = EnumMap<ControllerOutputs>::convert(
-							freezeIt.first);
-					controlOutFreezing_.insert(std::make_pair(controllerOutputsEnum, freeze));
-				}
-			}
-		}
 	}
 
 	if (pm.add("maneuvers", maneuverSetTree, false))
@@ -170,7 +139,8 @@ ManeuverPlanner::run(RunStage stage)
 		}
 
 		controllerOutputTrimSubscription_ = ipc->subscribeOnPacket("controller_output_trim",
-				std::bind(&ManeuverPlanner::onControllerOutputTrimPacket, this, std::placeholders::_1));
+				std::bind(&ManeuverPlanner::onControllerOutputTrimPacket, this,
+						std::placeholders::_1));
 
 		if (!controllerOutputTrimSubscription_.connected())
 		{
@@ -507,10 +477,46 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 	}
 
 	Override override = currentManeuver->override;
+	bool controllerOutputOverrideFlag = currentManeuver->controllerOutputOverrideFlag;
 
-	if (enableControlOutFreezing_)
+	if (controllerOutputOverrideFlag)
 	{
-		freezeControllerOutput(override);
+		ControllerOutputsOverrides controllerOutputOverrideType =
+				currentManeuver->controllerOutputOverrideType;
+
+		switch (controllerOutputOverrideType)
+		{
+		case ControllerOutputsOverrides::FREEZE:
+		{
+			std::unique_lock<std::mutex> lock(controllerOutputMutex_);
+			ControllerOutput controllerOutputOverride = controllerOutput_;
+			lock.unlock();
+
+			std::map<ControllerOutputs, bool> controllerOutputOverrideMap =
+					currentManeuver->controllerOutputOverrideMap;
+			overrideControllerOutput(override, controllerOutputOverrideMap,
+					controllerOutputOverride);
+
+			break;
+		}
+		case ControllerOutputsOverrides::TRIM:
+		{
+			std::unique_lock<std::mutex> lock(controllerOutputTrimMutex_);
+			ControllerOutput controllerOutputOverride = controllerOutputTrim_;
+			lock.unlock();
+
+			std::map<ControllerOutputs, bool> controllerOutputOverrideMap =
+					currentManeuver->controllerOutputOverrideMap;
+			overrideControllerOutput(override, controllerOutputOverrideMap,
+					controllerOutputOverride);
+
+			break;
+		}
+		default:
+		{
+			break;
+		}
+		}
 	}
 
 	std::unique_lock<std::mutex> overrideLock(overrideMutex_);
@@ -530,13 +536,13 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 
 	std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
 	maneuverAnalysis_.maneuver = maneuverSet_;
-	maneuverAnalysis_.analysis = currentManeuver->analyze_maneuver;
+	maneuverAnalysis_.analysis = currentManeuver->analyzeManeuver;
 	maneuverAnalysis_.interrupted = overrideInterrupted_;
 	ManeuverAnalysisStatus maneuverAnalysis = maneuverAnalysis_;
 	maneuverAnalysisLock.unlock();
 
 	std::unique_lock<std::mutex> trimAnalysisLock(trimAnalysisMutex_);
-	trimAnalysis_ = currentManeuver->analyze_trim;
+	trimAnalysis_ = currentManeuver->analyzeTrim;
 	bool trimAnalysis = trimAnalysis_;
 	trimAnalysisLock.unlock();
 
@@ -618,15 +624,11 @@ ManeuverPlanner::safetyTrigger(int trigger)
 }
 
 void
-ManeuverPlanner::freezeControllerOutput(Override& override)
+ManeuverPlanner::overrideControllerOutput(Override& override,
+		const std::map<ControllerOutputs, bool>& overrideMap,
+		const ControllerOutput& outputOverride)
 {
-	ControllerOutput controllerOutput;
-
-	std::unique_lock<std::mutex> lock(controllerOutputMutex_);
-	controllerOutput = controllerOutput_;
-	lock.unlock();
-
-	for (auto& it : controlOutFreezing_)
+	for (auto& it : overrideMap)
 	{
 		if (it.second)
 		{
@@ -636,22 +638,22 @@ ManeuverPlanner::freezeControllerOutput(Override& override)
 				{
 				case ControllerOutputs::ROLL:
 				{
-					pair->second = controllerOutput.rollOutput;
+					pair->second = outputOverride.rollOutput;
 					break;
 				}
 				case ControllerOutputs::PITCH:
 				{
-					pair->second = controllerOutput.pitchOutput;
+					pair->second = outputOverride.pitchOutput;
 					break;
 				}
 				case ControllerOutputs::YAW:
 				{
-					pair->second = controllerOutput.yawOutput;
+					pair->second = outputOverride.yawOutput;
 					break;
 				}
 				case ControllerOutputs::THROTTLE:
 				{
-					pair->second = controllerOutput.throttleOutput;
+					pair->second = outputOverride.throttleOutput;
 					break;
 				}
 				default:

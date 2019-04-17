@@ -37,8 +37,16 @@ enum class ControllerOutputs
 	INVALID, ROLL, PITCH, YAW, THROTTLE, NUM_OUTPUT
 };
 
+enum class ControllerOutputsOverrides
+{
+	INVALID, FREEZE, TRIM, NUM_OVERRIDE
+};
+
 ENUMMAP_INIT(ControllerOutputs, { {ControllerOutputs::ROLL, "roll"}, {ControllerOutputs::PITCH,
 		"pitch"}, {ControllerOutputs::YAW, "yaw"}, {ControllerOutputs::THROTTLE, "throttle"} });
+
+ENUMMAP_INIT(ControllerOutputsOverrides, { {ControllerOutputsOverrides::FREEZE, "freeze"}, {ControllerOutputsOverrides::TRIM,
+		"trim"} });
 
 struct ControllerOutput: SerializeCustom
 {
