@@ -39,6 +39,7 @@
 		},
 		"special_control":
 		{
+			"none":			[0, 0, 0,    0, 0, 0,    0],
 			"flap": 		[0, 0, 0,-3356, 0, 0, 3356]
 		},
 		"channel_constraints":
