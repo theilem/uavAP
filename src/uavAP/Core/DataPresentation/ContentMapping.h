@@ -62,6 +62,8 @@
 							MAP(LOCAL_PLANNER_STATUS, LocalPlannerStatus, FUNC)								\
 							MAP(SAFETY_BOUNDS, Rectanguloid, FUNC)											\
 							MAP(CONTROLLER_OUTPUT, ControllerOutput, FUNC)									\
+							MAP(CONTROLLER_OUTPUT_TRIM, ControllerOutput, FUNC)								\
+							MAP(CONTROLLER_OUTPUT_OFFSET, ControllerOutput, FUNC)							\
 							MAP(LOCAL_FRAME, VehicleOneFrame, FUNC)											\
 							MAP(TUNE_PID, PIDTuning, FUNC)													\
 							MAP(TUNE_PITCH_CONSTRAINT, ConstraintParams, FUNC)								\
