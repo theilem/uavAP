@@ -160,8 +160,11 @@ MissionControlDataHandling::collectAndSend()
 
 	auto mp = maneuverPlanner_.get();
 	auto override = mp->getOverride();
-	Packet packet = dp->serialize(override, Content::OVERRIDE);
-	publisher_.publish(packet);
+	auto trim = mp->getControllerOutputTrim();
+	Packet overridePacket = dp->serialize(override, Content::OVERRIDE);
+	Packet trimPacket = dp->serialize(trim, Content::CONTROLLER_OUTPUT_TRIM);
+	publisher_.publish(overridePacket);
+	publisher_.publish(trimPacket);
 
 	if (mp->getOverrideNr() != lastOverrideSeqNr_)
 	{
@@ -264,6 +267,18 @@ MissionControlDataHandling::receiveAndDistribute(const Packet& packet)
 			break;
 		}
 		lfm->setFrame(frame);
+		break;
+	}
+	case Content::CONTROLLER_OUTPUT_OFFSET:
+	{
+		auto offset = boost::any_cast<ControllerOutput>(any);
+		auto mp = maneuverPlanner_.get();
+		if (!mp)
+		{
+			APLOG_ERROR << "Maneuver Planner not found. Cannot Set Controller Output Offset.";
+			break;
+		}
+		mp->setControllerOutputOffset(offset);
 		break;
 	}
 	default:

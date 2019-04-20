@@ -71,6 +71,9 @@ public:
 	setManeuverOverride(const std::string& maneuverSet);
 
 	void
+	setControllerOutputOffset(const ControllerOutput& offset);
+
+	void
 	interruptOverride();
 
 	void
@@ -84,6 +87,9 @@ public:
 
 	Rectanguloid
 	getSafetyBounds() const;
+
+	ControllerOutput
+	getControllerOutputTrim() const;
 
 private:
 
@@ -143,6 +149,9 @@ private:
 
 	ControllerOutput controllerOutputTrim_;
 	mutable std::mutex controllerOutputTrimMutex_;
+
+	ControllerOutput controllerOutputOffset_;
+	mutable std::mutex controllerOutputOffsetMutex_;
 
 	ManeuverSetMap maneuverSetMap_;
 	ManeuverSetMap::const_iterator currentManeuverSet_;

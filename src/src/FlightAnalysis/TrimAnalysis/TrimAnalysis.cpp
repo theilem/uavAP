@@ -124,11 +124,7 @@ TrimAnalysis::onControllerOutput(const Packet& output)
 	bool trimAnalysisLast = trimAnalysisLast_;
 
 	std::unique_lock<std::mutex> controllerOutputLock(controllerOutputMutex_);
-	if (trimAnalysisLast == false && trimAnalysis == false)
-	{
-		analysisIdle();
-	}
-	else if (trimAnalysisLast == false && trimAnalysis == true)
+	if (trimAnalysisLast == false && trimAnalysis == true)
 	{
 		analysisInit();
 	}
@@ -164,7 +160,6 @@ TrimAnalysis::analysisInit()
 	controllerOutputCount_.pitchOutput = 0;
 	controllerOutputCount_.yawOutput = 0;
 	controllerOutputCount_.throttleOutput = 0;
-	controllerOutputTrimPublisher_.publish(dp::serialize(controllerOutputTrim_));
 }
 
 void
@@ -199,20 +194,4 @@ TrimAnalysis::analysisFinal()
 	controllerOutputTrim_.yawOutput /= controllerOutputCount_.yawOutput;
 	controllerOutputTrim_.throttleOutput /= controllerOutputCount_.throttleOutput;
 	controllerOutputTrimPublisher_.publish(dp::serialize(controllerOutputTrim_));
-}
-
-void
-TrimAnalysis::analysisIdle()
-{
-	controllerOutputTrimPublisher_.publish(dp::serialize(controllerOutputTrim_));
-
-	APLOG_DEBUG << "rollOutput: " << controllerOutputTrim_.rollOutput;
-	APLOG_DEBUG << "pitchOutput: " << controllerOutputTrim_.pitchOutput;
-	APLOG_DEBUG << "yawOutput: " << controllerOutputTrim_.yawOutput;
-	APLOG_DEBUG << "throttleOutput: " << controllerOutputTrim_.throttleOutput;
-	APLOG_DEBUG << "rollOutputCount: " << controllerOutputCount_.rollOutput;
-	APLOG_DEBUG << "pitchOutputCount: " << controllerOutputCount_.pitchOutput;
-	APLOG_DEBUG << "yawOutputCount: " << controllerOutputCount_.yawOutput;
-	APLOG_DEBUG << "throttleOutputCount: " << controllerOutputCount_.throttleOutput;
-	APLOG_DEBUG << "";
 }

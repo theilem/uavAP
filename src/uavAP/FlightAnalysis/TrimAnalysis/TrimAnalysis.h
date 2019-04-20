@@ -72,9 +72,6 @@ private:
 	void
 	analysisFinal();
 
-	void
-	analysisIdle();
-
 	ObjectHandle<IPC> ipc_;
 
 	ControllerOutput controllerOutputTrim_;

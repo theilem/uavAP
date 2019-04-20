@@ -37,6 +37,7 @@ ManeuverPlanner::ManeuverPlanner() :
 				false), maneuverActive_(false), lastManualActive_(false), lastManeuverActive_(
 				false), manualRestart_(false), maneuverRestart_(false), overrideSeqNr_(0)
 {
+	controllerOutputOffset_.throttleOutput = 0;
 }
 
 std::shared_ptr<ManeuverPlanner>
@@ -240,6 +241,14 @@ ManeuverPlanner::setManeuverOverride(const std::string& maneuverSet)
 }
 
 void
+ManeuverPlanner::setControllerOutputOffset(const ControllerOutput& offset)
+{
+	std::unique_lock<std::mutex> lock(controllerOutputOffsetMutex_);
+	controllerOutputOffset_ = offset;
+	lock.unlock();
+}
+
+void
 ManeuverPlanner::interruptOverride()
 {
 	if (overrideInterrupted_)
@@ -316,6 +325,25 @@ Rectanguloid
 ManeuverPlanner::getSafetyBounds() const
 {
 	return params_.safety_bounds();
+}
+
+ControllerOutput
+ManeuverPlanner::getControllerOutputTrim() const
+{
+	std::unique_lock<std::mutex> trimLock(controllerOutputTrimMutex_);
+	ControllerOutput controllerOutputTrim = controllerOutputTrim_;
+	trimLock.unlock();
+
+	std::unique_lock<std::mutex> offsetLock(controllerOutputOffsetMutex_);
+	ControllerOutput controllerOutputOffset = controllerOutputOffset_;
+	offsetLock.unlock();
+
+	controllerOutputTrim.rollOutput += controllerOutputOffset.rollOutput;
+	controllerOutputTrim.pitchOutput += controllerOutputOffset.pitchOutput;
+	controllerOutputTrim.yawOutput += controllerOutputOffset.yawOutput;
+	controllerOutputTrim.throttleOutput += controllerOutputOffset.throttleOutput;
+
+	return controllerOutputTrim;
 }
 
 void
@@ -628,6 +656,10 @@ ManeuverPlanner::overrideControllerOutput(Override& override,
 		const std::map<ControllerOutputs, bool>& overrideMap,
 		const ControllerOutput& outputOverride)
 {
+	std::unique_lock<std::mutex> offsetLock(controllerOutputOffsetMutex_);
+	ControllerOutput controllerOutputOffset = controllerOutputOffset_;
+	offsetLock.unlock();
+
 	for (auto& it : overrideMap)
 	{
 		if (it.second)
@@ -639,21 +671,25 @@ ManeuverPlanner::overrideControllerOutput(Override& override,
 				case ControllerOutputs::ROLL:
 				{
 					pair->second = outputOverride.rollOutput;
+					pair->second += controllerOutputOffset.rollOutput;
 					break;
 				}
 				case ControllerOutputs::PITCH:
 				{
 					pair->second = outputOverride.pitchOutput;
+					pair->second += controllerOutputOffset.pitchOutput;
 					break;
 				}
 				case ControllerOutputs::YAW:
 				{
 					pair->second = outputOverride.yawOutput;
+					pair->second += controllerOutputOffset.yawOutput;
 					break;
 				}
 				case ControllerOutputs::THROTTLE:
 				{
 					pair->second = outputOverride.throttleOutput;
+					pair->second += controllerOutputOffset.throttleOutput;
 					break;
 				}
 				default:
