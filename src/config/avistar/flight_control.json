@@ -2,9 +2,13 @@
 	"controller": {
 		"type": "rate",
 		"hard_roll_constraint": 45.0,
-		"hard_roll_rate_constraint": 30.0,
-		"hard_pitch_constraint": 20.0,
+		"hard_roll_rate_constraint": 100.0,
+		"hard_pitch_constraint": 45.0,
 		"hard_pitch_rate_constraint": 1000.0,
+		"roll_constraint": 45.0,
+		"roll_rate_constraint": 30.0,
+		"pitch_constraint": 20.0,
+		"pitch_rate_constraint": 1000.0,
 		"pids": {
 			"climb_angle": {
 				"ff": 1,
