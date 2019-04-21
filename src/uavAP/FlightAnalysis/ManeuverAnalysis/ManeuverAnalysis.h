@@ -36,6 +36,7 @@
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
+#include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightAnalysis/ManeuverAnalysis/ManeuverAnalysisStatus.h"
 
 enum class Maneuvers
@@ -43,6 +44,7 @@ enum class Maneuvers
 	INVALID,
 	GEOFENCING,
 	ADVANCED_CONTROL,
+	FLIGHT_TESTING,
 	NUM_MANEUVERS
 };
 
@@ -56,7 +58,8 @@ enum class CollectStates
 };
 
 ENUMMAP_INIT(Maneuvers, { {Maneuvers::GEOFENCING, "geofencing"},
-		{Maneuvers::ADVANCED_CONTROL, "advanced_control"} });
+		{Maneuvers::ADVANCED_CONTROL, "advanced_control"},
+		{Maneuvers::FLIGHT_TESTING, "flight_testing"}});
 
 class ManeuverAnalysis: public IAggregatableObject, public IRunnableObject
 {
@@ -84,6 +87,9 @@ private:
 	onSensorData(const SensorData& data);
 
 	void
+	onControllerOutput(const Packet& output);
+
+	void
 	onManeuverAnalysisStatus(const Packet& status);
 
 	void
@@ -101,10 +107,17 @@ private:
 	void
 	collectAdvancedControl(const SensorData& data, const CollectStates& states);
 
+	void
+	collectFlightTesting(const SensorData& data, const CollectStates& states);
+
 	Subscription sensorDataSubscription_;
+	Subscription controllerOutputSubscription_;
 	Subscription maneuverAnalysisSubscription_;
 
 	ObjectHandle<IPC> ipcHandle_;
+
+	ControllerOutput controllerOutput_;
+	std::mutex controllerOutputMutex_;
 
 	ManeuverAnalysisStatus analysis_;
 	std::mutex maneuverAnalysisStatusMutex_;

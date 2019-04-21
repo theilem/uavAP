@@ -130,7 +130,7 @@ ManeuverPlanner::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		controllerOutputSubscription_ = ipc->subscribeOnPacket("controller_output",
+		controllerOutputSubscription_ = ipc->subscribeOnPacket("controller_output_mp",
 				std::bind(&ManeuverPlanner::onControllerOutputPacket, this, std::placeholders::_1));
 
 		if (!controllerOutputSubscription_.connected())

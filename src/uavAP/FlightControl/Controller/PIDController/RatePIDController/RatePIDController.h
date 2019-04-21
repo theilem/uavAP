@@ -90,7 +90,9 @@ private:
 	Vector3 accelerationInertial_;
 	ControllerOutput controllerOutput_;
 
-	Publisher controllerOutputPublisher_;
+	Publisher controllerOutputPublisherMP_;
+	Publisher controllerOutputPublisherTA_;
+	Publisher controllerOutputPublisherMA_;
 	Subscription overrideSubscription_;
 
 	std::shared_ptr<RateCascade> pidCascade_;

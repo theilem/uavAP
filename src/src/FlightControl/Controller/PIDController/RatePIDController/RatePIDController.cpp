@@ -77,7 +77,9 @@ RatePIDController::run(RunStage stage)
 
 		auto ipc = ipc_.get();
 
-		controllerOutputPublisher_ = ipc->publishPackets("controller_output");
+		controllerOutputPublisherMP_ = ipc->publishPackets("controller_output_mp");
+		controllerOutputPublisherTA_ = ipc->publishPackets("controller_output_ta");
+		controllerOutputPublisherMA_ = ipc->publishPackets("controller_output_ma");
 
 		break;
 	}
@@ -171,7 +173,9 @@ RatePIDController::calculateControl()
 	targetLock.unlock();
 
 	sensAct->setControllerOutput(controllerOutput_);
-	controllerOutputPublisher_.publish(dp::serialize(controllerOutput_));
+	controllerOutputPublisherMP_.publish(dp::serialize(controllerOutput_));
+	controllerOutputPublisherTA_.publish(dp::serialize(controllerOutput_));
+	controllerOutputPublisherMA_.publish(dp::serialize(controllerOutput_));
 
 	APLOG_TRACE << "Roll Output: " << controllerOutput_.rollOutput;
 	APLOG_TRACE << "Pitch Output: " << controllerOutput_.pitchOutput;

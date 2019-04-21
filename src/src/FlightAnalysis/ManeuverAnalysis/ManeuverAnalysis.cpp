@@ -90,7 +90,16 @@ ManeuverAnalysis::run(RunStage stage)
 
 		if (!sensorDataSubscription_.connected())
 		{
-			APLOG_ERROR << "Sensor Data Subscription Missing.";
+			APLOG_ERROR << "ManeuverAnalysis: Sensor Data Subscription Missing.";
+			return true;
+		}
+
+		controllerOutputSubscription_ = ipc->subscribeOnPacket("controller_output_ma",
+				std::bind(&ManeuverAnalysis::onControllerOutput, this, std::placeholders::_1));
+
+		if (!controllerOutputSubscription_.connected())
+		{
+			APLOG_ERROR << "ManeuverAnalysis: Controller Output Subscription Missing.";
 			return true;
 		}
 
@@ -100,7 +109,7 @@ ManeuverAnalysis::run(RunStage stage)
 
 		if (!maneuverAnalysisSubscription_.connected())
 		{
-			APLOG_ERROR << "Maneuver Analysis Subscription Missing.";
+			APLOG_ERROR << "ManeuverAnalysis: Maneuver Analysis Subscription Missing.";
 			return true;
 		}
 
@@ -147,6 +156,14 @@ ManeuverAnalysis::onManeuverAnalysisStatus(const Packet& status)
 {
 	std::unique_lock<std::mutex> lock(maneuverAnalysisStatusMutex_);
 	analysis_ = dp::deserialize<ManeuverAnalysisStatus>(status);
+	lock.unlock();
+}
+
+void
+ManeuverAnalysis::onControllerOutput(const Packet& output)
+{
+	std::unique_lock<std::mutex> lock(controllerOutputMutex_);
+	controllerOutput_ = dp::deserialize<ControllerOutput>(output);
 	lock.unlock();
 }
 

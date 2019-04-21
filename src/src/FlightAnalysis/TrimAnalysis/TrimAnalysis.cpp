@@ -74,7 +74,7 @@ TrimAnalysis::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		controllerOutputSubscription_ = ipc->subscribeOnPacket("controller_output",
+		controllerOutputSubscription_ = ipc->subscribeOnPacket("controller_output_ta",
 				std::bind(&TrimAnalysis::onControllerOutput, this, std::placeholders::_1));
 
 		if (!controllerOutputSubscription_.connected())
