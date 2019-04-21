@@ -36,6 +36,7 @@
 		},
 		"camber_offset":
 		{
+			"normal":		[0, 0, 0, 0, 0, 0, 0]
 		},
 		"special_control":
 		{
