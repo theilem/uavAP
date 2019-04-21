@@ -22,15 +22,12 @@
 			"pids/roll": 5.0,
 			"pids/roll_rate": 5.0
 		},
-		"in_tolerance_duration": 5000
+		"in_tolerance_duration": 2000
 	},
 	"maneuver_analysis": {
 		"log_path": "/usr/local/"
 	},
 	"data_presentation": {
 		"compress_double": true
-	},
-	"fa_data_handling": {
-		"period": 200
 	}
 }
