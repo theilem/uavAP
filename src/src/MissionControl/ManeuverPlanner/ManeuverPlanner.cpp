@@ -522,6 +522,7 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 
 			std::map<ControllerOutputs, bool> controllerOutputOverrideMap =
 					currentManeuver->controllerOutputOverrideMap;
+
 			overrideControllerOutput(override, controllerOutputOverrideMap,
 					controllerOutputOverride);
 
@@ -535,6 +536,58 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 
 			std::map<ControllerOutputs, bool> controllerOutputOverrideMap =
 					currentManeuver->controllerOutputOverrideMap;
+
+			overrideControllerOutput(override, controllerOutputOverrideMap,
+					controllerOutputOverride);
+
+			break;
+		}
+		case ControllerOutputsOverrides::OFFSET:
+		{
+			std::unique_lock<std::mutex> lock(controllerOutputTrimMutex_);
+			ControllerOutput controllerOutputOverride = controllerOutputTrim_;
+			lock.unlock();
+
+			std::map<ControllerOutputs, bool> controllerOutputOverrideMap =
+					currentManeuver->controllerOutputOverrideMap;
+			std::map<ControllerOutputs, double> offsetOverride = override.output;
+			ControllerOutput controllerOutputOffset;
+
+			for (auto& it : offsetOverride)
+			{
+				switch(it.first)
+				{
+				case ControllerOutputs::ROLL:
+				{
+					controllerOutputOffset.rollOutput = it.second;
+					break;
+				}
+				case ControllerOutputs::PITCH:
+				{
+					controllerOutputOffset.pitchOutput = it.second;
+					break;
+				}
+				case ControllerOutputs::YAW:
+				{
+					controllerOutputOffset.yawOutput = it.second;
+					break;
+				}
+				case ControllerOutputs::THROTTLE:
+				{
+					controllerOutputOffset.throttleOutput = it.second;
+					break;
+				}
+				default:
+				{
+					break;
+				}
+				}
+			}
+
+			std::unique_lock<std::mutex> offsetLock(controllerOutputOffsetMutex_);
+			controllerOutputOffset_ = controllerOutputOffset;
+			offsetLock.unlock();
+
 			overrideControllerOutput(override, controllerOutputOverrideMap,
 					controllerOutputOverride);
 
