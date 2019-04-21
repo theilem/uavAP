@@ -552,6 +552,7 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 					currentManeuver->controllerOutputOverrideMap;
 			std::map<ControllerOutputs, double> offsetOverride = override.output;
 			ControllerOutput controllerOutputOffset;
+			controllerOutputOffset.throttleOutput = 0;
 
 			for (auto& it : offsetOverride)
 			{

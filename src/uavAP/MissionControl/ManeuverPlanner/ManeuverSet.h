@@ -40,10 +40,10 @@ struct Maneuver
 	AdvancedControl advancedControl;
 	std::shared_ptr<ICondition> condition;
 	std::map<ControllerOutputs, bool> controllerOutputOverrideMap;
-	ControllerOutputsOverrides controllerOutputOverrideType;
-	bool controllerOutputOverrideFlag;
-	bool analyzeManeuver;
-	bool analyzeTrim;
+	ControllerOutputsOverrides controllerOutputOverrideType = ControllerOutputsOverrides::INVALID;
+	bool controllerOutputOverrideFlag = false;
+	bool analyzeManeuver = false;
+	bool analyzeTrim = false;
 
 	bool
 	configure(const boost::property_tree::ptree& config)
