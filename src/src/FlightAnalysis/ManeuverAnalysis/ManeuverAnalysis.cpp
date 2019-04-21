@@ -207,6 +207,11 @@ ManeuverAnalysis::collectStateInit(const SensorData& data, const std::string& ma
 		collectAdvancedControl(data, CollectStates::INIT);
 		break;
 	}
+	case Maneuvers::FLIGHT_TESTING:
+	{
+		collectFlightTesting(data, CollectStates::INIT);
+		break;
+	}
 	default:
 	{
 		break;
@@ -239,6 +244,11 @@ ManeuverAnalysis::collectStateNormal(const SensorData& data)
 		collectAdvancedControl(data, CollectStates::NORMAL);
 		break;
 	}
+	case Maneuvers::FLIGHT_TESTING:
+	{
+		collectFlightTesting(data, CollectStates::NORMAL);
+		break;
+	}
 	default:
 	{
 		break;
@@ -269,6 +279,11 @@ ManeuverAnalysis::collectStateFinal(const SensorData& data)
 	case Maneuvers::ADVANCED_CONTROL:
 	{
 		collectAdvancedControl(data, CollectStates::FINAL);
+		break;
+	}
+	case Maneuvers::FLIGHT_TESTING:
+	{
+		collectFlightTesting(data, CollectStates::FINAL);
 		break;
 	}
 	default:
@@ -353,6 +368,88 @@ ManeuverAnalysis::collectAdvancedControl(const SensorData& data, const CollectSt
 	}
 	case CollectStates::FINAL:
 	{
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
+}
+
+void
+ManeuverAnalysis::collectFlightTesting(const SensorData& data, const CollectStates& states)
+{
+	std::unique_lock<std::mutex> lock(controllerOutputMutex_);
+	ControllerOutput controllerOutput = controllerOutput_;
+	lock.unlock();
+
+	switch (states)
+	{
+	case CollectStates::INIT:
+	{
+		logFile_ << "Position x (m)" << "	" << "Position y (m)" << "	" << "Position z (m)"
+				<< "	" << "Velocity x (m/s)" << "	" << "Velocity y (m/s)" << "	" << "Velocity z (m/s)"
+				<< "	" << "Acceleration x (m/s)" << "	" << "Acceleration y (m/s)" << "	" << "Acceleration z (m/s)"
+				<< "	" << "Euler Angles phi (Rad)" << "	" << "Euler Angles theta (Rad)" << "	" << "Euler Angles psi (Rad)"
+				<< "	" << "Rotation Rate x (Rad/s)" << "	" << "Rotation Rate y (Rad/s)" << "	" << "Rotation Rate z (Rad/s)"
+				<< "	" << "Timestamp (UTC)"
+				<< "	" << "Air Speed (m/s)" << "	" << "Ground Speed (m/s)"
+				<< "	" << "Battery Voltage (V)" << "	" << "Battery Current (A)"
+				<< "	" << "Throttle Level (%)" << "	" << "Motor Speed (RPM)"
+				<< "	" << "Roll Output (Unit)" << "	" << "Pitch Output (Unit)"
+				<< "	" << "Yaw Output (Unit)" << "	" << "Throttle Output (Unit)"
+				<< std::endl;
+
+		logFile_ << data.position.x() << "	" << data.position.y() << "	" << data.position.z()
+				 << "	" << data.velocity.x() << "	" << data.velocity.y() << "	" << data.velocity.z()
+				 << "	" << data.acceleration.x() << "	" << data.acceleration.y() << "	" << data.acceleration.z()
+				 << "	" << data.attitude.x() << "	" << data.attitude.y() << "	" << data.attitude.z()
+				 << "	" << data.angularRate.x() << "	" << data.angularRate.y() << "	" << data.angularRate.z()
+				 << "	" << to_simple_string(data.timestamp)
+				 << "	" << data.airSpeed << "	" << data.groundSpeed
+				 << "	" << data.batteryVoltage << "	" << data.batteryCurrent
+				 << "	" << data.throttle << "	" << data.rpm
+				 << "	" << controllerOutput.rollOutput << "	" << controllerOutput.pitchOutput
+				 << "	" << controllerOutput.yawOutput << "	" << controllerOutput.throttleOutput
+				 << std::endl;
+
+		logFile_ << "collectStateNormal:" << std::endl;
+
+		break;
+	}
+	case CollectStates::NORMAL:
+	{
+		logFile_ << data.position.x() << "	" << data.position.y() << "	" << data.position.z()
+				 << "	" << data.velocity.x() << "	" << data.velocity.y() << "	" << data.velocity.z()
+				 << "	" << data.acceleration.x() << "	" << data.acceleration.y() << "	" << data.acceleration.z()
+				 << "	" << data.attitude.x() << "	" << data.attitude.y() << "	" << data.attitude.z()
+				 << "	" << data.angularRate.x() << "	" << data.angularRate.y() << "	" << data.angularRate.z()
+				 << "	" << to_simple_string(data.timestamp)
+				 << "	" << data.airSpeed << "	" << data.groundSpeed
+				 << "	" << data.batteryVoltage << "	" << data.batteryCurrent
+				 << "	" << data.throttle << "	" << data.rpm
+				 << "	" << controllerOutput.rollOutput << "	" << controllerOutput.pitchOutput
+				 << "	" << controllerOutput.yawOutput << "	" << controllerOutput.throttleOutput
+				 << std::endl;
+
+		break;
+	}
+	case CollectStates::FINAL:
+	{
+		logFile_ << data.position.x() << "	" << data.position.y() << "	" << data.position.z()
+				 << "	" << data.velocity.x() << "	" << data.velocity.y() << "	" << data.velocity.z()
+				 << "	" << data.acceleration.x() << "	" << data.acceleration.y() << "	" << data.acceleration.z()
+				 << "	" << data.attitude.x() << "	" << data.attitude.y() << "	" << data.attitude.z()
+				 << "	" << data.angularRate.x() << "	" << data.angularRate.y() << "	" << data.angularRate.z()
+				 << "	" << to_simple_string(data.timestamp)
+				 << "	" << data.airSpeed << "	" << data.groundSpeed
+				 << "	" << data.batteryVoltage << "	" << data.batteryCurrent
+				 << "	" << data.throttle << "	" << data.rpm
+				 << "	" << controllerOutput.rollOutput << "	" << controllerOutput.pitchOutput
+				 << "	" << controllerOutput.yawOutput << "	" << controllerOutput.throttleOutput
+				 << std::endl;
+
 		break;
 	}
 	default:
