@@ -7,7 +7,7 @@
 		],
 		"yaw": 47
 	},
-	"geofencing": {
+	"geofencing_model": {
 		"type":"roll_rate",
 		"roll_rate":20,
 		"roll_max":45,
