@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * ManeuverLocalPlanner.cpp
- *
- *  Created on: Aug 2, 2018
- *      Author: mircot
+/**
+ * @file ManeuverLocalPlanner.cpp
+ * @date Aug 2, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief Description
  */
 #include <uavAP/Core/DataHandling/DataHandling.h>
 #include <uavAP/Core/IPC/IPC.h>
