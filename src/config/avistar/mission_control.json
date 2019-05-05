@@ -493,7 +493,7 @@
 					"analyze_trim": false
 				}
 			],
-			"singlet": [
+			"singlet_roll_R_P500_A05": [
 				{
 					"override": {
 						"local_planner/position_z": 150.0,
@@ -510,19 +510,20 @@
 				{
 					"override": {
 						"local_planner/velocity": 20.0,
-						"pids/roll": 0.0,
-						"controller_outputs/pitch": 0.5
+						"controller_outputs/roll": 0.5,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 200
+						"duration": 500
 					},
 					"override_controller_outputs": {
 						"type": "offset",
 						"enable": true,
-						"roll": false,
+						"roll": true,
 						"pitch": true,
-						"yaw": false,
+						"yaw": true,
 						"throttle": false
 					},
 					"analyze_maneuver": true,
@@ -531,8 +532,9 @@
 				{
 					"override": {
 						"local_planner/velocity": 20.0,
-						"pids/roll": 0.0,
-						"controller_outputs/pitch": 0.0
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
 					},
 					"condition": {
 						"type": "duration",
@@ -541,16 +543,16 @@
 					"override_controller_outputs": {
 						"type": "offset",
 						"enable": true,
-						"roll": false,
+						"roll": true,
 						"pitch": true,
-						"yaw": false,
+						"yaw": true,
 						"throttle": false
 					},
 					"analyze_maneuver": true,
 					"analyze_trim": false
 				}
 			],
-			"doublet": [
+			"singlet_roll_L_P500_A05": [
 				{
 					"override": {
 						"local_planner/position_z": 150.0,
@@ -567,19 +569,20 @@
 				{
 					"override": {
 						"local_planner/velocity": 20.0,
-						"pids/roll": 0.0,
-						"controller_outputs/pitch": 0.5
+						"controller_outputs/roll": -0.5,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
 					},
 					"condition": {
 						"type": "duration",
-						"duration": 200
+						"duration": 500
 					},
 					"override_controller_outputs": {
 						"type": "offset",
 						"enable": true,
-						"roll": false,
+						"roll": true,
 						"pitch": true,
-						"yaw": false,
+						"yaw": true,
 						"throttle": false
 					},
 					"analyze_maneuver": true,
@@ -588,29 +591,9 @@
 				{
 					"override": {
 						"local_planner/velocity": 20.0,
-						"pids/roll": 0.0,
-						"controller_outputs/pitch": -0.5
-					},
-					"condition": {
-						"type": "duration",
-						"duration": 200
-					},
-					"override_controller_outputs": {
-						"type": "offset",
-						"enable": true,
-						"roll": false,
-						"pitch": true,
-						"yaw": false,
-						"throttle": false
-					},
-					"analyze_maneuver": true,
-					"analyze_trim": false
-				},
-				{
-					"override": {
-						"local_planner/velocity": 20.0,
-						"pids/roll": 0.0,
-						"controller_outputs/pitch": 0.0
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
 					},
 					"condition": {
 						"type": "duration",
@@ -619,9 +602,1513 @@
 					"override_controller_outputs": {
 						"type": "offset",
 						"enable": true,
-						"roll": false,
+						"roll": true,
 						"pitch": true,
-						"yaw": false,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			
+			"singlet_roll_R_P300_A05": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.5,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 300
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"singlet_roll_L_P300_A05": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": -0.5,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 300
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"singlet_roll_R_P500_A02": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.2,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"singlet_roll_L_P500_A02": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": -0.2,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"singlet_pitch_U_P500_A05": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.5,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"singlet_pitch_U_P500_A075": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.75,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"singlet_pitch_U_P750_A05": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.5,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 750
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"singlet_pitch_U_P1000_A05": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.5,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 1000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"singlet_yaw": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.5
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"doublet_roll_RL_P500_A05": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.5,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": -0.5,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"doublet_roll_RL_P300_A05": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.5,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 300
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": -0.5,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 300
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"doublet_roll_RL_P500_A025": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.25,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": -0.25,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"doublet_roll_LR_P500_A05": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": -0.5,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.5,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"doublet_roll_LR_P300_A05": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": -0.5,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 300
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.5,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 300
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"doublet_roll_LR_P500_A025": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": -0.25,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.25,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"doublet_pitch_UD_P500_A05": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.5,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": -0.5,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"doublet_pitch_UD_P750_A05": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.5,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 750
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": -0.5,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 750
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"doublet_pitch_UD_P1000_A05": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.5,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 1000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": -0.5,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 1000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"doublet_pitch_UD_P500_A075": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.75,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": -0.75,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"doublet_pitch_UD_P500_A1": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 1,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": -1,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				}
+			],
+			"doublet_yaw": [
+				{
+					"override": {
+						"local_planner/position_z": 150.0,
+						"local_planner/velocity": 20.0,
+						"pids/roll": 0.0
+					},
+					"condition": {
+						"type": "steady_state",
+						"steady_state": true
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.5
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": -0.5
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 500
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
+						"throttle": false
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": false
+				},
+				{
+					"override": {
+						"local_planner/velocity": 20.0,
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 2000
+					},
+					"override_controller_outputs": {
+						"type": "offset",
+						"enable": true,
+						"roll": true,
+						"pitch": true,
+						"yaw": true,
 						"throttle": false
 					},
 					"analyze_maneuver": true,
