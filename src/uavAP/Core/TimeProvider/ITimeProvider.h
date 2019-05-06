@@ -25,9 +25,8 @@
 
 #ifndef UAVAP_CORE_TIMEPROVIDER_ITIMEPROVIDER_H_
 #define UAVAP_CORE_TIMEPROVIDER_ITIMEPROVIDER_H_
-#include <boost/thread/lock_types.hpp>
-#include <boost/thread/pthread/condition_variable.hpp>
 #include "uavAP/Core/Time.h"
+#include <condition_variable>
 
 class ITimeProvider
 {
@@ -42,12 +41,12 @@ public:
 	now() = 0;
 
 	virtual bool
-	waitFor(Duration duration, boost::condition_variable& interrupt,
-			boost::unique_lock<boost::mutex>& lock) = 0;
+	waitFor(Duration duration, std::condition_variable& interrupt,
+			std::unique_lock<std::mutex>& lock) = 0;
 
-	virtual bool
-	waitUntil(TimePoint timePoint, boost::condition_variable& interrupt,
-			boost::unique_lock<boost::mutex>& lock) = 0;
+	virtual	bool
+	waitUntil(TimePoint timePoint, std::condition_variable& interrupt,
+			std::unique_lock<std::mutex>& lock) = 0;
 
 private:
 

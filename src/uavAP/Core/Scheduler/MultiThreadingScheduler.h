@@ -27,13 +27,13 @@
 #define UAVAP_CORE_SCHEDULER_MULTITHREADINGSCHEDULER_H_
 #include <boost/optional/optional.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/thread.hpp>
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Scheduler/EventBody.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/TimeProvider/ITimeProvider.h"
+#include <thread>
 
 class MultiThreadingScheduler: public IScheduler, public IAggregatableObject, public IRunnableObject
 {
@@ -97,10 +97,10 @@ private:
 
 	ObjectHandle<ITimeProvider> timeProvider_;
 
-	boost::thread invokerThread_;
+	std::thread invokerThread_;
 
-	boost::condition_variable wakeupCondition_;
-	boost::mutex eventsMutex_;
+	std::condition_variable wakeupCondition_;
+	std::mutex eventsMutex_;
 
 	bool started_;
 	TimePoint startingTime_;

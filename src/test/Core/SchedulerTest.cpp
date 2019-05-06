@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(MultiThreadedTest001)
 
 	int count1 = 0;
 
-	sched->schedule(boost::bind(schedulingCount, boost::ref(count1)), Milliseconds(0));
+	sched->schedule(std::bind(schedulingCount, boost::ref(count1)), Milliseconds(0));
 
 	runner->runAllStages();
 
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(MultiThreadedTest003)
 
 	tp->stopOnWait();
 
-	sched->schedule(boost::bind(schedulingCount, boost::ref(count1)), Milliseconds(5),
+	sched->schedule(std::bind(schedulingCount, boost::ref(count1)), Milliseconds(5),
 			Milliseconds(10));
 
 	runner->runAllStages();
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(MultiThreadedTest003)
 	BOOST_CHECK_EQUAL(tp->now() - start, Milliseconds(5));
 	BOOST_CHECK_EQUAL(count1, 1);
 
-	sched->schedule(boost::bind(schedulingCount, boost::ref(count2)), Milliseconds(0),
+	sched->schedule(std::bind(schedulingCount, boost::ref(count2)), Milliseconds(0),
 			Milliseconds(20));
 	boost::this_thread::sleep(Milliseconds(10));
 	BOOST_CHECK_EQUAL(count2, 1);
