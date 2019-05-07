@@ -24,8 +24,6 @@
  */
 #include "uavAP/Core/IPC/detail/PacketSubscriptionImpl.h"
 
-#include <boost/thread.hpp>
-
 PacketSubscriptionImpl::PacketSubscriptionImpl(const std::string& id, std::size_t maxPacketSize) :
 		messageQueue_(boost::interprocess::open_only, id.c_str()), listenerCanceled_(false), maxPacketSize_(
 				maxPacketSize), id_(id)
@@ -38,7 +36,7 @@ PacketSubscriptionImpl::~PacketSubscriptionImpl()
 	{
 		cancel();
 	}
-	boost::this_thread::sleep(Milliseconds(100)); //Wait for timeout of message_queue to stop subscription
+	std::this_thread::sleep_for(std::chrono::milliseconds(100)); //Wait for timeout of message_queue to stop subscription
 
 //	if (messageQueue_.remove(id_.c_str()))
 //		APLOG_DEBUG << id_ << " message queue removed.";

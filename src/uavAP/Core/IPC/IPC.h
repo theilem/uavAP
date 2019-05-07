@@ -33,7 +33,6 @@
 
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/interprocess/shared_memory_object.hpp>
-#include <boost/thread/lock_types.hpp>
 #include <boost/interprocess/sync/sharable_lock.hpp>
 #include <boost/property_tree/ptree.hpp>
 
@@ -68,28 +67,28 @@ public:
 
 	template<class Object>
 	Subscription
-	subscribeOnSharedMemory(std::string id, const boost::function<void
+	subscribeOnSharedMemory(const std::string& id, const std::function<void
 	(const Object&)>& slot);
 
 	template<class Object>
 	Subscription
-	subscribeOnMessageQueue(std::string id, const boost::function<void
+	subscribeOnMessageQueue(const std::string& id, const std::function<void
 	(const Object&)>& slot);
 
 	Subscription
-	subscribeOnPacket(std::string id, const boost::function<void
+	subscribeOnPacket(const std::string& id, const std::function<void
 	(const Packet&)>& slot);
 
 	template<class Object>
 	Publisher
-	publishOnSharedMemory(std::string id);
+	publishOnSharedMemory(const std::string& id);
 
 	template<class Object>
 	Publisher
-	publishOnMessageQueue(std::string id, unsigned int numOfMessages);
+	publishOnMessageQueue(const std::string& id, unsigned int numOfMessages);
 
 	Publisher
-	publishPackets(std::string id);
+	publishPackets(const std::string& id);
 
 	bool
 	run(RunStage stage) override;
@@ -117,7 +116,7 @@ private:
 
 template<class Object>
 inline Subscription
-IPC::subscribeOnSharedMemory(std::string id, const boost::function<void
+IPC::subscribeOnSharedMemory(const std::string& id, const std::function<void
 (const Object&)>& slot)
 {
 	std::shared_ptr<SharedMemorySubscriptionImpl<Object>> impl;
@@ -165,7 +164,7 @@ IPC::subscribeOnSharedMemory(std::string id, const boost::function<void
 
 template<class Object>
 inline Publisher
-IPC::publishOnSharedMemory(std::string id)
+IPC::publishOnSharedMemory(const std::string& id)
 {
 	auto impl = std::make_shared<SharedMemoryPublisherImpl<Object>>(id, Object());
 	publications_.push_back(impl);
@@ -174,7 +173,7 @@ IPC::publishOnSharedMemory(std::string id)
 
 template<class Object>
 Subscription
-IPC::subscribeOnMessageQueue(std::string id, const boost::function<void
+IPC::subscribeOnMessageQueue(const std::string& id, const std::function<void
 (const Object&)>& slot)
 {
 	std::shared_ptr<MessageQueueSubscriptionImpl<Object>> impl;
@@ -220,7 +219,7 @@ IPC::subscribeOnMessageQueue(std::string id, const boost::function<void
 
 template<class Object>
 Publisher
-IPC::publishOnMessageQueue(std::string id, unsigned int numOfMessages)
+IPC::publishOnMessageQueue(const std::string& id, unsigned int numOfMessages)
 {
 	std::shared_ptr<MessageQueuePublisherImpl<Object>> impl;
 	try

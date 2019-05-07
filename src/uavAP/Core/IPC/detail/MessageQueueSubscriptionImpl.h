@@ -87,7 +87,7 @@ MessageQueueSubscriptionImpl<Object>::~MessageQueueSubscriptionImpl()
 	{
 		cancel();
 	}
-	boost::this_thread::sleep(Milliseconds(100)); //Wait for timeout of message_queue to stop subscription
+	std::this_thread::sleep_for(std::chrono::milliseconds(100)); //Wait for timeout of message_queue to stop subscription
 //	if (messageQueue_.remove(id_.c_str()))
 //		APLOG_DEBUG << id_ << " message queue removed.";
 }

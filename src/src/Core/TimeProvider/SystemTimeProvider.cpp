@@ -22,14 +22,13 @@
  *  Created on: Jul 19, 2017
  *      Author: mircot
  */
-#include <boost/thread/pthread/thread_data.hpp>
 #include <boost/thread/thread_time.hpp>
 #include "uavAP/Core/TimeProvider/SystemTimeProvider.h"
 
 SystemTimeProvider::SystemTimeProvider()
 {
-	auto epoch = boost::chrono::system_clock::time_point();
-	auto t = boost::chrono::system_clock::to_time_t(epoch);
+	auto epoch = std::chrono::system_clock::time_point();
+	auto t = std::chrono::system_clock::to_time_t(epoch);
 	chronoEpoch_ = boost::posix_time::from_time_t(t);
 }
 

@@ -91,7 +91,7 @@ SensingActuationIO::setControllerOutput(const ControllerOutput& out)
 void
 SensingActuationIO::onSensorData(const SensorData& data)
 {
-	boost::unique_lock<boost::shared_mutex> lock(mutex_);
+	std::unique_lock<std::shared_mutex> lock(mutex_);
 	sensorData_ = data;
 	lock.unlock();
 	onSensorData_(data);
@@ -106,6 +106,6 @@ SensingActuationIO::subscribeOnSensorData(const OnSensorData::slot_type& slot)
 SensorData
 SensingActuationIO::getSensorData() const
 {
-	SharedLockGuard lock(mutex_);
+	std::unique_lock<std::shared_mutex> lock(mutex_);
 	return sensorData_;
 }

@@ -23,7 +23,6 @@
  *      Author: mircot
  */
 
-#include <boost/bind/bind.hpp>
 #include <boost/test/unit_test.hpp>
 #include "uavAP/Core/LinearAlgebra.h"
 #include "uavAP/Core/Runner/SimpleRunner.h"
@@ -32,6 +31,7 @@
 #include "uavAP/Core/TimeProvider/SystemTimeProvider.h"
 
 #include "uavAP/Core/IPC/IPC.h"
+#include <functional>
 
 BOOST_AUTO_TEST_SUITE(IPCTest)
 
@@ -95,12 +95,12 @@ BOOST_AUTO_TEST_CASE(test001)
 	BOOST_CHECK_EQUAL(counter1, 0);
 	BOOST_CHECK_EQUAL(counter2, 0);
 
-	boost::this_thread::sleep(Milliseconds(5));
+	std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
 	BOOST_CHECK_EQUAL(counter1, 0);
 	BOOST_CHECK_EQUAL(counter2, 0);
 	publisher.publish(test);
-	boost::this_thread::sleep(Milliseconds(5));
+	std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
 	BOOST_CHECK_EQUAL(counter1, 1);
 	BOOST_CHECK_EQUAL(counter2, 1);
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(test001)
 	test.val3 = Vector3(2, 3, 4);
 
 	publisher.publish(test);
-	boost::this_thread::sleep(Milliseconds(5));
+	std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
 	BOOST_CHECK_EQUAL(counter1, 2);
 	BOOST_CHECK_EQUAL(counter2, 2);
@@ -127,21 +127,21 @@ BOOST_AUTO_TEST_CASE(test002)
 	Publisher publisher = ipc->publishOnMessageQueue<Test>("test2", 10);
 	int counter1 = 0;
 	Subscription sub = ipc->subscribeOnMessageQueue<Test>("test2",
-			boost::bind(&checkValue, _1, boost::ref(counter1)));
+			std::bind(&checkValue, std::placeholders::_1, std::ref(counter1)));
 	BOOST_REQUIRE(sub.connected());
 	SimpleRunner run(agg);
 	BOOST_REQUIRE(!run.runAllStages());
 	test.val1 = 1;
 	test.val2 = 1.2;
 	test.val3 = Vector3(1, 2, 3);
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	publisher.publish(test);
 	publisher.publish(test);
 	publisher.publish(test);
 	publisher.publish(test);
 	publisher.publish(test);
 	publisher.publish(test);
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 	BOOST_CHECK_EQUAL(counter1, 6);
 
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(test002)
 	test.val3 = Vector3(2, 3, 4);
 
 	publisher.publish(test);
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 	BOOST_CHECK_EQUAL(counter1, 7);
 }

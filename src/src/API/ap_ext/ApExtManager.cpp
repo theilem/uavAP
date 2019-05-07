@@ -22,6 +22,7 @@
  *  Created on: Aug 31, 2017
  *      Author: mircot
  */
+#include <boost/thread/thread_time.hpp>
 #include "uavAP/API/ap_ext/ApExtManager.h"
 #include "uavAP/API/ap_ext/latLongToUTM.h"
 #include "uavAP/Core/SensorData.h"
@@ -29,7 +30,6 @@
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include <cmath>
 #include <iostream>
-#include <boost/thread/thread_time.hpp>
 
 ApExtManager::ApExtManager() :
 		internalImu_(false), externalGps_(false), useAirspeed_(false), useEuler_(false), traceSeqNr_(false), courseAsHeading_(

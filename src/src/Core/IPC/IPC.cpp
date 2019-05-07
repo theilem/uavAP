@@ -78,7 +78,7 @@ IPC::notifyAggregationOnUpdate(const Aggregator& agg)
 }
 
 Subscription
-IPC::subscribeOnPacket(std::string id, const boost::function<void
+IPC::subscribeOnPacket(const std::string& id, const std::function<void
 (const Packet&)>& slot)
 {
 	std::shared_ptr<PacketSubscriptionImpl> impl;
@@ -121,7 +121,7 @@ IPC::subscribeOnPacket(std::string id, const boost::function<void
 }
 
 Publisher
-IPC::publishPackets(std::string id)
+IPC::publishPackets(const std::string& id)
 {
 	std::shared_ptr<PacketPublisherImpl> impl;
 	try

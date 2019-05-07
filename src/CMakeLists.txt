@@ -43,7 +43,7 @@ if(CMAKE_COMPILER_IS_GNUCC)
 
 endif(CMAKE_COMPILER_IS_GNUCC)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -std=c++14 -fPIC -Wall -Wno-int-in-bool-context")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -std=c++17 -fPIC -Wall -Wno-int-in-bool-context")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
 include_directories(	${CMAKE_SOURCE_DIR}
@@ -58,7 +58,6 @@ link_directories(	${Boost_LIBRARY_DIRS}
 					
 if(LINK_STATIC)
 	set(BOOST 	libboost_filesystem.a
-				libboost_thread.a
 				libboost_system.a
 				libboost_date_time.a
 				libboost_chrono.a
@@ -70,7 +69,6 @@ if(LINK_STATIC)
 				libflint.a)
 else(LINK_STATIC)
 	set(BOOST 	boost_filesystem
-				boost_thread
 				boost_system
 				boost_date_time
 				boost_chrono
