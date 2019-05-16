@@ -98,6 +98,12 @@ private:
 			const bool& maneuverActive);
 
 	void
+	startManeuverAnalysis();
+
+	void
+	stopManeuverAnalysis();
+
+	void
 	startOverride();
 
 	void
@@ -138,6 +144,9 @@ private:
 	AdvancedControl advancedControl_;
 	mutable std::mutex advancedControlMutex_;
 
+	bool maneuverAnalysis_;
+	mutable std::mutex maneuverAnalysisMutex_;
+
 	ManeuverAnalysisStatus maneuverAnalysisStatus_;
 	mutable std::mutex maneuverAnalysisStatusMutex_;
 
@@ -177,6 +186,7 @@ private:
 	std::shared_ptr<RectanguloidCondition> safetyCondition_;
 
 	Publisher overridePublisher_;
+	Publisher maneuverAnalysisPublisher_;
 	Publisher maneuverAnalysisStatusPublisher_;
 	Publisher trimAnalysisPublisher_;
 	Publisher advancedControlPublisher_;

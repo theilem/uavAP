@@ -90,13 +90,16 @@ private:
 	onControllerOutput(const Packet& output);
 
 	void
+	onManeuverAnalysis(const Packet& analysis);
+
+	void
 	onManeuverAnalysisStatus(const Packet& status);
 
 	void
 	collectStateInit(const SensorData& data, const std::string& maneuver, const bool& interrupted);
 
 	void
-	collectStateNormal(const SensorData& data);
+	collectStateNormal(const SensorData& data, const bool& analysis);
 
 	void
 	collectStateFinal(const SensorData& data);
@@ -112,12 +115,16 @@ private:
 
 	Subscription sensorDataSubscription_;
 	Subscription controllerOutputSubscription_;
+	Subscription maneuverAnalysisSubscription_;
 	Subscription maneuverAnalysisStatusSubscription_;
 
 	ObjectHandle<IPC> ipcHandle_;
 
 	ControllerOutput controllerOutput_;
 	std::mutex controllerOutputMutex_;
+
+	bool analysis_;
+	std::mutex maneuverAnalysisMutex_;
 
 	ManeuverAnalysisStatus analysisStatus_;
 	std::mutex maneuverAnalysisStatusMutex_;

@@ -33,8 +33,8 @@
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 
 ManeuverPlanner::ManeuverPlanner() :
-		maneuverAnalysisStatus_(), trimAnalysis_(false), overrideInterrupted_(false), manualActive_(
-				false), maneuverActive_(false), lastManualActive_(false), lastManeuverActive_(
+		maneuverAnalysis_(false), maneuverAnalysisStatus_(), trimAnalysis_(false), overrideInterrupted_(
+				false), manualActive_(false), maneuverActive_(false), lastManualActive_(false), lastManeuverActive_(
 				false), manualRestart_(false), maneuverRestart_(false), overrideSeqNr_(0)
 {
 	controllerOutputOffset_.throttleOutput = 0;
@@ -121,6 +121,7 @@ ManeuverPlanner::run(RunStage stage)
 		overridePublisher_ = ipc->publishPackets("override");
 		advancedControlPublisher_ = ipc->publishOnSharedMemory<AdvancedControl>(
 				"advanced_control_maneuver");
+		maneuverAnalysisPublisher_ = ipc->publishPackets("maneuver_analysis");
 		maneuverAnalysisStatusPublisher_ = ipc->publishPackets("maneuver_analysis_status");
 		trimAnalysisPublisher_ = ipc->publishPackets("trim_analysis");
 
@@ -176,16 +177,20 @@ ManeuverPlanner::run(RunStage stage)
 	}
 	case RunStage::FINAL:
 	{
+		std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
+		bool maneuverAnalysis = maneuverAnalysis_;
+		maneuverAnalysisLock.unlock();
+
 		std::unique_lock<std::mutex> maneuverAnalysisStatusLock(maneuverAnalysisStatusMutex_);
 		ManeuverAnalysisStatus maneuverAnalysisStatus = maneuverAnalysisStatus_;
 		maneuverAnalysisStatusLock.unlock();
-
-		maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
 
 		std::unique_lock<std::mutex> trimAnalysisLock(trimAnalysisMutex_);
 		bool trimAnalysis = trimAnalysis_;
 		trimAnalysisLock.unlock();
 
+		maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
+		maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
 		trimAnalysisPublisher_.publish(dp::serialize(trimAnalysis));
 
 		break;
@@ -206,6 +211,7 @@ ManeuverPlanner::setManualOverride(const Override& override)
 	}
 
 	stopOverride();
+	stopManeuverAnalysis();
 
 	std::unique_lock<std::mutex> overrideLock(overrideMutex_);
 	override_ = override;
@@ -233,10 +239,12 @@ ManeuverPlanner::setManeuverOverride(const std::string& maneuverSet)
 	}
 
 	stopOverride();
+	stopManeuverAnalysis();
 
 	currentManeuver_ = currentManeuverSet_->second.begin();
 
 	setOverride(maneuverSet, false, true);
+	startManeuverAnalysis();
 	startOverride();
 }
 
@@ -356,6 +364,28 @@ ManeuverPlanner::setOverride(const std::string& maneuverSet, const bool& manualA
 }
 
 void
+ManeuverPlanner::startManeuverAnalysis()
+{
+	std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
+	maneuverAnalysis_ = true;
+	bool maneuverAnalysis = maneuverAnalysis_;
+	maneuverAnalysisLock.unlock();
+
+	maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
+}
+
+void
+ManeuverPlanner::stopManeuverAnalysis()
+{
+	std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
+	maneuverAnalysis_ = false;
+	bool maneuverAnalysis = maneuverAnalysis_;
+	maneuverAnalysisLock.unlock();
+
+	maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
+}
+
+void
 ManeuverPlanner::startOverride()
 {
 	APLOG_DEBUG << "Start Override.";
@@ -393,6 +423,7 @@ ManeuverPlanner::startOverride()
 		if (currentManeuver_ == currentManeuverSet_->second.end())
 		{
 			stopOverride();
+			stopManeuverAnalysis();
 
 			return;
 		}
@@ -461,6 +492,7 @@ ManeuverPlanner::nextManeuverOverride()
 	else
 	{
 		stopOverride();
+		stopManeuverAnalysis();
 		return;
 	}
 
@@ -556,7 +588,7 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 
 			for (auto& it : offsetOverride)
 			{
-				switch(it.first)
+				switch (it.first)
 				{
 				case ControllerOutputs::ROLL:
 				{
