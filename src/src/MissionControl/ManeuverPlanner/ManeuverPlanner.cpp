@@ -33,7 +33,7 @@
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 
 ManeuverPlanner::ManeuverPlanner() :
-		maneuverAnalysis_(), trimAnalysis_(false), overrideInterrupted_(false), manualActive_(
+		maneuverAnalysisStatus_(), trimAnalysis_(false), overrideInterrupted_(false), manualActive_(
 				false), maneuverActive_(false), lastManualActive_(false), lastManeuverActive_(
 				false), manualRestart_(false), maneuverRestart_(false), overrideSeqNr_(0)
 {
@@ -121,7 +121,7 @@ ManeuverPlanner::run(RunStage stage)
 		overridePublisher_ = ipc->publishPackets("override");
 		advancedControlPublisher_ = ipc->publishOnSharedMemory<AdvancedControl>(
 				"advanced_control_maneuver");
-		maneuverAnalysisPublisher_ = ipc->publishPackets("maneuver_analysis_status");
+		maneuverAnalysisStatusPublisher_ = ipc->publishPackets("maneuver_analysis_status");
 		trimAnalysisPublisher_ = ipc->publishPackets("trim_analysis");
 
 		break;
@@ -176,11 +176,11 @@ ManeuverPlanner::run(RunStage stage)
 	}
 	case RunStage::FINAL:
 	{
-		std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
-		ManeuverAnalysisStatus maneuverAnalysis = maneuverAnalysis_;
-		maneuverAnalysisLock.unlock();
+		std::unique_lock<std::mutex> maneuverAnalysisStatusLock(maneuverAnalysisStatusMutex_);
+		ManeuverAnalysisStatus maneuverAnalysisStatus = maneuverAnalysisStatus_;
+		maneuverAnalysisStatusLock.unlock();
 
-		maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
+		maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
 
 		std::unique_lock<std::mutex> trimAnalysisLock(trimAnalysisMutex_);
 		bool trimAnalysis = trimAnalysis_;
@@ -368,10 +368,10 @@ ManeuverPlanner::startOverride()
 		Override override = override_;
 		overrideLock.unlock();
 
-		std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
-		maneuverAnalysis_.reset();
-		ManeuverAnalysisStatus maneuverAnalysis = maneuverAnalysis_;
-		maneuverAnalysisLock.unlock();
+		std::unique_lock<std::mutex> maneuverAnalysisStatusLock(maneuverAnalysisStatusMutex_);
+		maneuverAnalysisStatus_.reset();
+		ManeuverAnalysisStatus maneuverAnalysisStatus = maneuverAnalysisStatus_;
+		maneuverAnalysisStatusLock.unlock();
 
 		std::unique_lock<std::mutex> trimAnalysisLock(trimAnalysisMutex_);
 		trimAnalysis_ = false;
@@ -379,7 +379,7 @@ ManeuverPlanner::startOverride()
 		trimAnalysisLock.unlock();
 
 		overridePublisher_.publish(dp::serialize(override));
-		maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
+		maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
 		trimAnalysisPublisher_.publish(dp::serialize(trimAnalysis));
 
 		std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
@@ -422,10 +422,10 @@ ManeuverPlanner::stopOverride()
 	AdvancedControl advancedControl = advancedControl_;
 	advancedControlLock.unlock();
 
-	std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
-	maneuverAnalysis_.reset();
-	ManeuverAnalysisStatus maneuverAnalysis = maneuverAnalysis_;
-	maneuverAnalysisLock.unlock();
+	std::unique_lock<std::mutex> maneuverAnalysisStatusLock(maneuverAnalysisStatusMutex_);
+	maneuverAnalysisStatus_.reset();
+	ManeuverAnalysisStatus maneuverAnalysisStatus = maneuverAnalysisStatus_;
+	maneuverAnalysisStatusLock.unlock();
 
 	std::unique_lock<std::mutex> trimAnalysisLock(trimAnalysisMutex_);
 	trimAnalysis_ = false;
@@ -434,7 +434,7 @@ ManeuverPlanner::stopOverride()
 
 	overridePublisher_.publish(dp::serialize(override));
 	advancedControlPublisher_.publish(advancedControl);
-	maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
+	maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
 	trimAnalysisPublisher_.publish(dp::serialize(trimAnalysis));
 
 	std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
@@ -616,12 +616,12 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 	APLOG_TRACE << "Maneuver Camber Value: " << advancedControl.camberValue;
 	APLOG_TRACE << "Maneuver Special Value: " << advancedControl.specialValue;
 
-	std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
-	maneuverAnalysis_.maneuver = maneuverSet_;
-	maneuverAnalysis_.analysis = currentManeuver->analyzeManeuver;
-	maneuverAnalysis_.interrupted = overrideInterrupted_;
-	ManeuverAnalysisStatus maneuverAnalysis = maneuverAnalysis_;
-	maneuverAnalysisLock.unlock();
+	std::unique_lock<std::mutex> maneuverAnalysisStatusLock(maneuverAnalysisStatusMutex_);
+	maneuverAnalysisStatus_.maneuver = maneuverSet_;
+	maneuverAnalysisStatus_.analysis = currentManeuver->analyzeManeuver;
+	maneuverAnalysisStatus_.interrupted = overrideInterrupted_;
+	ManeuverAnalysisStatus maneuverAnalysisStatus = maneuverAnalysisStatus_;
+	maneuverAnalysisStatusLock.unlock();
 
 	std::unique_lock<std::mutex> trimAnalysisLock(trimAnalysisMutex_);
 	trimAnalysis_ = currentManeuver->analyzeTrim;
@@ -630,7 +630,7 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 
 	overridePublisher_.publish(dp::serialize(override));
 	advancedControlPublisher_.publish(advancedControl);
-	maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
+	maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
 	trimAnalysisPublisher_.publish(dp::serialize(trimAnalysis));
 
 	std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
@@ -675,12 +675,12 @@ ManeuverPlanner::deactivateManeuverOverride()
 		conditionManager->deactivateCondition(currentManeuver->condition);
 	}
 
-	std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
-	maneuverAnalysis_.analysis = false;
-	ManeuverAnalysisStatus maneuverAnalysis = maneuverAnalysis_;
-	maneuverAnalysisLock.unlock();
+	std::unique_lock<std::mutex> maneuverAnalysisStatusLock(maneuverAnalysisStatusMutex_);
+	maneuverAnalysisStatus_.analysis = false;
+	ManeuverAnalysisStatus maneuverAnalysisStatus = maneuverAnalysisStatus_;
+	maneuverAnalysisStatusLock.unlock();
 
-	maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
+	maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
 
 	std::unique_lock<std::mutex> trimAnalysisLock(trimAnalysisMutex_);
 	trimAnalysis_ = false;

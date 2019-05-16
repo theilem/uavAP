@@ -138,8 +138,8 @@ private:
 	AdvancedControl advancedControl_;
 	mutable std::mutex advancedControlMutex_;
 
-	ManeuverAnalysisStatus maneuverAnalysis_;
-	mutable std::mutex maneuverAnalysisMutex_;
+	ManeuverAnalysisStatus maneuverAnalysisStatus_;
+	mutable std::mutex maneuverAnalysisStatusMutex_;
 
 	bool trimAnalysis_;
 	mutable std::mutex trimAnalysisMutex_;
@@ -177,7 +177,7 @@ private:
 	std::shared_ptr<RectanguloidCondition> safetyCondition_;
 
 	Publisher overridePublisher_;
-	Publisher maneuverAnalysisPublisher_;
+	Publisher maneuverAnalysisStatusPublisher_;
 	Publisher trimAnalysisPublisher_;
 	Publisher advancedControlPublisher_;
 	Subscription controllerOutputSubscription_;
