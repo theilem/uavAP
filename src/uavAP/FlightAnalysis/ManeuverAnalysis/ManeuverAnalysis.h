@@ -112,14 +112,14 @@ private:
 
 	Subscription sensorDataSubscription_;
 	Subscription controllerOutputSubscription_;
-	Subscription maneuverAnalysisSubscription_;
+	Subscription maneuverAnalysisStatusSubscription_;
 
 	ObjectHandle<IPC> ipcHandle_;
 
 	ControllerOutput controllerOutput_;
 	std::mutex controllerOutputMutex_;
 
-	ManeuverAnalysisStatus analysis_;
+	ManeuverAnalysisStatus analysisStatus_;
 	std::mutex maneuverAnalysisStatusMutex_;
 
 	bool collectInit_;

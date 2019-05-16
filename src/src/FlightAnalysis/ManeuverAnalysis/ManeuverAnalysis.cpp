@@ -103,11 +103,11 @@ ManeuverAnalysis::run(RunStage stage)
 			return true;
 		}
 
-		maneuverAnalysisSubscription_ = ipc->subscribeOnPacket("maneuver_analysis_status",
+		maneuverAnalysisStatusSubscription_ = ipc->subscribeOnPacket("maneuver_analysis_status",
 				std::bind(&ManeuverAnalysis::onManeuverAnalysisStatus, this,
 						std::placeholders::_1));
 
-		if (!maneuverAnalysisSubscription_.connected())
+		if (!maneuverAnalysisStatusSubscription_.connected())
 		{
 			APLOG_ERROR << "ManeuverAnalysis: Maneuver Analysis Subscription Missing.";
 			return true;
@@ -134,18 +134,18 @@ void
 ManeuverAnalysis::onSensorData(const SensorData& data)
 {
 	std::unique_lock<std::mutex> lock(maneuverAnalysisStatusMutex_);
-	ManeuverAnalysisStatus analysis = analysis_;
+	ManeuverAnalysisStatus analysisStatus = analysisStatus_;
 	lock.unlock();
 
-	if (analysis.analysis && !collectInit_)
+	if (analysisStatus.analysis && !collectInit_)
 	{
-		collectStateInit(data, analysis.maneuver, analysis_.interrupted);
+		collectStateInit(data, analysisStatus.maneuver, analysisStatus.interrupted);
 	}
-	else if (analysis.analysis && collectInit_)
+	else if (analysisStatus.analysis && collectInit_)
 	{
 		collectStateNormal(data);
 	}
-	else if (!analysis.analysis && collectInit_)
+	else if (!analysisStatus.analysis && collectInit_)
 	{
 		collectStateFinal(data);
 	}
@@ -155,7 +155,7 @@ void
 ManeuverAnalysis::onManeuverAnalysisStatus(const Packet& status)
 {
 	std::unique_lock<std::mutex> lock(maneuverAnalysisStatusMutex_);
-	analysis_ = dp::deserialize<ManeuverAnalysisStatus>(status);
+	analysisStatus_ = dp::deserialize<ManeuverAnalysisStatus>(status);
 	lock.unlock();
 }
 
