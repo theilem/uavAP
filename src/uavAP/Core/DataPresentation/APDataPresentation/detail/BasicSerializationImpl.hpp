@@ -222,8 +222,8 @@ dp::load(Archive& ar,
 {
 	uint16_t size;
 	ar >> size;
-	val.append(ar.begin(), size);
-	ar.consume(size);
+	val.resize(size);
+	ar.read(val.data(), size);
 }
 
 template<class Archive, typename Type>

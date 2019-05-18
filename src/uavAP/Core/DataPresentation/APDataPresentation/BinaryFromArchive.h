@@ -73,6 +73,11 @@ public:
 	void
 	consume(unsigned long bytes);
 
+
+
+	void
+	read(char* val, unsigned long bytes);
+
 	/**
 	 * @brief Flush out operator used for non protobuf objects
 	 * @param val Non protobuf object
