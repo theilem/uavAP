@@ -123,9 +123,9 @@ dp::load(Archive& ar, typename std::enable_if<is_vector<Type>::value, Type>::typ
 {
 	uint8_t size;
 	ar >> size;
-	typename Type::value_type tmp;
 	for (uint8_t i = 0; i < size; ++i)
 	{
+		typename Type::value_type tmp;
 		ar >> tmp;
 		val.push_back(tmp);
 	}
@@ -187,10 +187,10 @@ dp::load(Archive& ar, typename std::enable_if<is_map<Type>::value, Type>::type& 
 {
 	uint8_t size;
 	ar >> size;
-	typename Type::mapped_type valTmp;
-	typename Type::key_type keyTmp;
 	for (uint8_t i = 0; i < size; ++i)
 	{
+		typename Type::mapped_type valTmp;
+		typename Type::key_type keyTmp;
 		ar >> keyTmp >> valTmp;
 		val.insert(std::make_pair(keyTmp, valTmp));
 	}
