@@ -29,26 +29,6 @@
 
 #include "uavAP/MissionControl/ManeuverPlanner/Override.h"
 
-template<class Group, typename Type>
-void
-mapOverrideValue(PropertyMapper& pm, const std::string& override,
-		const std::string& overrideMember, Group& overrideGroup)
-{
-	auto overrideValueEnum = EnumMap<Type>::convert(overrideMember);
-
-	if (overrideValueEnum != Type::INVALID)
-	{
-		auto insert = overrideGroup.insert(std::make_pair(overrideValueEnum, 0));
-		pm.add<double>(override, insert.first->second, true);
-	}
-	else
-	{
-		APLOG_WARN << "Override: Invalid Override Member for " << override;
-	}
-
-	return;
-}
-
 bool
 Override::configure(const boost::property_tree::ptree& config)
 {
@@ -96,6 +76,13 @@ Override::configure(const boost::property_tree::ptree& config)
 		{
 			mapOverrideValue<ControllerOutputOverrides, ControllerOutputs>(pm, override,
 					overrideMember, output);
+
+			break;
+		}
+		case OverrideGroup::CONTROLLER_OUTPUTS_WAVEFORMS:
+		{
+			mapOverrideEnum<ControllerOutputWaveformOverrides, ControllerOutputsWaveforms, Waveforms>(pm, override,
+					overrideMember, waveform);
 
 			break;
 		}

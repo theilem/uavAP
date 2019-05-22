@@ -47,6 +47,7 @@ enum class OverrideGroup
 	CONTROLLER_TARGETS,
 	PIDS,
 	CONTROLLER_OUTPUTS,
+	CONTROLLER_OUTPUTS_WAVEFORMS,
 	CONTROLLER_CONSTRAINTS,
 	CUSTOM,
 	NUM_GROUP
@@ -59,6 +60,7 @@ ENUMMAP_INIT(CustomOverrideIDs, { {CustomOverrideIDs::CUSTOM_1, "custom_1"},
 ENUMMAP_INIT(OverrideGroup, { {OverrideGroup::LOCAL_PLANNER, "local_planner"},
 		{OverrideGroup::CONTROLLER_TARGETS, "controller_targets"}, {OverrideGroup::PIDS, "pids"},
 		{OverrideGroup::CONTROLLER_OUTPUTS, "controller_outputs"},
+		{OverrideGroup::CONTROLLER_OUTPUTS_WAVEFORMS, "controller_outputs_waveforms"},
 		{OverrideGroup::CONTROLLER_CONSTRAINTS, "controller_constraints"}, {OverrideGroup::CUSTOM,
 		"custom"} });
 
@@ -68,6 +70,7 @@ struct Override
 	using ControllerTargetOverrides = std::map<ControllerTargets, double>;
 	using PIDOverrides = std::map<PIDs, double>;
 	using ControllerOutputOverrides = std::map<ControllerOutputs, double>;
+	using ControllerOutputWaveformOverrides = std::map<ControllerOutputsWaveforms, Waveforms>;
 	using ControllerConstraintOverrides = std::map<ControllerConstraints, double>;
 	using CustomOverrides = std::map<CustomOverrideIDs, double>;
 
@@ -75,6 +78,7 @@ struct Override
 	ControllerTargetOverrides controllerTarget;
 	PIDOverrides pid;
 	ControllerOutputOverrides output;
+	ControllerOutputWaveformOverrides waveform;
 	ControllerConstraintOverrides constraint;
 	CustomOverrides custom;
 
@@ -84,6 +88,46 @@ struct Override
 	bool
 	isEmpty() const;
 };
+
+template<class Group, typename Type>
+void
+mapOverrideValue(PropertyMapper& pm, const std::string& override,
+		const std::string& overrideMember, Group& overrideGroup)
+{
+	auto overrideValueEnum = EnumMap<Type>::convert(overrideMember);
+
+	if (overrideValueEnum != Type::INVALID)
+	{
+		auto insert = overrideGroup.insert(std::make_pair(overrideValueEnum, 0));
+		pm.add<double>(override, insert.first->second, true);
+	}
+	else
+	{
+		APLOG_WARN << "Override: Invalid Override Member for " << override;
+	}
+
+	return;
+}
+
+template<class Group, typename Type, typename Enum>
+void
+mapOverrideEnum(PropertyMapper& pm, const std::string& override,
+		const std::string& overrideMember, Group& overrideGroup)
+{
+	auto overrideValueEnum = EnumMap<Type>::convert(overrideMember);
+
+	if (overrideValueEnum != Type::INVALID)
+	{
+		auto insert = overrideGroup.insert(std::make_pair(overrideValueEnum, Enum()));
+		pm.addEnum<Enum>(override, insert.first->second, true);
+	}
+	else
+	{
+		APLOG_WARN << "Override: Invalid Override Member for " << override;
+	}
+
+	return;
+}
 
 void
 degreeToRadian(Override& override);

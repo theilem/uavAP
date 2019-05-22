@@ -37,17 +37,35 @@ enum class ControllerOutputs
 	INVALID, ROLL, PITCH, YAW, THROTTLE, NUM_OUTPUT
 };
 
+enum class ControllerOutputsWaveforms
+{
+	INVALID, ROLL, PITCH, YAW, THROTTLE, NUM_OUTPUT
+};
+
 enum class ControllerOutputsOverrides
 {
 	INVALID, FREEZE, TRIM, OFFSET, NUM_OVERRIDE
 };
 
+enum class Waveforms
+{
+	INVALID, SQUARE, SINE, RAMP, SAWTOOTH, TRIANGULAR, NUM_WAVEFORM
+};
+
 ENUMMAP_INIT(ControllerOutputs, { {ControllerOutputs::ROLL, "roll"}, {ControllerOutputs::PITCH,
 		"pitch"}, {ControllerOutputs::YAW, "yaw"}, {ControllerOutputs::THROTTLE, "throttle"} });
+
+ENUMMAP_INIT(ControllerOutputsWaveforms, { {ControllerOutputsWaveforms::ROLL, "roll"},
+		{ControllerOutputsWaveforms::PITCH, "pitch"}, {ControllerOutputsWaveforms::YAW, "yaw"},
+		{ControllerOutputsWaveforms::THROTTLE, "throttle"} });
 
 ENUMMAP_INIT(ControllerOutputsOverrides, { {ControllerOutputsOverrides::FREEZE, "freeze"},
 		{ControllerOutputsOverrides::TRIM, "trim"}, {ControllerOutputsOverrides::OFFSET,
 		"offset"} });
+
+ENUMMAP_INIT(Waveforms, { {Waveforms::SQUARE, "square"}, {Waveforms::SINE, "sine"},
+		{Waveforms::RAMP, "ramp"}, {Waveforms::SAWTOOTH, "sawtooth"}, {Waveforms::TRIANGULAR,
+		"triangular"} });
 
 struct ControllerOutput: SerializeCustom
 {
