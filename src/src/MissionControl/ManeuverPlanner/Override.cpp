@@ -41,6 +41,13 @@ Override::configure(const boost::property_tree::ptree& config)
 	for (const auto& it : config)
 	{
 		override = it.first;
+
+		if (override == "wavelength")
+		{
+			pm.add<double>(override, wavelength, false);
+			continue;
+		}
+
 		std::istringstream ss(override);
 
 		if (!std::getline(ss, overrideGroup, '/') || !std::getline(ss, overrideMember, '/'))

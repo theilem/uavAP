@@ -93,9 +93,11 @@ public:
 
 private:
 
+	double
+	getWaveformOutput();
+
 	Element in_;
 	TimePoint start_;
-	TimePoint current_;
 	Waveforms waveform_;
 	double* out_;
 	bool override_;

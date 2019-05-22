@@ -62,16 +62,16 @@ Filter::setAlpha(double alpha)
 }
 
 Output::Output(Element in, double* out) :
-		in_(in), start_(), current_(), waveform_(), out_(out), override_(false), overrideOut_(0), wavelength_(
-				0)
+		in_(in), start_(), waveform_(), out_(out), override_(false), overrideOut_(0), wavelength_(0)
 {
 }
 
 void
 Output::overrideOutput(double newOutput)
 {
-	override_ = true;
 	overrideOut_ = newOutput;
+	start_ = boost::posix_time::microsec_clock::local_time();
+	override_ = true;
 }
 
 void
@@ -90,18 +90,62 @@ void
 Output::disableOverride()
 {
 	override_ = false;
+	start_ = TimePoint();
+	waveform_ = Waveforms::NONE;
+	wavelength_ = 0;
 }
 
 void
 Output::evaluate()
 {
-	*out_ = override_ ? overrideOut_ : in_->getValue();
+	*out_ = override_ ? getWaveformOutput() : in_->getValue();
 }
 
 double
 Output::getValue()
 {
 	return in_->getValue();
+}
+
+double
+Output::getWaveformOutput()
+{
+	double waveformOutput = 0;
+
+	switch (waveform_)
+	{
+	case Waveforms::NONE:
+	{
+		waveformOutput = overrideOut_;
+
+		break;
+	}
+	case Waveforms::SQUARE:
+	{
+		//TODO change to actual square wave signal
+		waveformOutput = overrideOut_;
+
+		break;
+	}
+	case Waveforms::SINE:
+	{
+		TimePoint current = boost::posix_time::microsec_clock::local_time();
+		double time = (current - start_).total_milliseconds();
+		double period = (2 * M_PI) / wavelength_;
+
+		waveformOutput = overrideOut_ * sin(period * time);
+
+		break;
+	}
+	default:
+	{
+		waveformOutput = overrideOut_;
+
+		break;
+	}
+	}
+
+	return waveformOutput;
 }
 
 PID::PID(Element target, Element current, const Parameters& params, Duration* timeDiff) :

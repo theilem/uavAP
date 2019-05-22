@@ -119,7 +119,7 @@ mapOverrideEnum(PropertyMapper& pm, const std::string& override,
 
 	if (overrideValueEnum != Type::INVALID)
 	{
-		auto insert = overrideGroup.insert(std::make_pair(overrideValueEnum, Enum()));
+		auto insert = overrideGroup.insert(std::make_pair(overrideValueEnum, Enum::INVALID));
 		pm.addEnum<Enum>(override, insert.first->second, true);
 	}
 	else

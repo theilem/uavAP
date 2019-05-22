@@ -49,7 +49,7 @@ enum class ControllerOutputsOverrides
 
 enum class Waveforms
 {
-	INVALID, SQUARE, SINE, RAMP, SAWTOOTH, TRIANGULAR, NUM_WAVEFORM
+	INVALID, NONE, SQUARE, SINE, RAMP, SAWTOOTH, TRIANGULAR, NUM_WAVEFORM
 };
 
 ENUMMAP_INIT(ControllerOutputs, { {ControllerOutputs::ROLL, "roll"}, {ControllerOutputs::PITCH,
@@ -63,9 +63,9 @@ ENUMMAP_INIT(ControllerOutputsOverrides, { {ControllerOutputsOverrides::FREEZE, 
 		{ControllerOutputsOverrides::TRIM, "trim"}, {ControllerOutputsOverrides::OFFSET,
 		"offset"} });
 
-ENUMMAP_INIT(Waveforms, { {Waveforms::SQUARE, "square"}, {Waveforms::SINE, "sine"},
-		{Waveforms::RAMP, "ramp"}, {Waveforms::SAWTOOTH, "sawtooth"}, {Waveforms::TRIANGULAR,
-		"triangular"} });
+ENUMMAP_INIT(Waveforms, { {Waveforms::NONE, "none"}, {Waveforms::SQUARE, "square"},
+		{Waveforms::SINE, "sine"}, {Waveforms::RAMP, "ramp"}, {Waveforms::SAWTOOTH, "sawtooth"},
+		{Waveforms::TRIANGULAR, "triangular"} });
 
 struct ControllerOutput: SerializeCustom
 {

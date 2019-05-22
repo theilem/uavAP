@@ -91,12 +91,6 @@ struct Maneuver
 		}
 
 		pm.add("condition", conditionTree, true);
-
-		PropertyMapper conditionPm(conditionTree);
-		conditionPm.add<double>("duration", override.wavelength, false);
-		override.wavelength *= 2; // Maneuver duration is half of the wavelength
-		override.wavelength /= 1000; // Maneuver duration is in milliseconds
-
 		pm.add<AdvancedControl>("advanced_control", advancedControl, false);
 		pm.add<bool>("analyze_maneuver", analyzeManeuver, false);
 		pm.add<bool>("analyze_trim", analyzeTrim, false);
