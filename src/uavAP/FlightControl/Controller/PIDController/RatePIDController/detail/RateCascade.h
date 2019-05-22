@@ -81,6 +81,7 @@ private:
 
 	std::map<PIDs, std::shared_ptr<Control::PID>> pids_;
 	std::map<ControllerOutputs, std::shared_ptr<Control::Output>> outputs_;
+	std::map<ControllerOutputsWaveforms, std::shared_ptr<Control::Output>> outputWaveforms_;
 	std::map<ControllerConstraints, std::shared_ptr<Control::Constraint>> constraints_;
 
 	std::shared_ptr<Control::Constraint> rollTargetConstraint_;

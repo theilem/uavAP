@@ -119,6 +119,11 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 	outputs_.insert(std::make_pair(ControllerOutputs::THROTTLE, throttleOut));
 	outputs_.insert(std::make_pair(ControllerOutputs::YAW, yawOut));
 
+	outputWaveforms_.insert(std::make_pair(ControllerOutputsWaveforms::ROLL, rollOut));
+	outputWaveforms_.insert(std::make_pair(ControllerOutputsWaveforms::PITCH, pitchOut));
+	outputWaveforms_.insert(std::make_pair(ControllerOutputsWaveforms::THROTTLE, throttleOut));
+	outputWaveforms_.insert(std::make_pair(ControllerOutputsWaveforms::YAW, yawOut));
+
 	constraints_.insert(std::make_pair(ControllerConstraints::ROLL, rollTargetConstraint_));
 	constraints_.insert(
 			std::make_pair(ControllerConstraints::ROLL_RATE, rollRateTargetConstraint_));
@@ -330,6 +335,15 @@ RateCascade::setManeuverOverride(const Override& override)
 		if (auto pid = findInMap(pids_, it.first))
 		{
 			pid->second->overrideTarget(it.second);
+		}
+	}
+
+	for (const auto& it : override.waveform)
+	{
+		if (auto out = findInMap(outputWaveforms_, it.first))
+		{
+			out->second->setWaveform(it.second);
+			out->second->setWavelength(override.wavelength);
 		}
 	}
 

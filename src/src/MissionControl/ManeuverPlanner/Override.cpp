@@ -81,8 +81,8 @@ Override::configure(const boost::property_tree::ptree& config)
 		}
 		case OverrideGroup::CONTROLLER_OUTPUTS_WAVEFORMS:
 		{
-			mapOverrideEnum<ControllerOutputWaveformOverrides, ControllerOutputsWaveforms, Waveforms>(pm, override,
-					overrideMember, waveform);
+			mapOverrideEnum<ControllerOutputWaveformOverrides, ControllerOutputsWaveforms, Waveforms>(
+					pm, override, overrideMember, waveform);
 
 			break;
 		}
@@ -121,7 +121,7 @@ bool
 Override::isEmpty() const
 {
 	return localPlanner.empty() && controllerTarget.empty() && pid.empty() && output.empty()
-			&& constraint.empty() && custom.empty();
+			&& waveform.empty() && constraint.empty() && custom.empty();
 }
 
 void

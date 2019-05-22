@@ -81,6 +81,7 @@ struct Override
 	ControllerOutputWaveformOverrides waveform;
 	ControllerConstraintOverrides constraint;
 	CustomOverrides custom;
+	double wavelength;
 
 	bool
 	configure(const boost::property_tree::ptree& config);
@@ -142,8 +143,10 @@ serialize(Archive& ar, Override& t)
 	ar & t.controllerTarget;
 	ar & t.pid;
 	ar & t.output;
+	ar & t.waveform;
 	ar & t.constraint;
 	ar & t.custom;
+	ar & t.wavelength;
 }
 } /* dp */
 

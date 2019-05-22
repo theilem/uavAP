@@ -32,6 +32,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightControl/Controller/ControlElements/IEvaluableControlElement.h"
+#include "uavAP/FlightControl/Controller/ControllerOutput.h"
 
 struct PIDStatus;
 
@@ -76,6 +77,12 @@ public:
 	overrideOutput(double newOutput);
 
 	void
+	setWaveform(Waveforms waveform);
+
+	void
+	setWavelength(double wavelength);
+
+	void
 	disableOverride();
 
 	void
@@ -87,11 +94,13 @@ public:
 private:
 
 	Element in_;
+	TimePoint start_;
+	TimePoint current_;
+	Waveforms waveform_;
 	double* out_;
 	bool override_;
 	double overrideOut_;
-
-
+	double wavelength_;
 };
 
 class PID: public IEvaluableControlElement

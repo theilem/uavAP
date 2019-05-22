@@ -23,6 +23,7 @@
  *      Author: uav
  */
 
+#include "uavAP/Core/EnumMap.hpp"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightControl/Controller/ControlElements/EvaluableControlElements.h"
 #include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
@@ -61,7 +62,8 @@ Filter::setAlpha(double alpha)
 }
 
 Output::Output(Element in, double* out) :
-		in_(in), out_(out), override_(false), overrideOut_(0)
+		in_(in), start_(), current_(), waveform_(), out_(out), override_(false), overrideOut_(0), wavelength_(
+				0)
 {
 }
 
@@ -70,6 +72,18 @@ Output::overrideOutput(double newOutput)
 {
 	override_ = true;
 	overrideOut_ = newOutput;
+}
+
+void
+Output::setWaveform(Waveforms waveform)
+{
+	waveform_ = waveform;
+}
+
+void
+Output::setWavelength(double wavelength)
+{
+	wavelength_ = wavelength;
 }
 
 void
