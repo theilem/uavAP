@@ -47,6 +47,11 @@ Override::configure(const boost::property_tree::ptree& config)
 			pm.add<double>(override, wavelength, false);
 			continue;
 		}
+		else if (override == "phase")
+		{
+			pm.add<double>(override, phase, false);
+			continue;
+		}
 
 		std::istringstream ss(override);
 

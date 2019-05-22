@@ -62,7 +62,8 @@ Filter::setAlpha(double alpha)
 }
 
 Output::Output(Element in, double* out) :
-		in_(in), start_(), waveform_(), out_(out), override_(false), overrideOut_(0), wavelength_(0)
+		in_(in), start_(), waveform_(), out_(out), override_(false), overrideOut_(0), wavelength_(
+				0), phase_(0)
 {
 }
 
@@ -87,12 +88,19 @@ Output::setWavelength(double wavelength)
 }
 
 void
+Output::setPhase(double phase)
+{
+	phase_ = phase;
+}
+
+void
 Output::disableOverride()
 {
 	override_ = false;
 	start_ = TimePoint();
 	waveform_ = Waveforms::NONE;
 	wavelength_ = 0;
+	phase_ = 0;
 }
 
 void
@@ -133,7 +141,9 @@ Output::getWaveformOutput()
 		double time = (current - start_).total_milliseconds();
 		double period = (2 * M_PI) / wavelength_;
 
-		waveformOutput = overrideOut_ * sin(period * time);
+		waveformOutput = overrideOut_ * sin(period * (time + phase_));
+
+		APLOG_ERROR << "phase: " << phase_;
 
 		break;
 	}

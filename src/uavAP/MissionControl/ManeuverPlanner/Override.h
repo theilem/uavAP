@@ -82,6 +82,7 @@ struct Override
 	ControllerConstraintOverrides constraint;
 	CustomOverrides custom;
 	double wavelength;
+	double phase;
 
 	bool
 	configure(const boost::property_tree::ptree& config);
@@ -147,6 +148,7 @@ serialize(Archive& ar, Override& t)
 	ar & t.constraint;
 	ar & t.custom;
 	ar & t.wavelength;
+	ar & t.phase;
 }
 } /* dp */
 

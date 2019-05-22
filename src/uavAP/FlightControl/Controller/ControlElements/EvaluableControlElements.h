@@ -83,6 +83,9 @@ public:
 	setWavelength(double wavelength);
 
 	void
+	setPhase(double phase);
+
+	void
 	disableOverride();
 
 	void
@@ -103,6 +106,7 @@ private:
 	bool override_;
 	double overrideOut_;
 	double wavelength_;
+	double phase_;
 };
 
 class PID: public IEvaluableControlElement

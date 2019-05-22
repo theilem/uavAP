@@ -344,6 +344,7 @@ RateCascade::setManeuverOverride(const Override& override)
 		{
 			out->second->setWaveform(it.second);
 			out->second->setWavelength(override.wavelength);
+			out->second->setPhase(override.phase);
 		}
 	}
 
