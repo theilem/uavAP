@@ -130,8 +130,23 @@ Output::getWaveformOutput()
 	}
 	case Waveforms::SQUARE:
 	{
-		//TODO change to actual square wave signal
-		waveformOutput = overrideOut_;
+		TimePoint current = boost::posix_time::microsec_clock::local_time();
+		double time = (current - start_).total_milliseconds();
+		double period = (2 * M_PI) / wavelength_;
+		double sine = sin(period * (time + phase_));
+
+		if (sine > 0)
+		{
+			waveformOutput = overrideOut_;
+		}
+		else if (sine == 0)
+		{
+			waveformOutput = 0;
+		}
+		else if (sine < 0)
+		{
+			waveformOutput = -overrideOut_;
+		}
 
 		break;
 	}
@@ -142,8 +157,6 @@ Output::getWaveformOutput()
 		double period = (2 * M_PI) / wavelength_;
 
 		waveformOutput = overrideOut_ * sin(period * (time + phase_));
-
-		APLOG_ERROR << "phase: " << phase_;
 
 		break;
 	}
