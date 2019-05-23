@@ -128,6 +128,16 @@ Output::getWaveformOutput()
 
 		break;
 	}
+	case Waveforms::SINE:
+	{
+		TimePoint current = boost::posix_time::microsec_clock::local_time();
+		double time = (current - start_).total_milliseconds();
+		double period = (2 * M_PI) / wavelength_;
+
+		waveformOutput = overrideOut_ * sin(period * (time + phase_));
+
+		break;
+	}
 	case Waveforms::SQUARE:
 	{
 		TimePoint current = boost::posix_time::microsec_clock::local_time();
@@ -150,24 +160,15 @@ Output::getWaveformOutput()
 
 		break;
 	}
-	case Waveforms::SINE:
-	{
-		TimePoint current = boost::posix_time::microsec_clock::local_time();
-		double time = (current - start_).total_milliseconds();
-		double period = (2 * M_PI) / wavelength_;
-
-		waveformOutput = overrideOut_ * sin(period * (time + phase_));
-
-		break;
-	}
 	case Waveforms::RAMP:
 	{
 		TimePoint current = boost::posix_time::microsec_clock::local_time();
 		double time = (current - start_).total_milliseconds();
+		double time_mod = fmod(time + phase_, wavelength_);
 		double slope = (2 * overrideOut_) / wavelength_;
 		double intercept = -overrideOut_;
 
-		waveformOutput = slope * (fmod(time + phase_, wavelength_)) + intercept;
+		waveformOutput = slope * time_mod + intercept;
 
 		break;
 	}
@@ -175,10 +176,11 @@ Output::getWaveformOutput()
 	{
 		TimePoint current = boost::posix_time::microsec_clock::local_time();
 		double time = (current - start_).total_milliseconds();
+		double time_mod = fmod(time + phase_, wavelength_);
 		double slope = -(2 * overrideOut_) / wavelength_;
 		double intercept = overrideOut_;
 
-		waveformOutput = slope * (fmod(time + phase_, wavelength_)) + intercept;
+		waveformOutput = slope * time_mod + intercept;
 
 		break;
 	}
