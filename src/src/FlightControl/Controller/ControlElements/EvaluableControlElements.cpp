@@ -160,6 +160,19 @@ Output::getWaveformOutput()
 
 		break;
 	}
+	case Waveforms::RAMP:
+	{
+		TimePoint current = boost::posix_time::microsec_clock::local_time();
+		double time = (current - start_).total_milliseconds();
+		double slope = (2 * overrideOut_) / wavelength_;
+		double intercept = -overrideOut_;
+
+		waveformOutput = slope * (fmod(time + phase_, wavelength_)) + intercept;
+
+		APLOG_ERROR << "waveformOutput: " << waveformOutput;
+
+		break;
+	}
 	default:
 	{
 		waveformOutput = overrideOut_;
