@@ -184,6 +184,12 @@ Output::getWaveformOutput()
 
 		break;
 	}
+	case Waveforms::TRIANGULAR:
+	{
+		waveformOutput = overrideOut_;
+
+		break;
+	}
 	default:
 	{
 		waveformOutput = overrideOut_;
