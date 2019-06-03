@@ -44,12 +44,12 @@ public:
 	now() override;
 
 	bool
-	waitFor(Duration duration, boost::condition_variable& interrupt,
-			boost::unique_lock<boost::mutex>& lock) override;
+	waitFor(Duration duration, std::condition_variable& interrupt,
+			std::unique_lock<std::mutex>& lock) override;
 
 	bool
-	waitUntil(TimePoint timePoint, boost::condition_variable& interrupt,
-			boost::unique_lock<boost::mutex>& lock) override;
+	waitUntil(TimePoint timePoint, std::condition_variable& interrupt,
+			std::unique_lock<std::mutex>& lock) override;
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;

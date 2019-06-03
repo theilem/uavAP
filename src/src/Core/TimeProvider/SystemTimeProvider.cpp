@@ -22,14 +22,13 @@
  *  Created on: Jul 19, 2017
  *      Author: mircot
  */
-#include <boost/thread/pthread/thread_data.hpp>
 #include <boost/thread/thread_time.hpp>
 #include "uavAP/Core/TimeProvider/SystemTimeProvider.h"
 
 SystemTimeProvider::SystemTimeProvider()
 {
-	auto epoch = boost::chrono::system_clock::time_point();
-	auto t = boost::chrono::system_clock::to_time_t(epoch);
+	auto epoch = std::chrono::system_clock::time_point();
+	auto t = std::chrono::system_clock::to_time_t(epoch);
 	chronoEpoch_ = boost::posix_time::from_time_t(t);
 }
 
@@ -46,22 +45,22 @@ SystemTimeProvider::now()
 }
 
 bool
-SystemTimeProvider::waitFor(Duration duration, boost::condition_variable& interrupt,
-		boost::unique_lock<boost::mutex>& lock)
+SystemTimeProvider::waitFor(Duration duration, std::condition_variable& interrupt,
+		std::unique_lock<std::mutex>& lock)
 {
-	boost::chrono::nanoseconds nsec(duration.total_nanoseconds());
-	return interrupt.wait_for(lock, nsec) == boost::cv_status::timeout;
+	std::chrono::nanoseconds nsec(duration.total_nanoseconds());
+	return interrupt.wait_for(lock, nsec) == std::cv_status::timeout;
 }
 
 bool
-SystemTimeProvider::waitUntil(TimePoint timePoint, boost::condition_variable& interrupt,
-		boost::unique_lock<boost::mutex>& lock)
+SystemTimeProvider::waitUntil(TimePoint timePoint, std::condition_variable& interrupt,
+		std::unique_lock<std::mutex>& lock)
 {
 	auto t = boost::posix_time::to_time_t(timePoint);
-	boost::chrono::system_clock::time_point tp = boost::chrono::system_clock::from_time_t(t)
-			+ boost::chrono::microseconds(timePoint.time_of_day().fractional_seconds());
+	std::chrono::system_clock::time_point tp = std::chrono::system_clock::from_time_t(t)
+			+ std::chrono::microseconds(timePoint.time_of_day().fractional_seconds());
 
-	return interrupt.wait_until(lock, tp) == boost::cv_status::timeout;
+	return interrupt.wait_until(lock, tp) == std::cv_status::timeout;
 }
 
 void

@@ -24,11 +24,11 @@
  */
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
-#include <boost/thread/lock_types.hpp>
 #include "uavAP/Core/Object/Aggregator.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Runner/SynchronizedRunner.h"
 #include "uavAP/Core/Runner/SynchronizedRunnerMaster.h"
+#include <mutex>
 #include <string>
 
 SynchronizedRunner::SynchronizedRunner() :
@@ -50,12 +50,16 @@ SynchronizedRunner::runSynchronized(Aggregator& agg)
 	while (lastRunStage != RunStage::FINAL)
 	{
 		RunStage stage;
-		boost::unique_lock<boost::interprocess::interprocess_mutex> lock(
+		std::unique_lock<boost::interprocess::interprocess_mutex> lock(
 				synchronizer->runStageMutex);
+		if (synchronizer->failure)
+			return true;
 		stage = synchronizer->runStage;
 		if (stage == lastRunStage)
 		{
 			synchronizer->runStageChanged.wait(lock);
+			if (synchronizer->failure)
+				return true;
 			stage = synchronizer->runStage;
 		}
 		lock.unlock();

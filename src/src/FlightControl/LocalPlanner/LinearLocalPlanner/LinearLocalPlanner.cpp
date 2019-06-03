@@ -25,7 +25,6 @@
  *  Description
  */
 
-#include <boost/thread/pthread/shared_mutex.hpp>
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/detail/AirplaneLocalPlannerImpl.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"

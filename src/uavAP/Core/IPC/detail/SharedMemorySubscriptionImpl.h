@@ -100,7 +100,7 @@ SharedMemorySubscriptionImpl<Object>::~SharedMemorySubscriptionImpl()
 	{
 		cancel();
 	}
-	boost::this_thread::sleep(Milliseconds(100)); //Wait for timeout of condition to stop subscription
+	std::this_thread::sleep_for(std::chrono::milliseconds(100)); //Wait for timeout of condition to stop subscription
 
 	std::string name = sharedMem_.get_name();
 //	if (sharedMem_.remove(name.c_str()))
