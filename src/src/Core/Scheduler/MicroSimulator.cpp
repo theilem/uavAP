@@ -120,7 +120,7 @@ MicroSimulator::startSchedule()
 void
 MicroSimulator::releaseWait()
 {
-	boost::unique_lock<boost::mutex> lock(waitCondMutex_);
+	std::unique_lock<std::mutex> lock(waitCondMutex_);
 	if (!waitCondition_)
 	{
 		APLOG_WARN << "Nobody waiting on release";
@@ -137,8 +137,8 @@ MicroSimulator::now()
 }
 
 bool
-MicroSimulator::waitFor(Duration duration, boost::condition_variable& interrupt,
-		boost::unique_lock<boost::mutex>& lock)
+MicroSimulator::waitFor(Duration duration, std::condition_variable& interrupt,
+		std::unique_lock<std::mutex>& lock)
 {
 	if (stopOnWait_)
 	{
@@ -153,8 +153,8 @@ MicroSimulator::waitFor(Duration duration, boost::condition_variable& interrupt,
 }
 
 bool
-MicroSimulator::waitUntil(TimePoint timePoint, boost::condition_variable& interrupt,
-		boost::unique_lock<boost::mutex>& lock)
+MicroSimulator::waitUntil(TimePoint timePoint, std::condition_variable& interrupt,
+		std::unique_lock<std::mutex>& lock)
 {
 	if (stopOnWait_)
 	{

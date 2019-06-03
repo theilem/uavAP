@@ -51,7 +51,7 @@ public:
 	start() override;
 
 	using OnMessageQueue = boost::signals2::signal<void(const Packet&)>;
-	using OnMessageQueueSlot = boost::function<void(const Packet&)>;
+	using OnMessageQueueSlot = std::function<void(const Packet&)>;
 
 	boost::signals2::connection
 	subscribe(const OnMessageQueueSlot& slot);

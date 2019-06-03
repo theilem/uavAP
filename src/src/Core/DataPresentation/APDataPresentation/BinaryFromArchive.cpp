@@ -78,3 +78,10 @@ BinaryFromArchive::operator >>(double& doub)
 	}
 	return *this;
 }
+
+void
+BinaryFromArchive::read(char* val, unsigned long bytes)
+{
+	memcpy(static_cast<void*>(val), string_.c_str() + idx_, bytes);
+	consume(bytes);
+}

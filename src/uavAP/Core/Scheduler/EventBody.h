@@ -28,11 +28,10 @@
 
 #include <functional>
 #include <boost/optional.hpp>
-#include <boost/thread.hpp>
-#include <boost/thread/pthread/condition_variable.hpp>
-#include <boost/thread/pthread/mutex.hpp>
 #include "uavAP/Core/Time.h"
 #include <atomic>
+#include <condition_variable>
+#include <thread>
 
 struct EventBody
 {
@@ -44,9 +43,9 @@ struct EventBody
 	std::atomic_bool isStarted;
 	std::atomic_bool missedDeadline;
 
-	boost::mutex executionMutex;
-	boost::thread periodicThread;
-	boost::condition_variable intervalCondition;
+	std::mutex executionMutex;
+	std::thread periodicThread;
+	std::condition_variable intervalCondition;
 
 	EventBody(const std::function<void
 	()>& b);

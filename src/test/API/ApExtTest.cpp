@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(test001)
 
 	setConfigPath("/usr/local/config/sailplane/alvolo.json");
 	BOOST_REQUIRE_EQUAL(ap_ext_setup(), 0);
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 	unsigned long channels[32] = {0};
 
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(test001)
 	out.throttleOutput = 0;
 
 	pub.publish(out);
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 	ap_ext_actuate(channels, 7);
 

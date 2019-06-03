@@ -30,12 +30,6 @@
 
 #include "uavAP/Core/Logging/APLogger.h"
 
-/**
- * @brief
- * @param argc
- * @param argv
- * @return
- */
 int
 main(int argc, char** argv)
 {

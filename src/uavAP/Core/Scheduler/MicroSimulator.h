@@ -28,12 +28,12 @@
 
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 #include <boost/optional/optional.hpp>
-#include <boost/thread/pthread/condition_variable.hpp>
 #include <boost/thread.hpp>
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/Time.h"
 #include "uavAP/Core/TimeProvider/ITimeProvider.h"
+#include <condition_variable>
 #include <functional>
 #include <map>
 
@@ -71,12 +71,12 @@ public:
 	now() override;
 
 	bool
-	waitFor(Duration duration, boost::condition_variable& interrupt,
-			boost::unique_lock<boost::mutex>& lock) override;
+	waitFor(Duration duration, std::condition_variable& interrupt,
+			std::unique_lock<std::mutex>& lock) override;
 
 	bool
-	waitUntil(TimePoint timePoint, boost::condition_variable& interrupt,
-			boost::unique_lock<boost::mutex>& lock) override;
+	waitUntil(TimePoint timePoint, std::condition_variable& interrupt,
+			std::unique_lock<std::mutex>& lock) override;
 
 	int
 	simulate(Duration duration);
@@ -95,8 +95,8 @@ private:
 	int runs_;
 	bool stopOnWait_;
 
-	boost::mutex waitCondMutex_;
-	boost::condition_variable* waitCondition_;
+	std::mutex waitCondMutex_;
+	std::condition_variable* waitCondition_;
 	bool waitReleased_;
 };
 

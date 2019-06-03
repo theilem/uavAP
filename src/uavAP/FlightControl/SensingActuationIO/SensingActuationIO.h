@@ -26,7 +26,6 @@
 #ifndef UAVAP_FLIGHTCONTROL_FLIGHTCONTROLDATA_H_
 #define UAVAP_FLIGHTCONTROL_FLIGHTCONTROLDATA_H_
 
-#include <boost/thread/shared_mutex.hpp>
 #include <boost/signals2.hpp>
 #include <boost/property_tree/ptree.hpp>
 
@@ -38,6 +37,7 @@
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 
+#include <shared_mutex>
 
 struct ControllerOutput;
 class IPC;
@@ -81,7 +81,7 @@ private:
 
 	OnSensorData onSensorData_;
 
-	mutable boost::shared_mutex mutex_;
+	mutable std::shared_mutex mutex_;
 	SensorData sensorData_;
 
 };
