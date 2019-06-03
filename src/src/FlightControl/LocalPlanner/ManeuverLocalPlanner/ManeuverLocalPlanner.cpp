@@ -414,10 +414,10 @@ ManeuverLocalPlanner::onOverridePacket(const Packet& packet)
 	targetOverrides_ = override.controllerTarget;
 }
 
-#define magic_timing_begin(cycleLo, cycleHi) {\
-    cycleHi = 0;\
-    asm volatile("mrs %0, cntvct_el0" : "=r"(cycleLo) );\
-}\
+//#define magic_timing_begin(cycleLo, cycleHi) {\
+//    cycleHi = 0;\
+//    asm volatile("mrs %0, cntvct_el0" : "=r"(cycleLo) );\
+//}\
 
 void
 ManeuverLocalPlanner::update()
@@ -426,7 +426,7 @@ ManeuverLocalPlanner::update()
 	static unsigned int endCycles[2];
 	static unsigned int elapsed[2];
 
-	magic_timing_begin(startCycles[0], startCycles[1]);
+//	magic_timing_begin(startCycles[0], startCycles[1]);
 
 	auto sensing = sensing_.get();
 
@@ -440,7 +440,7 @@ ManeuverLocalPlanner::update()
 	createLocalPlan(data.position, data.attitude.z(), data.hasGPSFix, data.sequenceNr);
 
 
-	magic_timing_begin(endCycles[0], endCycles[1]);
+//	magic_timing_begin(endCycles[0], endCycles[1]);
 
 	unsigned long long start = (((unsigned long long)0x0) | startCycles[0]) << 32 | startCycles[1];
 	unsigned long long end = (((unsigned long long)0x0) | endCycles[0]) << 32 | endCycles[1];
