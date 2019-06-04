@@ -61,6 +61,9 @@ enum class Sensor
 	CONSUMED_ENERGY,
 	BATTERY_VOLTAGE,
 	BATTERY_CURRENT,
+	AILERON,
+	ELEVATOR,
+	RUDDER,
 	THROTTLE,
 	RPM,
 	NUM_SENSOR
@@ -94,6 +97,9 @@ ENUMMAP_INIT(Sensor,
 		{Sensor::CONSUMED_ENERGY, "consumed_energy"},
 		{Sensor::BATTERY_VOLTAGE, "battery_voltage"},
 		{Sensor::BATTERY_CURRENT, "battery_current"},
+		{Sensor::AILERON, "aileron"},
+		{Sensor::ELEVATOR, "elevator"},
+		{Sensor::RUDDER, "rudder"},
 		{Sensor::THROTTLE, "throttle"},
 		{Sensor::RPM, "rpm"}
 	}
@@ -120,6 +126,9 @@ struct SensorData
 	double consumedEnergy; 	//!< measured or estimated total used energy for propulsion
 	double batteryVoltage;	//!< current battery voltage
 	double batteryCurrent;	//!< current battery current
+	double aileron;			//!< current aileron position
+	double elevator;		//!< current elevator position
+	double rudder;			//!< current rudder position
 	double throttle;		//!< current throttle position
 	double rpm;				//!< current motor rotation speed
 
@@ -127,7 +136,7 @@ struct SensorData
 				position(0, 0, 0), velocity(0, 0, 0), acceleration(0, 0, 0), attitude(0, 0, 0), angularRate(
 						0, 0, 0), sequenceNr(0), hasGPSFix(false), autopilotActive(false), airSpeed(0), groundSpeed(
 						0), angleOfAttack(0), propulsionPower(0), consumedEnergy(0), batteryVoltage(0), batteryCurrent(
-						0), throttle(0), rpm(0)
+						0), aileron(0), elevator(0), rudder(0), throttle(0), rpm(0)
 	{
 	}
 };
@@ -157,6 +166,9 @@ serialize(Archive& ar, SensorData& t)
 	ar & t.sequenceNr;
 	ar & t.batteryVoltage;
 	ar & t.batteryCurrent;
+	ar & t.aileron;
+	ar & t.elevator;
+	ar & t.rudder;
 	ar & t.throttle;
 	ar & t.rpm;
 }

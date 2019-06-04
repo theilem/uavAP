@@ -422,10 +422,11 @@ ManeuverAnalysis::collectFlightTesting(const SensorData& data, const CollectStat
 				<< "Rotation Rate x (Rad/s)" << "	" << "Rotation Rate y (Rad/s)" << "	"
 				<< "Rotation Rate z (Rad/s)" << "	" << "Timestamp (UTC)" << "	" << "Air Speed (m/s)"
 				<< "	" << "Ground Speed (m/s)" << "	" << "Battery Voltage (V)" << "	"
-				<< "Battery Current (A)" << "	" << "Throttle Level (%)" << "	"
-				<< "Motor Speed (RPM)" << "	" << "Roll Output (Unit)" << "	"
-				<< "Pitch Output (Unit)" << "	" << "Yaw Output (Unit)" << "	"
-				<< "Throttle Output (Unit)" << std::endl;
+				<< "Battery Current (A)" << "	" << "Aileron Level (Deg)" << "	"
+				<< "Elevator Level (Deg)" << "	" << "Rudder Level (Deg)" << "	" << "Throttle Level (%)"
+				<< "	" << "Motor Speed (RPM)" << "	" << "Roll Output (%)" << "	"
+				<< "Pitch Output (%)" << "	" << "Yaw Output (%)" << "	" << "Throttle Output (%)"
+				<< std::endl;
 
 		logFile_ << data.position.x() << "	" << data.position.y() << "	" << data.position.z() << "	"
 				<< data.velocity.x() << "	" << data.velocity.y() << "	" << data.velocity.z() << "	"
@@ -435,8 +436,9 @@ ManeuverAnalysis::collectFlightTesting(const SensorData& data, const CollectStat
 				<< data.angularRate.y() << "	" << data.angularRate.z() << "	"
 				<< to_simple_string(data.timestamp) << "	" << data.airSpeed << "	"
 				<< data.groundSpeed << "	" << data.batteryVoltage << "	" << data.batteryCurrent
-				<< "	" << data.throttle << "	" << data.rpm << "	" << controllerOutput.rollOutput
-				<< "	" << controllerOutput.pitchOutput << "	" << controllerOutput.yawOutput << "	"
+				<< "	" << data.aileron << "	" << data.elevator << "	" << data.rudder << "	"
+				<< data.throttle << "	" << data.rpm << "	" << controllerOutput.rollOutput << "	"
+				<< controllerOutput.pitchOutput << "	" << controllerOutput.yawOutput << "	"
 				<< controllerOutput.throttleOutput << std::endl;
 
 		logFile_ << "collectStateNormal:" << std::endl;
@@ -453,8 +455,9 @@ ManeuverAnalysis::collectFlightTesting(const SensorData& data, const CollectStat
 				<< data.angularRate.y() << "	" << data.angularRate.z() << "	"
 				<< to_simple_string(data.timestamp) << "	" << data.airSpeed << "	"
 				<< data.groundSpeed << "	" << data.batteryVoltage << "	" << data.batteryCurrent
-				<< "	" << data.throttle << "	" << data.rpm << "	" << controllerOutput.rollOutput
-				<< "	" << controllerOutput.pitchOutput << "	" << controllerOutput.yawOutput << "	"
+				<< "	" << data.aileron << "	" << data.elevator << "	" << data.rudder << "	"
+				<< data.throttle << "	" << data.rpm << "	" << controllerOutput.rollOutput << "	"
+				<< controllerOutput.pitchOutput << "	" << controllerOutput.yawOutput << "	"
 				<< controllerOutput.throttleOutput << std::endl;
 
 		break;
@@ -469,8 +472,9 @@ ManeuverAnalysis::collectFlightTesting(const SensorData& data, const CollectStat
 				<< data.angularRate.y() << "	" << data.angularRate.z() << "	"
 				<< to_simple_string(data.timestamp) << "	" << data.airSpeed << "	"
 				<< data.groundSpeed << "	" << data.batteryVoltage << "	" << data.batteryCurrent
-				<< "	" << data.throttle << "	" << data.rpm << "	" << controllerOutput.rollOutput
-				<< "	" << controllerOutput.pitchOutput << "	" << controllerOutput.yawOutput << "	"
+				<< "	" << data.aileron << "	" << data.elevator << "	" << data.rudder << "	"
+				<< data.throttle << "	" << data.rpm << "	" << controllerOutput.rollOutput << "	"
+				<< controllerOutput.pitchOutput << "	" << controllerOutput.yawOutput << "	"
 				<< controllerOutput.throttleOutput << std::endl;
 
 		break;
