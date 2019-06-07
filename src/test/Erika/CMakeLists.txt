@@ -1,0 +1,1 @@
+add_executable(erika_test erika_test.cpp)

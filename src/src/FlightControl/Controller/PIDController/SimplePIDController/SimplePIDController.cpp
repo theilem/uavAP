@@ -34,7 +34,6 @@
 #include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/detail/AirplaneSimplePIDCascade.h"
-//#include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/detail/HelicopterSimplePIDCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/SimplePIDController.h"
 
 SimplePIDController::SimplePIDController() :
@@ -55,18 +54,9 @@ bool
 SimplePIDController::configure(const boost::property_tree::ptree& config)
 {
 	PropertyMapper propertyMapper(config);
-	propertyMapper.add<bool>("airplane", airplane_, false);
 
-	if (airplane_)
-	{
-		pidCascade_ = std::make_shared<AirplaneSimplePIDCascade>(&sensorData_, velocityInertial_,
-				accelerationInertial_, &controllerTarget_, &controllerOutput_);
-	}
-	else
-	{
-//		pidCascade_ = std::make_shared<HelicopterSimplePIDCascade>(&sensorData_, &controllerTarget_,
-//				&controllerOutput_);
-	}
+	pidCascade_ = std::make_shared<AirplaneSimplePIDCascade>(&sensorData_, velocityInertial_,
+			accelerationInertial_, &controllerTarget_, &controllerOutput_);
 
 	return pidCascade_->configure(config);
 }

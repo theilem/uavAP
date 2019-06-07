@@ -28,7 +28,15 @@
 
 #include <boost/property_tree/ptree.hpp>
 
+#ifdef ERIKA
+//No idea yet what to do, somehow include StaticAggregator and create a typedef to Aggregator
+#include "erika_defs.hpp"
+#else
+
 class Aggregator;
+
+#endif
+
 
 class IAggregatableObject
 {

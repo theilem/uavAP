@@ -88,3 +88,4 @@ add_executable (rttests EXCLUDE_FROM_ALL ${RT_TEST_SOURCES})
 target_link_libraries (rttests ${TEST_DEPENDENCIES})
 
 add_subdirectory(Messages)
+add_subdirectory(Erika)
