@@ -26,12 +26,12 @@
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_MANEUVERPIDCONTROLLER_MANEUVERPIDCONTROLLER_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_MANEUVERPIDCONTROLLER_MANEUVERPIDCONTROLLER_H_
 
+#include <uavAP/Core/Object/AggregatableObject.hpp>
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/MissionControl/ManeuverPlanner/Override.h"
-#include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
@@ -44,7 +44,7 @@ class IScheduler;
 class IPC;
 class Packet;
 
-class ManeuverPIDController: public IPIDController, public IAggregatableObject, public IRunnableObject
+class ManeuverPIDController: public IPIDController, public AggregatableObject<IPC, IScheduler, ISensingActuationIO>, public IRunnableObject
 {
 public:
 
@@ -67,9 +67,6 @@ public:
 	ControllerOutput
 	getControllerOutput() override;
 
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
-
 	std::shared_ptr<IPIDCascade>
 	getCascade() override;
 
@@ -80,10 +77,6 @@ private:
 
 	void
 	onOverridePacket(const Packet& packet);
-
-	ObjectHandle<ISensingActuationIO> sensAct_;
-	ObjectHandle<IScheduler> scheduler_;
-	ObjectHandle<IPC> ipc_;
 
 	std::mutex controllerTargetMutex_;
 	ControllerTarget controllerTarget_;

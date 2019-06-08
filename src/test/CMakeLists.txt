@@ -23,6 +23,7 @@ set (TEST_SOURCES 	TestRunner.cpp
                         Core/IPCTest.cpp
                         Core/SchedulerTest.cpp
                         Core/PropertyMapperTest.cpp
+                        Core/ObjectHandleTest.cpp
                         
                         Math/BetaIncompleteTest.cpp
                         Geofencing/GeneralTests.cpp

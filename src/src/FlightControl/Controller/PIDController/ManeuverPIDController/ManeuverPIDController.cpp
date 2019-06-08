@@ -59,23 +59,23 @@ ManeuverPIDController::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!sensAct_.isSet())
+		if (!isSet<ISensingActuationIO>())
 		{
 			APLOG_ERROR << "PIDController: Failed to Load SensingActuationIO";
 			return true;
 		}
-		if (!scheduler_.isSet())
+		if (!isSet<IScheduler>())
 		{
 			APLOG_ERROR << "PIDController: Failed to Load Scheduler";
 			return true;
 		}
-		if (!ipc_.isSet())
+		if (!isSet<IPC>())
 		{
 			APLOG_ERROR << "PIDController: ipc missing";
 			return true;
 		}
 
-		auto ipc = ipc_.get();
+		auto ipc = get<IPC>();
 
 		controllerOutputPublisher_ = ipc->publishPackets("controller_output");
 
@@ -83,7 +83,7 @@ ManeuverPIDController::run(RunStage stage)
 	}
 	case RunStage::NORMAL:
 	{
-		auto ipc = ipc_.get();
+		auto ipc = get<IPC>();
 		overrideSubscription_ = ipc->subscribeOnPacket("override",
 				std::bind(&ManeuverPIDController::onOverridePacket, this, std::placeholders::_1));
 
@@ -92,7 +92,7 @@ ManeuverPIDController::run(RunStage stage)
 			APLOG_DEBUG << "Override not present.";
 		}
 
-		auto scheduler = scheduler_.get();
+		auto scheduler = get<IScheduler>();
 //		scheduler->schedule(std::bind(&ManeuverPIDController::calculateControl, this),
 //				Milliseconds(0), Milliseconds(10));
 
@@ -125,14 +125,6 @@ ManeuverPIDController::getControllerOutput()
 	return controllerOutput_;
 }
 
-void
-ManeuverPIDController::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	sensAct_.setFromAggregationIfNotSet(agg);
-	scheduler_.setFromAggregationIfNotSet(agg);
-	ipc_.setFromAggregationIfNotSet(agg);
-}
-
 std::shared_ptr<IPIDCascade>
 ManeuverPIDController::getCascade()
 {
@@ -142,7 +134,7 @@ ManeuverPIDController::getCascade()
 void
 ManeuverPIDController::calculateControl()
 {
-	auto sensAct = sensAct_.get();
+	auto sensAct = get<ISensingActuationIO>();
 
 	if (!sensAct)
 	{
