@@ -23,10 +23,11 @@ set (TEST_SOURCES 	TestRunner.cpp
 					Core/IPCTest.cpp
 					Core/SchedulerTest.cpp
 					Core/PropertyMapperTest.cpp
+	                Core/ObjectHandleTest.cpp
 					#Core/FramesTest.cpp
 					Core/FrameworkAPITest.cpp
 					Math/BetaIncompleteTest.cpp
-					Geofencing/GeneralTests.cpp
+#					Geofencing/GeneralTests.cpp
 					#FlightControl/Controller/PIDControllerTest_Airplane.cpp
 					#FlightControl/Controller/PIDControllerTest_Helicopter.cpp
 					API/ApExtTest.cpp
