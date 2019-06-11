@@ -71,6 +71,120 @@
 					"analyze_trim": true
 				}
 			],
+			"control_surface_test": [
+				{
+					"override": {
+						"controller_outputs/roll": 1.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0,
+						"controller_outputs/throttle": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 1000
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": true
+				},
+				{
+					"override": {
+						"controller_outputs/roll": -1.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0,
+						"controller_outputs/throttle": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 1000
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": true
+				},
+				{
+					"override": {
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 1.0,
+						"controller_outputs/yaw": 0.0,
+						"controller_outputs/throttle": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 1000
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": true
+				},
+				{
+					"override": {
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": -1.0,
+						"controller_outputs/yaw": 0.0,
+						"controller_outputs/throttle": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 1000
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": true
+				},
+				{
+					"override": {
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 1.0,
+						"controller_outputs/throttle": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 1000
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": true
+				},
+				{
+					"override": {
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": -1.0,
+						"controller_outputs/throttle": 0.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 1000
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": true
+				},
+				{
+					"override": {
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0,
+						"controller_outputs/throttle": 1.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 1000
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": true
+				},
+				{
+					"override": {
+						"controller_outputs/roll": 0.0,
+						"controller_outputs/pitch": 0.0,
+						"controller_outputs/yaw": 0.0,
+						"controller_outputs/throttle": -1.0
+					},
+					"condition": {
+						"type": "duration",
+						"duration": 1000
+					},
+					"analyze_maneuver": true,
+					"analyze_trim": true
+				}
+			],
 			"stall_speed": [
 				{
 					"override": {
