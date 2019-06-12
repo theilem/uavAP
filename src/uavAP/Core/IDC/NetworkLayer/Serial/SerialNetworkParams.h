@@ -63,7 +63,7 @@ struct SerialNetworkParams: public INetworkParams
 	SerialNetworkParams(const std::string& port, unsigned int baud_rate, std::string delim);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 };
 

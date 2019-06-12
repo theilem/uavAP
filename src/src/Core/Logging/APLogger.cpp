@@ -77,14 +77,18 @@ APLogger::log(LogLevel level, const std::string& module)
 APLogger::APLogger() :
 		setLevel_(LogLevel::WARN), sink_(nullptr), emptySink_(nullptr)
 {
+#ifndef ERIKA
 	sink_.rdbuf(std::cout.rdbuf());
+#endif
 }
 
 APLogger::CGuard::~CGuard()
 {
 	if (APLogger::instance_ != nullptr)
 	{
+#ifndef ERIKA
 		std::cout << std::endl; //Quick printout fix
+#endif
 		delete APLogger::instance_;
 		APLogger::instance_ = nullptr;
 	}

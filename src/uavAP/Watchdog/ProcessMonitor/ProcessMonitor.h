@@ -27,8 +27,7 @@
 #define UAVAP_WATCHDOG_PROCESSMONITOR_H_
 
 #include "uavAP/Core/Runner/IRunnableObject.h"
-
-#include <boost/property_tree/ptree.hpp>
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Watchdog/ProcessMonitor/ProcessInfo.h"
 #include <cstdlib>
@@ -42,7 +41,7 @@ public:
 	ProcessMonitor();
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	bool
 	run(RunStage stage) override;

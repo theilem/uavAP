@@ -33,6 +33,7 @@
 #include "uavAP/Core/Scheduler/EventBody.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/TimeProvider/ITimeProvider.h"
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 #include <thread>
 
 class MultiThreadingScheduler: public IScheduler, public IAggregatableObject, public IRunnableObject
@@ -49,7 +50,7 @@ public:
 	~MultiThreadingScheduler();
 
 	static std::shared_ptr<IScheduler>
-	create(const boost::property_tree::ptree& conf);
+	create(const Configuration& conf);
 
 	Event
 	schedule(const std::function<void

@@ -40,6 +40,7 @@
 #include "uavAP/FlightControl/Controller/PIDController/RatePIDController/RatePIDController.h"
 #include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/SimplePIDController.h"
 #include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
+#include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 
 FlightControlDataHandling::FlightControlDataHandling() :
@@ -48,7 +49,7 @@ FlightControlDataHandling::FlightControlDataHandling() :
 }
 
 std::shared_ptr<FlightControlDataHandling>
-FlightControlDataHandling::create(const boost::property_tree::ptree& configuration)
+FlightControlDataHandling::create(const Configuration& configuration)
 {
 	auto dataHandlingIO = std::make_shared<FlightControlDataHandling>();
 
@@ -61,7 +62,7 @@ FlightControlDataHandling::create(const boost::property_tree::ptree& configurati
 }
 
 bool
-FlightControlDataHandling::configure(const boost::property_tree::ptree& configuration)
+FlightControlDataHandling::configure(const Configuration& configuration)
 {
 	PropertyMapper propertyMapper(configuration);
 	propertyMapper.add("period", period_, false);

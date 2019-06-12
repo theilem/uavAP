@@ -28,7 +28,7 @@
 #ifndef UAVAP_FLIGHTCONTROL_LOCALPLANNER_LINEARLOCALPLANNER_LINEARLOCALPLANNER_H_
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_LINEARLOCALPLANNER_LINEARLOCALPLANNER_H_
 
-#include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/Object/AggregatableObject.hpp>
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/ILinearPlannerImpl.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlannerStatus.h"
 
@@ -49,7 +49,7 @@ class Packet;
 struct SensorData;
 struct ControllerTarget;
 
-class LinearLocalPlanner: public ILocalPlanner, public IRunnableObject, public IAggregatableObject
+class LinearLocalPlanner: public ILocalPlanner, public IRunnableObject, public AggregatableObject<ISensingActuationIO,IController, IScheduler, IPC>
 {
 public:
 
@@ -58,7 +58,7 @@ public:
 	LinearLocalPlanner();
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	ADD_CREATE_WITH_CONFIG(LinearLocalPlanner)
 
@@ -73,9 +73,6 @@ public:
 
 	Trajectory
 	getTrajectory() const override;
-
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	std::shared_ptr<ILinearPlannerImpl>
 	getImpl();
@@ -102,11 +99,6 @@ private:
 
 	void
 	update();
-
-	ObjectHandle<ISensingActuationIO> sensing_;
-	ObjectHandle<IController> controller_;
-	ObjectHandle<IScheduler> scheduler_;
-	ObjectHandle<IPC> ipc_;
 
 	std::shared_ptr<ILinearPlannerImpl> localPlannerImpl_;
 

@@ -34,6 +34,7 @@
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/LockTypes.h"
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 #include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
 #include <memory>
 
@@ -43,7 +44,7 @@ LinearLocalPlanner::LinearLocalPlanner() :
 }
 
 bool
-LinearLocalPlanner::configure(const boost::property_tree::ptree& config)
+LinearLocalPlanner::configure(const Configuration& config)
 {
 	PropertyMapper propertyMapper(config);
 	propertyMapper.add<bool>("airplane", airplane_, false);
@@ -69,25 +70,25 @@ LinearLocalPlanner::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!controller_.isSet())
+		if (!isSet<IController>())
 		{
 			APLOG_ERROR << "LinearLocalPlanner: Controller missing";
 
 			return true;
 		}
-		if (!sensing_.isSet())
+		if (!isSet<ISensingActuationIO>())
 		{
 			APLOG_ERROR << "LinearLocalPlanner: FlightControlData missing";
 
 			return true;
 		}
-		if (!scheduler_.isSet())
+		if (!isSet<IScheduler>())
 		{
 			APLOG_ERROR << "LinearLocalPlanner: Scheduler missing";
 
 			return true;
 		}
-		if (!ipc_.isSet())
+		if (!isSet<IPC>())
 		{
 			APLOG_ERROR << "LinearLocalPlanner: IPC missing";
 
@@ -102,18 +103,18 @@ LinearLocalPlanner::run(RunStage stage)
 		//Directly calculate local plan when sensor data comes in
 		if (period_ == 0)
 		{
-			auto sensing = sensing_.get();
+			auto sensing = get<ISensingActuationIO>();
 			sensing->subscribeOnSensorData(
 					boost::bind(&LinearLocalPlanner::onSensorData, this, _1));
 		}
 		else
 		{
-			auto scheduler = scheduler_.get();
+			auto scheduler = get<IScheduler>();
 			scheduler->schedule(std::bind(&LinearLocalPlanner::update, this), Milliseconds(period_),
 					Milliseconds(period_));
 		}
 
-		auto ipc = ipc_.get();
+		auto ipc = get<IPC>();
 
 		ipc->subscribeOnPacket("trajectory",
 				std::bind(&LinearLocalPlanner::onTrajectoryPacket, this, std::placeholders::_1));
@@ -246,7 +247,7 @@ LinearLocalPlanner::createLocalPlan(const Vector3& position, double heading, boo
 	}
 	controllerTarget_.sequenceNr = seqNum;
 
-	auto controller = controller_.get();
+	auto controller = get<IController>();
 	if (!controller)
 	{
 		APLOG_ERROR << "LinearLocalPlanner: Controller missing";
@@ -291,20 +292,11 @@ LinearLocalPlanner::getStatus() const
 }
 
 void
-LinearLocalPlanner::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	controller_.setFromAggregationIfNotSet(agg);
-	sensing_.setFromAggregationIfNotSet(agg);
-	scheduler_.setFromAggregationIfNotSet(agg);
-	ipc_.setFromAggregationIfNotSet(agg);
-}
-
-void
 LinearLocalPlanner::onTrajectoryPacket(const Packet& packet)
 {
 	try
 	{
-		setTrajectory(dp::deserialize < Trajectory > (packet));
+		setTrajectory(dp::deserialize<Trajectory>(packet));
 	} catch (ArchiveError& err)
 	{
 		APLOG_ERROR << "Invalid Trajectory packet: " << err.what();
@@ -327,7 +319,7 @@ LinearLocalPlanner::onSensorData(const SensorData& sd)
 void
 LinearLocalPlanner::update()
 {
-	auto sensing = sensing_.get();
+	auto sensing = get<ISensingActuationIO>();
 
 	if (!sensing)
 	{

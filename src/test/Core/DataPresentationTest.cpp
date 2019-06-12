@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(sensor_data)
 	SensorData test;
 
 	test.position = Vector3(1, 2, 3);
-	test.timestamp = boost::get_system_time();
+	test.timestamp = Clock::now();
 
 	APDataPresentation<Content, Target> dp;
 	Packet packet = dp.serialize(test, Content::SENSOR_DATA);
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(sensor_data)
 	BOOST_REQUIRE_NO_THROW(sensorCheck = boost::any_cast<SensorData>(check));
 
 	BOOST_CHECK_EQUAL(test.position, sensorCheck.position);
-	BOOST_CHECK_EQUAL(test.timestamp, sensorCheck.timestamp);
+	BOOST_CHECK_EQUAL(test.timestamp.time_since_epoch().count(), sensorCheck.timestamp.time_since_epoch().count());
 }
 
 BOOST_AUTO_TEST_CASE(ap_data_presentation_test)

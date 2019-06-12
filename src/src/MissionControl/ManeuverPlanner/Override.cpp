@@ -26,12 +26,13 @@
 #include <sstream>
 #include <string>
 #include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 
 #include "uavAP/MissionControl/ManeuverPlanner/Override.h"
 
 template<class Group, typename Type>
 void
-mapOverrideValue(PropertyMapper& pm, const std::string& override,
+mapOverrideValue(PropertyMapper<boost::property_tree::ptree>& pm, const std::string& override,
 		const std::string& overrideMember, Group& overrideGroup)
 {
 	auto overrideValueEnum = EnumMap<Type>::convert(overrideMember);

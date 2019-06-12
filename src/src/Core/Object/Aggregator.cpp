@@ -50,12 +50,8 @@ Aggregator::Aggregator()
 void
 Aggregator::add(std::shared_ptr<IAggregatableObject> obj)
 {
-	container_.push_back(obj);
-
-	for (auto it : container_)
-	{
-		it->notifyAggregationOnUpdate(*this);
-	}
+	container_.add(obj);
+	container_.notifyAggregationOnUpdate(*this);
 }
 
 Aggregator
@@ -70,14 +66,9 @@ Aggregator::aggregate(std::vector<std::shared_ptr<IAggregatableObject> > aggrega
 }
 
 void
-Aggregator::add(std::vector<std::shared_ptr<IAggregatableObject> > objs)
+Aggregator::add(const ObjectContainer& obj)
 {
-	container_.insert(container_.end(), objs.begin(), objs.end());
-
-	for (auto it : container_)
-	{
-		it->notifyAggregationOnUpdate(*this);
-	}
+	container_.add(obj);
 }
 
 void

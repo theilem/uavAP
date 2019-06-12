@@ -22,6 +22,7 @@
  *  Created on: Jul 31, 2017
  *      Author: mircot
  */
+#include <boost/property_tree/ptree.hpp>
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include "uavAP/Core/IDC/NetworkLayer/Serial/SerialNetworkParams.h"
 

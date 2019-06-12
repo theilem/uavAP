@@ -44,7 +44,7 @@ ControlEnvironment::evaluate()
 	//Calculate timeDiff
 	if (timeStamp_)
 	{
-		if (lastTimeStamp_.is_not_a_date_time())
+		if (lastTimeStamp_.time_since_epoch() == Duration(0))
 		{
 			timeDiff_ = Microseconds(0);
 		}

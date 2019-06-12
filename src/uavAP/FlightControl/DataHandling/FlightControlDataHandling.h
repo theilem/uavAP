@@ -54,6 +54,7 @@ template<typename C, typename T>
 class IDataPresentation;
 struct ControllerOutput;
 class LocalPlannerParams;
+class ISensingActuationIO;
 
 class FlightControlDataHandling: public IAggregatableObject, public IRunnableObject
 {
@@ -64,10 +65,10 @@ public:
 	FlightControlDataHandling();
 
 	static std::shared_ptr<FlightControlDataHandling>
-	create(const boost::property_tree::ptree& configuration);
+	create(const Configuration& configuration);
 
 	bool
-	configure(const boost::property_tree::ptree& configuration);
+	configure(const Configuration& configuration);
 
 	bool
 	run(RunStage stage) override;
@@ -104,7 +105,7 @@ private:
 	ObjectHandle<IPC> ipc_;
 	ObjectHandle<ILocalPlanner> localPlanner_;
 	ObjectHandle<IController> controller_;
-	ObjectHandle<SensingActuationIO> sensActIO_;
+	ObjectHandle<ISensingActuationIO> sensActIO_;
 	ObjectHandle<IScheduler> scheduler_;
 	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
 	Subscription flightControlSubscription_;

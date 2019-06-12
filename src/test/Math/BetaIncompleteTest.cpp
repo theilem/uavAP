@@ -58,12 +58,12 @@ BOOST_AUTO_TEST_CASE(test001_single)
 	acb_set_d_d(a, 1.0 / 2.0, -g / (2 * v * r));
 	acb_set_d(b, 1.0 / 2.0);
 
-	TimePoint t = boost::get_system_time();
+	TimePoint t = Clock::now();
 	acb_hypgeom_beta_lower(res1, a, b, z1, 0, 32);
 	acb_hypgeom_beta_lower(res, a, b, z, 0, 32);
 	acb_sub(res, res1, res, 32);
 	acb_mul_arb(pos, res, f, 32);
-	Duration d = boost::get_system_time() - t;
+	Duration d = Clock::now() - t;
 
 //	std::cout << "Time: " << d.total_microseconds() << " micros" << std::endl;
 //
@@ -121,17 +121,17 @@ BOOST_AUTO_TEST_CASE(test002_multi)
 
 	slong prec = 32;
 
-	TimePoint t = boost::get_system_time();
+	TimePoint t = Clock::now();
 	_acb_hypgeom_beta_lower_series(res, a, b, z, 5, 0, 5, prec);
 	acb_sub(res + 1, res, res + 1, prec);
 	acb_sub(res + 2, res, res + 2, prec);
 	acb_sub(res + 3, res, res + 3, prec);
 	acb_sub(res + 4, res, res + 4, prec);
-	acb_mul_arb(pos, res+1, f, prec);
+	acb_mul_arb(pos, res + 1, f, prec);
 	acb_mul_arb(pos + 1, res + 2, f, prec);
 	acb_mul_arb(pos + 2, res + 3, f, prec);
 	acb_mul_arb(pos + 3, res + 4, f, prec);
-	Duration d = boost::get_system_time() - t;
+	Duration d = Clock::now() - t;
 //
 //	std::cout << "Time: " << d.total_microseconds() << " micros" << std::endl;
 //

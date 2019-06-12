@@ -26,9 +26,11 @@
 #ifndef CONTROLLER_IPIDCONTROLLER_H_
 #define CONTROLLER_IPIDCONTROLLER_H_
 
+#include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/Controller/ControlElements/Control.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDCascade.h"
 #include "uavAP/FlightControl/Controller/IController.h"
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 
 class IPIDController : public IController
 {
@@ -37,7 +39,7 @@ public:
 	~IPIDController() = default;
 
 	virtual bool
-	configure(const boost::property_tree::ptree& config) = 0;
+	configure(const Configuration& config) = 0;
 
 	virtual ControllerOutput
 	getControllerOutput() = 0;

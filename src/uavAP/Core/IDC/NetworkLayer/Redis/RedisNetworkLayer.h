@@ -11,6 +11,7 @@
 #include <uavAP/Core/Object/IAggregatableObject.h>
 #include <uavAP/Core/Object/ObjectHandle.h>
 #include <uavAP/Core/Runner/IRunnableObject.h>
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 #include <unordered_map>
 
 class IScheduler;
@@ -24,10 +25,10 @@ public:
 	static constexpr TypeId typeId = "redis";
 
 	static std::shared_ptr<RedisNetworkLayer>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	bool
 	sendPacket(const std::string& id, const Packet& packet) override;

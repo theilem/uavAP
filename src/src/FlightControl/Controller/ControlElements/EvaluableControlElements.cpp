@@ -160,7 +160,7 @@ PID::addIntegralControl()
 	if (params_.ki == 0. || !timeDiff_)
 		return;
 
-	integrator_ += currentError_ * timeDiff_->total_microseconds() * MUSEC_TO_SEC;
+	integrator_ += currentError_ * std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC;
 
 	if (integrator_ > 0)
 		integrator_ = std::min(integrator_, params_.imax);
@@ -181,10 +181,10 @@ PID::addDifferentialControl()
 		//Take the negative derivative value to counter acceleration towards the target
 		output_ -= params_.kd * derivative_->getValue();
 	}
-	else if (!isnanf(lastError_) && timeDiff_ && timeDiff_->total_microseconds() > 0.)
+	else if (!isnanf(lastError_) && timeDiff_ && std::chrono::duration_cast<Microseconds>(*timeDiff_).count() > 0.)
 	{
 		double derivative = (currentError_ - lastError_)
-				/ (timeDiff_->total_microseconds() * MUSEC_TO_SEC);
+				/ (std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC);
 		output_ += params_.kd * derivative;
 	}
 }

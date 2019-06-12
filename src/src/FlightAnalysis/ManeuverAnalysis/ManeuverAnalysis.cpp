@@ -163,7 +163,8 @@ ManeuverAnalysis::collectStateInit(const SensorData& data, const std::string& ma
 
 	std::string maneuverName = std::to_string(counter_) + "_" + maneuver;
 	std::string logFileName = logPath_ + maneuverName + ".log";
-	std::string time = to_simple_string(data.timestamp);
+	auto t = std::chrono::system_clock::to_time_t(data.timestamp);
+	std::string time = std::ctime(&t);
 
 	logFile_.open(logFileName);
 	logFile_.precision(15);

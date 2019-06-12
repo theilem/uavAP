@@ -34,7 +34,7 @@ AirplaneLocalPlannerImpl::AirplaneLocalPlannerImpl() :
 }
 
 bool
-AirplaneLocalPlannerImpl::configure(const boost::property_tree::ptree& config)
+AirplaneLocalPlannerImpl::configure(const Configuration& config)
 {
 	return PropertyMapperProto::configure(params_, config);
 }

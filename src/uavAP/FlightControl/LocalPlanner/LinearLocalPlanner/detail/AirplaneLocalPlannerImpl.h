@@ -25,6 +25,7 @@
 
 #ifndef UAVAP_FLIGHTCONTROL_LOCALPLANNER_LINEARLOCALPLANNER_DETAIL_AIRPLANELOCALPLANNERIMPL_H_
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_LINEARLOCALPLANNER_DETAIL_AIRPLANELOCALPLANNERIMPL_H_
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/ILinearPlannerImpl.h"
 
 struct IPathSection;
@@ -38,7 +39,7 @@ public:
 	AirplaneLocalPlannerImpl();
 
 	bool
-	configure(const boost::property_tree::ptree& config) override;
+	configure(const Configuration& config) override;
 
 	bool
 	tuneParams(const LocalPlannerParams& params) override;

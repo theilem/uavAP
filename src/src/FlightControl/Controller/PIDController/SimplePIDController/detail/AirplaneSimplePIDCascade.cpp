@@ -89,20 +89,20 @@ AirplaneSimplePIDCascade::AirplaneSimplePIDCascade(SensorData* sensorData, Vecto
 }
 
 bool
-AirplaneSimplePIDCascade::configure(const boost::property_tree::ptree& config)
+AirplaneSimplePIDCascade::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	pm.add<double>("hard_roll_constraint", hardRollConstraint_, false);
 	pm.add<double>("hard_pitch_constraint", hardPitchConstraint_, false);
 
-	boost::property_tree::ptree pidConfig;
+	Configuration pidConfig;
 	pm.add("pids", pidConfig, false);
 
 	rollConstraint_->setContraintValue(hardRollConstraint_ * M_PI / 180.0);
 	pitchConstraint_->setContraintValue(hardPitchConstraint_ * M_PI / 180.0);
 
 	Control::PID::Parameters params;
-	for (auto it : pidConfig)
+	for (const auto& it : pidConfig)
 	{
 		if (!params.configure(it.second))
 		{

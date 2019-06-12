@@ -25,9 +25,9 @@
 
 #ifndef UAVAP_CORE_TIMEPROVIDER_SYSTEMTIMEPROVIDER_H_
 #define UAVAP_CORE_TIMEPROVIDER_SYSTEMTIMEPROVIDER_H_
-#include <boost/property_tree/ptree.hpp>
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/TimeProvider/ITimeProvider.h"
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 
 class SystemTimeProvider: public ITimeProvider, public IAggregatableObject
 {
@@ -38,7 +38,7 @@ public:
 	SystemTimeProvider();
 
 	static std::shared_ptr<ITimeProvider>
-	create(const boost::property_tree::ptree& conf);
+	create(const Configuration& conf);
 
 	TimePoint
 	now() override;

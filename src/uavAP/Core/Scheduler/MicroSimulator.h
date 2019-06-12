@@ -33,6 +33,7 @@
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/Time.h"
 #include "uavAP/Core/TimeProvider/ITimeProvider.h"
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 #include <condition_variable>
 #include <functional>
 #include <map>

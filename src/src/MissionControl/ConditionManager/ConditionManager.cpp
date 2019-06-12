@@ -23,7 +23,6 @@
  *      Author: simonyu
  */
 
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/Frames/InertialFrame.h"
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/Logging/APLogger.h"
@@ -31,7 +30,7 @@
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
 
 std::shared_ptr<ConditionManager>
-ConditionManager::create(const boost::property_tree::ptree& config)
+ConditionManager::create(const Configuration& config)
 {
 	auto conditionManager = std::make_shared<ConditionManager>();
 
@@ -44,7 +43,7 @@ ConditionManager::create(const boost::property_tree::ptree& config)
 }
 
 bool
-ConditionManager::configure(const boost::property_tree::ptree& config)
+ConditionManager::configure(const Configuration& config)
 {
 	return true;
 }

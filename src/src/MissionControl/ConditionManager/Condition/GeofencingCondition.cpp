@@ -23,9 +23,9 @@
  *      Author: mircot
  */
 #include <uavAP/Core/Frames/VehicleOneFrame.h>
-#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include <uavAP/MissionControl/ConditionManager/Condition/GeofencingCondition.h>
 #include <uavAP/MissionControl/ConditionManager/ConditionManager.h>
+#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 
 GeofencingCondition::GeofencingCondition() :
 		rollRate_(0), rollMax_(0), precision_(16), g_(9.81), yawCenterLeft_(0), yawCenterRight_(0)

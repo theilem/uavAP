@@ -7,6 +7,7 @@
 
 #ifndef UAVAP_CORE_PROPERTYMAPPER_PROPERTYMAPPERPROTO_H_
 #define UAVAP_CORE_PROPERTYMAPPER_PROPERTYMAPPERPROTO_H_
+#include <boost/property_tree/ptree.hpp>
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 
 namespace google
@@ -17,7 +18,7 @@ class Message;
 }
 }
 
-class PropertyMapperProto: public PropertyMapper
+class PropertyMapperProto: public PropertyMapper<boost::property_tree::ptree>
 {
 public:
 

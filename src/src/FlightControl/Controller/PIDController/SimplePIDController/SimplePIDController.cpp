@@ -35,6 +35,8 @@
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/detail/AirplaneSimplePIDCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/SimplePIDController.h"
+#include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 
 SimplePIDController::SimplePIDController() :
 		airplane_(true)
@@ -42,7 +44,7 @@ SimplePIDController::SimplePIDController() :
 }
 
 std::shared_ptr<SimplePIDController>
-SimplePIDController::create(const boost::property_tree::ptree& configuration)
+SimplePIDController::create(const Configuration& configuration)
 {
 	auto flightController = std::make_shared<SimplePIDController>();
 	flightController->configure(configuration);
@@ -51,9 +53,9 @@ SimplePIDController::create(const boost::property_tree::ptree& configuration)
 }
 
 bool
-SimplePIDController::configure(const boost::property_tree::ptree& config)
+SimplePIDController::configure(const Configuration& config)
 {
-	PropertyMapper propertyMapper(config);
+	PropertyMapper<Configuration> propertyMapper(config);
 
 	pidCascade_ = std::make_shared<AirplaneSimplePIDCascade>(&sensorData_, velocityInertial_,
 			accelerationInertial_, &controllerTarget_, &controllerOutput_);
@@ -68,13 +70,13 @@ SimplePIDController::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!sensAct_.isSet())
+		if (!isSet<ISensingActuationIO>())
 		{
 			APLOG_ERROR << "SimplePIDController: Failed to Load SensingActuationIO";
 
 			return true;
 		}
-		if (!scheduler_.isSet())
+		if (!isSet<IScheduler>())
 		{
 			APLOG_ERROR << "SimplePIDController: Failed to Load Scheduler";
 
@@ -85,7 +87,7 @@ SimplePIDController::run(RunStage stage)
 	}
 	case RunStage::NORMAL:
 	{
-		auto scheduler = scheduler_.get();
+		auto scheduler = get<IScheduler>();
 		scheduler->schedule(std::bind(&SimplePIDController::calculateControl, this), Milliseconds(0),
 				Milliseconds(10));
 
@@ -126,7 +128,7 @@ SimplePIDController::getCascade()
 void
 SimplePIDController::calculateControl()
 {
-	auto sensAct = sensAct_.get();
+	auto sensAct = get<ISensingActuationIO>();
 
 	if (!sensAct)
 	{
@@ -156,11 +158,4 @@ SimplePIDController::calculateControl()
 	targetLock.unlock();
 
 	sensAct->setControllerOutput(controllerOutput_);
-}
-
-void
-SimplePIDController::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	sensAct_.setFromAggregationIfNotSet(agg);
-	scheduler_.setFromAggregationIfNotSet(agg);
 }

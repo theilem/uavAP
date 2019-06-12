@@ -37,6 +37,7 @@
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDController.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDCascade.h"
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 #include <mutex>
 
 class ManeuverCascade;
@@ -54,10 +55,10 @@ public:
 	ManeuverPIDController();
 
 	static std::shared_ptr<ManeuverPIDController>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config) override;
+	configure(const Configuration& config) override;
 
 	bool
 	run(RunStage stage) override;

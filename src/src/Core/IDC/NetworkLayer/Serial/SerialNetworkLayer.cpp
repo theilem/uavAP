@@ -27,7 +27,7 @@
 #include "uavAP/Core/Scheduler/IScheduler.h"
 
 std::shared_ptr<INetworkLayer>
-SerialNetworkLayer::create(const boost::property_tree::ptree& config)
+SerialNetworkLayer::create(const Configuration& config)
 {
 	auto snl = std::make_shared<SerialNetworkLayer>();
 	snl->configure(config);
@@ -35,7 +35,7 @@ SerialNetworkLayer::create(const boost::property_tree::ptree& config)
 }
 
 bool
-SerialNetworkLayer::configure(const boost::property_tree::ptree& config)
+SerialNetworkLayer::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 	boost::property_tree::ptree ports;

@@ -76,7 +76,8 @@ PacketSubscriptionImpl::onMessageQueue()
 		packet.resize(maxPacketSize_);
 		message_queue::size_type size;
 		unsigned int priority;
-		auto timeout = boost::get_system_time() + Milliseconds(100);
+
+		auto timeout = boost::get_system_time() + boost::posix_time::milliseconds(100);
 		if (!messageQueue_.timed_receive(static_cast<void*>(&packet[0]), maxPacketSize_, size,
 				priority, timeout))
 		{

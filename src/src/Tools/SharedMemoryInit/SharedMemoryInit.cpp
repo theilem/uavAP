@@ -37,7 +37,7 @@ main(int argc, char** argv)
 	auto ipc = std::make_shared<IPC>();
 
 	SensorData sd;
-	sd.timestamp = boost::get_system_time();
+	sd.timestamp = Clock::now();
 	sd.hasGPSFix = true;
 	auto pub = ipc->publishOnSharedMemory<SensorData>("sensor_data");
 	pub.publish(sd);
@@ -53,7 +53,7 @@ main(int argc, char** argv)
 		}
 		if (input.compare("u") == 0)
 		{
-			sd.timestamp = boost::get_system_time();
+			sd.timestamp = Clock::now();
 			pub.publish(sd);
 		}
 	}

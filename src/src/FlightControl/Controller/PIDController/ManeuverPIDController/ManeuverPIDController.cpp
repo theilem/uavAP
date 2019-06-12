@@ -28,6 +28,7 @@
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/ManeuverPIDController.h"
 #include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 
 ManeuverPIDController::ManeuverPIDController()
@@ -35,7 +36,7 @@ ManeuverPIDController::ManeuverPIDController()
 }
 
 std::shared_ptr<ManeuverPIDController>
-ManeuverPIDController::create(const boost::property_tree::ptree& config)
+ManeuverPIDController::create(const Configuration& config)
 {
 	auto flightController = std::make_shared<ManeuverPIDController>();
 	flightController->configure(config);
@@ -44,7 +45,7 @@ ManeuverPIDController::create(const boost::property_tree::ptree& config)
 }
 
 bool
-ManeuverPIDController::configure(const boost::property_tree::ptree& config)
+ManeuverPIDController::configure(const Configuration& config)
 {
 	pidCascade_ = std::make_shared<ManeuverCascade>(&sensorData_, velocityInertial_,
 			accelerationInertial_, &controllerTarget_, &controllerOutput_);

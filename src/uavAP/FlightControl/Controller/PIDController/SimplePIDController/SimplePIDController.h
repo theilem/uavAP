@@ -32,21 +32,20 @@
 #include <memory>
 #include <mutex>
 
-#include "uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDController.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/Core/Time.h"
-#include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/Core/Object/AggregatableObject.hpp"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 
-class FlightControlData;
 class IScheduler;
+class ISensingActuationIO;
 
-class SimplePIDController: public IPIDController, public IAggregatableObject, public IRunnableObject
+class SimplePIDController: public IPIDController, public AggregatableObject<ISensingActuationIO, IScheduler>, public IRunnableObject
 {
 public:
 
@@ -55,10 +54,10 @@ public:
 	SimplePIDController();
 
 	static std::shared_ptr<SimplePIDController>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config) override;
+	configure(const Configuration& config) override;
 
 	bool
 	run(RunStage stage) override;
@@ -69,9 +68,6 @@ public:
 	ControllerOutput
 	getControllerOutput() override;
 
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
-
 	std::shared_ptr<IPIDCascade>
 	getCascade() override;
 
@@ -79,9 +75,6 @@ private:
 
 	void
 	calculateControl();
-
-	ObjectHandle<SensingActuationIO> sensAct_;
-	ObjectHandle<IScheduler> scheduler_;
 
 	std::mutex controllerTargetMutex_;
 	ControllerTarget controllerTarget_;

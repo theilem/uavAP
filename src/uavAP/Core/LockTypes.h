@@ -26,16 +26,13 @@
 #ifndef UAVAP_CORE_LOCKTYPES_H_
 #define UAVAP_CORE_LOCKTYPES_H_
 
-#include <boost/thread/lock_types.hpp>
-#include <boost/thread/shared_lock_guard.hpp>
-#include <boost/thread/shared_mutex.hpp>
 #include <mutex>
 
 using Lock = std::unique_lock<std::mutex>;
 using LockGuard = std::lock_guard<std::mutex>;
-using SharedLock = boost::shared_lock<boost::shared_mutex>;
-using SharedLockGuard = boost::shared_lock_guard<boost::shared_mutex>;
-using ExclusiveLock = boost::unique_lock<boost::shared_mutex>;
-using ExclusiveLockGuard = boost::lock_guard<boost::shared_mutex>;
+//using SharedLock = std::shared_lock<boost::shared_mutex>;
+//using SharedLockGuard = boost::shared_lock_guard<boost::shared_mutex>;
+//using ExclusiveLock = boost::unique_lock<boost::shared_mutex>;
+//using ExclusiveLockGuard = boost::lock_guard<boost::shared_mutex>;
 
 #endif /* UAVAP_CORE_LOCKTYPES_H_ */

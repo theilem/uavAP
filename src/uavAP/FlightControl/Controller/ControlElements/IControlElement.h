@@ -26,6 +26,11 @@
 #ifndef FLIGHTCONTROLLER_CONTROLELEMENTS_CONTROLELEMENTS_H_
 #define FLIGHTCONTROLLER_CONTROLELEMENTS_CONTROLELEMENTS_H_
 
+#ifndef ERIKA
+#include <boost/property_tree/ptree.hpp>
+#else
+#include "uavAP/Core/PropertyMapper/EmptyConfiguration.h"
+#endif
 #include <chrono>
 #include <memory>
 
@@ -38,6 +43,12 @@ namespace Control
 class IControlElement
 {
 public:
+
+#ifdef ERIKA
+	using Configuration = EmptyConfiguration;
+#else
+	using Configuration = boost::property_tree::ptree;
+#endif
 
 	virtual
 	~IControlElement() = default;

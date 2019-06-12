@@ -7,8 +7,9 @@
 
 #ifndef UAVAP_CORE_OBJECT_OBJECTHANDLECONTAINER_HPP_
 #define UAVAP_CORE_OBJECT_OBJECTHANDLECONTAINER_HPP_
-#include <uavAP/Core/Object/Aggregator.h>
 #include <memory>
+
+#include <uavAP/Core/Object/Aggregator.h>
 
 template<class ... Objects>
 class ObjectHandleContainer;
@@ -22,7 +23,6 @@ public:
 	using PtrType = std::shared_ptr<Type>;
 	template<class Type>
 	using WeakPtrType = std::weak_ptr<Type>;
-	using AggregatorType = Aggregator;
 
 	template<class Ret>
 	PtrType<
@@ -46,8 +46,12 @@ public:
 			bool>::type
 	isSet() const;
 
+	template<class Agg>
 	void
-	setFromAggregationIfNotSet(const AggregatorType& agg);
+	setFromAggregationIfNotSet(const Agg& agg);
+
+	void
+	setFromAggregationIfNotSet(const Aggregator& agg);
 
 private:
 
@@ -64,14 +68,12 @@ public:
 	using PtrType = std::shared_ptr<Type>;
 	template<class Type>
 	using WeakPtrType = std::weak_ptr<Type>;
-	using AggregatorType = Aggregator;
 
 	template<class Ret>
 	inline std::shared_ptr<Ret>
 	get()
 	{
 		return nullptr;
-//		static_assert(false, "Cannot get object");
 	}
 
 	template<class Ret>
@@ -79,14 +81,19 @@ public:
 	isSet() const
 	{
 		return false;
-//		static_assert(false, "Cannot get object");
 	}
 
+	template<class Agg>
 	inline void
-	setFromAggregationIfNotSet(const AggregatorType&)
+	setFromAggregationIfNotSet(const Agg& agg)
 	{
 	}
 
+
+	inline void
+	setFromAggregationIfNotSet(const Aggregator& agg)
+	{
+	}
 };
 
 template<class Object, class ... Others>
@@ -110,13 +117,25 @@ ObjectHandleContainer<Object, Others...>::get()
 }
 
 template<class Object, class ... Others>
+template<class Agg>
 inline void
-ObjectHandleContainer<Object, Others ...>::setFromAggregationIfNotSet(const AggregatorType& agg)
+ObjectHandleContainer<Object, Others ...>::setFromAggregationIfNotSet(const Agg& agg)
 {
 	if (!object_.lock())
 		object_ = agg.template getOne<Object>();
 	others_.setFromAggregationIfNotSet(agg);
 }
+
+template<class Object, class ... Others>
+inline void
+ObjectHandleContainer<Object, Others ...>::setFromAggregationIfNotSet(const Aggregator& agg)
+{
+	if (!object_.lock())
+		object_ = agg.getOne<Object>();
+	others_.setFromAggregationIfNotSet(agg);
+}
+
+
 
 template<class Object, class ... Others>
 template<class Ret>
@@ -135,5 +154,6 @@ ObjectHandleContainer<Object, Others...>::isSet() const
 {
 	return others_.template isSet<Ret>();
 }
+
 
 #endif /* UAVAP_CORE_OBJECT_OBJECTHANDLECONTAINER_HPP_ */

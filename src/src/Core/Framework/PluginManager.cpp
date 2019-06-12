@@ -22,6 +22,7 @@
  * @author Mirco Theile, mirco.theile@tum.de
  * @brief
  */
+#include <boost/property_tree/ptree.hpp>
 #include <dlfcn.h>
 
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>

@@ -38,7 +38,6 @@
 #include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/Controller/AdvancedControl.h"
-#include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"
 #include "uavAP/MissionControl/ManeuverPlanner/Override.h"
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 #include "uavAP/MissionControl/MissionPlanner/Mission.h"

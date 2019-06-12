@@ -29,7 +29,6 @@
 #include <cmath>
 #include <iostream>
 #include "uavAP/Core/Time.h"
-#include <boost/property_tree/ptree.hpp>
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightControl/Controller/ControlElements/IEvaluableControlElement.h"
 
@@ -108,9 +107,9 @@ public:
 		}
 
 		bool
-		configure(const boost::property_tree::ptree& p)
+		configure(const Configuration& p)
 		{
-			PropertyMapper pm(p);
+			PropertyMapper<Configuration> pm(p);
 			pm.add<double>("kp", kp, true);
 			pm.add<double>("ki", ki, false);
 			pm.add<double>("kd", kd, false);

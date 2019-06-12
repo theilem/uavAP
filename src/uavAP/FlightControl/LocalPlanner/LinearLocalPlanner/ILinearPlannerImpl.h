@@ -25,8 +25,7 @@
 
 #ifndef UAVAP_FLIGHTCONTROL_LOCALPLANNER_LINEARLOCALPLANNER_ILINEARPLANNERIMPL_H_
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_LINEARLOCALPLANNER_ILINEARPLANNERIMPL_H_
-#include <boost/property_tree/ptree.hpp>
-#include <boost/variant/variant.hpp>
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 #include "uavAP/Core/protobuf/messages/LocalPlanner.pb.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 
@@ -42,7 +41,7 @@ public:
 	~ILinearPlannerImpl() = default;
 
 	virtual bool
-	configure(const boost::property_tree::ptree& config) = 0;
+	configure(const Configuration& config) = 0;
 
 	virtual bool
 	tuneParams(const LocalPlannerParams& params) = 0;

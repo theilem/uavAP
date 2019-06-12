@@ -23,19 +23,12 @@
  *      Author: mircot
  */
 
-#include <boost/date_time/date_defs.hpp>
-#include <boost/date_time/gregorian/greg_date.hpp>
-#include <boost/date_time/posix_time/conversion.hpp>
-#include <boost/date_time/posix_time/posix_time_duration.hpp>
-#include <boost/date_time/time.hpp>
-#include <boost/date_time/time_duration.hpp>
-#include <boost/operators.hpp>
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/Scheduler/MicroSimulator.h"
 #include <utility>
 
 MicroSimulator::MicroSimulator() :
-		now_(Date(2000, boost::gregorian::Jan, 1), Seconds(0)), runs_(0), stopOnWait_(false), waitCondition_(
+		now_(), runs_(0), stopOnWait_(false), waitCondition_(
 				nullptr), waitReleased_(false)
 {
 }

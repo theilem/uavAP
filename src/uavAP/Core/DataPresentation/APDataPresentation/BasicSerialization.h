@@ -30,7 +30,9 @@
 
 #include "uavAP/Core/DataPresentation/APDataPresentation/SerializeCustom.h"
 
+#ifndef ERIKA
 #include <boost/optional/optional.hpp>
+#endif
 
 #include <cstdint>
 #include <map>
@@ -289,7 +291,7 @@ template<typename T>
 struct is_optional: public std::false_type
 {
 };
-
+#ifndef ERIKA
 /**
  * @brief is_optional struct true_type because T is a boost optional
  */
@@ -297,6 +299,7 @@ template<typename T>
 struct is_optional<boost::optional<T>> : public std::true_type
 {
 };
+#endif
 
 /**
  * @brief Load function for boost optionals
