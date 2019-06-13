@@ -68,13 +68,13 @@ ControlEnvironment::evaluate()
 }
 
 std::shared_ptr<Input>
-ControlEnvironment::addInput(double* in)
+ControlEnvironment::addInput(IControlElement::ControlFloating* in)
 {
 	return std::make_shared<Input>(in);
 }
 
 std::shared_ptr<Filter>
-ControlEnvironment::addFilter(Element in, double alpha)
+ControlEnvironment::addFilter(Element in, IControlElement::ControlFloating alpha)
 {
 	auto filter = std::make_shared<Filter>(in, alpha);
 	evaluableControlElements_.push_back(filter);
@@ -82,7 +82,7 @@ ControlEnvironment::addFilter(Element in, double alpha)
 }
 
 std::shared_ptr<Output>
-ControlEnvironment::addOutput(Element in, double* out)
+ControlEnvironment::addOutput(Element in, IControlElement::ControlFloating* out)
 {
 	auto output = std::make_shared<Output>(in, out);
 	evaluableControlElements_.push_back(output);
@@ -102,19 +102,19 @@ ControlEnvironment::addDifference(Element in1, Element in2)
 }
 
 std::shared_ptr<Gain>
-ControlEnvironment::addGain(Element in, double gain)
+ControlEnvironment::addGain(Element in, IControlElement::ControlFloating gain)
 {
 	return std::make_shared<Gain>(in, gain);
 }
 
 std::shared_ptr<Constant>
-ControlEnvironment::addConstant(double val)
+ControlEnvironment::addConstant(IControlElement::ControlFloating val)
 {
 	return std::make_shared<Constant>(val);
 }
 
 std::shared_ptr<Constraint>
-ControlEnvironment::addConstraint(Element in, double min, double max)
+ControlEnvironment::addConstraint(Element in, IControlElement::ControlFloating min, IControlElement::ControlFloating max)
 {
 	return std::make_shared<Constraint>(in, min, max);
 }

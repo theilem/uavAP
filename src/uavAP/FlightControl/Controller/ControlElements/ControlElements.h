@@ -34,14 +34,14 @@ namespace Control
 class Constant: public IControlElement
 {
 public:
-	Constant(double val);
+	Constant(ControlFloating val);
 
-	double
+	ControlFloating
 	getValue() override;
 
 private:
 
-	double val_;
+	ControlFloating val_;
 };
 
 class Constraint: public IControlElement
@@ -49,22 +49,22 @@ class Constraint: public IControlElement
 
 public:
 
-	Constraint(Element in, double min, double max);
+	Constraint(Element in, ControlFloating min, ControlFloating max);
 
-	double
+	ControlFloating
 	getValue() override;
 
 	void
-	setContraintValue(double minmax);
+	setContraintValue(ControlFloating minmax);
 
 	void
-	setContraintValue(double min, double max);
+	setContraintValue(ControlFloating min, ControlFloating max);
 
 private:
 
 	Element in_;
-	double min_;
-	double max_;
+	ControlFloating min_;
+	ControlFloating max_;
 
 };
 
@@ -74,7 +74,7 @@ public:
 
 	Difference(Element in1, Element in2);
 
-	double
+	ControlFloating
 	getValue() override;
 
 private:
@@ -88,16 +88,16 @@ class Gain: public IControlElement
 
 public:
 
-	Gain(Element in, double gain);
+	Gain(Element in, ControlFloating gain);
 
-	double
+	ControlFloating
 	getValue() override;
 
 private:
 
 	Element in_;
 
-	double gain_;
+	ControlFloating gain_;
 
 };
 
@@ -105,14 +105,14 @@ class Input: public IControlElement
 {
 public:
 
-	Input(double* in);
+	Input(ControlFloating* in);
 
-	double
+	ControlFloating
 	getValue() override;
 
 private:
 
-	double* in_;
+	ControlFloating* in_;
 };
 
 class Sum: public IControlElement
@@ -121,7 +121,7 @@ public:
 
 	Sum(Element in1, Element in2);
 
-	double
+	ControlFloating
 	getValue() override;
 
 private:
@@ -136,7 +136,7 @@ public:
 
 	ManualSwitch(Element inTrue, Element inFalse);
 
-	double
+	ControlFloating
 	getValue() override;
 
 	void

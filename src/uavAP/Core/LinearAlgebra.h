@@ -33,12 +33,28 @@
 
 #include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
 
+#ifdef ERIKA
+using Vector2 = Eigen::Vector2f;
+using Vector3 = Eigen::Vector3f;
+using Matrix3 = Eigen::Matrix3f;
+using AngleAxis = Eigen::AngleAxisf;
+using Rotation2 = Eigen::Rotation2Df;
+using EigenLine = Eigen::ParametrizedLine<float, 3>;
+using EigenLine2 = Eigen::ParametrizedLine<float, 2>;
+using EigenHyperplane = Eigen::Hyperplane<float, 3, Eigen::DontAlign>;
+using FloatingType = float;
+#else
 using Vector2 = Eigen::Vector2d;
 using Vector3 = Eigen::Vector3d;
+using Matrix3 = Eigen::Matrix3d;
+using AngleAxis = Eigen::AngleAxisd;
 using Rotation2 = Eigen::Rotation2Dd;
 using EigenLine = Eigen::ParametrizedLine<double, 3>;
 using EigenLine2 = Eigen::ParametrizedLine<double, 2>;
 using EigenHyperplane = Eigen::Hyperplane<double, 3, Eigen::DontAlign>;
+using FloatingType = double;
+#endif
+
 
 /**
  * @brief Rotate 2D vector counter clockwise
@@ -133,7 +149,7 @@ namespace dp
 {
 template<class Archive, typename Type>
 inline void
-serialize(Archive& ar, Vector3& t)
+serialize(Archive& ar, Eigen::Vector3d& t)
 {
 	ar & t[0];
 	ar & t[1];

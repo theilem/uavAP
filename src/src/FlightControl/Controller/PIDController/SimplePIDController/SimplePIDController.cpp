@@ -140,10 +140,10 @@ SimplePIDController::calculateControl()
 
 	sensorData_ = sensAct->getSensorData();
 
-	Eigen::Matrix3d m;
-	m = Eigen::AngleAxisd(sensorData_.attitude.x(), Vector3::UnitX())
-			* Eigen::AngleAxisd(sensorData_.attitude.y(), Vector3::UnitY())
-			* Eigen::AngleAxisd(sensorData_.attitude.z(), Vector3::UnitZ());
+	Matrix3 m;
+	m = AngleAxis(sensorData_.attitude.x(), Vector3::UnitX())
+			* AngleAxis(sensorData_.attitude.y(), Vector3::UnitY())
+			* AngleAxis(sensorData_.attitude.z(), Vector3::UnitZ());
 
 	velocityInertial_ = m.transpose() * sensorData_.velocity;
 	accelerationInertial_ = m.transpose() * sensorData_.acceleration;

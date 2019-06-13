@@ -49,13 +49,13 @@ public:
 	using EvaluableElement = std::shared_ptr<IEvaluableControlElement>;
 
 	std::shared_ptr<Input>
-	addInput(double* in);
+	addInput(IControlElement::ControlFloating* in);
 
 	std::shared_ptr<Filter>
-	addFilter(Element in, double alpha);
+	addFilter(Element in, IControlElement::ControlFloating alpha);
 
 	std::shared_ptr<Output>
-	addOutput(Element in, double* out);
+	addOutput(Element in, IControlElement::ControlFloating* out);
 
 	std::shared_ptr<Sum>
 	addSum(Element in1, Element in2);
@@ -64,13 +64,13 @@ public:
 	addDifference(Element in1, Element in2);
 
 	std::shared_ptr<Gain>
-	addGain(Element in, double gain);
+	addGain(Element in, IControlElement::ControlFloating gain);
 
 	std::shared_ptr<Constant>
-	addConstant(double val);
+	addConstant(IControlElement::ControlFloating val);
 
 	std::shared_ptr<Constraint>
-	addConstraint(Element in, double min, double max);
+	addConstraint(Element in, IControlElement::ControlFloating min, IControlElement::ControlFloating max);
 
 	std::shared_ptr<PID>
 	addPID(Element target, Element current, const PID::Parameters& params);

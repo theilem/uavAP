@@ -48,10 +48,10 @@ public:
 	tunePID(PIDs pid, const Control::PID::Parameters& params) override;
 
 	bool
-	tuneRollBounds(double min, double max) override;
+	tuneRollBounds(FloatingType min, FloatingType max) override;
 
 	bool
-	tunePitchBounds(double min, double max) override;
+	tunePitchBounds(FloatingType min, FloatingType max) override;
 
 	std::map<PIDs, PIDStatus>
 	getPIDStatus() override;
@@ -72,8 +72,8 @@ private:
 	std::shared_ptr<Control::Constraint> rollConstraint_;
 	std::shared_ptr<Control::Constraint> pitchConstraint_;
 
-	double hardRollConstraint_;
-	double hardPitchConstraint_;
+	FloatingType hardRollConstraint_;
+	FloatingType hardPitchConstraint_;
 };
 
 #endif /* UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_SIMPLEPIDCONTROLLER_DETAIL_AIRPLANESIMPLEPIDCASCADE_H_ */

@@ -42,21 +42,21 @@ struct SensorData
 	Vector3 attitude; //!< [X: Roll, Y: Pitch, Z: Yaw]
 	Vector3 angularRate; //!< [X: Roll, Y: Pitch, Z: Yaw]
 	TimePoint timestamp; //!< Timestamp of this sensor data struct
-	double airSpeed; //!< total velocity w.r.t. wind
-	double groundSpeed; //!< total velocity w.r.t. ground
+	FloatingType airSpeed; //!< total velocity w.r.t. wind
+	FloatingType groundSpeed; //!< total velocity w.r.t. ground
 	bool hasGPSFix; //!< Shows whether the GPS has a fix
 	bool autopilotActive; //!< Shows if the autopilot is active, always true in simulation
 
-	double angleOfAttack; //!< current angle of attack
+	FloatingType angleOfAttack; //!< current angle of attack
 
-	double propulsionPower; //!< measured or estimated current propulsion power
-	double consumedEnergy; //!< measured or estimated total used energy for propulsion
+	FloatingType propulsionPower; //!< measured or estimated current propulsion power
+	FloatingType consumedEnergy; //!< measured or estimated total used energy for propulsion
 	uint32_t sequenceNr; //!< Sequence number of the struct
 
-	double batteryVoltage;
-	double batteryCurrent;
-	double throttle;
-	double rpm;
+	FloatingType batteryVoltage;
+	FloatingType batteryCurrent;
+	FloatingType throttle;
+	FloatingType rpm;
 
 	inline
 	SensorData() :

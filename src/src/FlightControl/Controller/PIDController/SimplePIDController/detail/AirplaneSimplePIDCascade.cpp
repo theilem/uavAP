@@ -92,8 +92,8 @@ bool
 AirplaneSimplePIDCascade::configure(const Configuration& config)
 {
 	PropertyMapper<Configuration> pm(config);
-	pm.add<double>("hard_roll_constraint", hardRollConstraint_, false);
-	pm.add<double>("hard_pitch_constraint", hardPitchConstraint_, false);
+	pm.add<FloatingType>("hard_roll_constraint", hardRollConstraint_, false);
+	pm.add<FloatingType>("hard_pitch_constraint", hardPitchConstraint_, false);
 
 	Configuration pidConfig;
 	pm.add("pids", pidConfig, false);
@@ -143,7 +143,7 @@ AirplaneSimplePIDCascade::tunePID(PIDs pid, const Control::PID::Parameters& para
 }
 
 bool
-AirplaneSimplePIDCascade::tuneRollBounds(double min, double max)
+AirplaneSimplePIDCascade::tuneRollBounds(FloatingType min, FloatingType max)
 {
 	if ((min < -hardRollConstraint_) || (min > 0.0))
 	{
@@ -160,7 +160,7 @@ AirplaneSimplePIDCascade::tuneRollBounds(double min, double max)
 }
 
 bool
-AirplaneSimplePIDCascade::tunePitchBounds(double min, double max)
+AirplaneSimplePIDCascade::tunePitchBounds(FloatingType min, FloatingType max)
 {
 	if ((min < -hardPitchConstraint_) || (min > 0.0))
 	{

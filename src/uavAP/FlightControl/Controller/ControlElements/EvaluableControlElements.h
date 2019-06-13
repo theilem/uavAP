@@ -42,16 +42,16 @@ class Filter: public IEvaluableControlElement
 
 public:
 
-	Filter(Element in, double alpha);
+	Filter(Element in, ControlFloating alpha);
 
 	void
 	evaluate() override;
 
-	double
+	ControlFloating
 	getValue() override;
 
 	void
-	setAlpha(double alpha);
+	setAlpha(ControlFloating alpha);
 
 private:
 
@@ -59,9 +59,9 @@ private:
 
 	bool init_;
 
-	double smoothData_;
+	ControlFloating smoothData_;
 
-	double alpha_;
+	ControlFloating alpha_;
 };
 
 class Output: public IEvaluableControlElement
@@ -69,10 +69,10 @@ class Output: public IEvaluableControlElement
 
 public:
 
-	Output(Element in, double* out);
+	Output(Element in, ControlFloating* out);
 
 	void
-	overrideOutput(double newOutput);
+	overrideOutput(ControlFloating newOutput);
 
 	void
 	disableOverride();
@@ -80,15 +80,15 @@ public:
 	void
 	evaluate() override;
 
-	double
+	ControlFloating
 	getValue() override;
 
 private:
 
 	Element in_;
-	double* out_;
+	ControlFloating* out_;
 	bool override_;
-	double overrideOut_;
+	ControlFloating overrideOut_;
 
 
 };
@@ -99,7 +99,7 @@ public:
 
 	struct Parameters
 	{
-		double kp, ki, kd, imax, ff;
+		ControlFloating kp, ki, kd, imax, ff;
 
 		Parameters() :
 				kp(0), ki(0), kd(0), imax(INFINITY), ff(0)
@@ -110,11 +110,11 @@ public:
 		configure(const Configuration& p)
 		{
 			PropertyMapper<Configuration> pm(p);
-			pm.add<double>("kp", kp, true);
-			pm.add<double>("ki", ki, false);
-			pm.add<double>("kd", kd, false);
-			pm.add<double>("imax", imax, false);
-			pm.add<double>("ff", ff, false);
+			pm.add<ControlFloating>("kp", kp, true);
+			pm.add<ControlFloating>("ki", ki, false);
+			pm.add<ControlFloating>("kd", kd, false);
+			pm.add<ControlFloating>("imax", imax, false);
+			pm.add<ControlFloating>("ff", ff, false);
 			return pm.map();
 		}
 	};
@@ -132,7 +132,7 @@ public:
 	setControlParameters(const Parameters& params);
 
 	void
-	overrideTarget(double newTarget);
+	overrideTarget(ControlFloating newTarget);
 
 	void
 	disableOverride();
@@ -140,7 +140,7 @@ public:
 	void
 	evaluate() override;
 
-	double
+	ControlFloating
 	getValue() override;
 
 	PIDStatus
@@ -173,19 +173,19 @@ private:
 	Duration* timeDiff_;
 
 	//Internal PID state
-	double targetValue_;
+	ControlFloating targetValue_;
 
-	double currentError_;
+	ControlFloating currentError_;
 
-	double integrator_;
+	ControlFloating integrator_;
 
-	double lastError_;
+	ControlFloating lastError_;
 
 	//Latest calculated output value
-	double output_;
+	ControlFloating output_;
 
 	bool override_;
-	double overrideTarget_;
+	ControlFloating overrideTarget_;
 };
 
 }

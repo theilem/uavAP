@@ -43,10 +43,10 @@ public:
 	tunePID(PIDs pid, const Control::PID::Parameters& params) = 0;
 
 	virtual bool
-	tuneRollBounds(double min, double max) = 0;
+	tuneRollBounds(FloatingType min, FloatingType max) = 0;
 
 	virtual bool
-	tunePitchBounds(double min, double max) = 0;
+	tunePitchBounds(FloatingType min, FloatingType max) = 0;
 
 	virtual std::map<PIDs, PIDStatus>
 	getPIDStatus() = 0;

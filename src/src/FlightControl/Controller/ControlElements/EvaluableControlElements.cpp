@@ -30,7 +30,7 @@
 namespace Control
 {
 
-Filter::Filter(Element in, double alpha) :
+Filter::Filter(Element in, ControlFloating alpha) :
 		in_(in), init_(true), smoothData_(0), alpha_(alpha)
 {
 }
@@ -48,25 +48,25 @@ Filter::evaluate()
 	smoothData_ = alpha_ * in_->getValue() + (1 - alpha_) * smoothData_;
 }
 
-double
+Filter::ControlFloating
 Filter::getValue()
 {
 	return smoothData_;
 }
 
 void
-Filter::setAlpha(double alpha)
+Filter::setAlpha(ControlFloating alpha)
 {
 	alpha_ = alpha;
 }
 
-Output::Output(Element in, double* out) :
+Output::Output(Element in, ControlFloating* out) :
 		in_(in), out_(out), override_(false), overrideOut_(0)
 {
 }
 
 void
-Output::overrideOutput(double newOutput)
+Output::overrideOutput(ControlFloating newOutput)
 {
 	override_ = true;
 	overrideOut_ = newOutput;
@@ -84,7 +84,7 @@ Output::evaluate()
 	*out_ = override_ ? overrideOut_ : in_->getValue();
 }
 
-double
+Output::ControlFloating
 Output::getValue()
 {
 	return in_->getValue();
@@ -114,7 +114,7 @@ PID::setControlParameters(const Parameters& g)
 }
 
 void
-PID::overrideTarget(double newTarget)
+PID::overrideTarget(ControlFloating newTarget)
 {
 	override_ = true;
 	overrideTarget_ = newTarget;
@@ -142,7 +142,7 @@ PID::evaluate()
 	lastError_ = currentError_;
 }
 
-double
+PID::ControlFloating
 PID::getValue()
 {
 	return std::isnan(output_) ? 0 : output_;
@@ -183,7 +183,7 @@ PID::addDifferentialControl()
 	}
 	else if (!isnanf(lastError_) && timeDiff_ && std::chrono::duration_cast<Microseconds>(*timeDiff_).count() > 0.)
 	{
-		double derivative = (currentError_ - lastError_)
+		ControlFloating derivative = (currentError_ - lastError_)
 				/ (std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC);
 		output_ += params_.kd * derivative;
 	}
