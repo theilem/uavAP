@@ -26,7 +26,9 @@
 #ifndef UAVAP_CORE_LOGGING_APLOGGER_H_
 #define UAVAP_CORE_LOGGING_APLOGGER_H_
 
+#ifndef ERIKA
 #include <iostream>
+#endif
 #include <sstream>
 #include <string>
 

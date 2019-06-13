@@ -7,6 +7,7 @@
 
 #ifndef UAVAP_CORE_OBJECT_STATICCONTAINER_STATICOBJECTCONTAINER_H_
 #define UAVAP_CORE_OBJECT_STATICCONTAINER_STATICOBJECTCONTAINER_H_
+#include <memory>
 #include <type_traits>
 #include <vector>
 

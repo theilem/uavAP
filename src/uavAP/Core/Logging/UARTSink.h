@@ -7,13 +7,37 @@
 
 #ifndef UAVAP_CORE_LOGGING_UARTSINK_H_
 #define UAVAP_CORE_LOGGING_UARTSINK_H_
-#include <ostream>
+#include <streambuf>
+#include <sstream>
 
-
-class UARTSink : public std::ostream
+class UARTSink: public std::ostream
 {
+public:
+	struct UARTRdbuf: public std::stringbuf
+	{
+		int
+		sync() override
+		{
+#ifdef ERIKA
+			int ret = 1;
+			printf(str().c_str());
+#else
+			int ret = printf(str().c_str());
+#endif
+			this->str("");
+			return ret;
+		}
+	};
+
+	UARTSink()
+	{
+		rdbuf(&buf);
+	}
+
+private:
+
+	UARTRdbuf buf;
 
 };
-
 
 #endif /* UAVAP_CORE_LOGGING_UARTSINK_H_ */
