@@ -20,7 +20,7 @@ public:
 		{
 #ifdef ERIKA
 			int ret = 1;
-			printf(str().c_str());
+			printk(str().c_str());
 #else
 			int ret = printf(str().c_str());
 #endif

@@ -25,6 +25,7 @@
 
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/Scheduler/MicroSimulator.h"
+#include "uavAP/Core/Scheduler/EventBody.h"
 #include <utility>
 
 MicroSimulator::MicroSimulator() :
