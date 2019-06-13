@@ -26,6 +26,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include "uavAP/Core/Object/AggregatableObject.hpp"
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 
 namespace
 {

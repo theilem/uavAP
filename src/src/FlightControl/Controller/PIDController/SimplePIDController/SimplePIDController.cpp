@@ -76,20 +76,23 @@ SimplePIDController::run(RunStage stage)
 
 			return true;
 		}
-		if (!isSet<IScheduler>())
-		{
-			APLOG_ERROR << "SimplePIDController: Failed to Load Scheduler";
-
-			return true;
-		}
+//		if (!isSet<IScheduler>())
+//		{
+//			APLOG_ERROR << "SimplePIDController: Failed to Load Scheduler";
+//
+//			return true;
+//		}
 
 		break;
 	}
 	case RunStage::NORMAL:
 	{
-		auto scheduler = get<IScheduler>();
-		scheduler->schedule(std::bind(&SimplePIDController::calculateControl, this), Milliseconds(0),
-				Milliseconds(10));
+//		auto scheduler = get<IScheduler>();
+//		scheduler->schedule(std::bind(&SimplePIDController::calculateControl, this), Milliseconds(0),
+//				Milliseconds(10));
+
+		auto io = get<ISensingActuationIO>();
+		io->subscribeOnSensorData(std::bind(&SimplePIDController::calculateControl, this));
 
 		break;
 	}

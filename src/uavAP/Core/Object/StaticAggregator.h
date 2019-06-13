@@ -102,7 +102,7 @@ template<class Type>
 inline std::vector<std::shared_ptr<Type> >
 StaticAggregator<Objects...>::getAll(Type* self) const
 {
-	assert(false);
+	return container_.template getAll<Type>();
 }
 
 template<class ... Objects>
