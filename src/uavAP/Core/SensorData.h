@@ -79,7 +79,7 @@ struct SensorData
 	{
 	}
 
-	inline void
+	inline SensorData&
 	operator=(const SensorData& other)
 	{
 		position = other.position;
@@ -100,6 +100,7 @@ struct SensorData
 		batteryCurrent = other.batteryCurrent;
 		throttle = other.throttle;
 		rpm = other.rpm;
+		return *this;
 	}
 };
 
