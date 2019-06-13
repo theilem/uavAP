@@ -30,7 +30,6 @@
 
 #include <vector>
 #include <memory>
-#include <mutex>
 
 #include "uavAP/FlightControl/Controller/PIDController/IPIDCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDController.h"
@@ -41,6 +40,7 @@
 #include "uavAP/Core/Object/AggregatableObject.hpp"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
+#include "uavAP/Core/LockTypes.h"
 
 class IScheduler;
 class ISensingActuationIO;
@@ -76,7 +76,7 @@ private:
 	void
 	calculateControl();
 
-	std::mutex controllerTargetMutex_;
+	Mutex controllerTargetMutex_;
 	ControllerTarget controllerTarget_;
 	SensorData sensorData_;
 	Vector3 velocityInertial_;

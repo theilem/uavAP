@@ -26,13 +26,28 @@
 #ifndef UAVAP_CORE_LOCKTYPES_H_
 #define UAVAP_CORE_LOCKTYPES_H_
 
+#ifdef ERIKA
+using Mutex = int;
+
+struct FakeLock
+{
+	FakeLock(const Mutex& mut){}
+
+	void
+	unlock(){}
+};
+using Lock = FakeLock;
+using LockGuard = int;
+#else
 #include <mutex>
 
-using Lock = std::unique_lock<std::mutex>;
-using LockGuard = std::lock_guard<std::mutex>;
+using Mutex = std::mutex;
+using Lock = std::unique_lock<Mutex>;
+using LockGuard = std::lock_guard<Mutex>;
 //using SharedLock = std::shared_lock<boost::shared_mutex>;
 //using SharedLockGuard = boost::shared_lock_guard<boost::shared_mutex>;
 //using ExclusiveLock = boost::unique_lock<boost::shared_mutex>;
 //using ExclusiveLockGuard = boost::lock_guard<boost::shared_mutex>;
+#endif
 
 #endif /* UAVAP_CORE_LOCKTYPES_H_ */

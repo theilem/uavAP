@@ -27,11 +27,9 @@
 
 #include <iostream>
 #include <cmath>
-#include <mutex>
 
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
-#include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/detail/AirplaneSimplePIDCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/SimplePIDController.h"
