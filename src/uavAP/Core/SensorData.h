@@ -58,12 +58,48 @@ struct SensorData
 	double throttle;
 	double rpm;
 
+	inline
 	SensorData() :
 			position(0, 0, 0), velocity(0, 0, 0), acceleration(0, 0, 0), attitude(0, 0, 0), angularRate(
 					0, 0, 0), airSpeed(0), groundSpeed(0), hasGPSFix(false), autopilotActive(false), angleOfAttack(
 					0), propulsionPower(0), consumedEnergy(0), sequenceNr(0), batteryVoltage(0), batteryCurrent(
 					0), throttle(0), rpm(0)
 	{
+	}
+
+	inline
+	SensorData(const SensorData& other) :
+			position(other.position), velocity(other.velocity), acceleration(other.acceleration), attitude(
+					other.attitude), angularRate(other.angularRate), timestamp(other.timestamp), airSpeed(
+					other.airSpeed), groundSpeed(other.groundSpeed), hasGPSFix(other.hasGPSFix), autopilotActive(
+					other.autopilotActive), angleOfAttack(other.angleOfAttack), propulsionPower(
+					other.propulsionPower), consumedEnergy(other.consumedEnergy), sequenceNr(
+					other.sequenceNr), batteryVoltage(other.batteryVoltage), batteryCurrent(
+					other.batteryCurrent), throttle(other.throttle), rpm(other.rpm)
+	{
+	}
+
+	inline void
+	operator=(const SensorData& other)
+	{
+		position = other.position;
+		velocity = other.velocity;
+		acceleration = other.acceleration;
+		attitude = other.attitude;
+		angularRate = other.angularRate;
+		timestamp = other.timestamp;
+		airSpeed = other.airSpeed;
+		groundSpeed = other.groundSpeed;
+		hasGPSFix = other.hasGPSFix;
+		autopilotActive = other.autopilotActive;
+		angleOfAttack = other.angleOfAttack;
+		propulsionPower = other.propulsionPower;
+		consumedEnergy = other.consumedEnergy;
+		sequenceNr = other.sequenceNr;
+		batteryVoltage = other.batteryVoltage;
+		batteryCurrent = other.batteryCurrent;
+		throttle = other.throttle;
+		rpm = other.rpm;
 	}
 };
 
