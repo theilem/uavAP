@@ -36,7 +36,6 @@
 #include "uavAP/Core/Scheduler/SchedulerFactory.h"
 #include "uavAP/Core/TimeProvider/TimeProviderFactory.h"
 #include "uavAP/FlightControl/Controller/ControllerFactory.h"
-#include "uavAP/FlightControl/DataHandling/FlightControlDataHandling.h"
 #include "uavAP/FlightControl/LocalPlanner/LocalPlannerFactory.h"
 #include "uavAP/FlightControl/SensingActuationIO/SensingActuationIOFactory.h"
 

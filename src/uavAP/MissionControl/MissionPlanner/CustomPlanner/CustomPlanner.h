@@ -97,6 +97,7 @@ private:
 	onSensorData(const SensorData& data);
 
 	double defaultVelocity_;
+	double defaultAltitude_;
 	bool useApproach_;
 
 	ObjectHandle<IPC> ipc_;

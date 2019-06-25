@@ -35,11 +35,23 @@
 #include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 #include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
+#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <memory>
 
 LinearLocalPlanner::LinearLocalPlanner() :
 		headingTarget_(0), inApproach_(false), currentPathSectionIdx_(0)
 {
+}
+
+std::shared_ptr<LinearLocalPlanner>
+LinearLocalPlanner::create(const Configuration& config)
+{
+	auto agg = std::make_shared<LinearLocalPlanner>();
+	if (!agg->configure(config))
+	{
+		APLOG_ERROR << "LinearLocalPlanner" << ": Configuration failed";
+	}
+	return agg;
 }
 
 bool

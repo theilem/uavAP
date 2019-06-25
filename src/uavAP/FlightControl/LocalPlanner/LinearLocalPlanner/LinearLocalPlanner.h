@@ -60,9 +60,11 @@ public:
 
 	LinearLocalPlanner();
 
-	ADD_CREATE_WITH_CONFIG(LinearLocalPlanner)
+	static std::shared_ptr<LinearLocalPlanner>
+	create(const Configuration& config);
 
-bool	run(RunStage stage) override;
+	bool
+	run(RunStage stage) override;
 
 	ControllerTarget
 	getControllerTarget();

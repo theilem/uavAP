@@ -25,6 +25,7 @@
  *  Description
  */
 
+#include <uavAP/Core/DataHandling/DataHandling.h>
 #include <iostream>
 #include <cmath>
 
@@ -36,8 +37,7 @@
 #include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 #include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 
-SimplePIDController::SimplePIDController() :
-		airplane_(true)
+SimplePIDController::SimplePIDController()
 {
 }
 
@@ -74,23 +74,26 @@ SimplePIDController::run(RunStage stage)
 
 			return true;
 		}
-//		if (!isSet<IScheduler>())
-//		{
-//			APLOG_ERROR << "SimplePIDController: Failed to Load Scheduler";
-//
-//			return true;
-//		}
+
+		if (!isSet<DataHandling>())
+		{
+			APLOG_DEBUG << "SimplePIDController: DataHandling not set. Debugging disabled.";
+		}
 
 		break;
 	}
 	case RunStage::NORMAL:
 	{
-//		auto scheduler = get<IScheduler>();
-//		scheduler->schedule(std::bind(&SimplePIDController::calculateControl, this), Milliseconds(0),
-//				Milliseconds(10));
-
 		auto io = get<ISensingActuationIO>();
 		io->subscribeOnSensorData(std::bind(&SimplePIDController::calculateControl, this));
+
+		if (auto dh = get<DataHandling>())
+		{
+			dh->addStatusFunction<std::map<PIDs, PIDStatus>>(
+					std::bind(&IPIDCascade::getPIDStatus, pidCascade_));
+			dh->subscribeOnCommand<PIDTuning>(Content::TUNE_PID,
+					std::bind(&SimplePIDController::tunePID, this, std::placeholders::_1));
+		}
 
 		break;
 	}
@@ -158,4 +161,10 @@ SimplePIDController::calculateControl()
 	targetLock.unlock();
 
 	sensAct->setControllerOutput(controllerOutput_);
+}
+
+void
+SimplePIDController::tunePID(const PIDTuning& params)
+{
+	pidCascade_->tunePID(static_cast<PIDs>(params.pid), params.params);
 }

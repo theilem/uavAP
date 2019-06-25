@@ -40,7 +40,9 @@
 #include <shared_mutex>
 
 struct ControllerOutput;
+struct AdvancedControl;
 class IPC;
+class DataHandling;
 
 class SensingActuationIO: public ISensingActuationIO,
 		public IAggregatableObject,
@@ -74,10 +76,15 @@ private:
 	void
 	onSensorData(const SensorData& data);
 
+	void
+	onAdvancedControl(const AdvancedControl& control);
+
 	ObjectHandle<IPC> ipc_;
+	ObjectHandle<DataHandling> dataHandling_;
 
 	Subscription sensorSubscription_;
 	Publisher actuationPublisher_;
+	Publisher advancedControlPublisher_;
 
 	OnSensorData onSensorData_;
 

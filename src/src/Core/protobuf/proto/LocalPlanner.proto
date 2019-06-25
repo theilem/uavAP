@@ -5,7 +5,7 @@ message AirplaneLinearLocalPlannerStatus {
 	double heading_target = 1;
 }
 
-message LinearLocalPlannerStatus {
+message LinearLocalPlannerStatusProto {
 	AirplaneLinearLocalPlannerStatus airplane_status = 1;
 	uint32 current_path_section = 2;
 	VelocityBody velocity_target = 3;
@@ -23,18 +23,7 @@ message ManeuverLocalPlannerStatus{
 }
 
 message LocalPlannerStatus {
-	LinearLocalPlannerStatus linear_status = 1;
-	ManeuverLocalPlannerStatus maneuver_status = 2;
-}
-
-message AirplaneLinearLocalPlannerParams {
-	double k_altitude = 1;
-	double k_heading = 2;
-	double k_yaw_rate = 3;
-}
-
-message LinearLocalPlannerParams {
-	AirplaneLinearLocalPlannerParams airplane_params = 1;
+	ManeuverLocalPlannerStatus maneuver_status = 1;
 }
 
 message ManeuverLocalPlannerParams {
@@ -44,6 +33,5 @@ message ManeuverLocalPlannerParams {
 }
 
 message LocalPlannerParams {
-	LinearLocalPlannerParams linear_params = 1;
 	ManeuverLocalPlannerParams maneuver_params = 2;
 }

@@ -28,6 +28,7 @@
 
 #include <uavAP/Core/LockTypes.h>
 #include <uavAP/Core/Object/AggregatableObject.hpp>
+#include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/SensorData.h"
@@ -45,9 +46,10 @@ class ManeuverCascade;
 class ISensingActuationIO;
 class IScheduler;
 class IPC;
+class DataHandling;
 class Packet;
 
-class ManeuverPIDController: public IPIDController, public AggregatableObject<IPC, IScheduler, ISensingActuationIO>, public IRunnableObject
+class ManeuverPIDController: public IPIDController, public AggregatableObject<IPC, IScheduler, ISensingActuationIO, DataHandling>, public IRunnableObject
 {
 public:
 
@@ -80,6 +82,9 @@ private:
 
 	void
 	onOverridePacket(const Packet& packet);
+
+	void
+	tunePID(const PIDTuning& params);
 
 	Mutex controllerTargetMutex_;
 	ControllerTarget controllerTarget_;

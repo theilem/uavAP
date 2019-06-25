@@ -43,6 +43,7 @@ enum class Maneuvers
 	INVALID,
 	GEOFENCING,
 	ADVANCED_CONTROL,
+	SEQUENCE,
 	NUM_MANEUVERS
 };
 
@@ -55,8 +56,10 @@ enum class CollectStates
 	NUM_STATES
 };
 
-ENUMMAP_INIT(Maneuvers, { {Maneuvers::GEOFENCING, "geofencing"},
-		{Maneuvers::ADVANCED_CONTROL, "advanced_control"} });
+ENUMMAP_INIT(Maneuvers,
+		{{Maneuvers::GEOFENCING, "geofencing"},
+		{Maneuvers::ADVANCED_CONTROL, "advanced_control"},
+		{Maneuvers::SEQUENCE, "sequence"}});
 
 class ManeuverAnalysis: public IAggregatableObject, public IRunnableObject
 {
@@ -84,6 +87,9 @@ private:
 	onSensorData(const SensorData& data);
 
 	void
+	logSensorData();
+
+	void
 	onManeuverAnalysisStatus(const Packet& status);
 
 	void
@@ -101,10 +107,14 @@ private:
 	void
 	collectAdvancedControl(const SensorData& data, const CollectStates& states);
 
+	void
+	collectSequence(const SensorData& data, const CollectStates& states);
+
 	Subscription sensorDataSubscription_;
 	Subscription maneuverAnalysisSubscription_;
 
 	ObjectHandle<IPC> ipcHandle_;
+	ObjectHandle<IScheduler> scheduler_;
 
 	ManeuverAnalysisStatus analysis_;
 	std::mutex maneuverAnalysisStatusMutex_;
@@ -115,6 +125,11 @@ private:
 
 	std::string logPath_;
 	std::ofstream logFile_;
+
+	SensorData sensorData_;
+	std::mutex sensorDataMutex_;
+
+	unsigned int loggingPeriod_;
 };
 
 #endif /* UAVAP_FLIGHTANALYSIS_MANEUVERANALYSIS_MANEUVERANALYSIS_H_ */

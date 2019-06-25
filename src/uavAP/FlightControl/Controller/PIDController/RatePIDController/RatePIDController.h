@@ -29,6 +29,7 @@
 #include <uavAP/Core/IPC/Subscription.h>
 #include <uavAP/Core/Object/ObjectHandle.h>
 #include <uavAP/Core/SensorData.h>
+#include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
@@ -40,6 +41,7 @@ class RateCascade;
 class IScheduler;
 class IPC;
 class ISensingActuationIO;
+class DataHandling;
 class Packet;
 
 class RatePIDController: public IPIDController, public IAggregatableObject, public IRunnableObject
@@ -79,8 +81,12 @@ private:
 	void
 	onOverridePacket(const Packet& packet);
 
+	void
+	tunePID(const PIDTuning& params);
+
 	ObjectHandle<ISensingActuationIO> sensAct_;
 	ObjectHandle<IScheduler> scheduler_;
+	ObjectHandle<DataHandling> dataHandling_;
 	ObjectHandle<IPC> ipc_;
 
 	std::mutex controllerTargetMutex_;
@@ -91,6 +97,7 @@ private:
 	ControllerOutput controllerOutput_;
 
 	Publisher controllerOutputPublisher_;
+	Publisher pidStatiPublisher_;
 	Subscription overrideSubscription_;
 
 	std::shared_ptr<RateCascade> pidCascade_;

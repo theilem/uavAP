@@ -26,9 +26,8 @@
 #ifndef UAVAP_SIMULATION_CHANNELMIXING_H_
 #define UAVAP_SIMULATION_CHANNELMIXING_H_
 
+#include <uavAP/Core/PropertyMapper/Configuration.h>
 #include <vector>
-#include <boost/optional/optional.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <Eigen/Dense>
 
 #include "uavAP/Core/IPC/Publisher.h"
@@ -46,7 +45,7 @@ public:
 	ChannelMixing();
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	Eigen::VectorXd
 	mixChannels(const ControllerOutput& controllerOut);
@@ -64,7 +63,7 @@ private:
 	};
 
 	Mapping
-	getMapping(const boost::property_tree::ptree& config);
+	getMapping(const Configuration& config);
 
 	int numOfOutputChannel_;
 

@@ -28,6 +28,7 @@
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_SIMPLEPIDCONTROLLER_SIMPLEPIDCONTROLLER_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_SIMPLEPIDCONTROLLER_SIMPLEPIDCONTROLLER_H_
 
+#include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
 #include <vector>
 #include <memory>
 
@@ -44,8 +45,9 @@
 
 class IScheduler;
 class ISensingActuationIO;
+class DataHandling;
 
-class SimplePIDController: public IPIDController, public AggregatableObject<ISensingActuationIO, IScheduler>, public IRunnableObject
+class SimplePIDController: public IPIDController, public AggregatableObject<ISensingActuationIO, IScheduler, DataHandling>, public IRunnableObject
 {
 public:
 
@@ -76,6 +78,9 @@ private:
 	void
 	calculateControl();
 
+	void
+	tunePID(const PIDTuning& params);
+
 	Mutex controllerTargetMutex_;
 	ControllerTarget controllerTarget_;
 	SensorData sensorData_;
@@ -85,7 +90,6 @@ private:
 
 	std::shared_ptr<IPIDCascade> pidCascade_;
 
-	bool airplane_;
 };
 
 #endif /* UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_SIMPLEPIDCONTROLLER_SIMPLEPIDCONTROLLER_H_ */

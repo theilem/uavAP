@@ -57,7 +57,7 @@ create(const Configuration& config) \
 		APLOG_ERROR << #obj << ": Configuration failed";\
 	}\
 	return agg;\
-}\
+}
 
 #define ADD_CREATE_WITHOUT_CONFIG(obj) \
 static inline std::shared_ptr<obj> \

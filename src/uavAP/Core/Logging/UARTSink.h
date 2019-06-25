@@ -20,7 +20,12 @@ public:
 		{
 #ifdef ERIKA
 			int ret = 1;
+#ifdef LINUX
+			printf(str().c_str());
+#else
 			printk(str().c_str());
+#endif
+
 #else
 			int ret = printf(str().c_str());
 #endif
