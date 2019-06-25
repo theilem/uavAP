@@ -38,7 +38,7 @@ public:
 	{
 	}
 
-	Orbit(const Vector3& center, const Vector3& normal, double radius, double vel) :
+	Orbit(const Vector3& center, const Vector3& normal, FloatingType radius, FloatingType vel) :
 			center_(center), normal_(normal), radius_(radius), velocity_(vel), currentPosition_(0,
 					0, 0)
 	{
@@ -78,22 +78,22 @@ public:
 		return center_;
 	}
 
-	double
+	FloatingType
 	getRadius() const
 	{
 		return radius_;
 	}
 
-	double
+	FloatingType
 	getSlope() const override
 	{
 		return getDirection().z();
 	}
 
-	double
+	FloatingType
 	getCurvature() const override
 	{
-		double curv = 1 / radius_;
+		FloatingType curv = 1 / radius_;
 		return normal_.z() < 0 ? -curv : curv;
 	}
 
@@ -103,7 +103,7 @@ public:
 		return center_;
 	}
 
-	double
+	FloatingType
 	getVelocity() const override
 	{
 		return velocity_;
@@ -111,9 +111,9 @@ public:
 
 	Vector3 center_;
 	Vector3 normal_;
-	double radius_;
+	FloatingType radius_;
 	Vector3 radiusVector_;
-	double velocity_;
+	FloatingType velocity_;
 
 	Vector3 currentPosition_;
 };

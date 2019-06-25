@@ -37,7 +37,7 @@ struct Curve: public Orbit
 	{
 	}
 
-	Curve(const Vector3& center, const Vector3& normal, const Vector3 endPoint, double vel) :
+	Curve(const Vector3& center, const Vector3& normal, const Vector3 endPoint, FloatingType vel) :
 			Orbit(center, normal, (endPoint - center).norm(), vel), endPoint_(endPoint)
 	{
 		auto radius = (endPoint_ - center).normalized();

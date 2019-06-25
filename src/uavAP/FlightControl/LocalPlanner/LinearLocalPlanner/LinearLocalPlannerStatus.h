@@ -30,7 +30,7 @@
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include <memory>
 
-struct HelicopterLocalPlannerStatus
+struct LinearLocalPlannerStatus
 {
 	Vector2 directionTarget;
 
@@ -43,7 +43,7 @@ namespace dp
 {
 template<class Archive, typename Type>
 inline void
-serialize(Archive& ar, HelicopterLocalPlannerStatus& t)
+serialize(Archive& ar, LinearLocalPlannerStatus& t)
 {
 	ar & t.controllerTarget;
 	ar & t.currentPathSection;

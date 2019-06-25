@@ -26,10 +26,7 @@
 #ifndef UAVAP_CORE_LOGGING_APLOGGER_H_
 #define UAVAP_CORE_LOGGING_APLOGGER_H_
 
-#ifndef ERIKA
-#include <iostream>
-#endif
-#include <sstream>
+#include <ostream>
 #include <string>
 
 enum class LogLevel
@@ -79,6 +76,19 @@ private:
 };
 
 #define APLOG(level) (APLogger::instance()->log(level))
+#ifdef NO_LOGGING
+#define APLOG_ERROR if (0) APLOG(::LogLevel::ERROR)
+#define APLOG_WARN if (0) APLOG(::LogLevel::WARN)
+#define APLOG_DEBUG if (0) APLOG(::LogLevel::DEBUG)
+#define APLOG_TRACE if (0) APLOG(::LogLevel::TRACE)
+
+#define MODULE_LOG_ERROR(module) if (0) MODULE_LOG(::LogLevel::ERROR, module)
+#define MODULE_LOG_WARN(module) if (0) MODULE_LOG(::LogLevel::WARN, module)
+#define MODULE_LOG_DEBUG(module) if (0) MODULE_LOG(::LogLevel::DEBUG, module)
+#define MODULE_LOG_TRACE(module) if (0) MODULE_LOG(::LogLevel::TRACE, module)
+
+#else
+
 #define APLOG_ERROR (APLOG(::LogLevel::ERROR) << "[ERROR] ")
 #define APLOG_WARN (APLOG(::LogLevel::WARN) << "[WARNING] ")
 
@@ -101,5 +111,7 @@ private:
 #define MODULE_LOG_DEBUG(module) (MODULE_LOG(::LogLevel::DEBUG, module) << "[DEBUG] ")
 #define MODULE_LOG_TRACE(module) (MODULE_LOG(::LogLevel::TRACE, module) << "[TRACE] ")
 #endif
+
+#endif //NO_LOGGING
 
 #endif /* UAVAP_CORE_LOGGING_APLOGGER_H_ */

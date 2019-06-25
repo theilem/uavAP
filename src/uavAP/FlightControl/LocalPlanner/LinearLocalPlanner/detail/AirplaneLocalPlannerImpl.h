@@ -30,11 +30,9 @@
 
 struct IPathSection;
 
-class AirplaneLocalPlannerImpl: public ILinearPlannerImpl
+class AirplaneLocalPlannerImpl
 {
 public:
-
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 	AirplaneLocalPlannerImpl();
 

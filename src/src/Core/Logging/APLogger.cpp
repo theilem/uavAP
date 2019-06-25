@@ -23,6 +23,9 @@
  *      Author: mircot
  */
 
+#ifndef ERIKA
+#include <iostream>
+#endif
 #include "uavAP/Core/Logging/APLogger.h"
 
 APLogger* APLogger::instance_ = nullptr;

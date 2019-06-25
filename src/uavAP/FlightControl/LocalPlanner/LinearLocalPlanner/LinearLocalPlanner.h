@@ -29,7 +29,8 @@
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_LINEARLOCALPLANNER_LINEARLOCALPLANNER_H_
 
 #include <uavAP/Core/Object/AggregatableObject.hpp>
-#include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/ILinearPlannerImpl.h"
+#include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
+#include <uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlannerParams.h>
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlannerStatus.h"
 
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
@@ -49,7 +50,9 @@ class Packet;
 struct SensorData;
 struct ControllerTarget;
 
-class LinearLocalPlanner: public ILocalPlanner, public IRunnableObject, public AggregatableObject<ISensingActuationIO,IController, IScheduler, IPC>
+class LinearLocalPlanner: public ILocalPlanner, public IRunnableObject, public AggregatableObject<
+		ISensingActuationIO, IController, IScheduler, IPC>, public ConfigurableObject<
+		LinearLocalPlannerParams>
 {
 public:
 
@@ -57,13 +60,9 @@ public:
 
 	LinearLocalPlanner();
 
-	bool
-	configure(const Configuration& config);
-
 	ADD_CREATE_WITH_CONFIG(LinearLocalPlanner)
 
-	bool
-	run(RunStage stage) override;
+bool	run(RunStage stage) override;
 
 	ControllerTarget
 	getControllerTarget();
@@ -74,19 +73,10 @@ public:
 	Trajectory
 	getTrajectory() const override;
 
-	std::shared_ptr<ILinearPlannerImpl>
-	getImpl();
-
-	LocalPlannerStatus
-	getStatus() const override;
-
-	bool
-	tune(const LocalPlannerParams& params) override;
-
 private:
 
 	void
-	createLocalPlan(const Vector3& position, double heading, bool hasGPSFix, uint32_t seqNum);
+	createLocalPlan(const Vector3& position, FloatingType heading, bool hasGPSFix, uint32_t seqNum);
 
 	void
 	nextSection();
@@ -100,16 +90,17 @@ private:
 	void
 	update();
 
-	std::shared_ptr<ILinearPlannerImpl> localPlannerImpl_;
+	ControllerTarget
+	evaluate(const Vector3& position, FloatingType heading, std::shared_ptr<IPathSection> section);
+
+	FloatingType headingTarget_;
 
 	Trajectory trajectory_;
 	PathSectionIterator currentSection_;
 	bool inApproach_;
-	std::mutex trajectoryMutex_;
+	Mutex trajectoryMutex_;
 	ControllerTarget controllerTarget_;
 
-	bool airplane_;
-	unsigned int period_;
 	uint8_t currentPathSectionIdx_;
 };
 

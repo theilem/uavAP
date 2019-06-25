@@ -28,6 +28,7 @@
 
 #include <uavAP/Core/EnumMap.hpp>
 #include <uavAP/Core/LinearAlgebra.h>
+#include <uavAP/Core/PropertyMapper/Parameter.h>
 #include <uavAP/Core/Time.h>
 #include "uavAP/Core/Logging/APLogger.h"
 #include <Eigen/Core>
@@ -41,7 +42,7 @@ class time_duration;
 }
 }
 
-template <typename Configuration>
+template<typename Configuration>
 class PropertyMapper
 {
 public:
@@ -49,9 +50,9 @@ public:
 
 	template<typename PODType>
 	bool
-	add(const std::string& key, typename std::enable_if<std::is_pod<PODType>::value, PODType>::type& val,
+	add(const std::string& key,
+			typename std::enable_if<std::is_pod<PODType>::value, PODType>::type& val,
 			bool mandatory);
-
 
 	template<typename Type>
 	bool
@@ -80,21 +81,29 @@ public:
 	bool
 	add(const std::string& key, Configuration& val, bool mandatory);
 
-	template <typename Type>
+	template<typename Type>
 	bool
 	add(const std::string& key, Eigen::Matrix<Type, Eigen::Dynamic, 1>& val, bool mandatory);
 
-	template <typename Type>
+	template<typename Type>
 	bool
 	add(const std::string& key, Eigen::Array<Type, Eigen::Dynamic, 1>& val, bool mandatory);
 
-	template <typename Enum>
+	template<typename Enum>
 	bool
 	addEnum(const std::string& key, Enum& e, bool mandatory);
 
-	template <typename Enum>
+	template<typename Enum>
 	bool
 	addEnumVector(const std::string& key, std::vector<Enum>& e, bool mandatory);
+
+	template<typename Param>
+	typename std::enable_if<!is_parameter_set<typename Param::ValueType>::value, bool>::type
+	operator&(Param& param);
+
+	template<typename Param>
+	typename std::enable_if<is_parameter_set<typename Param::ValueType>::value, bool>::type
+	operator&(Param& param);
 
 	bool
 	map();
@@ -105,20 +114,43 @@ public:
 	bool
 	isEmpty() const;
 
-
 protected:
 
 	const Configuration& p_;
 	bool mandatoryCheck_;
 
+private:
+	template<typename Type>
+	struct is_special_param
+	{
+		template<typename _1> static char
+		chk(
+				decltype(std::declval<PropertyMapper<Configuration>>().add(std::string(), std::declval<_1&>(), true)));
+		template<typename > static int
+		chk(...);
+
+		static constexpr bool value = sizeof(chk<Type>(0)) == sizeof(char);
+	};
+
+	template<typename Type>
+	bool
+	addSpecific(const std::string& key,
+			typename std::enable_if<is_special_param<Type>::value, Type>::type& val,
+			bool mandatory);
+
+	template<typename Type>
+	bool
+	addSpecific(const std::string& key,
+			typename std::enable_if<!is_special_param<Type>::value, Type>::type& val,
+			bool mandatory);
 
 };
 
-template <typename Config>
+template<typename Config>
 template<typename PODType>
 inline bool
-PropertyMapper<Config>::add(const std::string& key, typename std::enable_if<std::is_pod<PODType>::value, PODType>::type& val,
-		bool mandatory)
+PropertyMapper<Config>::add(const std::string& key,
+		typename std::enable_if<std::is_pod<PODType>::value, PODType>::type& val, bool mandatory)
 {
 	auto value = p_.template get_optional<PODType>(key);
 	if (value)
@@ -135,11 +167,11 @@ PropertyMapper<Config>::add(const std::string& key, typename std::enable_if<std:
 	return false;
 }
 
-template <typename Config>
+template<typename Config>
 template<typename Type>
 inline bool
-PropertyMapper<Config>::add(const std::string& key, typename std::enable_if<!std::is_pod<Type>::value, Type>::type& val,
-		bool mandatory)
+PropertyMapper<Config>::add(const std::string& key,
+		typename std::enable_if<!std::is_pod<Type>::value, Type>::type& val, bool mandatory)
 {
 	if (key.empty())
 	{
@@ -167,7 +199,7 @@ PropertyMapper<Config>::add(const std::string& key, typename std::enable_if<!std
 	}
 }
 
-template <typename Config>
+template<typename Config>
 template<typename T>
 inline bool
 PropertyMapper<Config>::addVector(const std::string& key, std::vector<T>& val, bool mandatory)
@@ -197,7 +229,7 @@ PropertyMapper<Config>::addVector(const std::string& key, std::vector<T>& val, b
 	return false;
 }
 
-template <typename Config>
+template<typename Config>
 template<typename Type>
 inline bool
 PropertyMapper<Config>::add(const std::string& key, Eigen::Matrix<Type, Eigen::Dynamic, 1>& val,
@@ -207,7 +239,7 @@ PropertyMapper<Config>::add(const std::string& key, Eigen::Matrix<Type, Eigen::D
 	if (value)
 	{
 		Config child = *value;
-		Eigen::Matrix<Type, -1, 1>  values(child.size(), 1);
+		Eigen::Matrix<Type, -1, 1> values(child.size(), 1);
 		int k = 0;
 		for (auto& it : child)
 		{
@@ -224,13 +256,14 @@ PropertyMapper<Config>::add(const std::string& key, Eigen::Matrix<Type, Eigen::D
 	return false;
 }
 
-template <typename Config>
+template<typename Config>
 template<typename Type>
 inline bool
 PropertyMapper<Config>::add(const std::string& key, Eigen::Array<Type, Eigen::Dynamic, 1>& val,
 		bool mandatory)
 {
-	val = {};
+	val =
+	{};
 	auto value = p_.get_child_optional(key);
 	if (value)
 	{
@@ -252,7 +285,7 @@ PropertyMapper<Config>::add(const std::string& key, Eigen::Array<Type, Eigen::Dy
 	return false;
 }
 
-template <typename Config>
+template<typename Config>
 template<typename Enum>
 inline bool
 PropertyMapper<Config>::addEnum(const std::string& key, Enum& e, bool mandatory)
@@ -272,7 +305,7 @@ PropertyMapper<Config>::addEnum(const std::string& key, Enum& e, bool mandatory)
 	return false;
 }
 
-template <typename Config>
+template<typename Config>
 template<typename Enum>
 inline bool
 PropertyMapper<Config>::addEnumVector(const std::string& key, std::vector<Enum>& e, bool mandatory)
@@ -296,13 +329,13 @@ PropertyMapper<Config>::addEnumVector(const std::string& key, std::vector<Enum>&
 	return false;
 }
 
-template <typename Config>
+template<typename Config>
 PropertyMapper<Config>::PropertyMapper(const Config& p) :
 		p_(p), mandatoryCheck_(true)
 {
 }
 
-template <typename Config>
+template<typename Config>
 bool
 PropertyMapper<Config>::add(const std::string& key, std::string& val, bool mandatory)
 {
@@ -321,7 +354,7 @@ PropertyMapper<Config>::add(const std::string& key, std::string& val, bool manda
 	return false;
 }
 
-template <typename Config>
+template<typename Config>
 bool
 PropertyMapper<Config>::add(const std::string& key, Duration& val, bool mandatory)
 {
@@ -340,7 +373,7 @@ PropertyMapper<Config>::add(const std::string& key, Duration& val, bool mandator
 	return false;
 }
 
-template <typename Config>
+template<typename Config>
 bool
 PropertyMapper<Config>::add(const std::string& key, Config& val, bool mandatory)
 {
@@ -380,10 +413,9 @@ PropertyMapper<Config>::add(const std::string& key, Config& val, bool mandatory)
 	return false;
 }
 
-template <typename Config>
+template<typename Config>
 bool
-PropertyMapper<Config>::addVector(const std::string& key, std::vector<Config>& val,
-		bool mandatory)
+PropertyMapper<Config>::addVector(const std::string& key, std::vector<Config>& val, bool mandatory)
 {
 	val.clear();
 	auto value = p_.get_child_optional(key);
@@ -404,7 +436,7 @@ PropertyMapper<Config>::addVector(const std::string& key, std::vector<Config>& v
 	return false;
 }
 
-template <typename Config>
+template<typename Config>
 bool
 PropertyMapper<Config>::map()
 {
@@ -412,7 +444,7 @@ PropertyMapper<Config>::map()
 	return mandatoryCheck_;
 }
 
-template <typename Config>
+template<typename Config>
 bool
 PropertyMapper<Config>::add(const std::string& key, Vector3& val, bool mandatory)
 {
@@ -433,7 +465,7 @@ PropertyMapper<Config>::add(const std::string& key, Vector3& val, bool mandatory
 	return false;
 }
 
-template <typename Config>
+template<typename Config>
 bool
 PropertyMapper<Config>::add(const std::string& key, Vector2& val, bool mandatory)
 {
@@ -454,7 +486,7 @@ PropertyMapper<Config>::add(const std::string& key, Vector2& val, bool mandatory
 	return false;
 }
 
-template <typename Config>
+template<typename Config>
 PropertyMapper<Config>
 PropertyMapper<Config>::getChild(const std::string& key, bool mandatory)
 {
@@ -473,11 +505,51 @@ PropertyMapper<Config>::getChild(const std::string& key, bool mandatory)
 	return PropertyMapper(Config());
 }
 
-template <typename Config>
+template<typename Config>
 bool
 PropertyMapper<Config>::isEmpty() const
 {
 	return p_.empty();
+}
+
+template<typename Config>
+template<typename Param>
+inline typename std::enable_if<!is_parameter_set<typename Param::ValueType>::value, bool>::type
+PropertyMapper<Config>::operator &(Param& param)
+{
+	return addSpecific<typename Param::ValueType>(param.id, param.value, param.mandatory);
+}
+
+template<typename Config>
+template<typename Param>
+inline typename std::enable_if<is_parameter_set<typename Param::ValueType>::value, bool>::type
+PropertyMapper<Config>::operator &(Param& param)
+{
+	auto pm = getChild(param.id, param.mandatory);
+	if (!pm.isEmpty())
+	{
+		param.value.configure(pm);
+		return pm.map();
+	}
+	return false;
+}
+
+template<typename Config>
+template<typename Type>
+bool
+PropertyMapper<Config>::addSpecific(const std::string& key,
+		typename std::enable_if<is_special_param<Type>::value, Type>::type& val, bool mandatory)
+{
+	return add(key, val, mandatory);
+}
+
+template<typename Config>
+template<typename Type>
+bool
+PropertyMapper<Config>::addSpecific(const std::string& key,
+		typename std::enable_if<!is_special_param<Type>::value, Type>::type& val, bool mandatory)
+{
+	return add<Type>(key, val, mandatory);
 }
 
 #endif /* UAVAP_CORE_PROPERTYMAPPER_PROPERTYMAPPER_H_ */

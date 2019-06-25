@@ -26,6 +26,7 @@
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_MANEUVERPIDCONTROLLER_MANEUVERPIDCONTROLLER_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_MANEUVERPIDCONTROLLER_MANEUVERPIDCONTROLLER_H_
 
+#include <uavAP/Core/LockTypes.h>
 #include <uavAP/Core/Object/AggregatableObject.hpp>
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/IPC/Subscription.h"
@@ -80,7 +81,7 @@ private:
 	void
 	onOverridePacket(const Packet& packet);
 
-	std::mutex controllerTargetMutex_;
+	Mutex controllerTargetMutex_;
 	ControllerTarget controllerTarget_;
 	SensorData sensorData_;
 	Vector3 velocityInertial_;

@@ -26,7 +26,6 @@
 #include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/detail/ManeuverCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/ManeuverPIDController.h"
-#include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"

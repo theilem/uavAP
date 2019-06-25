@@ -41,6 +41,21 @@ AggregatableObject<Objects...>::isSet() const
 	return container_.template isSet<Ret>();
 }
 
+template<class ... Objects>
+template<class Check>
+inline bool
+AggregatableObject<Objects...>::checkIsSet() const
+{
+	return container_.template isSet<Check>();
+}
+
+template<class ... Objects>
+template<class Check, class ... Others>
+inline bool
+AggregatableObject<Objects...>::checkIsSet() const
+{
+	return container_.template isSet<Check>() && checkIsSet<Others...>;
+}
 
 
 #endif /* UAVAP_CORE_OBJECT_AGGREGATABLEOBJECTIMPL_HPP_ */

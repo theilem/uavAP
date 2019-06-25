@@ -23,6 +23,7 @@ set (TEST_SOURCES 	TestRunner.cpp
 					Core/IPCTest.cpp
 					Core/SchedulerTest.cpp
 					Core/PropertyMapperTest.cpp
+					Core/ConfigurableObjectTest.cpp
 	                Core/ObjectHandleTest.cpp
 					#Core/FramesTest.cpp
 					Core/FrameworkAPITest.cpp
@@ -89,3 +90,6 @@ add_executable (rttests EXCLUDE_FROM_ALL ${RT_TEST_SOURCES})
 target_link_libraries (rttests ${TEST_DEPENDENCIES})
 
 add_subdirectory(Messages)
+
+
+

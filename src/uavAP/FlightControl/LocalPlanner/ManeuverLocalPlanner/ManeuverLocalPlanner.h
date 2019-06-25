@@ -67,10 +67,10 @@ public:
 	getTrajectory() const override;
 
 	LocalPlannerStatus
-	getStatus() const override;
+	getStatus() const;
 
 	bool
-	tune(const LocalPlannerParams& params) override;
+	tune(const LocalPlannerParams& params);
 
 	bool
 	run(RunStage stage) override;

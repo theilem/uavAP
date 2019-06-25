@@ -26,7 +26,6 @@
  */
 
 #include "uavAP/Core/IPC/IPC.h"
-#include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/detail/AirplaneLocalPlannerImpl.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include "uavAP/FlightControl/Controller/IController.h"
@@ -39,28 +38,8 @@
 #include <memory>
 
 LinearLocalPlanner::LinearLocalPlanner() :
-		inApproach_(false), airplane_(true), period_(0), currentPathSectionIdx_(0)
+		headingTarget_(0), inApproach_(false), currentPathSectionIdx_(0)
 {
-}
-
-bool
-LinearLocalPlanner::configure(const Configuration& config)
-{
-	PropertyMapper propertyMapper(config);
-	propertyMapper.add<bool>("airplane", airplane_, false);
-	propertyMapper.add<unsigned int>("period", period_, false);
-
-	if (airplane_)
-	{
-		localPlannerImpl_ = std::make_shared<AirplaneLocalPlannerImpl>();
-	}
-	else
-	{
-		APLOG_ERROR << "Only airplane is defined";
-//		localPlannerImpl_ = std::make_shared<HelicopterLocalPlannerImpl>();
-	}
-
-	return localPlannerImpl_->configure(config);
 }
 
 bool
@@ -95,13 +74,17 @@ LinearLocalPlanner::run(RunStage stage)
 			return true;
 		}
 
+		Trajectory traj;
+		traj.pathSections.push_back(std::make_shared<Orbit>(Vector3(0,0,0), Vector3(0,0,1), 50,50));
+		setTrajectory(traj);
+
 		break;
 	}
 	case RunStage::NORMAL:
 	{
 
 		//Directly calculate local plan when sensor data comes in
-		if (period_ == 0)
+		if (params.period() == 0)
 		{
 			auto sensing = get<ISensingActuationIO>();
 			sensing->subscribeOnSensorData(
@@ -110,8 +93,8 @@ LinearLocalPlanner::run(RunStage stage)
 		else
 		{
 			auto scheduler = get<IScheduler>();
-			scheduler->schedule(std::bind(&LinearLocalPlanner::update, this), Milliseconds(period_),
-					Milliseconds(period_));
+			scheduler->schedule(std::bind(&LinearLocalPlanner::update, this),
+					Milliseconds(params.period()), Milliseconds(params.period()));
 		}
 
 		auto ipc = get<IPC>();
@@ -122,13 +105,9 @@ LinearLocalPlanner::run(RunStage stage)
 		break;
 	}
 	case RunStage::FINAL:
-	{
 		break;
-	}
 	default:
-	{
 		break;
-	}
 	}
 	return false;
 }
@@ -176,20 +155,8 @@ LinearLocalPlanner::nextSection()
 	}
 }
 
-bool
-LinearLocalPlanner::tune(const LocalPlannerParams& params)
-{
-	auto impl = getImpl();
-	if (!impl)
-	{
-		APLOG_ERROR << "Impl missing. Cannot tune local planner.";
-		return false;
-	}
-	return impl->tuneParams(params);
-}
-
 void
-LinearLocalPlanner::createLocalPlan(const Vector3& position, double heading, bool hasGPSFix,
+LinearLocalPlanner::createLocalPlan(const Vector3& position, FloatingType heading, bool hasGPSFix,
 		uint32_t seqNum)
 {
 
@@ -238,7 +205,7 @@ LinearLocalPlanner::createLocalPlan(const Vector3& position, double heading, boo
 	lock.unlock();
 
 	if (hasGPSFix)
-		controllerTarget_ = localPlannerImpl_->evaluate(position, heading, currentSection);
+		controllerTarget_ = evaluate(position, heading, currentSection);
 	else
 	{
 		APLOG_WARN << "Lost GPS fix. LocalPlanner safety procedure.";
@@ -264,33 +231,6 @@ LinearLocalPlanner::getTrajectory() const
 	return trajectory_;
 }
 
-std::shared_ptr<ILinearPlannerImpl>
-LinearLocalPlanner::getImpl()
-{
-	return localPlannerImpl_;
-}
-
-LocalPlannerStatus
-LinearLocalPlanner::getStatus() const
-{
-	auto status = localPlannerImpl_->getStatus();
-	if (!status.has_linear_status())
-	{
-		APLOG_ERROR << "Status from impl is wrong";
-		return status;
-	}
-
-	status.mutable_linear_status()->set_current_path_section(currentPathSectionIdx_);
-	status.mutable_linear_status()->mutable_velocity_target()->set_velocity_x(
-			controllerTarget_.velocity);
-	status.mutable_linear_status()->mutable_velocity_target()->set_velocity_y(0);
-	status.mutable_linear_status()->mutable_velocity_target()->set_velocity_z(0);
-	status.mutable_linear_status()->set_yaw_rate_target(controllerTarget_.yawRate);
-	status.mutable_linear_status()->set_is_in_approach(inApproach_);
-
-	return status;
-}
-
 void
 LinearLocalPlanner::onTrajectoryPacket(const Packet& packet)
 {
@@ -309,7 +249,7 @@ LinearLocalPlanner::onSensorData(const SensorData& sd)
 {
 	//TODO Lock?
 	Vector3 position = sd.position;
-	double heading = sd.attitude.z();
+	FloatingType heading = sd.attitude.z();
 	bool hasFix = sd.hasGPSFix;
 	uint32_t seq = sd.sequenceNr;
 
@@ -329,4 +269,36 @@ LinearLocalPlanner::update()
 
 	SensorData data = sensing->getSensorData();
 	createLocalPlan(data.position, data.attitude.z(), data.hasGPSFix, data.sequenceNr);
+}
+
+ControllerTarget
+LinearLocalPlanner::evaluate(const Vector3& position, FloatingType heading,
+		std::shared_ptr<IPathSection> section)
+{
+	ControllerTarget controllerTarget;
+
+	FloatingType vel = section->getVelocity();
+
+	controllerTarget.velocity = vel;
+	auto positionDeviation = section->getPositionDeviation();
+
+	// Climb Rate
+	FloatingType climbRate = controllerTarget.velocity * section->getSlope()
+			+ params.kAltitude() * positionDeviation.z();
+
+	climbRate = climbRate > vel ? vel : climbRate < -vel ? -vel : climbRate;
+
+	//Climb angle
+	controllerTarget.climbAngle = asin(climbRate / vel);
+
+	// Heading
+	Vector2 directionTarget_ = params.kHeading() * positionDeviation.head(2)
+			+ section->getDirection().head(2).normalized();
+	headingTarget_ = headingFromENU(directionTarget_);
+
+	FloatingType headingError = boundAngleRad(headingTarget_ - heading);
+
+	// Yaw Rate
+	controllerTarget.yawRate = vel * section->getCurvature() + params.kYawrate() * headingError;
+	return controllerTarget;
 }

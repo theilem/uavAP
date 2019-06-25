@@ -35,41 +35,20 @@ public:
 	bool
 	isSet() const;
 
+	template<class Check>
+	bool
+	checkIsSet() const;
+
+	template<class Check, class... Others>
+	bool
+	checkIsSet() const;
+
+
 protected:
 
 	ObjectHandleContainer<Objects...> container_;
 
 };
-//
-//template<class ... Objects>
-//inline void
-//AggregatableObject<Objects...>::notifyAggregationOnUpdate(const Aggregator& agg)
-//{
-//	container_.setFromAggregationIfNotSet(agg);
-//}
-//
-//template<class ... Objects>
-//template <class Agg>
-//void
-//AggregatableObject<Objects...>::notifyAggregationOnUpdate(const Agg& agg)
-//{
-//	container_.setFromAggregationIfNotSet(agg);
-//}
-//
-//template<class ... Objects>
-//template<class Ret>
-//inline AggregatableObject<Objects...>::PtrType<Ret>
-//AggregatableObject<Objects...>::get()
-//{
-//	return container_.template get<Ret>();
-//}
-//
-//template<class ... Objects>
-//template<class Ret>
-//inline bool
-//AggregatableObject<Objects...>::isSet() const
-//{
-//	return container_.template isSet<Ret>();
-//}
+
 
 #endif /* UAVAP_CORE_OBJECT_AGGREGATABLEOBJECT_HPP_ */
