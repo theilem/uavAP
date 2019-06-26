@@ -8,8 +8,8 @@
 		"yaw": 47
 	},
 	"global_planner": {
-		"type": "spline",
-		"tau": 0.6
+		"type": "fillet",
+		"fillet_radius": 75.0
 	},
 	"maneuver_planner": {
 		"safety_bounds": {
