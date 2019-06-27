@@ -45,7 +45,7 @@ public:
 	configure(const Configuration& config) override;
 
 	bool
-	tunePID(PIDs pid, const Control::PID::Parameters& params) override;
+	tunePID(PIDs pid, const Control::PIDParameters& params) override;
 
 	bool
 	tuneRollBounds(FloatingType min, FloatingType max) override;

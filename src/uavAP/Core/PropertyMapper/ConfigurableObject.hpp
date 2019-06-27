@@ -14,8 +14,15 @@ class ConfigurableObject
 {
 public:
 
+	ConfigurableObject() = default;
+
+	ConfigurableObject(const ParameterSet& params);
+
 	bool
 	configure(const Configuration& config);
+
+	void
+	setParams(const ParameterSet& set);
 
 protected:
 

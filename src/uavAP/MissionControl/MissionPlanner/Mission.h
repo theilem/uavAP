@@ -28,56 +28,54 @@
 
 #include <vector>
 
-#include <boost/optional.hpp>
-#include <boost/property_tree/ptree.hpp>
-
 #include "uavAP/Core/LinearAlgebra.h"
-#include "uavAP/Core/protobuf/messages/Positions.pb.h"
+#include "uavAP/Core/PropertyMapper/Optional.hpp"
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 
 #define DEFAULT_VELOCITY 15.0
 
 struct Waypoint
 {
 	Vector3 location;
-	boost::optional<Vector3> direction;
-	boost::optional<double> velocity; //Desired velocity upto this waypoint
+	Optional<Vector3> direction;
+	Optional<FloatingType> velocity; //Desired velocity upto this waypoint
 
 	Waypoint() :
-			location(0, 0, 0), direction(boost::none), velocity(boost::none)
+			location(0, 0, 0), direction(), velocity()
 	{
 	}
 
 	Waypoint(const Vector3& loc) :
-			location(loc), direction(boost::none), velocity(boost::none)
+			location(loc), direction(), velocity()
 	{
 	}
 
 	Waypoint(const Vector3& loc, const Vector3& dir) :
-			location(loc), direction(dir), velocity(boost::none)
+			location(loc), direction(dir), velocity()
 	{
 	}
 
-	Waypoint(const Vector3& loc, double vel) :
-			location(loc), direction(boost::none), velocity(vel)
+	Waypoint(const Vector3& loc, FloatingType vel) :
+			location(loc), direction(), velocity(vel)
 	{
 	}
 
-	Waypoint(const Vector3& loc, const Vector3& dir, double vel) :
+	Waypoint(const Vector3& loc, const Vector3& dir, FloatingType vel) :
 			location(loc), direction(dir), velocity(vel)
 	{
 	}
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 };
 
 struct Mission
 {
 	std::vector<Waypoint> waypoints;
-	boost::optional<Waypoint> initialPosition;
+	Optional<Waypoint> initialPosition;
 	bool infinite;
-	double velocity;
+	FloatingType velocity;
 
 	Mission() :
 			infinite(false), velocity(DEFAULT_VELOCITY)
@@ -85,7 +83,7 @@ struct Mission
 	}
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 };
 
 namespace dp

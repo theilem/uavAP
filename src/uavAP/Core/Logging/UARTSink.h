@@ -39,6 +39,12 @@ public:
 		rdbuf(&buf);
 	}
 
+	~UARTSink()
+	{
+		*this << std::endl;
+		buf.sync();
+	}
+
 private:
 
 	UARTRdbuf buf;

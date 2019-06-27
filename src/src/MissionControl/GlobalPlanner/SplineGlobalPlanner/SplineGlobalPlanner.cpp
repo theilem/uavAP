@@ -27,34 +27,19 @@
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 #include "uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlanner.h"
 #include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
-#include "uavAP/Core/IPC/IPC.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
-#include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
-#include <Eigen/Core>
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
+#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 
-SplineGlobalPlanner::SplineGlobalPlanner() :
-		orbitRadius_(50.0), tau_(0.5), inclusionLength_(0), smoothenZ_(true), naturalSplines_(false)
+SplineGlobalPlanner::SplineGlobalPlanner()
 {
 }
 
 std::shared_ptr<IGlobalPlanner>
-SplineGlobalPlanner::create(const boost::property_tree::ptree& config)
+SplineGlobalPlanner::create(const Configuration& config)
 {
 	auto gp = std::make_shared<SplineGlobalPlanner>();
 	gp->configure(config);
 	return gp;
-}
-
-bool
-SplineGlobalPlanner::configure(const boost::property_tree::ptree& config)
-{
-	PropertyMapper pm(config);
-	pm.add<double>("orbit_radius", orbitRadius_, false);
-	pm.add<double>("tau", tau_, false);
-	pm.add<bool>("smoothen_z", smoothenZ_, false);
-	pm.add<bool>("natural", naturalSplines_, false);
-	pm.add<uint8_t>("inclusion_length", inclusionLength_, false);
-	return pm.map();
 }
 
 bool
@@ -64,17 +49,12 @@ SplineGlobalPlanner::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (localPlanner_.isSet())
+		if (!isSet<ILocalPlanner>())
 		{
-			break;
+			APLOG_ERROR << "SplineGlobalPlanner: Local planner missing.";
+
+			return false;
 		}
-		if (!ipc_.isSet())
-		{
-			APLOG_ERROR << "GlobalPlanner: IPC missing.";
-			return true;
-		}
-		auto ipc = ipc_.get();
-		trajectoryPublisher_ = ipc->publishPackets("trajectory");
 		break;
 	}
 	case RunStage::NORMAL:
@@ -87,13 +67,6 @@ SplineGlobalPlanner::run(RunStage stage)
 		break;
 	}
 	return false;
-}
-
-void
-SplineGlobalPlanner::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	ipc_.setFromAggregationIfNotSet(agg);
-	localPlanner_.setFromAggregationIfNotSet(agg);
 }
 
 void
@@ -111,7 +84,7 @@ SplineGlobalPlanner::setMission(const Mission& mission)
 
 	Trajectory traj;
 
-	if (infinite && naturalSplines_)
+	if (infinite && params.naturalSplines())
 	{
 		traj = createNaturalSplines(mission);
 	}
@@ -120,15 +93,10 @@ SplineGlobalPlanner::setMission(const Mission& mission)
 		traj = createCatmulRomSplines(mission);
 	}
 
-	if (auto lp = localPlanner_.get())
+	if (auto lp = get<ILocalPlanner>())
 	{
-		APLOG_DEBUG << "Send Trajectory locally";
 		lp->setTrajectory(traj);
-		return;
 	}
-	APLOG_DEBUG << "Send Trajectory via IPC";
-	auto packet = dp::serialize(traj);
-	trajectoryPublisher_.publish(packet);
 }
 
 Mission
@@ -141,11 +109,11 @@ Trajectory
 SplineGlobalPlanner::createNaturalSplines(const Mission& mission)
 {
 	const auto& wp = mission.waypoints;
-	uint8_t n = inclusionLength_ * 2;
+	uint8_t n = params.inclusionLength() * 2;
 	if (n == 0)
 		n = static_cast<uint8_t>(wp.size());
 
-	Eigen::Matrix3d A, B, K, L, Rn;
+	Matrix3 A, B, K, L, Rn;
 	A << 1, 1, 1, 1, 2, 3, 0, 1, 3;
 
 	B << 0, 0, 0, -1, 0, 0, 0, -1, 0;
@@ -163,13 +131,11 @@ SplineGlobalPlanner::createNaturalSplines(const Mission& mission)
 
 	Rn = (A + B * Lpow).inverse();
 
-	std::cout << "Rn: " << Rn << std::endl;
-
-	std::vector<Eigen::Matrix3d> P;
+	std::vector<Matrix3> P;
 
 	for (uint8_t j = 0; j < n; ++j)
 	{
-		Eigen::Matrix3d temp;
+		Matrix3 temp;
 		temp.setZero();
 		if (j == n - 1)
 			temp.row(0) = wp[0].location - wp[j].location;
@@ -189,20 +155,17 @@ SplineGlobalPlanner::createNaturalSplines(const Mission& mission)
 			C[k] += P[j];
 			std::cout << C[j] << std::endl << std::endl;
 		}
-		std::cout << "Next" << std::endl << std::endl;
 	}
 
 	PathSections traj;
 	for (size_t j = 0; j < n; ++j)
 	{
-		double velocity = (!wp[j].velocity) ? mission.velocity : *wp[j].velocity;
+		FloatingType velocity = (!wp[j].velocity) ? mission.velocity : *wp[j].velocity;
 
 		auto spline = std::make_shared<CubicSpline>(wp[j].location, C[j].row(0), C[j].row(1),
 				C[j].row(2), velocity);
 		traj.push_back(spline);
 
-		std::cout << spline->c0_ << ", " << spline->c1_ << ", " << spline->c2_ << ", "
-				<< spline->c3_ << ", " << std::endl;
 	}
 
 	return Trajectory(traj, mission.infinite);
@@ -218,11 +181,11 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 
 	PathSections traj;
 
-	Eigen::Matrix<double, 4, 4> tauMat;
-	tauMat << 0, 1, 0, 0, -tau_, 0, tau_, 0, 2 * tau_, tau_ - 3, 3 - 2 * tau_, -tau_, -tau_, 2
-			- tau_, tau_ - 2, tau_;
-	Eigen::Matrix<double, 4, 3> pointMat;
-	Eigen::Matrix<double, 4, 3> approachMat;
+	Eigen::Matrix<FloatingType, 4, 4> tauMat;
+	tauMat << 0, 1, 0, 0, -params.tau(), 0, params.tau(), 0, 2 * params.tau(), params.tau() - 3, 3 - 2 * params.tau(), -params.tau(), -params.tau(), 2
+			- params.tau(), params.tau() - 2, params.tau();
+	Eigen::Matrix<FloatingType, 4, 3> pointMat;
+	Eigen::Matrix<FloatingType, 4, 3> approachMat;
 	if (wp.size() == 1)
 		infinite = false;
 	else
@@ -243,13 +206,13 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 			pointMat.row(0) = pointMat.row(2) - it->direction->transpose();
 		else
 		{
-			if (smoothenZ_)
+			if (params.smoothenZ())
 			{
 				const auto& col = pointMat.col(2);
-				double incline1 = col[2] - col[0];
-				double incline2 = col[2] - col[1];
-				double incline3 = col[1] - col[0];
-				double minIncline = 0;
+				FloatingType incline1 = col[2] - col[0];
+				FloatingType incline2 = col[2] - col[1];
+				FloatingType incline3 = col[1] - col[0];
+				FloatingType minIncline = 0;
 				if (fabs(incline1) < fabs(incline2))
 				{
 					if (fabs(incline3) < fabs(incline1))
@@ -280,9 +243,10 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 		{
 			if (!infinite)
 			{
-				double velocity = (!it->velocity) ? mission.velocity : *it->velocity;
+				FloatingType velocity = (!it->velocity) ? mission.velocity : *it->velocity;
 				traj.push_back(
-						std::make_shared<Orbit>(it->location, Vector3::UnitZ(), orbitRadius_, velocity));
+						std::make_shared<Orbit>(it->location, Vector3::UnitZ(), params.orbitRadius(),
+								velocity));
 				break;
 			}
 			nextIt = wp.begin();
@@ -301,13 +265,13 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 		else
 		{
 			pointMat.row(3) = next->location;
-			if (smoothenZ_)
+			if (params.smoothenZ())
 			{
 				const auto& col = pointMat.col(2);
-				double incline1 = col[3] - col[1];
-				double incline2 = col[3] - col[2];
-				double incline3 = col[2] - col[1];
-				double minIncline = 0;
+				FloatingType incline1 = col[3] - col[1];
+				FloatingType incline2 = col[3] - col[2];
+				FloatingType incline3 = col[2] - col[1];
+				FloatingType minIncline = 0;
 				if (fabs(incline1) < fabs(incline2))
 				{
 					if (fabs(incline3) < fabs(incline1))
@@ -327,8 +291,8 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 			}
 		}
 
-		Eigen::Matrix<double, 3, 4> C = (tauMat * pointMat).transpose();
-		double velocity = (!it->velocity) ? mission.velocity : *it->velocity;
+		Eigen::Matrix<FloatingType, 3, 4> C = (tauMat * pointMat).transpose();
+		FloatingType velocity = (!it->velocity) ? mission.velocity : *it->velocity;
 		auto spline = std::make_shared<CubicSpline>(C.col(0), C.col(1), C.col(2), C.col(3),
 				velocity);
 		traj.push_back(spline);
@@ -350,7 +314,7 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 		else
 			approachMat.row(0) = approachMat.row(1);
 
-		Eigen::Matrix<double, 3, 4> C = (tauMat * approachMat).transpose();
+		Eigen::Matrix<FloatingType, 3, 4> C = (tauMat * approachMat).transpose();
 		auto spline = std::make_shared<CubicSpline>(C.col(0), C.col(1), C.col(2), C.col(3),
 				mission.velocity);
 		result.approachSection = spline;

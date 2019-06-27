@@ -26,6 +26,7 @@
 #ifndef FLIGHTCONTROLLER_CONTROLELEMENTS_CONTROLELEMENTS_H_
 #define FLIGHTCONTROLLER_CONTROLELEMENTS_CONTROLELEMENTS_H_
 
+#include "uavAP/Core/LinearAlgebra.h"
 #include "uavAP/Core/PropertyMapper/Configuration.h"
 #include <chrono>
 #include <memory>
@@ -40,16 +41,10 @@ class IControlElement
 {
 public:
 
-#ifdef ERIKA
-	using ControlFloating = float;
-#else
-	using ControlFloating = double;
-#endif
-
 	virtual
 	~IControlElement() = default;
 
-	virtual ControlFloating
+	virtual FloatingType
 	getValue() = 0;
 
 };

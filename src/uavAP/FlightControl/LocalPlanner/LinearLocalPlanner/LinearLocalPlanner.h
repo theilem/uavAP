@@ -41,17 +41,15 @@
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/LockTypes.h"
 
-class FlightControlData;
 class IScheduler;
 class IController;
-class IPC;
 class ISensingActuationIO;
 class Packet;
 struct SensorData;
 struct ControllerTarget;
 
 class LinearLocalPlanner: public ILocalPlanner, public IRunnableObject, public AggregatableObject<
-		ISensingActuationIO, IController, IScheduler, IPC>, public ConfigurableObject<
+		ISensingActuationIO, IController, IScheduler>, public ConfigurableObject<
 		LinearLocalPlannerParams>
 {
 public:
@@ -82,9 +80,6 @@ private:
 
 	void
 	nextSection();
-
-	void
-	onTrajectoryPacket(const Packet& packet);
 
 	void
 	onSensorData(const SensorData& sd);

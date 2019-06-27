@@ -25,16 +25,14 @@
  *  Description
  */
 
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include "uavAP/FlightControl/Controller/IController.h"
-#include "uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h"
+#include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
-#include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
 #include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <memory>
 
@@ -75,19 +73,12 @@ LinearLocalPlanner::run(RunStage stage)
 		}
 		if (!isSet<IScheduler>())
 		{
-			APLOG_ERROR << "LinearLocalPlanner: Scheduler missing";
-
-			return true;
-		}
-		if (!isSet<IPC>())
-		{
-			APLOG_ERROR << "LinearLocalPlanner: IPC missing";
-
-			return true;
+			APLOG_DEBUG << "LinearLocalPlanner: Scheduler missing. Can only react to SensingIO";
 		}
 
 		Trajectory traj;
-		traj.pathSections.push_back(std::make_shared<Orbit>(Vector3(0,0,0), Vector3(0,0,1), 50,50));
+		traj.pathSections.push_back(
+				std::make_shared<Orbit>(Vector3(0, 0, 0), Vector3(0, 0, 1), 50, 50));
 		setTrajectory(traj);
 
 		break;
@@ -96,11 +87,10 @@ LinearLocalPlanner::run(RunStage stage)
 	{
 
 		//Directly calculate local plan when sensor data comes in
-		if (params.period() == 0)
+		if (params.period() == 0 || !isSet<IScheduler>())
 		{
 			auto sensing = get<ISensingActuationIO>();
-			sensing->subscribeOnSensorData(
-					boost::bind(&LinearLocalPlanner::onSensorData, this, _1));
+			sensing->subscribeOnSensorData(std::bind(&LinearLocalPlanner::onSensorData, this, std::placeholders::_1));
 		}
 		else
 		{
@@ -108,11 +98,6 @@ LinearLocalPlanner::run(RunStage stage)
 			scheduler->schedule(std::bind(&LinearLocalPlanner::update, this),
 					Milliseconds(params.period()), Milliseconds(params.period()));
 		}
-
-		auto ipc = get<IPC>();
-
-		ipc->subscribeOnPacket("trajectory",
-				std::bind(&LinearLocalPlanner::onTrajectoryPacket, this, std::placeholders::_1));
 
 		break;
 	}
@@ -133,7 +118,7 @@ LinearLocalPlanner::setTrajectory(const Trajectory& traj)
 	currentSection_ = trajectory_.pathSections.begin();
 	currentPathSectionIdx_ = 0;
 	inApproach_ = trajectory_.approachSection != nullptr;
-	APLOG_DEBUG << "Trajectory set.";
+	APLOG_TRACE << "Trajectory set.";
 }
 
 ControllerTarget
@@ -241,19 +226,6 @@ Trajectory
 LinearLocalPlanner::getTrajectory() const
 {
 	return trajectory_;
-}
-
-void
-LinearLocalPlanner::onTrajectoryPacket(const Packet& packet)
-{
-	try
-	{
-		setTrajectory(dp::deserialize<Trajectory>(packet));
-	} catch (ArchiveError& err)
-	{
-		APLOG_ERROR << "Invalid Trajectory packet: " << err.what();
-		return;
-	}
 }
 
 void

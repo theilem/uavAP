@@ -34,14 +34,14 @@ namespace Control
 class Constant: public IControlElement
 {
 public:
-	Constant(ControlFloating val);
+	Constant(FloatingType val);
 
-	ControlFloating
+	FloatingType
 	getValue() override;
 
 private:
 
-	ControlFloating val_;
+	FloatingType val_;
 };
 
 class Constraint: public IControlElement
@@ -49,22 +49,22 @@ class Constraint: public IControlElement
 
 public:
 
-	Constraint(Element in, ControlFloating min, ControlFloating max);
+	Constraint(Element in, FloatingType min, FloatingType max);
 
-	ControlFloating
+	FloatingType
 	getValue() override;
 
 	void
-	setContraintValue(ControlFloating minmax);
+	setContraintValue(FloatingType minmax);
 
 	void
-	setContraintValue(ControlFloating min, ControlFloating max);
+	setContraintValue(FloatingType min, FloatingType max);
 
 private:
 
 	Element in_;
-	ControlFloating min_;
-	ControlFloating max_;
+	FloatingType min_;
+	FloatingType max_;
 
 };
 
@@ -74,7 +74,7 @@ public:
 
 	Difference(Element in1, Element in2);
 
-	ControlFloating
+	FloatingType
 	getValue() override;
 
 private:
@@ -88,16 +88,16 @@ class Gain: public IControlElement
 
 public:
 
-	Gain(Element in, ControlFloating gain);
+	Gain(Element in, FloatingType gain);
 
-	ControlFloating
+	FloatingType
 	getValue() override;
 
 private:
 
 	Element in_;
 
-	ControlFloating gain_;
+	FloatingType gain_;
 
 };
 
@@ -105,14 +105,14 @@ class Input: public IControlElement
 {
 public:
 
-	Input(ControlFloating* in);
+	Input(FloatingType* in);
 
-	ControlFloating
+	FloatingType
 	getValue() override;
 
 private:
 
-	ControlFloating* in_;
+	FloatingType* in_;
 };
 
 class Sum: public IControlElement
@@ -121,7 +121,7 @@ public:
 
 	Sum(Element in1, Element in2);
 
-	ControlFloating
+	FloatingType
 	getValue() override;
 
 private:
@@ -136,7 +136,7 @@ public:
 
 	ManualSwitch(Element inTrue, Element inFalse);
 
-	ControlFloating
+	FloatingType
 	getValue() override;
 
 	void

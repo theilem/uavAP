@@ -40,7 +40,7 @@ public:
 	configure(const Configuration& config) = 0;
 
 	virtual bool
-	tunePID(PIDs pid, const Control::PID::Parameters& params) = 0;
+	tunePID(PIDs pid, const Control::PIDParameters& params) = 0;
 
 	virtual bool
 	tuneRollBounds(FloatingType min, FloatingType max) = 0;

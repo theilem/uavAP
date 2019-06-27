@@ -10,6 +10,11 @@
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/PropertyMapper/ConfigurableObject.hpp"
 
+template<class ParameterSet>
+ConfigurableObject<ParameterSet>::ConfigurableObject(const ParameterSet& p) :
+		params(p)
+{
+}
 
 template<class ParameterSet>
 inline bool
@@ -20,5 +25,11 @@ ConfigurableObject<ParameterSet>::configure(const Configuration& config)
 	return pm.map();
 }
 
+template<class ParameterSet>
+inline void
+ConfigurableObject<ParameterSet>::setParams(const ParameterSet& set)
+{
+	params = set;
+}
 
 #endif /* UAVAP_CORE_PROPERTYMAPPER_CONFIGURABLEOBJECTIMPL_HPP_ */

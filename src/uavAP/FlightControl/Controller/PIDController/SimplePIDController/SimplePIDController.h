@@ -29,6 +29,7 @@
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_SIMPLEPIDCONTROLLER_SIMPLEPIDCONTROLLER_H_
 
 #include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
+#include <uavAP/FlightControl/Controller/PIDController/SimplePIDController/detail/AirplaneSimplePIDCascade.h>
 #include <vector>
 #include <memory>
 
@@ -47,7 +48,7 @@ class IScheduler;
 class ISensingActuationIO;
 class DataHandling;
 
-class SimplePIDController: public IPIDController, public AggregatableObject<ISensingActuationIO, IScheduler, DataHandling>, public IRunnableObject
+class SimplePIDController: public IPIDController, public AggregatableObject<ISensingActuationIO, IScheduler/*, DataHandling*/>, public IRunnableObject
 {
 public:
 
@@ -70,8 +71,8 @@ public:
 	ControllerOutput
 	getControllerOutput() override;
 
-	std::shared_ptr<IPIDCascade>
-	getCascade() override;
+//	std::shared_ptr<IPIDCascade>
+//	getCascade() override;
 
 private:
 
@@ -88,7 +89,7 @@ private:
 	Vector3 accelerationInertial_;
 	ControllerOutput controllerOutput_;
 
-	std::shared_ptr<IPIDCascade> pidCascade_;
+	AirplaneSimplePIDCascade pidCascade_;
 
 };
 

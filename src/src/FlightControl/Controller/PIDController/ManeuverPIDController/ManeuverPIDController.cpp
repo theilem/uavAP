@@ -30,6 +30,7 @@
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 
 ManeuverPIDController::ManeuverPIDController()
 {
@@ -138,12 +139,6 @@ ControllerOutput
 ManeuverPIDController::getControllerOutput()
 {
 	return controllerOutput_;
-}
-
-std::shared_ptr<IPIDCascade>
-ManeuverPIDController::getCascade()
-{
-	return pidCascade_;
 }
 
 void

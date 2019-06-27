@@ -63,14 +63,14 @@ using FloatingType = double;
  * @return Rotated vector
  */
 Vector2
-rotate2Drad(const Vector2& vec, const double& rad);
+rotate2Drad(const Vector2& vec, const FloatingType& rad);
 
 /**
  * @brief Caculate the Heading from a Vector3 in ENU
  * @param vec Vector3 in ENU
  * @return Heading in radians. North is pi/2, East is 0.
  */
-double
+FloatingType
 headingFromENU(const Vector3& vec);
 
 /**
@@ -78,7 +78,7 @@ headingFromENU(const Vector3& vec);
  * @param vec Vector2 in EN(U)
  * @return Heading in radians. North is pi/2, East is 0.
  */
-double
+FloatingType
 headingFromENU(const Vector2& vec);
 
 /**
@@ -86,15 +86,15 @@ headingFromENU(const Vector2& vec);
  * @param angle Angle in radians
  * @return angle in (-PI, PI]
  */
-double
-boundAngleRad(double angle);
+FloatingType
+boundAngleRad(FloatingType angle);
 
 /**
  * @brief Convert euler angles to quaternion
  * @param euler Vector with [roll, pitch, yaw]
  * @return Quaternion
  */
-Eigen::Quaterniond
+Eigen::Quaternion<FloatingType>
 eulerToQuaternion(const Vector3& euler);
 
 /**
@@ -103,7 +103,7 @@ eulerToQuaternion(const Vector3& euler);
  * @return euler angles [roll, pitch, yaw]
  */
 Vector3
-quaternionToEuler(const Eigen::Quaterniond& quaternion);
+quaternionToEuler(const Eigen::Quaternion<FloatingType>& quaternion);
 
 Vector3
 directionFromAttitude(const Vector3& att);
@@ -111,26 +111,26 @@ directionFromAttitude(const Vector3& att);
 Vector3&
 degToRadRef(Vector3& vec);
 
-double&
-degToRadRef(double& deg);
+FloatingType&
+degToRadRef(FloatingType& deg);
 
 Vector3&
 radToDegRef(Vector3& vec);
 
-double&
-radToDegRef(double& rad);
+FloatingType&
+radToDegRef(FloatingType& rad);
 
 Vector3
 degToRad(const Vector3& vec);
 
-double
-degToRad(const double& deg);
+FloatingType
+degToRad(const FloatingType& deg);
 
 Vector3
 radToDeg(const Vector3& vec);
 
-double
-radToDeg(const double& rad);
+FloatingType
+radToDeg(const FloatingType& rad);
 
 std::istream&
 operator>>(std::istream& is, Vector3& obj);

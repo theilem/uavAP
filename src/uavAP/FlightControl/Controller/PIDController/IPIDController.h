@@ -44,8 +44,8 @@ public:
 	virtual ControllerOutput
 	getControllerOutput() = 0;
 
-	virtual std::shared_ptr<IPIDCascade>
-	getCascade() = 0;
+//	virtual std::shared_ptr<IPIDCascade>
+//	getCascade() = 0;
 };
 
 #endif /* CONTROLLER_IPIDCONTROLLER_H_ */

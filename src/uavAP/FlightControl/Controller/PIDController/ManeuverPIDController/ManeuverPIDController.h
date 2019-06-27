@@ -72,9 +72,6 @@ public:
 	ControllerOutput
 	getControllerOutput() override;
 
-	std::shared_ptr<IPIDCascade>
-	getCascade() override;
-
 private:
 
 	void

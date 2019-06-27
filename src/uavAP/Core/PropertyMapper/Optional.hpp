@@ -48,10 +48,22 @@ struct Optional
 		return isSet;
 	}
 
+	inline const Type*
+	operator->() const
+	{
+		return &value;
+	}
+
 	inline Type*
 	operator->()
 	{
 		return &value;
+	}
+
+	inline bool
+	is_initialized() const
+	{
+		return isSet;
 	}
 
 	Type value;
