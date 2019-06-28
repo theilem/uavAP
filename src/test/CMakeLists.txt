@@ -28,6 +28,7 @@ set (TEST_SOURCES 	TestRunner.cpp
 					Core/DataHandlingTest.cpp
 					Math/BetaIncompleteTest.cpp
 					Geofencing/GeneralTests.cpp
+	                Core/ObjectHandleTest.cpp
 					#FlightControl/Controller/PIDControllerTest_Airplane.cpp
 					#FlightControl/Controller/PIDControllerTest_Helicopter.cpp
 					API/ApExtTest.cpp
