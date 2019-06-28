@@ -81,7 +81,7 @@ IDCComm::run(RunStage stage)
 
 		auto ipc = ipc_.get();
 		flightAnalysisPublisher_ = ipc->publishPackets("data_com_fa");
-		flightControlPublisher_ = ipc->publishPackets("data_com_fc");
+		flightControlPublisher_ = ipc->publishPackets("comm_to_flight_control");
 		missionControlPublisher_ = ipc->publishPackets("data_com_mc");
 		apiPublisher_ = ipc->publishPackets("data_com_api");
 
@@ -110,7 +110,7 @@ IDCComm::run(RunStage stage)
 			APLOG_WARN << "Cannot connect to data_fa_com. Ignoring.";
 		}
 
-		flightControlSubscription_ = ipc->subscribeOnPacket("data_fc_com",
+		flightControlSubscription_ = ipc->subscribeOnPacket("flight_control_to_comm",
 				std::bind(&IDCComm::sendPacket, this, std::placeholders::_1));
 
 		if (!flightControlSubscription_.connected())

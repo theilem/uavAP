@@ -21,7 +21,6 @@ set(FLIGHT_CONTROL_SRC)
 add_subdirectory (Controller)
 add_subdirectory (LocalPlanner)
 add_subdirectory (SensingActuationIO)
-add_subdirectory (DataHandling)
 
 add_library(uavap_flight_control SHARED ${FLIGHT_CONTROL_SRC})
 

@@ -91,7 +91,5 @@ endif(NODEBUG)
 add_subdirectory(src)
 add_subdirectory(test)
 
-set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY true)
-
 install(DIRECTORY uavAP DESTINATION include) 
 install(DIRECTORY config DESTINATION .) 

@@ -36,7 +36,7 @@ add_library(uavap_mission_control SHARED ${MISSION_CONTROL_SRC})
 target_link_libraries(uavap_mission_control 	uavap_core
 												uavap_core_proto)
 
-add_library(uavap_mission_control_geo SHARED EXCLUDE_FROM_ALL ${MISSION_CONTROL_GEO_SRC})
+add_library(uavap_mission_control_geo SHARED ${MISSION_CONTROL_GEO_SRC})
 
 target_link_libraries(uavap_mission_control_geo 	uavap_core
 												uavap_core_proto
@@ -50,9 +50,6 @@ target_link_libraries(MissionControl    uavap_flight_analysis
 										uavap_mission_control_geo
                                         )
                                         
-install(TARGETS uavap_mission_control 
-		RUNTIME DESTINATION bin/uavAP
-		LIBRARY DESTINATION lib)
 		
 install(TARGETS MissionControl uavap_mission_control uavap_mission_control_geo
 		RUNTIME DESTINATION bin/uavAP

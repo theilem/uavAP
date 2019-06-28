@@ -43,6 +43,7 @@
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 #include "uavAP/MissionControl/MissionPlanner/Mission.h"
 #include "uavAP/Core/Frames/VehicleOneFrame.h"
+#include "uavAP/FlightAnalysis/WindEstimation/WindInfo.h"
 
 /**
  * Defines how to write the case labels in the switch case of the data presentation.
@@ -73,5 +74,28 @@
 							MAP(SELECT_MANEUVER_SET, std::string, FUNC)										\
 							MAP(SELECT_MISSION, std::string, FUNC)											\
 							MAP(SELECT_INSPECTING_METRICS, InspectingMetricsPair, FUNC)						\
+							MAP(WIND_INFO, WindInfo, FUNC)													\
+
+
+
+
+MATCH_TYPE_AND_ENUM(SensorData, Content::SENSOR_DATA);
+MATCH_TYPE_AND_ENUM(Mission, Content::MISSION);
+MATCH_TYPE_AND_ENUM(Trajectory, Content::TRAJECTORY);
+MATCH_TYPE_AND_ENUM(PIDStati, Content::PID_STATUS);
+MATCH_TYPE_AND_ENUM(SteadyStateMetrics, Content::INSPECTING_METRICS);
+MATCH_TYPE_AND_ENUM(LocalPlannerStatus, Content::LOCAL_PLANNER_STATUS);
+MATCH_TYPE_AND_ENUM(Rectanguloid, Content::SAFETY_BOUNDS);
+MATCH_TYPE_AND_ENUM(ControllerOutput, Content::CONTROLLER_OUTPUT);
+MATCH_TYPE_AND_ENUM(VehicleOneFrame, Content::LOCAL_FRAME);
+MATCH_TYPE_AND_ENUM(PIDTuning, Content::TUNE_PID);
+MATCH_TYPE_AND_ENUM(ConstraintParams, Content::TUNE_PITCH_CONSTRAINT);
+MATCH_TYPE_AND_ENUM(LocalPlannerParams, Content::TUNE_LOCAL_PLANNER);
+MATCH_TYPE_AND_ENUM(DataRequest, Content::REQUEST_DATA);
+MATCH_TYPE_AND_ENUM(AdvancedControl, Content::ADVANCED_CONTROL);
+MATCH_TYPE_AND_ENUM(Override, Content::OVERRIDE);
+MATCH_TYPE_AND_ENUM(std::string, Content::SELECT_MANEUVER_SET);
+MATCH_TYPE_AND_ENUM(InspectingMetricsPair, Content::SELECT_INSPECTING_METRICS);
+MATCH_TYPE_AND_ENUM(WindInfo, Content::WIND_INFO);
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_CONTENTMAPPING_H_ */

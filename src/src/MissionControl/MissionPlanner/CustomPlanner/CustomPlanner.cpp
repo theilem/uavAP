@@ -35,7 +35,7 @@
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
 
 CustomPlanner::CustomPlanner() :
-		defaultVelocity_(0), useApproach_(false)
+		defaultVelocity_(0), defaultAltitude_(100.0), useApproach_(false)
 {
 }
 
@@ -45,9 +45,10 @@ CustomPlanner::configure(const boost::property_tree::ptree& config)
 	PropertyMapper pm(config);
 
 	pm.add<double>("default_velocity", defaultVelocity_, true);
+	pm.add<double>("default_altitude", defaultAltitude_, true);
 	pm.add<bool>("use_approach", useApproach_, true);
 	Mission defaultMission;
-	Waypoint centerWP(Vector3(0, 0, 100), defaultVelocity_);
+	Waypoint centerWP(Vector3(0, 0, defaultAltitude_), defaultVelocity_);
 	defaultMission.waypoints.push_back(centerWP);
 	missionMap_.insert(std::make_pair("default", defaultMission));
 

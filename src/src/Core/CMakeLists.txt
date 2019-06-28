@@ -30,6 +30,7 @@ add_subdirectory(Object)
 add_subdirectory(TimeProvider)
 add_subdirectory(Framework)
 add_subdirectory(DataPresentation)
+add_subdirectory(DataHandling)
 add_subdirectory(Frames)
 
 set(CORE_SRC 	${CORE_SRC}

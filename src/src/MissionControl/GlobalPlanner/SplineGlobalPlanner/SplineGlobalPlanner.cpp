@@ -33,7 +33,7 @@
 #include <Eigen/Core>
 
 SplineGlobalPlanner::SplineGlobalPlanner() :
-		tau_(0.5), inclusionLength_(0), smoothenZ_(true), naturalSplines_(false)
+		orbitRadius_(50.0), tau_(0.5), inclusionLength_(0), smoothenZ_(true), naturalSplines_(false)
 {
 }
 
@@ -49,6 +49,7 @@ bool
 SplineGlobalPlanner::configure(const boost::property_tree::ptree& config)
 {
 	PropertyMapper pm(config);
+	pm.add<double>("orbit_radius", orbitRadius_, false);
 	pm.add<double>("tau", tau_, false);
 	pm.add<bool>("smoothen_z", smoothenZ_, false);
 	pm.add<bool>("natural", naturalSplines_, false);
@@ -281,7 +282,7 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 			{
 				double velocity = (!it->velocity) ? mission.velocity : *it->velocity;
 				traj.push_back(
-						std::make_shared<Orbit>(it->location, Vector3::UnitZ(), 50, velocity));
+						std::make_shared<Orbit>(it->location, Vector3::UnitZ(), orbitRadius_, velocity));
 				break;
 			}
 			nextIt = wp.begin();
@@ -344,7 +345,8 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 		Waypoint init = *mission.initialPosition;
 		approachMat.row(1) = init.location.transpose();
 		if (init.direction)
-			approachMat.row(0) = approachMat.row(2) - (init.direction->transpose() * mission.velocity);
+			approachMat.row(0) = approachMat.row(2)
+					- (init.direction->transpose() * mission.velocity);
 		else
 			approachMat.row(0) = approachMat.row(1);
 

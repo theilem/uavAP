@@ -33,7 +33,7 @@
 #include "uavAP/Core/Scheduler/SchedulerFactory.h"
 #include "uavAP/Core/TimeProvider/TimeProviderFactory.h"
 #include "uavAP/FlightControl/Controller/ControllerFactory.h"
-#include "uavAP/FlightControl/DataHandling/FlightControlDataHandling.h"
+#include "uavAP/Core/DataHandling/DataHandling.h"
 #include "uavAP/FlightControl/LocalPlanner/LocalPlannerFactory.h"
 #include "uavAP/FlightControl/SensingActuationIO/SensingActuationIOFactory.h"
 
@@ -49,7 +49,7 @@ public:
 		addDefault<TimeProviderFactory>();
 		addDefaultCreator<IPC>();
 		addDefault<SensingActuationIOFactory>();
-		addDefaultCreator<FlightControlDataHandling>();
+		addCreator<DataHandling>();
 		addDefault<DataPresentationFactory<Content, Target>>();
 	}
 };
