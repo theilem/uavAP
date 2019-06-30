@@ -71,7 +71,7 @@
 	},
 	"fc_data_handling": {
 		"compress_sensor_data": true,
-		"period": 100
+		"period": 200
 	},
 	"data_presentation": {
 		"compress_double": true
