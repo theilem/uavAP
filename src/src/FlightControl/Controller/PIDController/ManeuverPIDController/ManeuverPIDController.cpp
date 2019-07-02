@@ -22,21 +22,22 @@
  *  Created on: Sep 15, 2017
  *      Author: mircot
  */
-#include <uavAP/Core/DataHandling/DataHandling.h>
+#include "uavAP/Core/DataHandling/DataHandling.h"
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/detail/ManeuverCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/ManeuverPIDController.h"
-#include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 
 ManeuverPIDController::ManeuverPIDController()
 {
 }
 
 std::shared_ptr<ManeuverPIDController>
-ManeuverPIDController::create(const boost::property_tree::ptree& config)
+ManeuverPIDController::create(const Configuration& config)
 {
 	auto flightController = std::make_shared<ManeuverPIDController>();
 	flightController->configure(config);
@@ -45,7 +46,7 @@ ManeuverPIDController::create(const boost::property_tree::ptree& config)
 }
 
 bool
-ManeuverPIDController::configure(const boost::property_tree::ptree& config)
+ManeuverPIDController::configure(const Configuration& config)
 {
 	pidCascade_ = std::make_shared<ManeuverCascade>(&sensorData_, velocityInertial_,
 			accelerationInertial_, &controllerTarget_, &controllerOutput_);
@@ -140,12 +141,6 @@ ManeuverPIDController::getControllerOutput()
 	return controllerOutput_;
 }
 
-std::shared_ptr<IPIDCascade>
-ManeuverPIDController::getCascade()
-{
-	return pidCascade_;
-}
-
 void
 ManeuverPIDController::calculateControl()
 {
@@ -159,10 +154,10 @@ ManeuverPIDController::calculateControl()
 
 	sensorData_ = sensAct->getSensorData();
 
-	Eigen::Matrix3d m;
-	m = Eigen::AngleAxisd(-sensorData_.attitude.x(), Vector3::UnitX())
-			* Eigen::AngleAxisd(-sensorData_.attitude.y(), Vector3::UnitY())
-			* Eigen::AngleAxisd(-sensorData_.attitude.z(), Vector3::UnitZ());
+	Matrix3 m;
+	m = AngleAxis(-sensorData_.attitude.x(), Vector3::UnitX())
+			* AngleAxis(-sensorData_.attitude.y(), Vector3::UnitY())
+			* AngleAxis(-sensorData_.attitude.z(), Vector3::UnitZ());
 
 	accelerationInertial_ = m * sensorData_.acceleration;
 	Lock targetLock(controllerTargetMutex_);

@@ -216,7 +216,7 @@ MultiThreadingScheduler::createSchedule(Duration start, std::shared_ptr<EventBod
 		return std::make_pair(start, body);
 	}
 
-	Duration fromStart = start;
+	Nanoseconds fromStart = start;
 
 	if (started_)
 	{

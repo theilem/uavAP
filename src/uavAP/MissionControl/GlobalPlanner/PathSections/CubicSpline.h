@@ -37,7 +37,7 @@ struct CubicSpline: public IPathSection
 	}
 
 	CubicSpline(const Vector3& c0, const Vector3& c1, const Vector3& c2, const Vector3& c3,
-			double velocity) :
+			FloatingType velocity) :
 			closestU_(0), c0_(c0), c1_(c1), c2_(c2), c3_(c3), velocity_(velocity)
 	{
 	}
@@ -48,13 +48,13 @@ struct CubicSpline: public IPathSection
 		currentPosition_ = pos;
 
 		int maxIter = 10;
-		double convThreshold = 0.0001;
+		FloatingType convThreshold = 0.0001;
 
-		double distClosest = ((c0_ + c1_ * closestU_ + c2_ * pow(closestU_, 2)
+		FloatingType distClosest = ((c0_ + c1_ * closestU_ + c2_ * pow(closestU_, 2)
 				+ c3_ * pow(closestU_, 3)) - currentPosition_).squaredNorm();
-		double distZero = (c0_ - currentPosition_).squaredNorm();
+		FloatingType distZero = (c0_ - currentPosition_).squaredNorm();
 		//Newton method to find closest point
-		double u;
+		FloatingType u;
 		if (distClosest < distZero)
 			u = closestU_;
 		else
@@ -66,7 +66,7 @@ struct CubicSpline: public IPathSection
 			Vector3 p_prime = c1_ + 2 * c2_ * u + 3 * c3_ * pow(u, 2);
 			Vector3 p_2prime = 2 * c2_ + 6 * c3_ * u;
 
-			double grad = (p.dot(p_prime)) / (p_prime.dot(p_prime) + p.dot(p_2prime));
+			FloatingType grad = (p.dot(p_prime)) / (p_prime.dot(p_prime) + p.dot(p_2prime));
 
 			if (grad == NAN)
 				break;
@@ -109,21 +109,21 @@ struct CubicSpline: public IPathSection
 		return (c1_ + 2 * c2_ * closestU_ + 3 * c3_ * pow(closestU_, 2)).normalized();
 	}
 
-	double
+	FloatingType
 	getSlope() const override
 	{
 		return getDirection().z();
 	}
 
-	double
+	FloatingType
 	getCurvature() const override
 	{
 		Vector3 dp_du = c1_ + 2 * c2_ * closestU_ + 3 * c3_ * pow(closestU_, 2);
 		Vector3 dp_ddu = 2 * c2_ + 6 * c3_ * closestU_;
 
-		double dPsi_du = (dp_ddu[1] * dp_du[0] - dp_ddu[0] * dp_du[1])
+		FloatingType dPsi_du = (dp_ddu[1] * dp_du[0] - dp_ddu[0] * dp_du[1])
 				/ (pow(dp_du[0], 2) + pow(dp_du[1], 2));
-		double du_dt = 1.0 / dp_du.norm();
+		FloatingType du_dt = 1.0 / dp_du.norm();
 
 		return dPsi_du * du_dt; //Clockwise is positive for heading (not counter clockwise)
 	}
@@ -135,13 +135,13 @@ struct CubicSpline: public IPathSection
 		return c0_ + c1_ + c2_ + c3_;
 	}
 
-	double
+	FloatingType
 	getVelocity() const override
 	{
 		return velocity_;
 	}
 
-	double closestU_;
+	FloatingType closestU_;
 	Vector3 currentPosition_;
 
 	//Cubic Spline: p(u) = c0 + c1 * u + c2 * u^2 + c3 * u^3
@@ -150,7 +150,7 @@ struct CubicSpline: public IPathSection
 	Vector3 c2_;
 	Vector3 c3_;
 
-	double velocity_;
+	FloatingType velocity_;
 
 };
 

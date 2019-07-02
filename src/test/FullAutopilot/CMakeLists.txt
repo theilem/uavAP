@@ -22,7 +22,6 @@ add_executable(autopilot    Autopilot.cpp
 
 target_link_libraries(autopilot	uavap_flight_analysis
 									uavap_flight_control
-									uavap_core_proto
 									)
 
 install(TARGETS autopilot  

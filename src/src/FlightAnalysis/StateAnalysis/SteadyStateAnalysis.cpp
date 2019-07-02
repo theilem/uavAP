@@ -28,7 +28,7 @@
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 
 std::shared_ptr<SteadyStateAnalysis>
-SteadyStateAnalysis::create(const boost::property_tree::ptree& config)
+SteadyStateAnalysis::create(const Configuration& config)
 {
 	auto steadyStateAnalysis = std::make_shared<SteadyStateAnalysis>();
 
@@ -41,7 +41,7 @@ SteadyStateAnalysis::create(const boost::property_tree::ptree& config)
 }
 
 bool
-SteadyStateAnalysis::configure(const boost::property_tree::ptree& config)
+SteadyStateAnalysis::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 	boost::property_tree::ptree toleranceTree;

@@ -34,7 +34,7 @@
 ApExtManager::ApExtManager() :
 		internalImu_(false), externalGps_(false), useAirspeed_(false), useEuler_(false), traceSeqNr_(false), courseAsHeading_(
 				false), gpsTimeout_(Seconds(1)), airspeedTimeout_(Milliseconds(100)), downsample_(0), gpsSampleTimestamp_(
-				boost::posix_time::min_date_time), sampleNr_(0)
+				), sampleNr_(0)
 {
 }
 
@@ -140,7 +140,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			angularRate[2] = imuSample->imu_rot_z;
 
 			//Set timestamp to system time since int imu has no timestamp
-			sens.timestamp = boost::get_system_time();
+			sens.timestamp = Clock::now();
 		}
 	}
 	else
@@ -179,17 +179,21 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 
 			try
 			{
-				Date date(imuSample->imu_time_year, imuSample->imu_time_month,
+				boost::gregorian::date date(imuSample->imu_time_year, imuSample->imu_time_month,
 						imuSample->imu_time_day);
+
+				boost::posix_time::ptime time(date, boost::posix_time::milliseconds(0));
+
+				auto dur = time - boost::posix_time::ptime(boost::posix_time::special_values::min_date_time);
 
 				Duration duration = Hours(imuSample->imu_time_hour)
 						+ Minutes(imuSample->imu_time_minute) + Seconds(imuSample->imu_time_second)
-						+ Microseconds(imuSample->imu_time_nano / 1000);
-				sens.timestamp = TimePoint(date, duration);
+						+ Nanoseconds(imuSample->imu_time_nano);
+				sens.timestamp = TimePoint(duration) + Nanoseconds(dur.total_nanoseconds());
 			} catch (std::out_of_range& err)
 			{
 				APLOG_ERROR << "Time is not valid. " << err.what();
-				sens.timestamp = boost::posix_time::not_a_date_time;
+				sens.timestamp = TimePoint();
 			}
 		}
 	}
@@ -243,7 +247,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 		{
 			APLOG_ERROR << "PIC sample not available. Cannot read ext GPS data.";
 			sens.hasGPSFix = false;
-			sens.timestamp = boost::posix_time::not_a_date_time;
+			sens.timestamp = TimePoint();
 		}
 		else
 		{
@@ -252,7 +256,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			if (gps->flags != 7)
 			{
 				gps = &lastGPSSample_;
-				if (boost::get_system_time() - gpsSampleTimestamp_ > gpsTimeout_)
+				if (Clock::now() - gpsSampleTimestamp_ > gpsTimeout_)
 				{
 					sens.hasGPSFix = false;
 				}
@@ -260,7 +264,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			else
 			{
 				lastGPSSample_ = *gps;
-				gpsSampleTimestamp_ = boost::get_system_time();
+				gpsSampleTimestamp_ = Clock::now();
 			}
 			latitude = gps->latitude;
 			longitude = gps->longitude;
@@ -326,7 +330,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			if (std::isnan(airspeed->cal_airs) || airspeed->cal_airs == -1)
 			{
 				airspeed = &lastAirspeedSample_;
-				if (boost::get_system_time() - airspeedTimestamp_ > airspeedTimeout_)
+				if (Clock::now() - airspeedTimestamp_ > airspeedTimeout_)
 				{
 					setGroundSpeed = true;
 					sens.airSpeed = sens.groundSpeed; // Set to ground speed if timeout
@@ -335,7 +339,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			else
 			{
 				lastAirspeedSample_ = *airspeed;
-				airspeedTimestamp_ = boost::get_system_time();
+				airspeedTimestamp_ = Clock::now();
 			}
 			if (!setGroundSpeed)
 				sens.airSpeed = airspeed->cal_airs;

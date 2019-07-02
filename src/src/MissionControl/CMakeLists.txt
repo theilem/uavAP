@@ -33,13 +33,11 @@ set(MISSION_CONTROL_SRC ${MISSION_CONTROL_SRC}
 
 add_library(uavap_mission_control SHARED ${MISSION_CONTROL_SRC})
 
-target_link_libraries(uavap_mission_control 	uavap_core
-												uavap_core_proto)
+target_link_libraries(uavap_mission_control 	uavap_core)
 
 add_library(uavap_mission_control_geo SHARED ${MISSION_CONTROL_GEO_SRC})
 
 target_link_libraries(uavap_mission_control_geo 	uavap_core
-												uavap_core_proto
 												${ARB})
 
 add_executable(MissionControl   MissionControl.cpp

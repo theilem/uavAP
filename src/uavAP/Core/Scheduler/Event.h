@@ -25,8 +25,9 @@
 
 #ifndef UAVAP_CORE_SCHEDULER_EVENT_H_
 #define UAVAP_CORE_SCHEDULER_EVENT_H_
-#include "uavAP/Core/Scheduler/EventBody.h"
 #include <memory>
+
+struct EventBody;
 
 class Event
 {

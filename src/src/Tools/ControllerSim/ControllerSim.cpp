@@ -28,6 +28,7 @@
 #include "uavAP/Core/Scheduler/MultiThreadingScheduler.h"
 #include "uavAP/Core/TimeProvider/SystemTimeProvider.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
+#include <iostream>
 
 int
 main(int argc, char** argv)

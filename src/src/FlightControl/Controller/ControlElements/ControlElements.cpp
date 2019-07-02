@@ -29,39 +29,39 @@
 namespace Control
 {
 
-Constant::Constant(double val) :
+Constant::Constant(FloatingType val) :
 		val_(val)
 {
 }
 
-double
+FloatingType
 Constant::getValue()
 {
 	return std::isnan(val_) ? 0 : val_;
 }
 
-Constraint::Constraint(Element in, double min, double max) :
+Constraint::Constraint(Element in, FloatingType min, FloatingType max) :
 		in_(in), min_(min), max_(max)
 {
 }
 
-double
+FloatingType
 Constraint::getValue()
 {
-	double val = in_->getValue();
-	double ret = val > max_ ? max_ : val < min_ ? min_ : val;
+	FloatingType val = in_->getValue();
+	FloatingType ret = val > max_ ? max_ : val < min_ ? min_ : val;
 	return std::isnan(ret) ? 0 : ret;
 }
 
 void
-Constraint::setContraintValue(double minmax)
+Constraint::setContraintValue(FloatingType minmax)
 {
 	max_ = minmax;
 	min_ = -minmax;
 }
 
 void
-Constraint::setContraintValue(double min, double max)
+Constraint::setContraintValue(FloatingType min, FloatingType max)
 {
 	max_ = max;
 	min_ = -min;
@@ -72,34 +72,34 @@ Difference::Difference(Element in1, Element in2) :
 {
 }
 
-double
+FloatingType
 Difference::getValue()
 {
-	double ret = in1_->getValue() - in2_->getValue();
+	FloatingType ret = in1_->getValue() - in2_->getValue();
 	return std::isnan(ret) ? 0 : ret;
 }
 
-Gain::Gain(Element in, double gain) :
+Gain::Gain(Element in, FloatingType gain) :
 		in_(in), gain_(gain)
 {
 }
 
-double
+FloatingType
 Gain::getValue()
 {
 	return gain_ * in_->getValue();
 }
 
-Input::Input(double* in) :
+Input::Input(FloatingType* in) :
 		in_(in)
 {
 
 }
 
-double
+FloatingType
 Input::getValue()
 {
-	double ret = *in_;
+	FloatingType ret = *in_;
 	return std::isnan(ret) ? 0 : ret;
 }
 
@@ -108,10 +108,10 @@ Sum::Sum(Element in1, Element in2) :
 {
 }
 
-double
+FloatingType
 Sum::getValue()
 {
-	double ret = in1_->getValue() + in2_->getValue();
+	FloatingType ret = in1_->getValue() + in2_->getValue();
 	return std::isnan(ret) ? 0 : ret;
 }
 
@@ -120,10 +120,10 @@ ManualSwitch::ManualSwitch(Element inTrue, Element inFalse) :
 {
 }
 
-double
+FloatingType
 ManualSwitch::getValue()
 {
-	double ret = state_ ? inTrue_->getValue() : inFalse_->getValue();
+	FloatingType ret = state_ ? inTrue_->getValue() : inFalse_->getValue();
 	return std::isnan(ret) ? 0 : ret;
 }
 

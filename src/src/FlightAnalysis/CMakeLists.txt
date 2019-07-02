@@ -33,7 +33,6 @@ add_executable(FlightAnalysis	FlightAnalysis.cpp
 
 target_link_libraries(FlightAnalysis 	uavap_core
 										uavap_flight_analysis
-										uavap_core_proto
 										uavap_mission_control
 										)
 

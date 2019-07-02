@@ -85,7 +85,7 @@ private:
 
 	Target target_;
 	std::string targetName_;
-	Milliseconds period_;
+	int period_;
 
 	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
 	ObjectHandle<IScheduler> scheduler_;

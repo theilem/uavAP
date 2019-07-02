@@ -66,7 +66,7 @@ struct SteadyStateMetrics
 	bool foundSettlingTime;
 
 	SteadyStateMetrics() :
-			toleranceTimeStamp(boost::posix_time::not_a_date_time), target(0), value(0), tolerance(0)
+			toleranceTimeStamp(), target(0), value(0), tolerance(0)
 	{
 		SteadyStateMetrics::reset();
 	}

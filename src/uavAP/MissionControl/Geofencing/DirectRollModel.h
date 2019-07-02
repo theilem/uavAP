@@ -35,6 +35,7 @@
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/MissionControl/Geofencing/IGeofencingModel.h"
 #include "uavAP/MissionControl/Polygon.h"
+#include <mutex>
 
 class DirectRollModel: public IGeofencingModel, public IAggregatableObject
 {

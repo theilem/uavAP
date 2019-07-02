@@ -37,7 +37,7 @@ struct Line: public IPathSection, public EigenLine
 	{
 	}
 
-	Line(const EigenLine& line, const Vector3& end, double vel) :
+	Line(const EigenLine& line, const Vector3& end, FloatingType vel) :
 			EigenLine(line), endPoint_(end), currentPosition_(0, 0, 0), velocity_(vel)
 	{
 	}
@@ -66,13 +66,13 @@ struct Line: public IPathSection, public EigenLine
 		return direction();
 	}
 
-	double
+	FloatingType
 	getSlope() const override
 	{
 		return direction().z();
 	}
 
-	double
+	FloatingType
 	getCurvature() const override
 	{
 		return 0;
@@ -90,7 +90,7 @@ struct Line: public IPathSection, public EigenLine
 		endPoint_ = end;
 	}
 
-	double
+	FloatingType
 	getVelocity() const override
 	{
 		return velocity_;
@@ -98,7 +98,7 @@ struct Line: public IPathSection, public EigenLine
 
 	Vector3 endPoint_;
 	Vector3 currentPosition_;
-	double velocity_;
+	FloatingType velocity_;
 
 };
 

@@ -57,7 +57,7 @@ public:
 	CustomPlanner();
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	ADD_CREATE_WITH_CONFIG(CustomPlanner)
 

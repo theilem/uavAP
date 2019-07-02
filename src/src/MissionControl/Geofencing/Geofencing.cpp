@@ -28,11 +28,12 @@
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/MissionControl/Geofencing/Geofencing.h>
 #include <uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h>
+#include <limits>
 
 Geofencing::Geofencing() :
 		leftSafe_(true), rightSafe_(true), safetyActiveLeft_(false), safetyActiveRight_(false), rollMax_(
 				0), evaluationThreshold_(
-		DBL_MAX), distanceThreshold_(0)
+		std::numeric_limits<double>::max()), distanceThreshold_(0)
 {
 }
 

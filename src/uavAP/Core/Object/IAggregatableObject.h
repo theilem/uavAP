@@ -26,7 +26,7 @@
 #ifndef UAVAP_CORE_OBJECT_IAGGREGATABLEOBJECT_H_
 #define UAVAP_CORE_OBJECT_IAGGREGATABLEOBJECT_H_
 
-#include <boost/property_tree/ptree.hpp>
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 
 class Aggregator;
 
@@ -40,17 +40,16 @@ public:
 	{
 	}
 
-	virtual void
-	notifyAggregationOnUpdate(const Aggregator& agg) = 0;
 
 	using TypeId = const char* const;
-	using Configuration = boost::property_tree::ptree;
 
+	virtual void
+	notifyAggregationOnUpdate(const Aggregator& agg) = 0;
 };
 
 #define ADD_CREATE_WITH_CONFIG(obj) \
 static inline std::shared_ptr<obj> \
-create(const boost::property_tree::ptree& config) \
+create(const Configuration& config) \
 {\
 	auto agg = std::make_shared<obj>();\
 	if (!agg->configure(config))\
@@ -62,7 +61,7 @@ create(const boost::property_tree::ptree& config) \
 
 #define ADD_CREATE_WITHOUT_CONFIG(obj) \
 static inline std::shared_ptr<obj> \
-create(const boost::property_tree::ptree& config) \
+create(const Configuration& config) \
 {\
 	return std::make_shared<obj>();\
 }

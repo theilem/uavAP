@@ -42,10 +42,10 @@ ENUMMAP_INIT(ControllerOutputs, { {ControllerOutputs::ROLL, "roll"}, {Controller
 
 struct ControllerOutput: SerializeCustom
 {
-	double rollOutput;
-	double pitchOutput;
-	double yawOutput;
-	double throttleOutput;
+	FloatingType rollOutput;
+	FloatingType pitchOutput;
+	FloatingType yawOutput;
+	FloatingType throttleOutput;
 
 	uint32_t sequenceNr; //Trace sequence number to get timing
 

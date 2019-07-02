@@ -25,7 +25,6 @@ add_subdirectory(Logging)
 add_subdirectory(Runner)
 add_subdirectory(IPC)
 add_subdirectory(IDC)
-add_subdirectory(protobuf)
 add_subdirectory(Object)
 add_subdirectory(TimeProvider)
 add_subdirectory(Framework)
@@ -46,7 +45,6 @@ set(CORE_PROTO_SRC 	${CORE_PROTO_SRC}
 include_directories(${CMAKE_SOURCE_DIR}/uavAP/Core/protobuf/messages)
 
 add_library(uavap_core SHARED ${CORE_SRC})
-add_library(uavap_core_proto SHARED ${CORE_PROTO_SRC})
 
 target_link_libraries(uavap_core 	${BOOST}
 									${REDIS}
@@ -54,17 +52,9 @@ target_link_libraries(uavap_core 	${BOOST}
 									rt
 									dl									
 									)
-
-target_link_libraries(uavap_core_proto 	${BOOST}
-										${PROTOBUF}
-										${REDIS}
-										pthread
-										rt
-										dl									
-										)
 									
 									
-install(TARGETS uavap_core uavap_core_proto
+install(TARGETS uavap_core 
 		RUNTIME DESTINATION bin
 		LIBRARY DESTINATION lib
 		ARCHIVE DESTINATION lib)

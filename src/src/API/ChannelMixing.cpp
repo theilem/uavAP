@@ -34,15 +34,15 @@ ChannelMixing::ChannelMixing() :
 }
 
 bool
-ChannelMixing::configure(const boost::property_tree::ptree& config)
+ChannelMixing::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
-	boost::property_tree::ptree channelMixing;
-	boost::property_tree::ptree channelMapping;
-	boost::property_tree::ptree camberOffset;
-	boost::property_tree::ptree specialOffset;
-	boost::property_tree::ptree channelContraints;
+	Configuration channelMixing;
+	Configuration channelMapping;
+	Configuration camberOffset;
+	Configuration specialOffset;
+	Configuration channelContraints;
 	pm.add("channel_mixing", channelMixing, true);
 	pm.add("channel_mapping", channelMapping, true);
 	pm.add("camber_offset", camberOffset, true);
@@ -57,7 +57,7 @@ ChannelMixing::configure(const boost::property_tree::ptree& config)
 	}
 
 	/* Create mixing matrix */
-	PropertyMapper pmMix(channelMixing);
+	PropertyMapper<Configuration> pmMix(channelMixing);
 	Eigen::VectorXd roll, pitch, yaw, throttle;
 	pmMix.add("roll_out", roll, true);
 	pmMix.add("pitch_out", pitch, true);
@@ -85,7 +85,7 @@ ChannelMixing::configure(const boost::property_tree::ptree& config)
 	}
 
 	/* Load camber */
-	PropertyMapper camberPm(camberOffset);
+	PropertyMapper<Configuration> camberPm(camberOffset);
 
 	for (const auto& it : camberOffset)
 	{
@@ -103,7 +103,7 @@ ChannelMixing::configure(const boost::property_tree::ptree& config)
 	}
 
 	/* Load special */
-	PropertyMapper specialPm(specialOffset);
+	PropertyMapper<Configuration> specialPm(specialOffset);
 
 	for (const auto& it : specialOffset)
 	{
@@ -121,7 +121,7 @@ ChannelMixing::configure(const boost::property_tree::ptree& config)
 	}
 
 	/* Load constraints */
-	PropertyMapper constraintPm(channelContraints);
+	PropertyMapper<Configuration> constraintPm(channelContraints);
 	constraintPm.add("min", channelMin_, true);
 	constraintPm.add("max", channelMax_, true);
 
@@ -193,9 +193,9 @@ ChannelMixing::mapChannels(const ControllerOutput& out, const AdvancedControl& a
 }
 
 ChannelMixing::Mapping
-ChannelMixing::getMapping(const boost::property_tree::ptree& config)
+ChannelMixing::getMapping(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	Eigen::ArrayXd min, max, center;
 	pm.add("min", min, true);
 	pm.add("max", max, true);

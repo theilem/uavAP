@@ -25,10 +25,10 @@
 
 #include <uavAP/Core/Scheduler/IScheduler.h>
 #include "uavAP/Core/Logging/APLogger.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/SteadyStateCondition.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 
 SteadyStateCondition::SteadyStateCondition() :
 		connection_(), steadyState_(true), trigger_(), event_(), minimumDuration_(

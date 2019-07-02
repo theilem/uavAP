@@ -23,6 +23,7 @@
  *      Author: simonyu
  */
 
+#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include <vector>
 
 #include "uavAP/Core/IPC/IPC.h"
@@ -31,7 +32,7 @@
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
-#include "uavAP/Core/PropertyMapper/PropertyMapperProto.h"
+#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 
 ManeuverPlanner::ManeuverPlanner() :
 		analysis_(), overrideInterrupted_(false), manualActive_(false), maneuverActive_(false), lastManualActive_(
@@ -56,21 +57,22 @@ ManeuverPlanner::create(const boost::property_tree::ptree& config)
 bool
 ManeuverPlanner::configure(const Configuration& config)
 {
-	PropertyMapperProto pm(config);
+	bool paramsSet = static_cast<ConfigurableObject<ManeuverPlannerParams>*>(this)->configure(config);
+	if (paramsSet)
+	{
+		manualRestart_ = params.manualRestart();
+		maneuverRestart_ = params.maneuverRestart();
+
+		safetyCondition_ = std::make_shared<RectanguloidCondition>(params.safetyBounds());
+	}
+
+	PropertyMapper<Configuration> pm(config);
 	Configuration freezeControlOutTree;
 	Configuration maneuverSetTree;
 
-	if (pm.configure(params_, true))
-	{
-		manualRestart_ = params_.manual_restart();
-		maneuverRestart_ = params_.maneuver_restart();
-
-		safetyCondition_ = std::make_shared<RectanguloidCondition>(params_.safety_bounds());
-	}
-
 	if (pm.add("freeze_controller_outputs", freezeControlOutTree, false))
 	{
-		PropertyMapper freezeControlOutPm(freezeControlOutTree);
+		PropertyMapper<Configuration> freezeControlOutPm(freezeControlOutTree);
 
 		for (auto& freezeIt : freezeControlOutTree)
 		{
@@ -117,7 +119,7 @@ ManeuverPlanner::configure(const Configuration& config)
 		currentManeuver_ = boost::none;
 	}
 
-	return pm.map();
+	return pm.map() && paramsSet;
 }
 
 void
@@ -178,7 +180,7 @@ ManeuverPlanner::run(RunStage stage)
 			return true;
 		}
 
-		if (params_.use_safety_bounds())
+		if (params.useSafetyBounds())
 		{
 			auto conditionManager = conditionManager_.get();
 
@@ -329,7 +331,7 @@ ManeuverPlanner::getOverrideNr() const
 Rectanguloid
 ManeuverPlanner::getSafetyBounds() const
 {
-	return params_.safety_bounds();
+	return params.safetyBounds();
 }
 
 void
@@ -564,9 +566,9 @@ ManeuverPlanner::deactivateManeuverOverride()
 void
 ManeuverPlanner::safetyTrigger(int trigger)
 {
-	if ((trigger == RectanguloidCondition::ENTER_RECTANGULOID && params_.perform_in_safety_bounds())
+	if ((trigger == RectanguloidCondition::ENTER_RECTANGULOID && params.performInSafetyBounds())
 			|| (trigger == RectanguloidCondition::EXIT_RECTANGULOID
-					&& !params_.perform_in_safety_bounds()))
+					&& !params.performInSafetyBounds()))
 	{
 		resumeOverride();
 	}

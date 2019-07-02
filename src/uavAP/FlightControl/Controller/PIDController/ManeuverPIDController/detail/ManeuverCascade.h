@@ -46,10 +46,10 @@ public:
 			ControllerTarget* target, ControllerOutput* output);
 
 	bool
-	configure(const boost::property_tree::ptree& config) override;
+	configure(const Configuration& config) override;
 
 	bool
-	tunePID(PIDs pid, const Control::PID::Parameters& params) override;
+	tunePID(PIDs pid, const Control::PIDParameters& params) override;
 
 	bool
 	tuneRollBounds(double min, double max) override;

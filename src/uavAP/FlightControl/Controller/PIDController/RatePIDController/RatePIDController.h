@@ -71,7 +71,7 @@ public:
 	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	std::shared_ptr<IPIDCascade>
-	getCascade() override;
+	getCascade();
 
 private:
 

@@ -48,7 +48,7 @@ Edge::getDistanceAbs(const Vector2& query) const
 }
 
 bool
-Polygon::configure(const boost::property_tree::ptree& config)
+Polygon::configure(const Configuration& config)
 {
 	return true;
 }
@@ -56,17 +56,14 @@ Polygon::configure(const boost::property_tree::ptree& config)
 Polygon&
 Polygon::fromRectangle(const Rectanguloid& rect)
 {
-	Vector2 major = rotate2Drad(Vector2(rect.major_side_length(), 0.0),
-			rect.major_side_orientation()) / 2;
-	Vector2 minor = rotate2Drad(Vector2(0.0, rect.minor_side_length()),
-			rect.major_side_orientation()) / 2;
+	Vector2 major = rotate2Drad(Vector2(rect.majorSideLength, 0.0),
+			rect.majorSideOrientation) / 2;
+	Vector2 minor = rotate2Drad(Vector2(0.0, rect.minorSideLength),
+			rect.majorSideOrientation) / 2;
 
 	Vector2 center(0, 0);
-	if (rect.has_center())
-	{
-		center[0] = rect.center().east();
-		center[1] = rect.center().north();
-	}
+	center[0] = rect.center[0];
+	center[1] = rect.center[1];
 
 	edges_.push_back(Edge::fromPoints(center + major + minor, center - major + minor));
 	edges_.push_back(Edge::fromPoints(center - major + minor, center - major - minor));

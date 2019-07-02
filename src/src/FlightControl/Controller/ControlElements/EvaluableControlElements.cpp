@@ -24,13 +24,14 @@
  */
 
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
+#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include "uavAP/FlightControl/Controller/ControlElements/EvaluableControlElements.h"
 #include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
 
 namespace Control
 {
 
-Filter::Filter(Element in, double alpha) :
+Filter::Filter(Element in, FloatingType alpha) :
 		in_(in), init_(true), smoothData_(0), alpha_(alpha)
 {
 }
@@ -48,25 +49,25 @@ Filter::evaluate()
 	smoothData_ = alpha_ * in_->getValue() + (1 - alpha_) * smoothData_;
 }
 
-double
+FloatingType
 Filter::getValue()
 {
 	return smoothData_;
 }
 
 void
-Filter::setAlpha(double alpha)
+Filter::setAlpha(FloatingType alpha)
 {
 	alpha_ = alpha;
 }
 
-Output::Output(Element in, double* out) :
+Output::Output(Element in, FloatingType* out) :
 		in_(in), out_(out), override_(false), overrideOut_(0)
 {
 }
 
 void
-Output::overrideOutput(double newOutput)
+Output::overrideOutput(FloatingType newOutput)
 {
 	override_ = true;
 	overrideOut_ = newOutput;
@@ -84,22 +85,23 @@ Output::evaluate()
 	*out_ = override_ ? overrideOut_ : in_->getValue();
 }
 
-double
+FloatingType
 Output::getValue()
 {
 	return in_->getValue();
 }
 
-PID::PID(Element target, Element current, const Parameters& params, Duration* timeDiff) :
-		target_(target), current_(current), params_(params), timeDiff_(timeDiff), targetValue_(0), currentError_(
-				0), integrator_(0), lastError_(0), output_(0), override_(false), overrideTarget_(0)
+PID::PID(Element target, Element current, const PIDParameters& p, Duration* timeDiff) :
+		ConfigurableObject(p), target_(target), current_(current), timeDiff_(timeDiff), targetValue_(
+				0), currentError_(0), integrator_(0), lastError_(0), output_(0), override_(false), overrideTarget_(
+				0)
 {
 
 }
 
-PID::PID(Element target, Element current, Element derivative, const Parameters& params,
+PID::PID(Element target, Element current, Element derivative, const PIDParameters& p,
 		Duration* timeDiff) :
-		target_(target), current_(current), derivative_(derivative), params_(params), timeDiff_(
+		ConfigurableObject(p), target_(target), current_(current), derivative_(derivative), timeDiff_(
 				timeDiff), targetValue_(0), currentError_(0), integrator_(0), lastError_(0), output_(
 				0), override_(false), overrideTarget_(0)
 {
@@ -107,14 +109,7 @@ PID::PID(Element target, Element current, Element derivative, const Parameters& 
 }
 
 void
-PID::setControlParameters(const Parameters& g)
-{
-	params_ = g;
-	integrator_ = 0;
-}
-
-void
-PID::overrideTarget(double newTarget)
+PID::overrideTarget(FloatingType newTarget)
 {
 	override_ = true;
 	overrideTarget_ = newTarget;
@@ -142,7 +137,7 @@ PID::evaluate()
 	lastError_ = currentError_;
 }
 
-double
+FloatingType
 PID::getValue()
 {
 	return std::isnan(output_) ? 0 : output_;
@@ -151,41 +146,43 @@ PID::getValue()
 void
 PID::addProportionalControl()
 {
-	output_ += params_.kp * currentError_;
+	output_ += params.kp() * currentError_;
 }
 
 void
 PID::addIntegralControl()
 {
-	if (params_.ki == 0. || !timeDiff_)
+	if (params.ki() == 0. || !timeDiff_)
 		return;
 
-	integrator_ += currentError_ * timeDiff_->total_microseconds() * MUSEC_TO_SEC;
+	integrator_ += currentError_
+			* std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC;
 
 	if (integrator_ > 0)
-		integrator_ = std::min(integrator_, params_.imax);
+		integrator_ = std::min(integrator_, params.imax());
 	else
-		integrator_ = std::max(integrator_, -params_.imax);
+		integrator_ = std::max(integrator_, -params.imax());
 
-	output_ += params_.ki * integrator_;
+	output_ += params.ki() * integrator_;
 }
 
 void
 PID::addDifferentialControl()
 {
-	if (params_.kd == 0.)
+	if (params.kd() == 0.)
 		return;
 
 	if (derivative_)
 	{
 		//Take the negative derivative value to counter acceleration towards the target
-		output_ -= params_.kd * derivative_->getValue();
+		output_ -= params.kd() * derivative_->getValue();
 	}
-	else if (!isnanf(lastError_) && timeDiff_ && timeDiff_->total_microseconds() > 0.)
+	else if (!isnanf(lastError_) && timeDiff_
+			&& std::chrono::duration_cast<Microseconds>(*timeDiff_).count() > 0.)
 	{
-		double derivative = (currentError_ - lastError_)
-				/ (timeDiff_->total_microseconds() * MUSEC_TO_SEC);
-		output_ += params_.kd * derivative;
+		FloatingType derivative = (currentError_ - lastError_)
+				/ (std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC);
+		output_ += params.kd() * derivative;
 	}
 }
 
@@ -201,9 +198,9 @@ PID::getStatus()
 void
 PID::addFeedForwardControl()
 {
-	if (params_.ff != 0)
+	if (params.ff() != 0)
 	{
-		output_ += params_.ff * targetValue_;
+		output_ += params.ff() * targetValue_;
 	}
 }
 

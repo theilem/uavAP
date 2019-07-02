@@ -22,6 +22,7 @@
  *  Created on: Sep 18, 2017
  *      Author: mircot
  */
+#include <boost/property_tree/ptree.hpp>
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/MissionControl/MissionPlanner/Mission.h"
 

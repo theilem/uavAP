@@ -25,6 +25,7 @@
 
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
+#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include "uavAP/FlightControl/Controller/PIDController/PIDMapping.h"
 #include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/detail/AirplaneSimplePIDCascade.h"
 
@@ -34,8 +35,7 @@ AirplaneSimplePIDCascade::AirplaneSimplePIDCascade(SensorData* sensorData, Vecto
 {
 	APLOG_TRACE << "Create AirplaneCascade";
 
-	Control::PID::Parameters defaultParams;
-	defaultParams.kp = 1;
+	Control::PIDParameters defaultParams;
 
 	/* Yaw Rate Control */
 	auto yawRateInput = controlEnv_.addInput(&sensorData->angularRate[2]);
@@ -89,51 +89,67 @@ AirplaneSimplePIDCascade::AirplaneSimplePIDCascade(SensorData* sensorData, Vecto
 }
 
 bool
-AirplaneSimplePIDCascade::configure(const boost::property_tree::ptree& config)
+AirplaneSimplePIDCascade::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
-	pm.add<double>("hard_roll_constraint", hardRollConstraint_, false);
-	pm.add<double>("hard_pitch_constraint", hardPitchConstraint_, false);
+	PropertyMapper<Configuration> pm(config);
+	pm.add<FloatingType>("hard_roll_constraint", hardRollConstraint_, false);
+	pm.add<FloatingType>("hard_pitch_constraint", hardPitchConstraint_, false);
 
-	boost::property_tree::ptree pidConfig;
+	Configuration pidConfig;
 	pm.add("pids", pidConfig, false);
 
 	rollConstraint_->setContraintValue(hardRollConstraint_ * M_PI / 180.0);
 	pitchConstraint_->setContraintValue(hardPitchConstraint_ * M_PI / 180.0);
 
-	Control::PID::Parameters params;
-	for (auto it : pidConfig)
+	Control::PIDParameters params;
+	for (const auto& it : pidConfig)
 	{
-		if (!params.configure(it.second))
+		auto pid = EnumMap<PIDs>::convert(it.first);
+
+		switch (pid)
 		{
-			APLOG_ERROR << it.first << " configuration not valid.";
-			continue;
+		case PIDs::CLIMB_ANGLE:
+			climbRatePID_->configure(it.second);
+			break;
+		case PIDs::PITCH:
+			pitchPID_->configure(it.second);
+			break;
+		case PIDs::YAW_RATE:
+			yawRatePID_->configure(it.second);
+			break;
+		case PIDs::ROLL:
+			rollPID_->configure(it.second);
+			break;
+		case PIDs::VELOCITY:
+			velocityPID_->configure(it.second);
+			break;
+		default:
+			APLOG_WARN << "Unknown pidIndicator. Ignore.";
 		}
 
-		tunePID(EnumMap<PIDs>::convert(it.first), params);
 	}
 	return true;
 }
 
 bool
-AirplaneSimplePIDCascade::tunePID(PIDs pid, const Control::PID::Parameters& params)
+AirplaneSimplePIDCascade::tunePID(PIDs pid, const Control::PIDParameters& params)
 {
 	switch (pid)
 	{
 	case PIDs::CLIMB_ANGLE:
-		climbRatePID_->setControlParameters(params);
+		climbRatePID_->setParams(params);
 		break;
 	case PIDs::PITCH:
-		pitchPID_->setControlParameters(params);
+		pitchPID_->setParams(params);
 		break;
 	case PIDs::YAW_RATE:
-		yawRatePID_->setControlParameters(params);
+		yawRatePID_->setParams(params);
 		break;
 	case PIDs::ROLL:
-		rollPID_->setControlParameters(params);
+		rollPID_->setParams(params);
 		break;
 	case PIDs::VELOCITY:
-		velocityPID_->setControlParameters(params);
+		velocityPID_->setParams(params);
 		break;
 	default:
 		APLOG_WARN << "Unknown pidIndicator. Ignore.";
@@ -143,7 +159,7 @@ AirplaneSimplePIDCascade::tunePID(PIDs pid, const Control::PID::Parameters& para
 }
 
 bool
-AirplaneSimplePIDCascade::tuneRollBounds(double min, double max)
+AirplaneSimplePIDCascade::tuneRollBounds(FloatingType min, FloatingType max)
 {
 	if ((min < -hardRollConstraint_) || (min > 0.0))
 	{
@@ -160,7 +176,7 @@ AirplaneSimplePIDCascade::tuneRollBounds(double min, double max)
 }
 
 bool
-AirplaneSimplePIDCascade::tunePitchBounds(double min, double max)
+AirplaneSimplePIDCascade::tunePitchBounds(FloatingType min, FloatingType max)
 {
 	if ((min < -hardPitchConstraint_) || (min > 0.0))
 	{

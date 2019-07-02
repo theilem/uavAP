@@ -28,18 +28,21 @@
 #ifndef UAVAP_FLIGHTCONTROL_LOCALPLANNER_MANEUVERLOCALPLANNER_MANEUVERLOCALPLANNER_H_
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_MANEUVERLOCALPLANNER_MANEUVERLOCALPLANNER_H_
 
-#include <boost/optional/optional.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <uavAP/Core/DataPresentation/Content.h>
+#include <uavAP/Core/Object/AggregatableObject.hpp>
 
 #include <uavAP/Core/Object/IAggregatableObject.h>
 #include <uavAP/Core/Object/ObjectHandle.h>
-#include <uavAP/Core/protobuf/messages/LocalPlanner.pb.h>
+#include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
+#include <uavAP/Core/PropertyMapper/Configuration.h>
 #include <uavAP/Core/Runner/IRunnableObject.h>
 #include <uavAP/FlightControl/Controller/ControllerTarget.h>
 #include <uavAP/FlightControl/LocalPlanner/ILocalPlanner.h>
+#include <uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlannerParams.h>
+#include <uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlannerStatus.h>
 #include <uavAP/MissionControl/GlobalPlanner/Trajectory.h>
 #include <uavAP/MissionControl/ManeuverPlanner/Override.h>
+#include <uavAP/Core/LockTypes.h>
 
 class Packet;
 struct SensorData;
@@ -50,7 +53,9 @@ class IScheduler;
 class IPC;
 class DataHandling;
 
-class ManeuverLocalPlanner: public ILocalPlanner, public IRunnableObject, public IAggregatableObject
+class ManeuverLocalPlanner: public ILocalPlanner, public IRunnableObject, public AggregatableObject<
+		ISensingActuationIO, IController, IScheduler, IPC, DataHandling>, public ConfigurableObject<
+		ManeuverLocalPlannerParams>
 {
 public:
 
@@ -58,10 +63,8 @@ public:
 
 	ManeuverLocalPlanner();
 
-	bool
-	configure(const boost::property_tree::ptree& config);
-
-	ADD_CREATE_WITH_CONFIG(ManeuverLocalPlanner)
+	static std::shared_ptr<ManeuverLocalPlanner>
+	create(const Configuration& config);
 
 	void
 	setTrajectory(const Trajectory& traj) override;
@@ -69,17 +72,11 @@ public:
 	Trajectory
 	getTrajectory() const override;
 
-	LocalPlannerStatus
-	getStatus() const override;
-
-	bool
-	tune(const LocalPlannerParams& params) override;
+	ManeuverLocalPlannerStatus
+	getStatus() const;
 
 	bool
 	run(RunStage stage) override;
-
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 private:
 
@@ -93,9 +90,10 @@ private:
 	nextSection();
 
 	ControllerTarget
-	calculateControllerTarget(const Vector3& position, double heading, std::shared_ptr<IPathSection> section);
+	calculateControllerTarget(const Vector3& position, double heading,
+			std::shared_ptr<IPathSection> section);
 
-	boost::optional<Trajectory>
+	Trajectory
 	trajectoryRequest(const DataRequest& request);
 
 	void
@@ -110,29 +108,18 @@ private:
 	void
 	update();
 
-	ObjectHandle<ISensingActuationIO> sensing_;
-	ObjectHandle<IController> controller_;
-	ObjectHandle<IScheduler> scheduler_;
-	ObjectHandle<IPC> ipc_;
-	ObjectHandle<DataHandling> dataHandling_;
-
-	std::mutex paramsMutex_;
-	ManeuverLocalPlannerParams params_;
-	unsigned int period_;
-	ControllerTarget safetyTarget_;
-
-	mutable std::mutex statusMutex_;
+	mutable Mutex statusMutex_;
 	ManeuverLocalPlannerStatus status_;
 	ControllerTarget controllerTarget_;
 
-	mutable std::mutex trajectoryMutex_;
+	mutable Mutex trajectoryMutex_;
 	Trajectory trajectory_;
 	PathSectionIterator currentSection_;
 
 	//Overrides
 	Override::LocalPlannerOverrides plannerOverrides_;
 	Override::ControllerTargetOverrides targetOverrides_;
-	std::mutex overrideMutex_;
+	Mutex overrideMutex_;
 
 };
 

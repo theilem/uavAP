@@ -33,12 +33,28 @@
 
 #include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
 
+#ifdef ERIKA
+using Vector2 = Eigen::Matrix<float, 2, 1, Eigen::DontAlign>;
+using Vector3 = Eigen::Matrix<float, 3, 1, Eigen::DontAlign>;
+using Matrix3 = Eigen::Matrix<float, 3, 3, Eigen::DontAlign>;
+using AngleAxis = Eigen::AngleAxisf;
+using Rotation2 = Eigen::Rotation2Df;
+using EigenLine = Eigen::ParametrizedLine<float, 3, Eigen::DontAlign>;
+using EigenLine2 = Eigen::ParametrizedLine<float, 2, Eigen::DontAlign>;
+using EigenHyperplane = Eigen::Hyperplane<float, 3, Eigen::DontAlign>;
+using FloatingType = float;
+#else
 using Vector2 = Eigen::Vector2d;
 using Vector3 = Eigen::Vector3d;
+using Matrix3 = Eigen::Matrix3d;
+using AngleAxis = Eigen::AngleAxisd;
 using Rotation2 = Eigen::Rotation2Dd;
 using EigenLine = Eigen::ParametrizedLine<double, 3>;
 using EigenLine2 = Eigen::ParametrizedLine<double, 2>;
 using EigenHyperplane = Eigen::Hyperplane<double, 3, Eigen::DontAlign>;
+using FloatingType = double;
+#endif
+
 
 /**
  * @brief Rotate 2D vector counter clockwise
@@ -47,14 +63,14 @@ using EigenHyperplane = Eigen::Hyperplane<double, 3, Eigen::DontAlign>;
  * @return Rotated vector
  */
 Vector2
-rotate2Drad(const Vector2& vec, const double& rad);
+rotate2Drad(const Vector2& vec, const FloatingType& rad);
 
 /**
  * @brief Caculate the Heading from a Vector3 in ENU
  * @param vec Vector3 in ENU
  * @return Heading in radians. North is pi/2, East is 0.
  */
-double
+FloatingType
 headingFromENU(const Vector3& vec);
 
 /**
@@ -62,7 +78,7 @@ headingFromENU(const Vector3& vec);
  * @param vec Vector2 in EN(U)
  * @return Heading in radians. North is pi/2, East is 0.
  */
-double
+FloatingType
 headingFromENU(const Vector2& vec);
 
 /**
@@ -70,15 +86,15 @@ headingFromENU(const Vector2& vec);
  * @param angle Angle in radians
  * @return angle in (-PI, PI]
  */
-double
-boundAngleRad(double angle);
+FloatingType
+boundAngleRad(FloatingType angle);
 
 /**
  * @brief Convert euler angles to quaternion
  * @param euler Vector with [roll, pitch, yaw]
  * @return Quaternion
  */
-Eigen::Quaterniond
+Eigen::Quaternion<FloatingType>
 eulerToQuaternion(const Vector3& euler);
 
 /**
@@ -87,7 +103,7 @@ eulerToQuaternion(const Vector3& euler);
  * @return euler angles [roll, pitch, yaw]
  */
 Vector3
-quaternionToEuler(const Eigen::Quaterniond& quaternion);
+quaternionToEuler(const Eigen::Quaternion<FloatingType>& quaternion);
 
 Vector3
 directionFromAttitude(const Vector3& att);
@@ -95,26 +111,26 @@ directionFromAttitude(const Vector3& att);
 Vector3&
 degToRadRef(Vector3& vec);
 
-double&
-degToRadRef(double& deg);
+FloatingType&
+degToRadRef(FloatingType& deg);
 
 Vector3&
 radToDegRef(Vector3& vec);
 
-double&
-radToDegRef(double& rad);
+FloatingType&
+radToDegRef(FloatingType& rad);
 
 Vector3
 degToRad(const Vector3& vec);
 
-double
-degToRad(const double& deg);
+FloatingType
+degToRad(const FloatingType& deg);
 
 Vector3
 radToDeg(const Vector3& vec);
 
-double
-radToDeg(const double& rad);
+FloatingType
+radToDeg(const FloatingType& rad);
 
 std::istream&
 operator>>(std::istream& is, Vector3& obj);
@@ -133,7 +149,7 @@ namespace dp
 {
 template<class Archive, typename Type>
 inline void
-serialize(Archive& ar, Vector3& t)
+serialize(Archive& ar, Eigen::Vector3d& t)
 {
 	ar & t[0];
 	ar & t[1];

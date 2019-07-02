@@ -93,10 +93,10 @@ public:
 	 * @return true on success
 	 */
 	bool
-	configure(const boost::property_tree::ptree& config)
+	configure(const Configuration& config)
 	{
 		PropertyMapper pm(config);
-		pm.add<bool>("compress_double", options_.compressDouble_, false);
+		pm.template add<bool>("compress_double", options_.compressDouble_, false);
 		return pm.map();
 	}
 

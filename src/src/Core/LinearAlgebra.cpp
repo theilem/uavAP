@@ -28,12 +28,12 @@
 #include "uavAP/Core/LinearAlgebra.h"
 
 Vector2
-rotate2Drad(const Vector2& vec, const double& rad)
+rotate2Drad(const Vector2& vec, const FloatingType& rad)
 {
-	double c = std::cos(rad);
-	double s = std::sin(rad);
-	double x = vec.x() * c - vec.y() * s;
-	double y = vec.x() * s + vec.y() * c;
+	FloatingType c = std::cos(rad);
+	FloatingType s = std::sin(rad);
+	FloatingType x = vec.x() * c - vec.y() * s;
+	FloatingType y = vec.x() * s + vec.y() * c;
 	return Vector2(x, y);
 }
 
@@ -88,8 +88,8 @@ degToRadRef(Vector3& vec)
 	return vec;
 }
 
-double&
-degToRadRef(double& deg)
+FloatingType&
+degToRadRef(FloatingType& deg)
 {
 	deg = deg * M_PI / 180.0;
 	return deg;
@@ -102,8 +102,8 @@ radToDegRef(Vector3& vec)
 	return vec;
 }
 
-double&
-radToDegRef(double& rad)
+FloatingType&
+radToDegRef(FloatingType& rad)
 {
 	rad = rad * 180.0 / M_PI;
 	return rad;
@@ -115,8 +115,8 @@ degToRad(const Vector3& vec)
 	return vec * M_PI / 180.0;
 }
 
-double
-degToRad(const double& deg)
+FloatingType
+degToRad(const FloatingType& deg)
 {
 	return deg * M_PI / 180.0;
 }
@@ -127,8 +127,8 @@ radToDeg(const Vector3& vec)
 	return vec * 180.0 / M_PI;
 }
 
-double
-radToDeg(const double& rad)
+FloatingType
+radToDeg(const FloatingType& rad)
 {
 	return rad * 180.0 / M_PI;
 }
@@ -140,20 +140,20 @@ operator<<(std::ostream& os, const EigenHyperplane& obj)
 	return os;
 }
 
-double
+FloatingType
 headingFromENU(const Vector3& vec)
 {
 	return atan2(vec.y(), vec.x());
 }
 
-double
+FloatingType
 headingFromENU(const Vector2& vec)
 {
 	return atan2(vec.y(), vec.x());
 }
 
-double
-boundAngleRad(double angle)
+FloatingType
+boundAngleRad(FloatingType angle)
 {
 	if (angle > M_PI)
 		angle -= 2 * M_PI;
@@ -162,27 +162,27 @@ boundAngleRad(double angle)
 	return angle;
 }
 
-Eigen::Quaterniond
+Eigen::Quaternion<FloatingType>
 eulerToQuaternion(const Vector3& euler)
 {
-	double pitchForQuat = boundAngleRad(euler[1] - M_PI);
-	double yawForQuat = boundAngleRad(-euler[2] - M_PI / 2.0);
-	Eigen::Quaterniond attitude(
-			Eigen::AngleAxisd(yawForQuat, Vector3::UnitZ())
-					* Eigen::AngleAxisd(pitchForQuat, Vector3::UnitY())
-					* Eigen::AngleAxisd(euler[0], Vector3::UnitX()));
+	FloatingType pitchForQuat = boundAngleRad(euler[1] - M_PI);
+	FloatingType yawForQuat = boundAngleRad(-euler[2] - M_PI / 2.0);
+	Eigen::Quaternion<FloatingType> attitude(
+			AngleAxis(yawForQuat, Vector3::UnitZ())
+					* AngleAxis(pitchForQuat, Vector3::UnitY())
+					* AngleAxis(euler[0], Vector3::UnitX()));
 	attitude.normalize();
 	return attitude;
 }
 
 Vector3
-quaternionToEuler(const Eigen::Quaterniond& quaternion)
+quaternionToEuler(const Eigen::Quaternion<FloatingType>& quaternion)
 {
 	Vector3 temp = quaternion.toRotationMatrix().eulerAngles(2, 1, 0);
 
-	double roll = temp[2];
-	double pitch = temp[1];
-	double yaw = temp[0];
+	FloatingType roll = temp[2];
+	FloatingType pitch = temp[1];
+	FloatingType yaw = temp[0];
 	bool flipPitch = (pitch > M_PI / 2) || (pitch < -M_PI / 2);
 
 	if (flipPitch)

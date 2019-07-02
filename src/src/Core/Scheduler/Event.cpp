@@ -24,6 +24,7 @@
  */
 
 #include "uavAP/Core/Scheduler/Event.h"
+#include "uavAP/Core/Scheduler/EventBody.h"
 
 Event::Event()
 {

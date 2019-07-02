@@ -25,9 +25,9 @@
 
 #ifndef UAVAP_MISSIONCONTROL_POLYGON_H_
 #define UAVAP_MISSIONCONTROL_POLYGON_H_
-#include <boost/property_tree/ptree.hpp>
 #include <uavAP/Core/LinearAlgebra.h>
-#include <uavAP/Core/protobuf/messages/Shapes.pb.h>
+#include <uavAP/Core/PropertyMapper/Configuration.h>
+#include <uavAP/MissionControl/Geofencing/Rectanguloid.h>
 
 struct Edge
 {
@@ -62,7 +62,7 @@ public:
 	fromRectangle(const Rectanguloid& rect);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	const std::vector<Edge>&
 	getEdges() const;

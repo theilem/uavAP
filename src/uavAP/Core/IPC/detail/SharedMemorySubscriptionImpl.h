@@ -132,7 +132,8 @@ SharedMemorySubscriptionImpl<Object>::onSharedMemory()
 		{
 			return;
 		}
-		auto timeout = boost::get_system_time() + Milliseconds(100);
+
+		auto timeout = boost::get_system_time() + boost::posix_time::milliseconds(100);
 		if (!message->cnd.timed_wait(lock, timeout))
 		{
 			continue;

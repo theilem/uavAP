@@ -7,6 +7,7 @@
 
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/MissionControl/Geofencing/DirectRollModel.h"
+#include <mutex>
 
 DirectRollModel::DirectRollModel() :
 		rollMax_(0), g_(9.81), radiusOrbit_(0)

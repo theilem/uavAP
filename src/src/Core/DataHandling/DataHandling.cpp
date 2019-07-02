@@ -9,7 +9,7 @@
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 
 DataHandling::DataHandling() :
-		target_(Target::INVALID), period_(Milliseconds(10))
+		target_(Target::INVALID), period_(100)
 {
 }
 
@@ -27,8 +27,8 @@ DataHandling::create(const Configuration& config)
 bool
 DataHandling::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
-	pm.add("period", period_, true);
+	PropertyMapper<Configuration> pm(config);
+	pm.add<int>("period", period_, true);
 
 	pm.add("target", targetName_, true);
 	target_ = EnumMap<Target>::convert(targetName_);
@@ -79,7 +79,7 @@ DataHandling::run(RunStage stage)
 	case RunStage::NORMAL:
 	{
 		auto scheduler = scheduler_.get();
-		scheduler->schedule(std::bind(&DataHandling::sendStatus, this), Milliseconds(0), period_);
+		scheduler->schedule(std::bind(&DataHandling::sendStatus, this), Milliseconds(0), Milliseconds(period_));
 
 		std::string subscription = "comm_to_" + targetName_;
 		auto ipc = ipc_.get();

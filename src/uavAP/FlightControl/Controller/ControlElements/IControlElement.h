@@ -26,6 +26,8 @@
 #ifndef FLIGHTCONTROLLER_CONTROLELEMENTS_CONTROLELEMENTS_H_
 #define FLIGHTCONTROLLER_CONTROLELEMENTS_CONTROLELEMENTS_H_
 
+#include "uavAP/Core/LinearAlgebra.h"
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 #include <chrono>
 #include <memory>
 
@@ -42,7 +44,7 @@ public:
 	virtual
 	~IControlElement() = default;
 
-	virtual double
+	virtual FloatingType
 	getValue() = 0;
 
 };

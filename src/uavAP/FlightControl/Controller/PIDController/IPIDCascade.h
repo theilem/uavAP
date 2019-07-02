@@ -27,6 +27,7 @@
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_SIMPLEPIDCONTROLLER_IPIDCASCADE_H_
 #include "uavAP/FlightControl/Controller/ControlElements/EvaluableControlElements.h"
 #include "uavAP/FlightControl/Controller/PIDController/PIDMapping.h"
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 #include <map>
 
 class IPIDCascade
@@ -36,16 +37,16 @@ public:
 	~IPIDCascade() = default;
 
 	virtual bool
-	configure(const boost::property_tree::ptree& config) = 0;
+	configure(const Configuration& config) = 0;
 
 	virtual bool
-	tunePID(PIDs pid, const Control::PID::Parameters& params) = 0;
+	tunePID(PIDs pid, const Control::PIDParameters& params) = 0;
 
 	virtual bool
-	tuneRollBounds(double min, double max) = 0;
+	tuneRollBounds(FloatingType min, FloatingType max) = 0;
 
 	virtual bool
-	tunePitchBounds(double min, double max) = 0;
+	tunePitchBounds(FloatingType min, FloatingType max) = 0;
 
 	virtual std::map<PIDs, PIDStatus>
 	getPIDStatus() = 0;

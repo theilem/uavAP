@@ -28,9 +28,13 @@
 #ifndef UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BASICSERIALIZATION_H_
 #define UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BASICSERIALIZATION_H_
 
+#include <uavAP/Core/PropertyMapper/Optional.hpp>
+#include <uavAP/Core/PropertyMapper/Parameter.h>
 #include "uavAP/Core/DataPresentation/APDataPresentation/SerializeCustom.h"
 
+#ifndef ERIKA
 #include <boost/optional/optional.hpp>
+#endif
 
 #include <cstdint>
 #include <map>
@@ -289,7 +293,7 @@ template<typename T>
 struct is_optional: public std::false_type
 {
 };
-
+#ifndef ERIKA
 /**
  * @brief is_optional struct true_type because T is a boost optional
  */
@@ -297,6 +301,7 @@ template<typename T>
 struct is_optional<boost::optional<T>> : public std::true_type
 {
 };
+#endif
 
 /**
  * @brief Load function for boost optionals
@@ -319,6 +324,40 @@ template<class Archive, typename Type>
 inline void
 serialize(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val);
 
+
+template<typename T>
+struct isOptional: public std::false_type
+{
+};
+/**
+ * @brief is_optional struct true_type because T is a boost optional
+ */
+template<typename T>
+struct isOptional<Optional<T>> : public std::true_type
+{
+};
+
+/**
+ * @brief Load function for boost optionals
+ */
+template<class Archive, typename Type>
+void
+load(Archive& ar, typename std::enable_if<isOptional<Type>::value, Type>::type& val);
+
+/**
+ * @brief Store function for boost optionals
+ */
+template<class Archive, typename Type>
+void
+store(Archive& ar, typename std::enable_if<isOptional<Type>::value, Type>::type& val);
+
+/**
+ * @brief Serialize function for boost optionals
+ */
+template<class Archive, typename Type>
+void
+serialize(Archive& ar, typename std::enable_if<isOptional<Type>::value, Type>::type& val);
+
 /**
  * @brief is_pair struct false_type because T is not a pair
  */
@@ -339,8 +378,18 @@ struct is_pair<std::pair<T, A>> : public std::true_type
  * @brief Serialize function for any pair
  */
 template<class Archive, typename Type>
-inline void
+void
 serialize(Archive& ar, typename std::enable_if<is_pair<Type>::value, Type>::type& val);
+
+template<class Archive, typename Type>
+void
+serialize(Archive& ar, typename std::enable_if<is_parameter<Type>::value, Type>::type& val);
+
+template<class Archive, typename Type>
+void
+serialize(Archive& ar, typename std::enable_if<is_parameter_set<Type>::value, Type>::type& val);
+
+
 
 } /* dp */
 

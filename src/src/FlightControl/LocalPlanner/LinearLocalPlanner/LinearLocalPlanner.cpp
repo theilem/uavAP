@@ -25,41 +25,31 @@
  *  Description
  */
 
-#include "uavAP/Core/IPC/IPC.h"
-#include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/detail/AirplaneLocalPlannerImpl.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include "uavAP/FlightControl/Controller/IController.h"
-#include "uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h"
+#include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/LockTypes.h"
-#include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
+#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <memory>
 
 LinearLocalPlanner::LinearLocalPlanner() :
-		inApproach_(false), airplane_(true), period_(0), currentPathSectionIdx_(0)
+		headingTarget_(0), inApproach_(false), currentPathSectionIdx_(0)
 {
 }
 
-bool
-LinearLocalPlanner::configure(const boost::property_tree::ptree& config)
+std::shared_ptr<LinearLocalPlanner>
+LinearLocalPlanner::create(const Configuration& config)
 {
-	PropertyMapper propertyMapper(config);
-	propertyMapper.add<bool>("airplane", airplane_, false);
-	propertyMapper.add<unsigned int>("period", period_, false);
-
-	if (airplane_)
+	auto agg = std::make_shared<LinearLocalPlanner>();
+	if (!agg->configure(config))
 	{
-		localPlannerImpl_ = std::make_shared<AirplaneLocalPlannerImpl>();
+		APLOG_ERROR << "LinearLocalPlanner" << ": Configuration failed";
 	}
-	else
-	{
-		APLOG_ERROR << "Only airplane is defined";
-//		localPlannerImpl_ = std::make_shared<HelicopterLocalPlannerImpl>();
-	}
-
-	return localPlannerImpl_->configure(config);
+	return agg;
 }
 
 bool
@@ -69,30 +59,27 @@ LinearLocalPlanner::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!controller_.isSet())
+		if (!isSet<IController>())
 		{
 			APLOG_ERROR << "LinearLocalPlanner: Controller missing";
 
 			return true;
 		}
-		if (!sensing_.isSet())
+		if (!isSet<ISensingActuationIO>())
 		{
 			APLOG_ERROR << "LinearLocalPlanner: FlightControlData missing";
 
 			return true;
 		}
-		if (!scheduler_.isSet())
+		if (!isSet<IScheduler>())
 		{
-			APLOG_ERROR << "LinearLocalPlanner: Scheduler missing";
-
-			return true;
+			APLOG_DEBUG << "LinearLocalPlanner: Scheduler missing. Can only react to SensingIO";
 		}
-		if (!ipc_.isSet())
-		{
-			APLOG_ERROR << "LinearLocalPlanner: IPC missing";
 
-			return true;
-		}
+		Trajectory traj;
+		traj.pathSections.push_back(
+				std::make_shared<Orbit>(Vector3(0, 0, 0), Vector3(0, 0, 1), 50, 50));
+		setTrajectory(traj);
 
 		break;
 	}
@@ -100,34 +87,24 @@ LinearLocalPlanner::run(RunStage stage)
 	{
 
 		//Directly calculate local plan when sensor data comes in
-		if (period_ == 0)
+		if (params.period() == 0 || !isSet<IScheduler>())
 		{
-			auto sensing = sensing_.get();
-			sensing->subscribeOnSensorData(
-					boost::bind(&LinearLocalPlanner::onSensorData, this, _1));
+			auto sensing = get<ISensingActuationIO>();
+			sensing->subscribeOnSensorData(std::bind(&LinearLocalPlanner::onSensorData, this, std::placeholders::_1));
 		}
 		else
 		{
-			auto scheduler = scheduler_.get();
-			scheduler->schedule(std::bind(&LinearLocalPlanner::update, this), Milliseconds(period_),
-					Milliseconds(period_));
+			auto scheduler = get<IScheduler>();
+			scheduler->schedule(std::bind(&LinearLocalPlanner::update, this),
+					Milliseconds(params.period()), Milliseconds(params.period()));
 		}
-
-		auto ipc = ipc_.get();
-
-		ipc->subscribeOnPacket("trajectory",
-				std::bind(&LinearLocalPlanner::onTrajectoryPacket, this, std::placeholders::_1));
 
 		break;
 	}
 	case RunStage::FINAL:
-	{
 		break;
-	}
 	default:
-	{
 		break;
-	}
 	}
 	return false;
 }
@@ -141,7 +118,7 @@ LinearLocalPlanner::setTrajectory(const Trajectory& traj)
 	currentSection_ = trajectory_.pathSections.begin();
 	currentPathSectionIdx_ = 0;
 	inApproach_ = trajectory_.approachSection != nullptr;
-	APLOG_DEBUG << "Trajectory set.";
+	APLOG_TRACE << "Trajectory set.";
 }
 
 ControllerTarget
@@ -175,20 +152,8 @@ LinearLocalPlanner::nextSection()
 	}
 }
 
-bool
-LinearLocalPlanner::tune(const LocalPlannerParams& params)
-{
-	auto impl = getImpl();
-	if (!impl)
-	{
-		APLOG_ERROR << "Impl missing. Cannot tune local planner.";
-		return false;
-	}
-	return impl->tuneParams(params);
-}
-
 void
-LinearLocalPlanner::createLocalPlan(const Vector3& position, double heading, bool hasGPSFix,
+LinearLocalPlanner::createLocalPlan(const Vector3& position, FloatingType heading, bool hasGPSFix,
 		uint32_t seqNum)
 {
 
@@ -237,7 +202,7 @@ LinearLocalPlanner::createLocalPlan(const Vector3& position, double heading, boo
 	lock.unlock();
 
 	if (hasGPSFix)
-		controllerTarget_ = localPlannerImpl_->evaluate(position, heading, currentSection);
+		controllerTarget_ = evaluate(position, heading, currentSection);
 	else
 	{
 		APLOG_WARN << "Lost GPS fix. LocalPlanner safety procedure.";
@@ -246,7 +211,7 @@ LinearLocalPlanner::createLocalPlan(const Vector3& position, double heading, boo
 	}
 	controllerTarget_.sequenceNr = seqNum;
 
-	auto controller = controller_.get();
+	auto controller = get<IController>();
 	if (!controller)
 	{
 		APLOG_ERROR << "LinearLocalPlanner: Controller missing";
@@ -263,61 +228,12 @@ LinearLocalPlanner::getTrajectory() const
 	return trajectory_;
 }
 
-std::shared_ptr<ILinearPlannerImpl>
-LinearLocalPlanner::getImpl()
-{
-	return localPlannerImpl_;
-}
-
-LocalPlannerStatus
-LinearLocalPlanner::getStatus() const
-{
-	auto status = localPlannerImpl_->getStatus();
-	if (!status.has_linear_status())
-	{
-		APLOG_ERROR << "Status from impl is wrong";
-		return status;
-	}
-
-	status.mutable_linear_status()->set_current_path_section(currentPathSectionIdx_);
-	status.mutable_linear_status()->mutable_velocity_target()->set_velocity_x(
-			controllerTarget_.velocity);
-	status.mutable_linear_status()->mutable_velocity_target()->set_velocity_y(0);
-	status.mutable_linear_status()->mutable_velocity_target()->set_velocity_z(0);
-	status.mutable_linear_status()->set_yaw_rate_target(controllerTarget_.yawRate);
-	status.mutable_linear_status()->set_is_in_approach(inApproach_);
-
-	return status;
-}
-
-void
-LinearLocalPlanner::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	controller_.setFromAggregationIfNotSet(agg);
-	sensing_.setFromAggregationIfNotSet(agg);
-	scheduler_.setFromAggregationIfNotSet(agg);
-	ipc_.setFromAggregationIfNotSet(agg);
-}
-
-void
-LinearLocalPlanner::onTrajectoryPacket(const Packet& packet)
-{
-	try
-	{
-		setTrajectory(dp::deserialize < Trajectory > (packet));
-	} catch (ArchiveError& err)
-	{
-		APLOG_ERROR << "Invalid Trajectory packet: " << err.what();
-		return;
-	}
-}
-
 void
 LinearLocalPlanner::onSensorData(const SensorData& sd)
 {
 	//TODO Lock?
 	Vector3 position = sd.position;
-	double heading = sd.attitude.z();
+	FloatingType heading = sd.attitude.z();
 	bool hasFix = sd.hasGPSFix;
 	uint32_t seq = sd.sequenceNr;
 
@@ -327,7 +243,7 @@ LinearLocalPlanner::onSensorData(const SensorData& sd)
 void
 LinearLocalPlanner::update()
 {
-	auto sensing = sensing_.get();
+	auto sensing = get<ISensingActuationIO>();
 
 	if (!sensing)
 	{
@@ -337,4 +253,36 @@ LinearLocalPlanner::update()
 
 	SensorData data = sensing->getSensorData();
 	createLocalPlan(data.position, data.attitude.z(), data.hasGPSFix, data.sequenceNr);
+}
+
+ControllerTarget
+LinearLocalPlanner::evaluate(const Vector3& position, FloatingType heading,
+		std::shared_ptr<IPathSection> section)
+{
+	ControllerTarget controllerTarget;
+
+	FloatingType vel = section->getVelocity();
+
+	controllerTarget.velocity = vel;
+	auto positionDeviation = section->getPositionDeviation();
+
+	// Climb Rate
+	FloatingType climbRate = controllerTarget.velocity * section->getSlope()
+			+ params.kAltitude() * positionDeviation.z();
+
+	climbRate = climbRate > vel ? vel : climbRate < -vel ? -vel : climbRate;
+
+	//Climb angle
+	controllerTarget.climbAngle = asin(climbRate / vel);
+
+	// Heading
+	Vector2 directionTarget_ = params.kHeading() * positionDeviation.head(2)
+			+ section->getDirection().head(2).normalized();
+	headingTarget_ = headingFromENU(directionTarget_);
+
+	FloatingType headingError = boundAngleRad(headingTarget_ - heading);
+
+	// Yaw Rate
+	controllerTarget.yawRate = vel * section->getCurvature() + params.kYawrate() * headingError;
+	return controllerTarget;
 }

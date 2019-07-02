@@ -87,7 +87,7 @@ MessageQueueSubscriptionImpl<Object>::~MessageQueueSubscriptionImpl()
 	{
 		cancel();
 	}
-	std::this_thread::sleep_for(std::chrono::milliseconds(100)); //Wait for timeout of message_queue to stop subscription
+	std::this_thread::sleep_for(Milliseconds(100)); //Wait for timeout of message_queue to stop subscription
 //	if (messageQueue_.remove(id_.c_str()))
 //		APLOG_DEBUG << id_ << " message queue removed.";
 }
@@ -133,7 +133,7 @@ MessageQueueSubscriptionImpl<Object>::onMessageQueue()
 		void* buffer = &object;
 		message_queue::size_type size;
 		unsigned int priority;
-		auto timeout = boost::get_system_time() + Milliseconds(100);
+		auto timeout = boost::get_system_time() + boost::posix_time::milliseconds(100);
 		if (!messageQueue_.timed_receive(buffer, maxSize, size, priority, timeout))
 		{
 			continue;

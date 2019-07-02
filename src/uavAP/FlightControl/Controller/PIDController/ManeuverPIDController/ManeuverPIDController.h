@@ -26,8 +26,9 @@
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_MANEUVERPIDCONTROLLER_MANEUVERPIDCONTROLLER_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_MANEUVERPIDCONTROLLER_MANEUVERPIDCONTROLLER_H_
 
-#include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
-#include <uavAP/Core/Object/AggregatableObject.hpp>
+#include "uavAP/Core/LockTypes.h"
+#include "uavAP/Core/Object/AggregatableObject.hpp"
+#include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/SensorData.h"
@@ -38,7 +39,7 @@
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDController.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDCascade.h"
-#include <mutex>
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 
 class ManeuverCascade;
 class ISensingActuationIO;
@@ -56,10 +57,10 @@ public:
 	ManeuverPIDController();
 
 	static std::shared_ptr<ManeuverPIDController>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config) override;
+	configure(const Configuration& config) override;
 
 	bool
 	run(RunStage stage) override;
@@ -69,9 +70,6 @@ public:
 
 	ControllerOutput
 	getControllerOutput() override;
-
-	std::shared_ptr<IPIDCascade>
-	getCascade() override;
 
 private:
 
@@ -84,7 +82,7 @@ private:
 	void
 	tunePID(const PIDTuning& params);
 
-	std::mutex controllerTargetMutex_;
+	Mutex controllerTargetMutex_;
 	ControllerTarget controllerTarget_;
 	SensorData sensorData_;
 	Vector3 velocityInertial_;

@@ -27,10 +27,9 @@
 #define UAVAP_MISSIONCONTROL_CONDITIONMANAGER_CONDITION_RECTANGULOIDCONDITION_H_
 
 #include <boost/signals2.hpp>
-#include <boost/property_tree/ptree.hpp>
+#include <uavAP/MissionControl/Geofencing/Rectanguloid.h>
 
 #include "uavAP/Core/SensorData.h"
-#include "uavAP/Core/protobuf/messages/Shapes.pb.h"
 #include "uavAP/MissionControl/ConditionManager/ICondition.h"
 
 class ConditionManager;
@@ -46,10 +45,10 @@ public:
 	RectanguloidCondition(const Rectanguloid& rectanguloid);
 
 	static std::shared_ptr<RectanguloidCondition>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	void
 	activate(ConditionManager* conditionManager, const ConditionTrigger& conditionTrigger) override;

@@ -60,14 +60,14 @@ BOOST_AUTO_TEST_CASE(sensor_data)
 	SensorData test;
 
 	test.position = Vector3(1, 2, 3);
-	test.timestamp = boost::get_system_time();
+	test.timestamp = Clock::now();
 
 	APDataPresentation<Content, Target> dp;
 	Packet packet = dp.serialize(test, Content::SENSOR_DATA);
 
 	APLogger::instance()->setLogLevel(LogLevel::NONE);
 	Packet packet2;
-	BOOST_REQUIRE_NO_THROW(packet2 = dp.serialize(test, Content::LOCAL_PLANNER_STATUS));
+	BOOST_REQUIRE_NO_THROW(packet2 = dp.serialize(test, Content::LINEAR_LOCAL_PLANNER_STATUS));
 	APLogger::instance()->setLogLevel(LogLevel::WARN);
 
 	BOOST_CHECK_EQUAL(packet2.getSize(), (unsigned int )0);
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(sensor_data)
 	BOOST_REQUIRE_NO_THROW(sensorCheck = boost::any_cast<SensorData>(check));
 
 	BOOST_CHECK_EQUAL(test.position, sensorCheck.position);
-	BOOST_CHECK_EQUAL(test.timestamp, sensorCheck.timestamp);
+	BOOST_CHECK_EQUAL(test.timestamp.time_since_epoch().count(), sensorCheck.timestamp.time_since_epoch().count());
 }
 
 BOOST_AUTO_TEST_CASE(ap_data_presentation_test)
@@ -269,8 +269,8 @@ BOOST_AUTO_TEST_CASE(binary_serialization_002_serialize_file)
 BOOST_AUTO_TEST_CASE(binary_serialization_003_serialize_file_proto_message)
 {
 	LinearLocalPlannerStatus status;
-	status.mutable_airplane_status()->set_heading_target(5);
-	status.set_current_path_section(32);
+	status.headingTarget = 5;
+	status.currentPathSection = 32;
 
 	std::ofstream fileOut("test_proto", std::ofstream::out | std::ofstream::binary);
 
@@ -280,10 +280,10 @@ BOOST_AUTO_TEST_CASE(binary_serialization_003_serialize_file_proto_message)
 	std::ifstream fileIn("test_proto", std::ifstream::in | std::ifstream::binary);
 
 	auto statusRead = dp::deserialize<LinearLocalPlannerStatus>(fileIn);
-	BOOST_CHECK_EQUAL(statusRead.mutable_airplane_status()->heading_target(),
-			status.mutable_airplane_status()->heading_target());
-	BOOST_CHECK_EQUAL(statusRead.current_path_section(),
-			status.current_path_section());
+	BOOST_CHECK_EQUAL(statusRead.headingTarget,
+			status.headingTarget);
+	BOOST_CHECK_EQUAL(statusRead.currentPathSection,
+			status.currentPathSection);
 
 	fileIn.close();
 }

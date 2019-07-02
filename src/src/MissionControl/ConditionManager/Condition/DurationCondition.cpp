@@ -25,12 +25,12 @@
 
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/Logging/APLogger.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/DurationCondition.h"
+#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 
 std::shared_ptr<DurationCondition>
-DurationCondition::create(const boost::property_tree::ptree& config)
+DurationCondition::create(const Configuration& config)
 {
 	auto durationCondition = std::make_shared<DurationCondition>();
 
@@ -43,7 +43,7 @@ DurationCondition::create(const boost::property_tree::ptree& config)
 }
 
 bool
-DurationCondition::configure(const boost::property_tree::ptree& config)
+DurationCondition::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 
