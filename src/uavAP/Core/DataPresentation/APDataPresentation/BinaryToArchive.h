@@ -25,7 +25,6 @@
 
 #ifndef UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BINARYTOARCHIVE_H_
 #define UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BINARYTOARCHIVE_H_
-#include <google/protobuf/message.h>
 #include <string>
 
 #include "uavAP/Core/DataPresentation/APDataPresentation/ArchiveOptions.h"
