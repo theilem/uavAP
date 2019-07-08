@@ -24,6 +24,7 @@
  */
 #include "uavAP/Core/DataPresentation/APDataPresentation/BinaryFromArchive.h"
 #include <uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h>
+#include <cstring>
 
 BinaryFromArchive::BinaryFromArchive(const std::string& str, const ArchiveOptions& opts) :
 		options_(opts), string_(str), idx_(0)
