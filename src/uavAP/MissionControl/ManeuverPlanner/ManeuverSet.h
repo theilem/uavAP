@@ -42,7 +42,7 @@ struct Maneuver
 	bool analysis;
 
 	bool
-	configure(const boost::property_tree::ptree& config)
+	configure(const Configuration& config)
 	{
 		PropertyMapper pm(config);
 		boost::property_tree::ptree conditionTree;

@@ -70,10 +70,10 @@ public:
 	ManeuverAnalysis();
 
 	static std::shared_ptr<ManeuverAnalysis>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	bool
 	run(RunStage stage) override;

@@ -31,7 +31,7 @@ FlightAnalysisDataHandling::FlightAnalysisDataHandling() :
 }
 
 std::shared_ptr<FlightAnalysisDataHandling>
-FlightAnalysisDataHandling::create(const boost::property_tree::ptree& config)
+FlightAnalysisDataHandling::create(const Configuration& config)
 {
 	auto dataHandling = std::make_shared<FlightAnalysisDataHandling>();
 
@@ -44,7 +44,7 @@ FlightAnalysisDataHandling::create(const boost::property_tree::ptree& config)
 }
 
 bool
-FlightAnalysisDataHandling::configure(const boost::property_tree::ptree& config)
+FlightAnalysisDataHandling::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 	pm.add("period", period_, false);

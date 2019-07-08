@@ -26,6 +26,7 @@
 #ifndef UAVAP_FLIGHTANALYSIS_STATEANALYSIS_METRICS_H_
 #define UAVAP_FLIGHTANALYSIS_STATEANALYSIS_METRICS_H_
 
+#include <uavAP/Core/PropertyMapper/Configuration.h>
 #include <utility>
 
 #include "uavAP/Core/Time.h"
@@ -106,7 +107,7 @@ struct Metrics
 	PIDMetrics pid;
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	bool
 	isEmpty() const;

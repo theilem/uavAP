@@ -80,7 +80,7 @@ public:
 	 * @return Shared ptr to a new object
 	 */
 	static std::shared_ptr<APDataPresentation<Content, Target>>
-	create(const boost::property_tree::ptree& config)
+	create(const Configuration& config)
 	{
 		auto dp = std::make_shared<APDataPresentation<Content, Target>>();
 		dp->configure(config);
@@ -95,7 +95,7 @@ public:
 	bool
 	configure(const Configuration& config)
 	{
-		PropertyMapper pm(config);
+		PropertyMapper<Configuration> pm(config);
 		pm.template add<bool>("compress_double", options_.compressDouble_, false);
 		return pm.map();
 	}

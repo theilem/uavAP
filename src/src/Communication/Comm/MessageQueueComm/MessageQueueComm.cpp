@@ -40,7 +40,7 @@ MessageQueueComm::MessageQueueComm() :
 }
 
 std::shared_ptr<MessageQueueComm>
-MessageQueueComm::create(const boost::property_tree::ptree& configuration)
+MessageQueueComm::create(const Configuration& configuration)
 {
 	auto comm = std::make_shared<MessageQueueComm>();
 
@@ -53,7 +53,7 @@ MessageQueueComm::create(const boost::property_tree::ptree& configuration)
 }
 
 bool
-MessageQueueComm::configure(const boost::property_tree::ptree& configuration)
+MessageQueueComm::configure(const Configuration& configuration)
 {
 	PropertyMapper pm(configuration);
 

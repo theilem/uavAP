@@ -46,10 +46,10 @@ public:
 	~GeofencingCondition();
 
 	static std::shared_ptr<GeofencingCondition>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	void
 	activate(ConditionManager* conditionManager, const ConditionTrigger& conditionTrigger) override;

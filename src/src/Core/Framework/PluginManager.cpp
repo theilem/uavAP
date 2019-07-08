@@ -29,10 +29,10 @@
 #include "uavAP/Core/Framework/PluginManager.h"
 
 bool
-PluginManager::configure(const boost::property_tree::ptree& config)
+PluginManager::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
-	boost::property_tree::ptree plugins;
+	PropertyMapper<Configuration> pm(config);
+	Configuration plugins;
 	pm.add("plugins", plugins, true);
 
 	for (const auto& it : plugins)

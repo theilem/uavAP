@@ -56,7 +56,7 @@ public:
 	 * @return Aggregator containing the objects
 	 */
 	Aggregator
-	createAggregation(const boost::property_tree::ptree& config);
+	createAggregation(const Configuration& config);
 
 	void
 	setDefaultPluginRestriction(PluginRestriction plug);
@@ -108,7 +108,7 @@ private:
 	 */
 	template<class FactoryType>
 	static std::shared_ptr<IAggregatableObject>
-	createAggregatable(FactoryType factory, const boost::property_tree::ptree& config);
+	createAggregatable(FactoryType factory, const Configuration& config);
 
 	/**
 	 * @brief Merging to configuration trees, adding global configuration subtrees to the configuration tree
@@ -117,10 +117,10 @@ private:
 	 */
 	void
 	mergeGlobalConfig(boost::property_tree::ptree& config,
-			const boost::property_tree::ptree& globalConf);
+			const Configuration& globalConf);
 
 	//! Creator functor to create an IAggregatableObject
-	using CreatorAgg = std::function<std::shared_ptr<IAggregatableObject>(const boost::property_tree::ptree&)>;
+	using CreatorAgg = std::function<std::shared_ptr<IAggregatableObject>(const Configuration&)>;
 
 	//! Map containing the Creators that do not need factories mapped to their ID.
 	std::map<std::string, CreatorAgg> creators_;
@@ -181,7 +181,7 @@ Helper::addDefault(PluginRestriction restriction)
 
 template<class FactoryType>
 inline std::shared_ptr<IAggregatableObject>
-Helper::createAggregatable(FactoryType factory, const boost::property_tree::ptree& config)
+Helper::createAggregatable(FactoryType factory, const Configuration& config)
 {
 	auto obj = factory.create(config);
 	if (auto aggObj = std::dynamic_pointer_cast<IAggregatableObject>(obj))

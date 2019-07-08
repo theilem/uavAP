@@ -54,10 +54,10 @@ public:
 	MessageQueueComm();
 
 	static std::shared_ptr<MessageQueueComm>
-	create(const boost::property_tree::ptree& configuration);
+	create(const Configuration& configuration);
 
 	bool
-	configure(const boost::property_tree::ptree& configuration);
+	configure(const Configuration& configuration);
 
 	bool
 	run(RunStage stage) override;

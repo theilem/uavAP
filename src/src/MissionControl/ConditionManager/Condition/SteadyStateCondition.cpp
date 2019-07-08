@@ -37,7 +37,7 @@ SteadyStateCondition::SteadyStateCondition() :
 }
 
 std::shared_ptr<SteadyStateCondition>
-SteadyStateCondition::create(const boost::property_tree::ptree& config)
+SteadyStateCondition::create(const Configuration& config)
 {
 	auto steadyStateCondition = std::make_shared<SteadyStateCondition>();
 
@@ -50,7 +50,7 @@ SteadyStateCondition::create(const boost::property_tree::ptree& config)
 }
 
 bool
-SteadyStateCondition::configure(const boost::property_tree::ptree& config)
+SteadyStateCondition::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 

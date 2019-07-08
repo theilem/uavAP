@@ -53,10 +53,10 @@ public:
 	RatePIDController();
 
 	static std::shared_ptr<RatePIDController>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config) override;
+	configure(const Configuration& config) override;
 
 	bool
 	run(RunStage stage) override;

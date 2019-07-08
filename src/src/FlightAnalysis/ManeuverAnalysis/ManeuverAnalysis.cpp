@@ -35,7 +35,7 @@ ManeuverAnalysis::ManeuverAnalysis() :
 }
 
 std::shared_ptr<ManeuverAnalysis>
-ManeuverAnalysis::create(const boost::property_tree::ptree& config)
+ManeuverAnalysis::create(const Configuration& config)
 {
 	auto maneuverAnalysis = std::make_shared<ManeuverAnalysis>();
 
@@ -48,7 +48,7 @@ ManeuverAnalysis::create(const boost::property_tree::ptree& config)
 }
 
 bool
-ManeuverAnalysis::configure(const boost::property_tree::ptree& config)
+ManeuverAnalysis::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 	std::string maneuver;

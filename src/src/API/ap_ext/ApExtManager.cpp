@@ -39,7 +39,7 @@ ApExtManager::ApExtManager() :
 }
 
 bool
-ApExtManager::configure(const boost::property_tree::ptree& config)
+ApExtManager::configure(const Configuration& config)
 {
 	bool success = channelMixing_.configure(config);
 	uavapAPI_.initialize();

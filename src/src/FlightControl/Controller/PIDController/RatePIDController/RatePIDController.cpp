@@ -37,7 +37,7 @@ RatePIDController::RatePIDController()
 }
 
 std::shared_ptr<RatePIDController>
-RatePIDController::create(const boost::property_tree::ptree& config)
+RatePIDController::create(const Configuration& config)
 {
 	auto flightController = std::make_shared<RatePIDController>();
 	flightController->configure(config);
@@ -46,7 +46,7 @@ RatePIDController::create(const boost::property_tree::ptree& config)
 }
 
 bool
-RatePIDController::configure(const boost::property_tree::ptree& config)
+RatePIDController::configure(const Configuration& config)
 {
 	pidCascade_ = std::make_shared<RateCascade>(&sensorData_, velocityInertial_,
 			accelerationInertial_, &controllerTarget_, &controllerOutput_);

@@ -43,7 +43,7 @@ public:
 	static constexpr TypeId typeId = "idc";
 
 	static std::shared_ptr<IDC>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;

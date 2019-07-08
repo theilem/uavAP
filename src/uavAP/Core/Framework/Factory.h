@@ -25,7 +25,7 @@
 
 #ifndef UAVAP_CORE_FRAMEWORK_FACTORY_H_
 #define UAVAP_CORE_FRAMEWORK_FACTORY_H_
-#include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/PropertyMapper/Configuration.h>
 #include "uavAP/Core/Framework/PluginRestriction.h"
 #include "uavAP/Core/Framework/FrameworkExceptions.h"
 #include "uavAP/Core/Logging/APLogger.h"
@@ -60,7 +60,7 @@ public:
 	 * @return Created object
 	 */
 	std::shared_ptr<Type>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	void
 	setPluginRestriction(PluginRestriction plug);
@@ -80,7 +80,7 @@ public:
 protected:
 
 	//!Defines the function that can be registered
-	using Creator = std::function<std::shared_ptr<Type>(const boost::property_tree::ptree&) >;
+	using Creator = std::function<std::shared_ptr<Type>(const Configuration&) >;
 
 	/**
 	 * @brief Adds a creator function with a string id.
@@ -115,7 +115,7 @@ std::map<std::string, typename Factory<Type>::Creator> Factory<Type>::pluginMap_
 
 template<class Type>
 inline std::shared_ptr<Type>
-Factory<Type>::create(const boost::property_tree::ptree& config)
+Factory<Type>::create(const Configuration& config)
 {
 	if (creatorMap_.empty() && pluginRestriction_ != PluginRestriction::ALLOWED)
 	{

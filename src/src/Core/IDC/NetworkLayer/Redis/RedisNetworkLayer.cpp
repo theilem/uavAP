@@ -13,7 +13,7 @@
 
 
 std::shared_ptr<RedisNetworkLayer>
-RedisNetworkLayer::create(const boost::property_tree::ptree& config)
+RedisNetworkLayer::create(const Configuration& config)
 {
 	auto rnl = std::make_shared<RedisNetworkLayer>();
 	rnl->configure(config);
@@ -21,11 +21,11 @@ RedisNetworkLayer::create(const boost::property_tree::ptree& config)
 }
 
 bool
-RedisNetworkLayer::configure(const boost::property_tree::ptree& config)
+RedisNetworkLayer::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
-	boost::property_tree::ptree sub;
+	Configuration sub;
 	pm.add("sub", sub, false);
 
 	for (const auto& it : sub)
@@ -37,7 +37,7 @@ RedisNetworkLayer::configure(const boost::property_tree::ptree& config)
 		subscribers_.emplace(it.first, std::make_shared<RedisSubscriber>(params));
 	}
 
-	boost::property_tree::ptree pub;
+	Configuration pub;
 	pm.add("pub", pub, false);
 
 	for (const auto& it : pub)

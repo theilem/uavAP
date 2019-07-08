@@ -26,6 +26,7 @@
 #ifndef UAVAP_FLIGHTANALYSIS_STATEANALYSIS_STEADYSTATEANALYSIS_H_
 #define UAVAP_FLIGHTANALYSIS_STATEANALYSIS_STEADYSTATEANALYSIS_H_
 
+#include <uavAP/Core/LockTypes.h>
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/IPC/Subscription.h"
@@ -104,10 +105,10 @@ private:
 	SteadyStateMetrics* inspectingMetrics_;
 	mutable SteadyStateMetrics lastInspectingMetrics_;
 
-	std::mutex overrideMutex_;
-	std::mutex pidStatiMutex_;
-	std::mutex metricsMutex_;
-	mutable std::mutex inspectingMetricsMutex_;
+	Mutex overrideMutex_;
+	Mutex pidStatiMutex_;
+	Mutex metricsMutex_;
+	mutable Mutex inspectingMetricsMutex_;
 
 	TimePoint overrideTimeStamp_;
 

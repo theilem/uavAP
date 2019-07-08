@@ -15,7 +15,7 @@ DirectRollModel::DirectRollModel() :
 }
 
 std::shared_ptr<DirectRollModel>
-DirectRollModel::create(const boost::property_tree::ptree& config)
+DirectRollModel::create(const Configuration& config)
 {
 	auto directRollModel = std::make_shared<DirectRollModel>();
 
@@ -28,7 +28,7 @@ DirectRollModel::create(const boost::property_tree::ptree& config)
 }
 
 bool
-DirectRollModel::configure(const boost::property_tree::ptree& config)
+DirectRollModel::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 

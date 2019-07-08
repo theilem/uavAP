@@ -40,7 +40,7 @@ public:
 	ApExtManager();
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	int
 	ap_sense(const data_sample_t* sample);

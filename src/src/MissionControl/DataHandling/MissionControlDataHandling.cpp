@@ -41,7 +41,7 @@ MissionControlDataHandling::MissionControlDataHandling() :
 }
 
 std::shared_ptr<MissionControlDataHandling>
-MissionControlDataHandling::create(const boost::property_tree::ptree& configuration)
+MissionControlDataHandling::create(const Configuration& configuration)
 {
 	auto dataHandling = std::make_shared<MissionControlDataHandling>();
 
@@ -54,7 +54,7 @@ MissionControlDataHandling::create(const boost::property_tree::ptree& configurat
 }
 
 bool
-MissionControlDataHandling::configure(const boost::property_tree::ptree& configuration)
+MissionControlDataHandling::configure(const Configuration& configuration)
 {
 	PropertyMapper propertyMapper(configuration);
 	propertyMapper.add("period", period_, false);

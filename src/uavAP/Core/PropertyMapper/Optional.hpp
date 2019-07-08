@@ -8,6 +8,8 @@
 #ifndef UAVAP_UAVAP_CORE_PROPERTYMAPPER_OPTIONAL_HPP_
 #define UAVAP_UAVAP_CORE_PROPERTYMAPPER_OPTIONAL_HPP_
 
+#ifdef NO_RTTI
+
 template<typename Type>
 struct Optional
 {
@@ -69,5 +71,14 @@ struct Optional
 	Type value;
 	bool isSet;
 };
+
+#else
+
+#include <boost/optional.hpp>
+
+template <typename Type>
+using Optional = boost::optional<Type>;
+
+#endif
 
 #endif /* UAVAP_UAVAP_CORE_PROPERTYMAPPER_OPTIONAL_HPP_ */

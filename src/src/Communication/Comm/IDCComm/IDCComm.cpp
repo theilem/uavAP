@@ -41,7 +41,7 @@ IDCComm::IDCComm()
 }
 
 std::shared_ptr<IDCComm>
-IDCComm::create(const boost::property_tree::ptree& configuration)
+IDCComm::create(const Configuration& configuration)
 {
 	auto serialComm = std::make_shared<IDCComm>();
 
@@ -54,7 +54,7 @@ IDCComm::create(const boost::property_tree::ptree& configuration)
 }
 
 bool
-IDCComm::configure(const boost::property_tree::ptree& configuration)
+IDCComm::configure(const Configuration& configuration)
 {
 	PropertyMapper pm(configuration);
 

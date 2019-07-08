@@ -26,7 +26,7 @@
 #ifndef UAVAP_MISSIONCONTROL_MISSIONPLANNER_OVERRIDE_H_
 #define UAVAP_MISSIONCONTROL_MISSIONPLANNER_OVERRIDE_H_
 
-#include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/PropertyMapper/Configuration.h>
 
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
@@ -79,7 +79,7 @@ struct Override
 	CustomOverrides custom;
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	bool
 	isEmpty() const;

@@ -40,7 +40,7 @@ FilletGlobalPlanner::FilletGlobalPlanner() :
 }
 
 std::shared_ptr<FilletGlobalPlanner>
-FilletGlobalPlanner::create(const boost::property_tree::ptree& config)
+FilletGlobalPlanner::create(const Configuration& config)
 {
 	auto planner = std::make_shared<FilletGlobalPlanner>();
 	if (!planner->configure(config))
@@ -51,7 +51,7 @@ FilletGlobalPlanner::create(const boost::property_tree::ptree& config)
 }
 
 bool
-FilletGlobalPlanner::configure(const boost::property_tree::ptree& config)
+FilletGlobalPlanner::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 	pm.add<double>("fillet_radius", filletRadius_, true);

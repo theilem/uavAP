@@ -52,7 +52,7 @@ ConstRollRateModel::~ConstRollRateModel()
 }
 
 std::shared_ptr<ConstRollRateModel>
-ConstRollRateModel::create(const boost::property_tree::ptree& config)
+ConstRollRateModel::create(const Configuration& config)
 {
 	auto constRollRateModel = std::make_shared<ConstRollRateModel>();
 
@@ -65,7 +65,7 @@ ConstRollRateModel::create(const boost::property_tree::ptree& config)
 }
 
 bool
-ConstRollRateModel::configure(const boost::property_tree::ptree& config)
+ConstRollRateModel::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 	pm.add<double>("roll_rate", rollRate_, true);

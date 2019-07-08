@@ -43,7 +43,7 @@ IPC::~IPC()
 }
 
 std::shared_ptr<IPC>
-IPC::create(const boost::property_tree::ptree&)
+IPC::create(const Configuration&)
 {
 	return std::make_shared<IPC>();
 }

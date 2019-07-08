@@ -48,7 +48,7 @@ EduInterface::~EduInterface()
 }
 
 std::shared_ptr<EduInterface>
-EduInterface::create(const boost::property_tree::ptree& config)
+EduInterface::create(const Configuration& config)
 {
 	auto emulation = std::make_shared<EduInterface>();
 	if (!emulation->configure(config))
@@ -57,7 +57,7 @@ EduInterface::create(const boost::property_tree::ptree& config)
 }
 
 bool
-EduInterface::configure(const boost::property_tree::ptree& config)
+EduInterface::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 	return pm.map();

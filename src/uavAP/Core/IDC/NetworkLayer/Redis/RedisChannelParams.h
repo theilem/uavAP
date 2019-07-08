@@ -7,7 +7,7 @@
 
 #ifndef UAVAP_CORE_IDC_NETWORKLAYER_REDIS_REDISCHANNELPARAMS_H_
 #define UAVAP_CORE_IDC_NETWORKLAYER_REDIS_REDISCHANNELPARAMS_H_
-#include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/PropertyMapper/Configuration.h>
 #include <string>
 
 struct RedisChannelParams
@@ -23,7 +23,7 @@ struct RedisChannelParams
 	RedisChannelParams() = default;
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 };
 
 #endif /* UAVAP_CORE_IDC_NETWORKLAYER_REDIS_REDISCHANNELPARAMS_H_ */

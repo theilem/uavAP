@@ -43,8 +43,8 @@ SteadyStateAnalysis::create(const Configuration& config)
 bool
 SteadyStateAnalysis::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
-	boost::property_tree::ptree toleranceTree;
+	PropertyMapper<Configuration> pm(config);
+	Configuration toleranceTree;
 
 	pm.add("tolerance", toleranceTree, false);
 	pm.add<double>("in_tolerance_duration", inToleranceDuration_, false);
@@ -125,7 +125,7 @@ SteadyStateAnalysis::run(RunStage stage)
 SteadyStateMetrics
 SteadyStateAnalysis::getInspectingMetrics() const
 {
-	std::lock_guard<std::mutex> lg(inspectingMetricsMutex_);
+	LockGuard lg(inspectingMetricsMutex_);
 
 	if (inspectingMetrics_)
 	{
@@ -140,7 +140,7 @@ SteadyStateAnalysis::setInspectingMetrics(InspectingMetricsPair pair)
 {
 	MetricsGroup inspectingGroup = static_cast<MetricsGroup>(pair.first);
 
-	std::unique_lock<std::mutex> lock(metricsMutex_);
+	Lock lock(metricsMutex_);
 	switch (inspectingGroup)
 	{
 	case MetricsGroup::LOCAL_PLANNER:
@@ -149,7 +149,7 @@ SteadyStateAnalysis::setInspectingMetrics(InspectingMetricsPair pair)
 
 		if (auto metricsPair = findInMap(metrics_.localPlanner, inspectingMember))
 		{
-			std::unique_lock<std::mutex> lock(inspectingMetricsMutex_);
+			Lock lock(inspectingMetricsMutex_);
 			inspectingMetrics_ = &(metricsPair->second);
 			lock.unlock();
 		}
@@ -166,7 +166,7 @@ SteadyStateAnalysis::setInspectingMetrics(InspectingMetricsPair pair)
 
 		if (auto metricsPair = findInMap(metrics_.controllerTarget, inspectingMember))
 		{
-			std::unique_lock<std::mutex> lock(inspectingMetricsMutex_);
+			Lock lock(inspectingMetricsMutex_);
 			inspectingMetrics_ = &(metricsPair->second);
 			lock.unlock();
 		}
@@ -183,7 +183,7 @@ SteadyStateAnalysis::setInspectingMetrics(InspectingMetricsPair pair)
 
 		if (auto metricsPair = findInMap(metrics_.pid, inspectingMember))
 		{
-			std::unique_lock<std::mutex> lock(inspectingMetricsMutex_);
+			Lock lock(inspectingMetricsMutex_);
 			inspectingMetrics_ = &(metricsPair->second);
 			lock.unlock();
 		}
@@ -211,7 +211,7 @@ SteadyStateAnalysis::setInspectingMetrics(InspectingMetricsPair pair)
 void
 SteadyStateAnalysis::onOverride(const Packet& packet)
 {
-	std::unique_lock<std::mutex> lock(overrideMutex_);
+	Lock lock(overrideMutex_);
 	override_ = dp::deserialize<Override>(packet);
 	newOverride_ = true;
 	lock.unlock();
@@ -220,7 +220,7 @@ SteadyStateAnalysis::onOverride(const Packet& packet)
 void
 SteadyStateAnalysis::onPIDStati(const Packet& packet)
 {
-	std::unique_lock<std::mutex> lock(pidStatiMutex_);
+	Lock lock(pidStatiMutex_);
 	pidStati_ = dp::deserialize<PIDStati>(packet);
 	lock.unlock();
 }
@@ -230,14 +230,14 @@ SteadyStateAnalysis::onSensorData(const SensorData& data)
 {
 	if (!initialize_)
 	{
-		std::unique_lock<std::mutex> metricsLock(metricsMutex_);
+		Lock metricsLock(metricsMutex_);
 		metrics_.setToleranceTimeStamp(data.timestamp);
 		metricsLock.unlock();
 
 		initialize_ = true;
 	}
 
-	std::unique_lock<std::mutex> overrideLock(overrideMutex_);
+	Lock overrideLock(overrideMutex_);
 
 	if (newOverride_ || override_.isEmpty())
 	{
@@ -257,8 +257,8 @@ SteadyStateAnalysis::onSensorData(const SensorData& data)
 		newOverride_ = false;
 	}
 
-	std::unique_lock<std::mutex> pidStatiLock(pidStatiMutex_);
-	std::unique_lock<std::mutex> metricsLock(metricsMutex_);
+	Lock pidStatiLock(pidStatiMutex_);
+	Lock metricsLock(metricsMutex_);
 
 	checkTolerance(data, pidStati_, override_, metrics_);
 	checkSteadyState(data, override_, metrics_);
@@ -426,7 +426,7 @@ SteadyStateAnalysis::resetMetrics(TimePoint time)
 {
 	APLOG_DEBUG << "Reset Metrics.";
 
-	std::unique_lock<std::mutex> lock(metricsMutex_);
+	Lock lock(metricsMutex_);
 	metrics_.reset();
 	lock.unlock();
 

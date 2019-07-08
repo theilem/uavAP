@@ -42,7 +42,7 @@ ManeuverPlanner::ManeuverPlanner() :
 }
 
 std::shared_ptr<ManeuverPlanner>
-ManeuverPlanner::create(const boost::property_tree::ptree& config)
+ManeuverPlanner::create(const Configuration& config)
 {
 	auto maneuverPlanner = std::make_shared<ManeuverPlanner>();
 

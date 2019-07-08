@@ -33,9 +33,9 @@ SerialNetworkParams::SerialNetworkParams(const std::string& port, unsigned int b
 }
 
 bool
-SerialNetworkParams::configure(const boost::property_tree::ptree& config)
+SerialNetworkParams::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	pm.add("serial_port", serialPort, true);
 	pm.add<unsigned int>("baud_rate", baudRate, false);
 	pm.add("delimiter_string", delimiterString, false);

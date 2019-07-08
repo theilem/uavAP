@@ -149,37 +149,37 @@ dp::serialize(Archive& ar, typename std::enable_if<is_vector<Type>::value, Type>
 	split(ar, val);
 }
 
-template<class Archive, typename Type>
-inline void
-dp::load(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
-{
-	bool init;
-	ar >> init;
-	if (init)
-	{
-		Type temp;
-		ar >> temp;
-		val = temp;
-	}
-}
-
-template<class Archive, typename Type>
-inline void
-dp::store(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
-{
-	ar << val.is_initialized();
-	if (val)
-	{
-		ar << *val;
-	}
-}
-
-template<class Archive, typename Type>
-inline void
-dp::serialize(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
-{
-	split(ar, val);
-}
+//template<class Archive, typename Type>
+//inline void
+//dp::load(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
+//{
+//	bool init;
+//	ar >> init;
+//	if (init)
+//	{
+//		Type temp;
+//		ar >> temp;
+//		val = temp;
+//	}
+//}
+//
+//template<class Archive, typename Type>
+//inline void
+//dp::store(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
+//{
+//	ar << val.is_initialized();
+//	if (val)
+//	{
+//		ar << *val;
+//	}
+//}
+//
+//template<class Archive, typename Type>
+//inline void
+//dp::serialize(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
+//{
+//	split(ar, val);
+//}
 
 template<class Archive, typename Type>
 inline void
@@ -255,7 +255,7 @@ dp::load(Archive& ar,
 	uint16_t size;
 	ar >> size;
 	val.resize(size);
-	ar.read(val.data(), size);
+	ar.read(const_cast<char*>(val.data()), size);
 }
 
 template<class Archive, typename Type>

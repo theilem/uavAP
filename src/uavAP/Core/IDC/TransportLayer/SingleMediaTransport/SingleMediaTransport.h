@@ -43,10 +43,10 @@ public:
 	static constexpr TypeId typeId = "single";
 
 	static std::shared_ptr<SingleMediaTransport>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	bool
 	send(const std::string& dest, const Packet& packet, bool ack = false) override;

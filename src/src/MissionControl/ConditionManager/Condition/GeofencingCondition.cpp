@@ -69,7 +69,7 @@ GeofencingCondition::~GeofencingCondition()
 }
 
 std::shared_ptr<GeofencingCondition>
-GeofencingCondition::create(const boost::property_tree::ptree& config)
+GeofencingCondition::create(const Configuration& config)
 {
 	auto cond = std::make_shared<GeofencingCondition>();
 	cond->configure(config);
@@ -77,7 +77,7 @@ GeofencingCondition::create(const boost::property_tree::ptree& config)
 }
 
 bool
-GeofencingCondition::configure(const boost::property_tree::ptree& config)
+GeofencingCondition::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 	pm.add<double>("roll_rate", rollRate_, true);

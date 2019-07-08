@@ -39,7 +39,7 @@ MultiThreadingScheduler::~MultiThreadingScheduler()
 }
 
 std::shared_ptr<IScheduler>
-MultiThreadingScheduler::create(const boost::property_tree::ptree&)
+MultiThreadingScheduler::create(const Configuration&)
 {
 	return std::make_shared<MultiThreadingScheduler>();
 }

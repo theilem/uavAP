@@ -8,9 +8,9 @@
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 
 bool
-RedisChannelParams::configure(const boost::property_tree::ptree& config)
+RedisChannelParams::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	pm.add("host_ip", hostIP_, false);
 	pm.add<unsigned int>("port", port_, false);
 	pm.add("channel", channel_, true);

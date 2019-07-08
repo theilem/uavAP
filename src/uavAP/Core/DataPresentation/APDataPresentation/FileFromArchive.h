@@ -45,14 +45,8 @@ public:
 	read(char* val, unsigned long bytes);
 
 	template<class Type>
-	typename std::enable_if<!std::is_base_of<google::protobuf::Message, Type>::value,
-	FileFromArchive>::type&
+	FileFromArchive&
 	operator >>(Type& val);
-
-	template<class Type>
-	typename std::enable_if<std::is_base_of<google::protobuf::Message, Type>::value,
-			FileFromArchive>::type&
-	operator >>(Type& message);
 
 	FileFromArchive&
 	operator >>(double& doub);

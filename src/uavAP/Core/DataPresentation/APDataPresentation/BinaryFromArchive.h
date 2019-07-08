@@ -73,8 +73,6 @@ public:
 	void
 	consume(unsigned long bytes);
 
-
-
 	void
 	read(char* val, unsigned long bytes);
 
@@ -84,19 +82,8 @@ public:
 	 * @return From archive
 	 */
 	template<class Type>
-	typename std::enable_if<!std::is_base_of<google::protobuf::Message, Type>::value,
-			BinaryFromArchive>::type&
+	BinaryFromArchive&
 	operator >>(Type& val);
-
-	/**
-	 * @brief Flush out operator used for protobuf objects
-	 * @param val Protobuf object
-	 * @return From archive
-	 */
-	template<class Type>
-	typename std::enable_if<std::is_base_of<google::protobuf::Message, Type>::value,
-			BinaryFromArchive>::type&
-	operator >>(Type& message);
 
 	BinaryFromArchive&
 	operator >>(double& doub);

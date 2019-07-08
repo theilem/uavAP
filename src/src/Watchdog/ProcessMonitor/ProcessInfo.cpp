@@ -33,7 +33,7 @@ ProcessInfo::ProcessInfo(const std::string& n) :
 }
 
 bool
-ProcessInfo::configure(const boost::property_tree::ptree& config)
+ProcessInfo::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 	pm.add("binary", binaryPath, true);

@@ -26,7 +26,8 @@
 #ifndef UAVAP_CORE_LOCKTYPES_H_
 #define UAVAP_CORE_LOCKTYPES_H_
 
-#ifdef ERIKA
+#ifdef NO_LOCKING
+
 using Mutex = int;
 
 struct FakeLock
@@ -38,7 +39,9 @@ struct FakeLock
 };
 using Lock = FakeLock;
 using LockGuard = int;
+
 #else
+
 #include <mutex>
 
 using Mutex = std::mutex;

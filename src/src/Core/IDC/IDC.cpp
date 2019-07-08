@@ -28,7 +28,7 @@
 #include <uavAP/Core/Logging/APLogger.h>
 
 std::shared_ptr<IDC>
-IDC::create(const boost::property_tree::ptree&)
+IDC::create(const Configuration&)
 {
 	return std::make_shared<IDC>();
 }

@@ -63,7 +63,7 @@ public:
 	~IPC();
 
 	static std::shared_ptr<IPC>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	template<class Object>
 	Subscription

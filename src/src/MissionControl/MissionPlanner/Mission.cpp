@@ -27,7 +27,7 @@
 #include "uavAP/MissionControl/MissionPlanner/Mission.h"
 
 bool
-Waypoint::configure(const boost::property_tree::ptree& config)
+Waypoint::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 	pm.add<double>("n", location[1], true);
@@ -62,7 +62,7 @@ Waypoint::configure(const boost::property_tree::ptree& config)
 }
 
 bool
-Mission::configure(const boost::property_tree::ptree& config)
+Mission::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 	pm.add<double>("velocity", velocity, true);

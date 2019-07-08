@@ -30,7 +30,7 @@
 
 using boost::property_tree::json_parser::read_json;
 
-PropertyMapper::PropertyMapper(const boost::property_tree::ptree& p) :
+PropertyMapper::PropertyMapper(const Configuration& p) :
 		p_(p), mandatoryCheck_(true)
 {
 }

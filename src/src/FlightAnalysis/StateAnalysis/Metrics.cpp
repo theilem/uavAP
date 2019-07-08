@@ -92,7 +92,7 @@ Metrics::reset()
 }
 
 bool
-Metrics::configure(const boost::property_tree::ptree& config)
+Metrics::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 

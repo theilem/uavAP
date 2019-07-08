@@ -8,7 +8,7 @@
 #ifndef UAVAP_UAVAP_CORE_PROPERTYMAPPER_CONFIGURATION_H_
 #define UAVAP_UAVAP_CORE_PROPERTYMAPPER_CONFIGURATION_H_
 
-#ifdef ERIKA
+#ifdef NO_RTTI
 
 #include "uavAP/Core/PropertyMapper/EmptyConfiguration.h"
 

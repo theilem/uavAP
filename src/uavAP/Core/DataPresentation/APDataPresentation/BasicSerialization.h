@@ -285,44 +285,44 @@ template<class Archive, typename Type>
 inline void
 serialize(Archive& ar,
 		typename std::enable_if<std::is_same<Type, std::string>::value, Type>::type& val);
-
-/**
- * @brief is_optional struct false_type because T is not a boost optional
- */
-template<typename T>
-struct is_optional: public std::false_type
-{
-};
-#ifndef ERIKA
-/**
- * @brief is_optional struct true_type because T is a boost optional
- */
-template<typename T>
-struct is_optional<boost::optional<T>> : public std::true_type
-{
-};
-#endif
-
-/**
- * @brief Load function for boost optionals
- */
-template<class Archive, typename Type>
-void
-load(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val);
-
-/**
- * @brief Store function for boost optionals
- */
-template<class Archive, typename Type>
-void
-store(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val);
-
-/**
- * @brief Serialize function for boost optionals
- */
-template<class Archive, typename Type>
-inline void
-serialize(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val);
+//
+///**
+// * @brief is_optional struct false_type because T is not a boost optional
+// */
+//template<typename T>
+//struct is_optional: public std::false_type
+//{
+//};
+//#ifndef ERIKA
+///**
+// * @brief is_optional struct true_type because T is a boost optional
+// */
+//template<typename T>
+//struct is_optional<boost::optional<T>> : public std::true_type
+//{
+//};
+//#endif
+//
+///**
+// * @brief Load function for boost optionals
+// */
+//template<class Archive, typename Type>
+//void
+//load(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val);
+//
+///**
+// * @brief Store function for boost optionals
+// */
+//template<class Archive, typename Type>
+//void
+//store(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val);
+//
+///**
+// * @brief Serialize function for boost optionals
+// */
+//template<class Archive, typename Type>
+//inline void
+//serialize(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val);
 
 
 template<typename T>

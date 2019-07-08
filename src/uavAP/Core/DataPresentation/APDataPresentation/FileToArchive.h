@@ -58,20 +58,8 @@ public:
 	 * @return The archive itself
 	 */
 	template<typename Type>
-	typename std::enable_if<!std::is_base_of<google::protobuf::Message, Type>::value, FileToArchive>::type&
+	FileToArchive&
 	operator <<(const Type& cval);
-
-	/**
-	 * @brief Flush in operator for protobuf objects.
-	 *
-	 * Uses the serialization function of a protobuf object to create a string from that object.
-	 * Then appends the current string with the serialization of the object.
-	 * @param message Protobuf object
-	 * @return The archive itself
-	 */
-	template<class Type>
-	typename std::enable_if<std::is_base_of<google::protobuf::Message, Type>::value, FileToArchive>::type&
-	operator <<(const Type& message);
 
 	/**
 	 * @brief Handle double according to setting compressDouble_

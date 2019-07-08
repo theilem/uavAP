@@ -26,19 +26,9 @@
 #ifndef UAVAP_CORE_TIME_H_
 #define UAVAP_CORE_TIME_H_
 
-//#include <boost/date_time/posix_time/posix_time.hpp>
-//#include <boost/date_time/gregorian_calendar.hpp>
 #include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
 #include <chrono>
-
-//using TimePoint = boost::posix_time::ptime;
-//using Duration = boost::posix_time::time_duration;
-//using Microseconds = boost::posix_time::microseconds;
-//using Milliseconds = boost::posix_time::milliseconds;
-//using Seconds = boost::posix_time::seconds;
-//using Minutes = boost::posix_time::minutes;
-//using Hours = boost::posix_time::hours;
-//using Date = boost::gregorian::date;
+#include <ctime>
 
 using Clock = std::chrono::high_resolution_clock;
 using TimePoint = std::chrono::time_point<Clock>;
@@ -50,39 +40,23 @@ using Seconds = std::chrono::seconds;
 using Minutes = std::chrono::minutes;
 using Hours = std::chrono::hours;
 
+inline std::tm*
+getTM(const TimePoint& time)
+{
+	auto timeT = Clock::to_time_t(time);
+	return std::localtime(&timeT);
+}
+
+inline Duration
+getTimeOfDay(const TimePoint& time)
+{
+	Hours sinceEpoch = std::chrono::duration_cast<Hours>(time.time_since_epoch());
+	return time.time_since_epoch() - Hours((sinceEpoch.count() / 24)*24);
+}
+
+
 namespace dp
 {
-//template<class Archive, typename Type>
-//inline void
-//store(Archive& ar, const TimePoint& t)
-//{
-//	auto special = t.is_special();
-//	ar << special;
-//	if (!special)
-//	{
-//		ar << t.date().day_count().as_number();
-//		ar << t.time_of_day().total_microseconds();
-//	}
-//}
-//
-//template<class Archive, typename Type>
-//inline void
-//load(Archive& ar, TimePoint& t)
-//{
-//	bool special;
-//	ar >> special;
-//	if (special)
-//	{
-//		t = boost::posix_time::not_a_date_time;
-//		return;
-//	}
-//	Date::date_rep_type::int_type days;
-//	ar >> days;
-//	TimePoint::time_duration_type::tick_type micros;
-//	ar >> micros;
-//
-//	t = TimePoint(Date(days), Microseconds(micros));
-//}
 
 template<class Archive, typename Type>
 inline void

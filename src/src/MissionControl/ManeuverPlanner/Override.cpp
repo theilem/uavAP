@@ -51,7 +51,7 @@ mapOverrideValue(PropertyMapper<boost::property_tree::ptree>& pm, const std::str
 }
 
 bool
-Override::configure(const boost::property_tree::ptree& config)
+Override::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 

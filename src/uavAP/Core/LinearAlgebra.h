@@ -33,7 +33,9 @@
 
 #include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
 
-#ifdef ERIKA
+#ifdef FLOAT_SINGLE
+
+using FloatingType = float;
 using Vector2 = Eigen::Matrix<float, 2, 1, Eigen::DontAlign>;
 using Vector3 = Eigen::Matrix<float, 3, 1, Eigen::DontAlign>;
 using Matrix3 = Eigen::Matrix<float, 3, 3, Eigen::DontAlign>;
@@ -42,8 +44,10 @@ using Rotation2 = Eigen::Rotation2Df;
 using EigenLine = Eigen::ParametrizedLine<float, 3, Eigen::DontAlign>;
 using EigenLine2 = Eigen::ParametrizedLine<float, 2, Eigen::DontAlign>;
 using EigenHyperplane = Eigen::Hyperplane<float, 3, Eigen::DontAlign>;
-using FloatingType = float;
+
 #else
+
+using FloatingType = double;
 using Vector2 = Eigen::Vector2d;
 using Vector3 = Eigen::Vector3d;
 using Matrix3 = Eigen::Matrix3d;
@@ -52,7 +56,7 @@ using Rotation2 = Eigen::Rotation2Dd;
 using EigenLine = Eigen::ParametrizedLine<double, 3>;
 using EigenLine2 = Eigen::ParametrizedLine<double, 2>;
 using EigenHyperplane = Eigen::Hyperplane<double, 3, Eigen::DontAlign>;
-using FloatingType = double;
+
 #endif
 
 

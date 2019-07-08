@@ -40,7 +40,7 @@ CustomPlanner::CustomPlanner() :
 }
 
 bool
-CustomPlanner::configure(const boost::property_tree::ptree& config)
+CustomPlanner::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 

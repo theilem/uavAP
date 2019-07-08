@@ -103,7 +103,7 @@ HelicopterSimplePIDCascade::HelicopterSimplePIDCascade(SensorData* sensorData, C
 }
 
 bool
-HelicopterSimplePIDCascade::configure(const boost::property_tree::ptree& config)
+HelicopterSimplePIDCascade::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 	pm.add<double>("hard_roll_constraint", hardRollConstraint_, false);
