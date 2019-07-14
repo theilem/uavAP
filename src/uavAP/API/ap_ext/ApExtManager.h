@@ -95,6 +95,8 @@ private:
 
 	unsigned int sampleNr_;
 
+	Vector3 lastPosition_;
+	Vector3 lastVelocity_;
 };
 
 #endif /* UAVAP_API_APEXTMANAGER_H_ */

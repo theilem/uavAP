@@ -104,6 +104,9 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	Vector3 angularRate;
 	Vector3 euler;
 	Eigen::Quaterniond attitude;
+
+	angularRate << 0.0, 0.0, 0.0;
+
 	if (internalImu_)
 	{
 		auto imuSample = sample->int_imu_sample;
@@ -291,15 +294,43 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			latitude = imu->imu_lat;
 			altitude = imu->imu_alt;
 
+			if (longitude == 0 || latitude == 0 || altitude == 0)
+			{
+				longitude = lastPosition_.x();
+				latitude = lastPosition_.y();
+				altitude = lastPosition_.z();
+			}
+			else
+			{
+				lastPosition_.x() = longitude;
+				lastPosition_.y() = latitude;
+				lastPosition_.z() = altitude;
+			}
+
 			sens.velocity[0] = imu->imu_vel_x;
 			sens.velocity[1] = imu->imu_vel_y;
 			sens.velocity[2] = imu->imu_vel_z;
 
-			courseAngle = atan2(imu->imu_vel_y, imu->imu_vel_x);
+			if (sens.velocity[0] == 0 || sens.velocity[1] == 0 || sens.velocity[2] == 0)
+			{
+				sens.velocity[0] = lastVelocity_.x();
+				sens.velocity[1] = lastVelocity_.y();
+				sens.velocity[2] = lastVelocity_.z();
+			}
+			else
+			{
+				lastVelocity_.x() = sens.velocity[0];
+				lastVelocity_.y() = sens.velocity[1];
+				lastVelocity_.z() = sens.velocity[2];
+			}
+
+//			courseAngle = atan2(imu->imu_vel_y, imu->imu_vel_x);
+			courseAngle = atan2(sens.velocity[1], sens.velocity[0]);
 
 			sens.groundSpeed = sens.velocity.norm();
 
-			sens.hasGPSFix = (sample->imu_sample->valid_flags & 0x80) > 0;
+//			sens.hasGPSFix = (sample->imu_sample->valid_flags & 0x80) > 0;
+			sens.hasGPSFix = true;
 		}
 	}
 

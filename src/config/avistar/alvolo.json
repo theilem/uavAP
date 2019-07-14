@@ -7,7 +7,7 @@
 		"use_airspeed":false,
 		"use_euler":true,
 		"external_gps":false,
-		"course_as_heading":true,
+		"course_as_heading":false,
 		"channel_naming":
 		{
 			"throttle":		0,
