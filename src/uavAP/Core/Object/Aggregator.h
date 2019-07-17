@@ -26,18 +26,12 @@
 #ifndef UAVAP_CORE_OBJECT_AGGREGATOR_H_
 #define UAVAP_CORE_OBJECT_AGGREGATOR_H_
 
-#ifndef ERIKA
-#include <boost/signals2.hpp>
-#endif
 #include <uavAP/Core/Object/DynamicContainer/DynamicObjectContainer.h>
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 
 #include <memory>
 #include <vector>
-
-void
-sigIntHandler(int sig) __attribute__((noreturn));
 
 class Aggregator
 {
@@ -68,15 +62,6 @@ public:
 	static Aggregator
 	aggregate(std::vector<std::shared_ptr<IAggregatableObject> > aggregation);
 
-#ifndef ERIKA
-	using OnSIGINT = boost::signals2::signal<void(int)>;
-
-	void
-	subscribeOnSigint(const OnSIGINT::slot_type& slot) const;
-#endif
-	void
-	callSigHandlers(int sig);
-
 	void
 	merge(Aggregator& agg);
 
@@ -92,9 +77,6 @@ public:
 private:
 
 	ObjectContainer container_;
-#ifndef ERIKA
-	mutable OnSIGINT onSigint_;
-#endif
 };
 
 template<class Type>

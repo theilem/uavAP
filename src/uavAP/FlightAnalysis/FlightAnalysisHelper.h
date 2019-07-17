@@ -26,8 +26,7 @@
 #ifndef UAVAP_FLIGHTANALYSIS_FLIGHTANALYSISHELPER_H_
 #define UAVAP_FLIGHTANALYSIS_FLIGHTANALYSISHELPER_H_
 
-#include "uavAP/Core/DataPresentation/ContentMapping.h"
-#include "uavAP/Core/DataPresentation/DataPresentationFactory.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/Scheduler/SchedulerFactory.h"
 #include "uavAP/Core/TimeProvider/TimeProviderFactory.h"
@@ -43,7 +42,7 @@ public:
 	{
 		addDefault<SchedulerFactory>();
 		addDefault<TimeProviderFactory>();
-		addDefault<DataPresentationFactory<Content, Target>>();
+		addDefaultCreator<DataPresentation>();
 		addDefaultCreator<IPC>();
 		addDefaultCreator<SteadyStateAnalysis>();
 		addDefaultCreator<ManeuverAnalysis>();

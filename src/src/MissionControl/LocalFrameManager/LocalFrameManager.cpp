@@ -22,10 +22,10 @@
  *  Created on: Aug 9, 2018
  *      Author: mircot
  */
-#include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include <uavAP/Core/Scheduler/IScheduler.h>
 #include <uavAP/MissionControl/LocalFrameManager/LocalFrameManager.h>
+#include <uavAP/Core/IPC/IPC.h>
 
 LocalFrameManager::LocalFrameManager() :
 		frame_(0)
@@ -73,7 +73,7 @@ LocalFrameManager::run(RunStage stage)
 
 		auto ipc = ipc_.get();
 
-		framePublisher_ = ipc->publishOnSharedMemory<VehicleOneFrame>("local_frame");
+		framePublisher_ = ipc->publish<VehicleOneFrame>("local_frame");
 		break;
 	}
 	case RunStage::NORMAL:

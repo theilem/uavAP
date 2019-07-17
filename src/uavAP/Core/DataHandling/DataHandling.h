@@ -7,21 +7,26 @@
 
 #ifndef UAVAP_CORE_DATAHANDLING_H_
 #define UAVAP_CORE_DATAHANDLING_H_
+#include <uavAP/Core/DataHandling/DataHandlingParams.h>
 #include <uavAP/Core/DataPresentation/Content.h>
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
-#include <uavAP/Core/DataPresentation/IDataPresentation.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 #include <uavAP/Core/DataPresentation/Packet.h>
 #include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/Core/IPC/Publisher.h>
 #include <uavAP/Core/Logging/APLogger.h>
+#include <uavAP/Core/Object/AggregatableObject.hpp>
 #include <uavAP/Core/Object/IAggregatableObject.h>
 #include <uavAP/Core/Object/ObjectHandle.h>
 #include <uavAP/Core/Runner/IRunnableObject.h>
+#include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
 #include <uavAP/Core/Time.h>
+#include <unordered_map>
 
 class IScheduler;
 
-class DataHandling: public IAggregatableObject, public IRunnableObject
+class DataHandling: public AggregatableObject<DataPresentation, IScheduler, IPC>,
+		public ConfigurableObject<DataHandlingParams>,
+		public IRunnableObject
 {
 public:
 
@@ -32,9 +37,6 @@ public:
 	static std::shared_ptr<DataHandling>
 	create(const Configuration& config);
 
-	bool
-	configure(const Configuration& config);
-
 	template<typename Type>
 	void
 	subscribeOnCommand(Content content, std::function<void
@@ -43,19 +45,16 @@ public:
 	template<typename Type>
 	void
 	addStatusFunction(std::function<Type
-	()> statusFunc);
+	()> statusFunc, Content content);
 
 	template<typename Type, typename TriggerType>
 	void
 	addTriggeredStatusFunction(std::function<boost::optional<Type>
-	(const TriggerType&)> statusFunc, Content TriggerCommand);
+	(const TriggerType&)> statusFunc, Content statusContent, Content TriggerCommand);
 
 	template<typename Type>
 	void
 	sendData(const Type& data, Content content, Target target = Target::BROADCAST);
-
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	bool
 	run(RunStage stage) override;
@@ -71,58 +70,51 @@ private:
 	template<typename Type>
 	Packet
 	createPacket(std::function<Type
-	()> statusFunc);
+	()> statusFunc, Content content);
 
 	template<typename Type>
 	void
-	forwardCommand(const boost::any& any, std::function<void
+	forwardCommand(const Packet& packet, std::function<void
 	(const Type&)> callback);
 
 	template<typename Type, typename TriggerType>
 	void
 	evaluateTrigger(const TriggerType& any, std::function<boost::optional<Type>
-	(const TriggerType&)> callback);
-
-	Target target_;
-	std::string targetName_;
-	int period_;
-
-	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
-	ObjectHandle<IScheduler> scheduler_;
-	ObjectHandle<IPC> ipc_;
+	(const TriggerType&)> callback, Content statusContent);
 
 	std::vector<std::function<Packet
 	()>> statusPackaging_;
 
 	std::unordered_map<Content, std::vector<std::function<void
-	(const boost::any&)>>> subscribers_;
+	(const Packet&)>>> subscribers_;
 
-	Publisher publisher_;
+	Publisher<Packet> publisher_;
 };
 
 template<typename Type>
 inline void
 DataHandling::addStatusFunction(std::function<Type
-()> statusFunc)
+()> statusFunc, Content content)
 {
-	auto func = std::bind(&DataHandling::createPacket<Type>, this, statusFunc);
+	auto func = std::bind(&DataHandling::createPacket<Type>, this, statusFunc, content);
 	statusPackaging_.push_back(func);
 }
 
 template<typename Type>
 inline Packet
 DataHandling::createPacket(std::function<Type
-()> statusFunc)
+()> statusFunc, Content content)
 {
 	auto status = statusFunc();
-	auto dp = dataPresentation_.get();
+	auto dp = get<DataPresentation>();
 	if (!dp)
 	{
 		APLOG_ERROR << "Data Presentation Missing, cannot create packet.";
 		return Packet();
 	}
-	Content content = TypeToEnum<Type, Content>::value;
-	return dp->serialize(status, content);
+	auto packet = dp->serialize(status);
+	dp->addHeader(packet, content);
+	return packet;
 
 }
 
@@ -141,46 +133,48 @@ DataHandling::subscribeOnCommand(Content content, std::function<void
 	}
 
 	std::vector<std::function<void
-	(const boost::any&)>> vec;
+	(const Packet&)>> vec;
 	vec.push_back(func);
 	subscribers_.insert(std::make_pair(content, vec));
 }
 
 template<typename Type>
 inline void
-DataHandling::forwardCommand(const boost::any& any, std::function<void
+DataHandling::forwardCommand(const Packet& packet, std::function<void
 (const Type&)> callback)
 {
-	callback(boost::any_cast<Type>(any));
+	auto dp = get<DataPresentation>();
+	callback(dp->deserialize<Type>(packet));
 }
 
 template<typename Type, typename TriggerType>
 inline void
 DataHandling::addTriggeredStatusFunction(std::function<boost::optional<Type>
-(const TriggerType&)> statusFunc, Content triggerCommand)
+(const TriggerType&)> statusFunc, Content statusContent, Content triggerCommand)
 {
 	std::function<void
 	(const TriggerType&)> func = std::bind(&DataHandling::evaluateTrigger<Type, TriggerType>, this,
-			std::placeholders::_1, statusFunc);
+			std::placeholders::_1, statusFunc, statusContent);
 	subscribeOnCommand(triggerCommand, func);
 }
 
 template<typename Type, typename TriggerType>
 inline void
 DataHandling::evaluateTrigger(const TriggerType& trigger, std::function<boost::optional<Type>
-(const TriggerType&)> callback)
+(const TriggerType&)> callback, Content statusContent)
 {
 	auto status = callback(trigger);
 	if (status)
 	{
-		auto dp = dataPresentation_.get();
+		auto dp = get<DataPresentation>();
 		if (!dp)
 		{
 			APLOG_ERROR << "Data Presentation Missing, cannot create packet.";
 			return;
 		}
-		Content content = TypeToEnum<Type, Content>::value;
-		publisher_.publish(dp->serialize(*status, content));
+		auto packet = dp->serialize(*status);
+		dp->addHeader(packet, statusContent);
+		publisher_.publish(packet);
 	}
 }
 
@@ -188,15 +182,16 @@ template<typename Type>
 inline void
 DataHandling::sendData(const Type& data, Content content, Target target)
 {
-	auto dp = dataPresentation_.get();
+	auto dp = get<DataPresentation>();
 	if (!dp)
 	{
 		APLOG_ERROR << "Data Presentation Missing, cannot create packet.";
 		return;
 	}
 
-	Packet packet = dp->serialize(data, content);
-	dp->setTarget(packet, target);
+	Packet packet = dp->serialize(data);
+	dp->addHeader(packet, content);
+	dp->addHeader(packet, target);
 	publisher_.publish(packet);
 
 }

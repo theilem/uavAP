@@ -23,7 +23,13 @@
  *      Author: simonyu
  */
 
+#include <boost/any.hpp>
+#include <uavAP/Core/DataPresentation/Content.h>
+#include <uavAP/Core/Scheduler/IScheduler.h>
 #include "uavAP/FlightAnalysis/DataHandling/FlightAnalysisDataHandling.h"
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
+#include <uavAP/FlightAnalysis/StateAnalysis/SteadyStateAnalysis.h>
+#include <uavAP/Core/IPC/IPC.h>
 
 FlightAnalysisDataHandling::FlightAnalysisDataHandling() :
 		period_(Milliseconds(100))
@@ -46,7 +52,7 @@ FlightAnalysisDataHandling::create(const Configuration& config)
 bool
 FlightAnalysisDataHandling::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	pm.add("period", period_, false);
 
 	return pm.map();
@@ -87,7 +93,7 @@ FlightAnalysisDataHandling::run(RunStage stage)
 	{
 		auto ipc = ipcHandle_.get();
 
-		subscription_ = ipc->subscribeOnPacket("data_com_fa",
+		subscription_ = ipc->subscribeOnPackets("data_com_fa",
 				boost::bind(&FlightAnalysisDataHandling::receiveAndDistribute, this, _1));
 
 		if (!subscription_.connected())
@@ -150,8 +156,8 @@ FlightAnalysisDataHandling::receiveAndDistribute(const Packet& packet)
 		return;
 	}
 
-	Content content = Content::INVALID;
-	auto any = dp->deserialize(packet, content);
+	auto p = packet;
+	auto content = dp->extractHeader<Content>(p);
 
 	try
 	{
@@ -159,7 +165,7 @@ FlightAnalysisDataHandling::receiveAndDistribute(const Packet& packet)
 		{
 		case Content::SELECT_INSPECTING_METRICS:
 		{
-			setInspectingMetrics(boost::any_cast<InspectingMetricsPair>(any));
+			setInspectingMetrics(dp->deserialize<InspectingMetricsPair>(p));
 			break;
 		}
 		default:
@@ -179,8 +185,7 @@ FlightAnalysisDataHandling::receiveAndDistribute(const Packet& packet)
 }
 
 void
-FlightAnalysisDataHandling::collectAndSendInspectingMetrics(
-		std::shared_ptr<IDataPresentation<Content, Target>> dp)
+FlightAnalysisDataHandling::collectAndSendInspectingMetrics(std::shared_ptr<DataPresentation> dp)
 {
 	APLOG_DEBUG << "Collect and Send Inspecting Metrics.";
 
@@ -193,7 +198,8 @@ FlightAnalysisDataHandling::collectAndSendInspectingMetrics(
 	}
 
 	SteadyStateMetrics inspectingMetrics = steadyStateAnalysis->getInspectingMetrics();
-	Packet packet = dp->serialize(inspectingMetrics, Content::INSPECTING_METRICS);
+	Packet packet = dp->serialize(inspectingMetrics);
+	dp->addHeader(packet, Content::INSPECTING_METRICS);
 	publisher_.publish(packet);
 }
 

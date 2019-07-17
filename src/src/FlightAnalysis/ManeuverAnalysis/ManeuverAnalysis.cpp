@@ -28,6 +28,7 @@
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightAnalysis/ManeuverAnalysis/ManeuverAnalysis.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/IPC/IPC.h"
 
 ManeuverAnalysis::ManeuverAnalysis() :
 		collectInit_(false), counter_(0), maneuver_(Maneuvers::GEOFENCING), loggingPeriod_(0)
@@ -50,7 +51,7 @@ ManeuverAnalysis::create(const Configuration& config)
 bool
 ManeuverAnalysis::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	std::string maneuver;
 
 	pm.add("log_path", logPath_, true);
@@ -91,7 +92,7 @@ ManeuverAnalysis::run(RunStage stage)
 	{
 		auto ipc = ipcHandle_.get();
 
-		sensorDataSubscription_ = ipc->subscribeOnSharedMemory<SensorData>("sensor_data",
+		sensorDataSubscription_ = ipc->subscribe<SensorData>("sensor_data",
 				std::bind(&ManeuverAnalysis::onSensorData, this, std::placeholders::_1));
 
 		if (!sensorDataSubscription_.connected())
@@ -100,7 +101,7 @@ ManeuverAnalysis::run(RunStage stage)
 			return true;
 		}
 
-		maneuverAnalysisSubscription_ = ipc->subscribeOnPacket("maneuver_analysis_status",
+		maneuverAnalysisSubscription_ = ipc->subscribeOnPackets("maneuver_analysis_status",
 				std::bind(&ManeuverAnalysis::onManeuverAnalysisStatus, this,
 						std::placeholders::_1));
 

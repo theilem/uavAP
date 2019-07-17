@@ -22,12 +22,12 @@
  *  Created on: Sep 2, 2017
  *      Author: mircot
  */
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/Runner/SimpleRunner.h"
 #include "uavAP/Core/Scheduler/MultiThreadingScheduler.h"
 #include "uavAP/Core/TimeProvider/SystemTimeProvider.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
+#include "uavAP/Core/IPC/IPC.h"
 #include <iostream>
 
 int
@@ -40,7 +40,7 @@ main(int argc, char** argv)
 	auto agg = Aggregator::aggregate(
 	{ ipc, tp, sched });
 
-	Publisher controlPub = ipc->publishOnSharedMemory<ControllerOutput>("actuation");
+	auto controlPub = ipc->publish<ControllerOutput>("actuation");
 
 	SimpleRunner runner(agg);
 	runner.runAllStages();

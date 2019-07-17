@@ -18,6 +18,7 @@
 #-------------------------------------------------------------------------------
 set(CORE_SRC 	${CORE_SRC}
 				${CMAKE_CURRENT_SOURCE_DIR}/Aggregator.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/SignalHandler.cpp
 				${CMAKE_CURRENT_SOURCE_DIR}/DynamicContainer/DynamicObjectContainer.cpp
 				PARENT_SCOPE)
 

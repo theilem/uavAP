@@ -25,9 +25,9 @@
 
 #include <boost/test/unit_test.hpp>
 #include <uavAP/API/ap_ext/ap_ext.h>
-#include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/FlightControl/Controller/AdvancedControl.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
+#include <uavAP/Core/IPC/IPC.h>
 
 
 BOOST_AUTO_TEST_SUITE(ApExtTest)
@@ -36,8 +36,8 @@ BOOST_AUTO_TEST_SUITE(ApExtTest)
 BOOST_AUTO_TEST_CASE(test001)
 {
 	IPC ipc;
-	auto pub = ipc.publishOnSharedMemory<ControllerOutput>("actuation");
-	auto pubAdv = ipc.publishOnSharedMemory<AdvancedControl>("advanced_control");
+	auto pub = ipc.publish<ControllerOutput>("actuation");
+	auto pubAdv = ipc.publish<AdvancedControl>("advanced_control");
 
 	setConfigPath("/usr/local/config/sailplane/alvolo.json");
 	BOOST_REQUIRE_EQUAL(ap_ext_setup(), 0);

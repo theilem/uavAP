@@ -22,7 +22,7 @@ set(CORE_SRC 	${CORE_SRC}
 				${CMAKE_CURRENT_SOURCE_DIR}/APDataPresentation/FileFromArchive.cpp
 				${CMAKE_CURRENT_SOURCE_DIR}/APDataPresentation/FileToArchive.cpp
 				${CMAKE_CURRENT_SOURCE_DIR}/APDataPresentation/BasicSerialization.cpp
-				${CMAKE_CURRENT_SOURCE_DIR}/APDataPresentation/ArchiveOptions.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/DataPresentation.cpp
 				${CMAKE_CURRENT_SOURCE_DIR}/Packet.cpp
 				PARENT_SCOPE)
 

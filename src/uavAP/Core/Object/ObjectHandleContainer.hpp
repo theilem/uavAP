@@ -28,13 +28,13 @@ public:
 	PtrType<
 			typename std::enable_if<
 					(std::is_base_of<Ret, Object> { } || std::is_same<Ret, Object> { }), Ret>::type>
-	get();
+	get() const;
 
 	template<class Ret>
 	PtrType<
 			typename std::enable_if<
 					!(std::is_base_of<Ret, Object> { } || std::is_same<Ret, Object> { }), Ret>::type>
-	get();
+	get() const;
 
 	template<class Ret>
 	typename std::enable_if<(std::is_base_of<Ret, Object> { } || std::is_same<Ret, Object> { }),
@@ -71,7 +71,7 @@ public:
 
 	template<class Ret>
 	inline std::shared_ptr<Ret>
-	get()
+	get() const
 	{
 		return nullptr;
 	}
@@ -101,7 +101,7 @@ template<class Ret>
 inline ObjectHandleContainer<Object, Others...>::PtrType<
 		typename std::enable_if<(std::is_base_of<Ret, Object> { } || std::is_same<Ret, Object> { }),
 				Ret>::type>
-ObjectHandleContainer<Object, Others...>::get()
+ObjectHandleContainer<Object, Others...>::get() const
 {
 	return object_.lock();
 }
@@ -111,7 +111,7 @@ template<class Ret>
 inline ObjectHandleContainer<Object, Others...>::PtrType<
 		typename std::enable_if<
 				!(std::is_base_of<Ret, Object> { } || std::is_same<Ret, Object> { }), Ret>::type>
-ObjectHandleContainer<Object, Others...>::get()
+ObjectHandleContainer<Object, Others...>::get() const
 {
 	return others_.template get<Ret>();
 }

@@ -22,15 +22,15 @@
  *  Created on: Sep 15, 2017
  *      Author: mircot
  */
-#include "uavAP/Core/DataHandling/DataHandling.h"
-#include "uavAP/Core/IPC/IPC.h"
+#include <uavAP/Core/LockTypes.h>
 #include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/detail/ManeuverCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/ManeuverPIDController.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
-#include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 #include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
+#include "uavAP/Core/DataHandling/DataHandling.h"
+#include "uavAP/Core/IPC/IPC.h"
 
 ManeuverPIDController::ManeuverPIDController()
 {
@@ -90,7 +90,7 @@ ManeuverPIDController::run(RunStage stage)
 	case RunStage::NORMAL:
 	{
 		auto ipc = get<IPC>();
-		overrideSubscription_ = ipc->subscribeOnPacket("override",
+		overrideSubscription_ = ipc->subscribeOnPackets("override",
 				std::bind(&ManeuverPIDController::onOverridePacket, this, std::placeholders::_1));
 
 		if (!overrideSubscription_.connected())
@@ -107,7 +107,7 @@ ManeuverPIDController::run(RunStage stage)
 		if (auto dh = get<DataHandling>())
 		{
 			dh->addStatusFunction<std::map<PIDs, PIDStatus>>(
-					std::bind(&IPIDCascade::getPIDStatus, pidCascade_));
+					std::bind(&IPIDCascade::getPIDStatus, pidCascade_), Content::PID_STATUS);
 			dh->subscribeOnCommand<PIDTuning>(Content::TUNE_PID,
 					std::bind(&ManeuverPIDController::tunePID, this, std::placeholders::_1));
 		}
@@ -174,13 +174,16 @@ ManeuverPIDController::calculateControl()
 	targetLock.unlock();
 
 	sensAct->setControllerOutput(controllerOutput_);
-	controllerOutputPublisher_.publish(dp::serialize(controllerOutput_));
+
+	auto dp = get<DataPresentation>();
+	controllerOutputPublisher_.publish(dp->serialize(controllerOutput_));
 }
 
 void
 ManeuverPIDController::onOverridePacket(const Packet& packet)
 {
-	auto override = dp::deserialize<Override>(packet);
+	auto dp = get<DataPresentation>();
+	auto override = dp->deserialize<Override>(packet);
 	LockGuard lock(controllerTargetMutex_);
 	pidCascade_->setManeuverOverride(override);
 }

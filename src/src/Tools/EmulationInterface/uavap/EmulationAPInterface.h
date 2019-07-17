@@ -35,8 +35,7 @@
 #include <uavAP/API/ap_ext/ap_ext.h>
 #include <uavAP/API/ap_ext/ServoMapping.h>
 #include <uavAP/API/ChannelMixing.h>
-#include <uavAP/Core/DataPresentation/APDataPresentation/APDataPresentation.h>
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 #include <uavAP/Core/IDC/Serial/SerialIDC.h>
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/Core/Scheduler/IScheduler.h>

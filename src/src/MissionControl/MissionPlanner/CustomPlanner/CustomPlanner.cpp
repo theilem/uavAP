@@ -42,7 +42,7 @@ CustomPlanner::CustomPlanner() :
 bool
 CustomPlanner::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
 	pm.add<double>("default_velocity", defaultVelocity_, true);
 	pm.add<double>("default_altitude", defaultAltitude_, true);
@@ -114,7 +114,7 @@ CustomPlanner::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		sensorDataSubscription_ = ipc->subscribeOnSharedMemory<SensorData>("sensor_data",
+		sensorDataSubscription_ = ipc->subscribe<SensorData>("sensor_data",
 				std::bind(&CustomPlanner::onSensorData, this, std::placeholders::_1));
 
 		if (!sensorDataSubscription_.connected())

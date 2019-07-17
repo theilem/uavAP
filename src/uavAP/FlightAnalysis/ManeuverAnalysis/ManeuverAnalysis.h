@@ -26,12 +26,13 @@
 #ifndef UAVAP_FLIGHTANALYSIS_MANEUVERANALYSIS_MANEUVERANALYSIS_H_
 #define UAVAP_FLIGHTANALYSIS_MANEUVERANALYSIS_MANEUVERANALYSIS_H_
 
+#include <uavAP/Core/LockTypes.h>
+#include <uavAP/Core/Object/ObjectHandle.h>
 #include <string>
 #include <iostream>
 #include <fstream>
 
 #include "uavAP/Core/EnumMap.hpp"
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
@@ -60,6 +61,9 @@ ENUMMAP_INIT(Maneuvers,
 		{{Maneuvers::GEOFENCING, "geofencing"},
 		{Maneuvers::ADVANCED_CONTROL, "advanced_control"},
 		{Maneuvers::SEQUENCE, "sequence"}});
+
+class IPC;
+class IScheduler;
 
 class ManeuverAnalysis: public IAggregatableObject, public IRunnableObject
 {
@@ -117,7 +121,7 @@ private:
 	ObjectHandle<IScheduler> scheduler_;
 
 	ManeuverAnalysisStatus analysis_;
-	std::mutex maneuverAnalysisStatusMutex_;
+	Mutex maneuverAnalysisStatusMutex_;
 
 	bool collectInit_;
 	unsigned counter_;
@@ -127,7 +131,7 @@ private:
 	std::ofstream logFile_;
 
 	SensorData sensorData_;
-	std::mutex sensorDataMutex_;
+	Mutex sensorDataMutex_;
 
 	unsigned int loggingPeriod_;
 };

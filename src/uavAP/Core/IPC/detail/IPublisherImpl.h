@@ -25,8 +25,7 @@
 
 #ifndef UAVAP_CORE_IPC_IPUBLISHERIMPL_H_
 #define UAVAP_CORE_IPC_IPUBLISHERIMPL_H_
-#include <boost/any.hpp>
-#include <vector>
+#include <uavAP/Core/DataPresentation/Packet.h>
 
 class IPublisherImpl
 {
@@ -36,10 +35,8 @@ public:
 	~IPublisherImpl() = default;
 
 	virtual void
-	publish(const boost::any& obj) = 0;
+	publish(const Packet& obj) = 0;
 
-	virtual void
-	publish(const std::vector<boost::any>& vec) = 0;
 };
 
 #endif /* UAVAP_CORE_IPC_IPUBLISHERIMPL_H_ */

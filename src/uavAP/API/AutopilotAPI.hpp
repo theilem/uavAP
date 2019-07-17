@@ -70,7 +70,7 @@ private:
 
 	OnAdvancedControl onAdvancedControl_;
 
-	Publisher sensorDataPublisher_;
+	Publisher<SensorData> sensorDataPublisher_;
 	Subscription controllerOutSubscription_;
 	Subscription advancedControlSubscription_;
 	Subscription localFrameSubscription_;

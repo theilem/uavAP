@@ -97,7 +97,7 @@ private:
 	Subscription sensorDataSubscription_;
 	Subscription overrideSubscription_;
 	Subscription pidStatiSubscription_;
-	Publisher steadyStatePublisher_;
+	Publisher<Packet> steadyStatePublisher_;
 
 	Override override_;
 	PIDStati pidStati_;

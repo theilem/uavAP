@@ -31,9 +31,8 @@
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 
-#include <boost/property_tree/ptree.hpp>
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
+#include "uavAP/Core/IPC/IPC.h"
 
 
 class FilletGlobalPlanner: public IGlobalPlanner, public IAggregatableObject, public IRunnableObject
@@ -49,9 +48,6 @@ public:
 
 	bool
 	configure(const Configuration& config);
-
-	void
-	collectWaypoint(const VectorWrapper<Waypoint>& wp);
 
 	void
 	setMission(const Mission& mission) override;
@@ -73,7 +69,7 @@ private:
 
 	ObjectHandle<IPC> ipc_;
 
-	Publisher trajectoryPublisher_;
+	Publisher<Packet> trajectoryPublisher_;
 
 };
 

@@ -40,7 +40,7 @@ FileFromArchive::setOptions(const ArchiveOptions& opts)
 FileFromArchive&
 FileFromArchive::operator >>(double& doub)
 {
-	if (options_.compressDouble_)
+	if (options_.compressDouble())
 	{
 		float flo;
 		dp::load(*this, reinterpret_cast<char*>(&flo), sizeof(float));

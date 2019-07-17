@@ -23,9 +23,9 @@
  *      Author: mircot
  */
 
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/Runner/SimpleRunner.h"
 #include "uavAP/Core/SensorData.h"
+#include "uavAP/Core/IPC/IPC.h"
 
 #include "uavAP/Core/Logging/APLogger.h"
 #include <iostream>
@@ -39,7 +39,7 @@ main(int argc, char** argv)
 	SensorData sd;
 	sd.timestamp = Clock::now();
 	sd.hasGPSFix = true;
-	auto pub = ipc->publishOnSharedMemory<SensorData>("sensor_data");
+	auto pub = ipc->publish<SensorData>("sensor_data");
 	pub.publish(sd);
 
 	std::string input;

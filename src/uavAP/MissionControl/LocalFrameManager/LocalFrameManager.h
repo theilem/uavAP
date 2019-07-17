@@ -72,7 +72,7 @@ private:
 
 	ObjectHandle<IPC> ipc_;
 	ObjectHandle<IScheduler> scheduler_;
-	Publisher framePublisher_;
+	Publisher<VehicleOneFrame> framePublisher_;
 	VehicleOneFrame frame_;
 	mutable std::mutex frameMutex_;
 };

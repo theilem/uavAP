@@ -29,7 +29,7 @@ public:
 
 	template<class Ret>
 	PtrType<Ret>
-	get();
+	get() const;
 
 	template<class Ret>
 	bool

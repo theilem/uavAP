@@ -22,29 +22,13 @@
  *  Created on: Aug 6, 2017
  *      Author: mircot
  */
+#include <uavAP/Core/Object/SignalHandler.h>
 #include "uavAP/Core/Object/Aggregator.h"
-#include <csignal>
 
-static Aggregator* aggSigHandler = nullptr;
-
-void
-sigIntHandler(int sig)
-{
-	if (aggSigHandler)
-	{
-		aggSigHandler->callSigHandlers(sig);
-	}
-	exit(sig);
-}
 
 Aggregator::Aggregator()
 {
-	if (!aggSigHandler)
-	{
-		aggSigHandler = this;
-		std::signal(SIGINT, sigIntHandler);
-		std::signal(SIGTERM, sigIntHandler);
-	}
+	add(std::make_shared<SignalHandler>());
 }
 
 void
@@ -69,18 +53,6 @@ void
 Aggregator::add(const ObjectContainer& obj)
 {
 	container_.add(obj);
-}
-
-void
-Aggregator::subscribeOnSigint(const OnSIGINT::slot_type& slot) const
-{
-	onSigint_.connect(slot);
-}
-
-void
-Aggregator::callSigHandlers(int sig)
-{
-	onSigint_(sig);
 }
 
 void

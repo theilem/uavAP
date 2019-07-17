@@ -7,6 +7,7 @@
 
 #ifndef UAVAP_CORE_DATAPRESENTATION_BINARYSERIALIZATION_HPP_
 #define UAVAP_CORE_DATAPRESENTATION_BINARYSERIALIZATION_HPP_
+#include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
 #include "uavAP/Core/DataPresentation/APDataPresentation/BinaryFromArchive.h"
 #include "uavAP/Core/DataPresentation/APDataPresentation/BinaryToArchive.h"
 #include "uavAP/Core/DataPresentation/APDataPresentation/FileFromArchive.h"

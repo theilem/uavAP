@@ -23,12 +23,12 @@
  *      Author: mircot
  */
 #include "uavAP/API/ap_ext/ApExtManager.h"
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/Runner/SimpleRunner.h"
 #include "uavAP/Core/Scheduler/MultiThreadingScheduler.h"
 #include "uavAP/Core/TimeProvider/SystemTimeProvider.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
+#include "uavAP/Core/IPC/IPC.h"
 
 int
 main(int argc, char** argv)
@@ -40,7 +40,7 @@ main(int argc, char** argv)
 	auto agg = Aggregator::aggregate(
 	{ ipc, tp, sched });
 
-	Publisher servoPub = ipc->publishOnSharedMemory<ApExtManager::OutPWM>("servo_out");
+	auto servoPub = ipc->publish<ApExtManager::OutPWM>("servo_out");
 
 	SimpleRunner runner(agg);
 	runner.runAllStages();

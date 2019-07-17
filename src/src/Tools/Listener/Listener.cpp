@@ -25,10 +25,10 @@
 
 #include <boost/property_tree/json_parser.hpp>
 #include "uavAP/Core/Runner/SimpleRunner.h"
-#include "uavAP/FlightControl/FlightControlHelper.h"
 
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/API/ap_ext/ApExtManager.h"
+#include "uavAP/FlightControl/FlightControlHelper.h"
 
 bool showControl = false;
 bool showSensor = false;
@@ -75,8 +75,8 @@ main(int argc, char** argv)
 	auto agg = Aggregator::aggregate(
 	{ ipc, tp, sched });
 
-	ipc->subscribeOnSharedMemory<ControllerOutput>("actuation", &dispControl);
-	ipc->subscribeOnSharedMemory<SensorData>("sensor_data", &dispSens);
+	ipc->subscribe<ControllerOutput>("actuation", &dispControl);
+	ipc->subscribe<SensorData>("sensor_data", &dispSens);
 
 	SimpleRunner runner(agg);
 	runner.runAllStages();

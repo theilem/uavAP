@@ -26,7 +26,6 @@
 #ifndef UAVAP_SIMULATION_SIMULATIONCONNECTOR_H_
 #define UAVAP_SIMULATION_SIMULATIONCONNECTOR_H_
 #include <boost/smart_ptr/shared_ptr.hpp>
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
 #include <uavAP/Core/IDC/IDCSender.h>
 #include <uavAP/Core/IDC/INetworkLayer.h>
 #include "uavAP/Core/IPC/Publisher.h"

@@ -26,7 +26,9 @@
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_RATEPIDCONTROLLER_RATEPIDCONTROLLER_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_RATEPIDCONTROLLER_RATEPIDCONTROLLER_H_
 
+#include <uavAP/Core/IPC/Publisher.h>
 #include <uavAP/Core/IPC/Subscription.h>
+#include <uavAP/Core/LockTypes.h>
 #include <uavAP/Core/Object/ObjectHandle.h>
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
@@ -89,15 +91,15 @@ private:
 	ObjectHandle<DataHandling> dataHandling_;
 	ObjectHandle<IPC> ipc_;
 
-	std::mutex controllerTargetMutex_;
+	Mutex controllerTargetMutex_;
 	ControllerTarget controllerTarget_;
 	SensorData sensorData_;
 	Vector3 velocityInertial_;
 	Vector3 accelerationInertial_;
 	ControllerOutput controllerOutput_;
 
-	Publisher controllerOutputPublisher_;
-	Publisher pidStatiPublisher_;
+	Publisher<Packet> controllerOutputPublisher_;
+	Publisher<Packet> pidStatiPublisher_;
 	Subscription overrideSubscription_;
 
 	std::shared_ptr<RateCascade> pidCascade_;

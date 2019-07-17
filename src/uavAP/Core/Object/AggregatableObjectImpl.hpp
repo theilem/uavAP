@@ -28,7 +28,7 @@ AggregatableObject<Objects...>::notifyAggregationOnUpdate(const Agg& agg)
 template<class ... Objects>
 template<class Ret>
 inline AggregatableObject<Objects...>::PtrType<Ret>
-AggregatableObject<Objects...>::get()
+AggregatableObject<Objects...>::get() const
 {
 	return container_.template get<Ret>();
 }

@@ -7,9 +7,10 @@
 #include <uavAP/Core/DataHandling/DataHandling.h>
 #include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
+#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 
-DataHandling::DataHandling() :
-		target_(Target::INVALID), period_(100)
+DataHandling::DataHandling()
 {
 }
 
@@ -25,66 +26,46 @@ DataHandling::create(const Configuration& config)
 }
 
 bool
-DataHandling::configure(const Configuration& config)
-{
-	PropertyMapper<Configuration> pm(config);
-	pm.add<int>("period", period_, true);
-
-	pm.add("target", targetName_, true);
-	target_ = EnumMap<Target>::convert(targetName_);
-
-	return pm.map();
-}
-
-void
-DataHandling::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	dataPresentation_.setFromAggregationIfNotSet(agg);
-	scheduler_.setFromAggregationIfNotSet(agg);
-	ipc_.setFromAggregationIfNotSet(agg);
-}
-
-bool
 DataHandling::run(RunStage stage)
 {
 	switch (stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!dataPresentation_.isSet())
+		if (!isSet<DataPresentation>())
 		{
 			APLOG_ERROR << "DataHandling: DataPresentation missing";
 			return true;
 		}
 
-		if (!scheduler_.isSet())
+		if (!isSet<IScheduler>())
 		{
 			APLOG_ERROR << "DataHandling: Scheduler missing";
 			return true;
 		}
 
-		if (!ipc_.isSet())
+		if (!isSet<IPC>())
 		{
 			APLOG_ERROR << "DataHandling: IPC missing";
 			return true;
 		}
 
-		std::string publication = targetName_ + "_to_comm";
+		std::string publication = EnumMap<Target>::convert(params.target()) + "_to_comm";
 		APLOG_DEBUG << "Publishing to " << publication;
-		auto ipc = ipc_.get();
+		auto ipc = get<IPC>();
 
 		publisher_ = ipc->publishPackets(publication);
 		break;
 	}
 	case RunStage::NORMAL:
 	{
-		auto scheduler = scheduler_.get();
-		scheduler->schedule(std::bind(&DataHandling::sendStatus, this), Milliseconds(0), Milliseconds(period_));
+		auto scheduler = get<IScheduler>();
+		scheduler->schedule(std::bind(&DataHandling::sendStatus, this), Milliseconds(0), Milliseconds(params.period()));
 
-		std::string subscription = "comm_to_" + targetName_;
-		auto ipc = ipc_.get();
+		std::string subscription = "comm_to_" + EnumMap<Target>::convert(params.target());
+		auto ipc = get<IPC>();
 
-		ipc->subscribeOnPacket(subscription,
+		ipc->subscribeOnPackets(subscription,
 				std::bind(&DataHandling::onPacket, this, std::placeholders::_1));
 		break;
 	}
@@ -97,14 +78,14 @@ DataHandling::run(RunStage stage)
 void
 DataHandling::onPacket(const Packet& packet)
 {
-	auto dp = dataPresentation_.get();
+	auto dp = get<DataPresentation>();
 	if (!dp)
 	{
 		APLOG_ERROR << "DataPresentation missing";
 		return;
 	}
-	Content content;
-	auto any = dp->deserialize(packet, content);
+	auto p = packet;
+	Content content = dp->getHeader<Content>(p);
 
 	auto it = subscribers_.find(content);
 	if (it == subscribers_.end())
@@ -116,7 +97,7 @@ DataHandling::onPacket(const Packet& packet)
 
 	for (const auto& k : it->second)
 	{
-		k(any);
+		k(p);
 	}
 }
 

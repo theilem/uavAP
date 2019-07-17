@@ -23,7 +23,6 @@
  *      Author: mircot
  */
 #include "uavAP/API/ChannelMixing.h"
-#include "uavAP/Core/DataPresentation/IDataPresentation.h"
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"

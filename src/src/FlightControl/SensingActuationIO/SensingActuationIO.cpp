@@ -22,12 +22,12 @@
  *  Created on: Jul 26, 2017
  *      Author: mircot
  */
-#include <uavAP/Core/DataHandling/DataHandling.h>
 #include <uavAP/Core/LockTypes.h>
 #include <uavAP/FlightControl/Controller/AdvancedControl.h>
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h"
+#include <uavAP/Core/DataHandling/DataHandling.h>
+#include "uavAP/Core/IPC/IPC.h"
 
 SensingActuationIO::SensingActuationIO()
 {
@@ -59,15 +59,15 @@ SensingActuationIO::run(RunStage stage)
 		}
 		auto ipc = ipc_.get();
 
-		actuationPublisher_ = ipc->publishOnSharedMemory<ControllerOutput>("actuation");
-		advancedControlPublisher_ = ipc->publishOnSharedMemory<AdvancedControl>("advanced_control");
+		actuationPublisher_ = ipc->publish<ControllerOutput>("actuation");
+		advancedControlPublisher_ = ipc->publish<AdvancedControl>("advanced_control");
 
 		break;
 	}
 	case RunStage::NORMAL:
 	{
 		auto ipc = ipc_.get();
-		sensorSubscription_ = ipc->subscribeOnSharedMemory<SensorData>("sensor_data",
+		sensorSubscription_ = ipc->subscribe<SensorData>("sensor_data",
 				boost::bind(&SensingActuationIO::onSensorData, this, _1));
 		if (!sensorSubscription_.connected())
 		{
@@ -77,7 +77,7 @@ SensingActuationIO::run(RunStage stage)
 		if (auto dh = dataHandling_.get())
 		{
 			dh->addStatusFunction<SensorData>(
-					std::bind(&SensingActuationIO::getSensorData, this));
+					std::bind(&SensingActuationIO::getSensorData, this), Content::SENSOR_DATA);
 			dh->subscribeOnCommand<AdvancedControl>(Content::ADVANCED_CONTROL,
 					std::bind(&SensingActuationIO::onAdvancedControl, this, std::placeholders::_1));
 		}

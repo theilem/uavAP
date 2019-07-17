@@ -26,15 +26,17 @@
 #ifndef UAVAP_FLIGHTANALYSIS_DATAHANDLING_FLIGHTANALYSISDATAHANDLING_H_
 #define UAVAP_FLIGHTANALYSIS_DATAHANDLING_FLIGHTANALYSISDATAHANDLING_H_
 
-#include "uavAP/Core/DataPresentation/ContentMapping.h"
-#include "uavAP/Core/DataPresentation/IDataPresentation.h"
-#include "uavAP/Core/IPC/IPC.h"
-#include "uavAP/Core/Scheduler/IScheduler.h"
+#include <uavAP/Core/IPC/Publisher.h>
+#include <uavAP/Core/IPC/Subscription.h>
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightAnalysis/StateAnalysis/Metrics.h"
-#include "uavAP/FlightAnalysis/StateAnalysis/SteadyStateAnalysis.h"
+
+class IPC;
+class IScheduler;
+class DataPresentation;
+class SteadyStateAnalysis;
 
 class FlightAnalysisDataHandling: public IAggregatableObject, public IRunnableObject
 {
@@ -64,18 +66,18 @@ private:
 	receiveAndDistribute(const Packet& packet);
 
 	void
-	collectAndSendInspectingMetrics(std::shared_ptr<IDataPresentation<Content, Target>> dp);
+	collectAndSendInspectingMetrics(std::shared_ptr<DataPresentation> dp);
 
 	void
 	setInspectingMetrics(InspectingMetricsPair pair);
 
 	ObjectHandle<IPC> ipcHandle_;
 	ObjectHandle<IScheduler> schedulerHandle_;
-	ObjectHandle<IDataPresentation<Content, Target>> dataPresentationHandle_;
+	ObjectHandle<DataPresentation> dataPresentationHandle_;
 	ObjectHandle<SteadyStateAnalysis> steadyStateAnalysisHandle_;
 
 	Subscription subscription_;
-	Publisher publisher_;
+	Publisher<Packet> publisher_;
 
 	Duration period_;
 };

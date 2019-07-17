@@ -28,10 +28,9 @@
 #ifndef UAVAP_COMMUNICATION_COMMUNICATIONHELPER_H_
 #define UAVAP_COMMUNICATION_COMMUNICATIONHELPER_H_
 
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
 #include "uavAP/Core/IDC/NetworkLayer/NetworkFactory.h"
 #include "uavAP/Core/IDC/IDC.h"
-#include "uavAP/Core/DataPresentation/DataPresentationFactory.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/TimeProvider/TimeProviderFactory.h"
 #include "uavAP/Core/Scheduler/SchedulerFactory.h"
@@ -49,7 +48,7 @@ public:
 		addDefaultCreator<IDC>();
 		addDefault<SchedulerFactory>();
 		addDefault<TimeProviderFactory>();
-		addDefault<DataPresentationFactory<Content, Target>>();
+		addDefaultCreator<DataPresentation>();
 
 		addFactory<NetworkFactory>();
 		addFactory<CommFactory>();

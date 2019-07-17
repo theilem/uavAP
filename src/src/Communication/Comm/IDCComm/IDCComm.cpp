@@ -26,10 +26,10 @@
  */
 
 #include <uavAP/Communication/Comm/IDCComm/IDCComm.h>
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
+#include <uavAP/Core/DataPresentation/Content.h>
 #include <uavAP/Core/IDC/IDC.h>
 #include <uavAP/Core/IPC/IPC.h>
-#include "uavAP/Core/DataPresentation/IDataPresentation.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightControl/Controller/IController.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
@@ -102,7 +102,7 @@ IDCComm::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		flightAnalysisSubscription_ = ipc->subscribeOnPacket("data_fa_com",
+		flightAnalysisSubscription_ = ipc->subscribeOnPackets("data_fa_com",
 				std::bind(&IDCComm::sendPacket, this, std::placeholders::_1));
 
 		if (!flightAnalysisSubscription_.connected())
@@ -110,7 +110,7 @@ IDCComm::run(RunStage stage)
 			APLOG_WARN << "Cannot connect to data_fa_com. Ignoring.";
 		}
 
-		flightControlSubscription_ = ipc->subscribeOnPacket("flight_control_to_comm",
+		flightControlSubscription_ = ipc->subscribeOnPackets("flight_control_to_comm",
 				std::bind(&IDCComm::sendPacket, this, std::placeholders::_1));
 
 		if (!flightControlSubscription_.connected())
@@ -119,7 +119,7 @@ IDCComm::run(RunStage stage)
 			return true;
 		}
 
-		missionControlSubscription_ = ipc->subscribeOnPacket("data_mc_com",
+		missionControlSubscription_ = ipc->subscribeOnPackets("data_mc_com",
 				std::bind(&IDCComm::sendPacket, this, std::placeholders::_1));
 
 		if (!missionControlSubscription_.connected())
@@ -162,7 +162,8 @@ IDCComm::receivePacket(const Packet& packet)
 		return;
 	}
 
-	Target target = dp->getTarget(const_cast<Packet&>(packet));
+	Packet p = packet;
+	Target target = dp->extractHeader<Target>(p);
 
 	switch (target)
 	{
@@ -203,7 +204,7 @@ IDCComm::tryConnectChannelMixing()
 		APLOG_ERROR << "IPC missing.";
 		return;
 	}
-	channelMixingSubscription_ = ipc->subscribeOnPacket("data_ch_com",
+	channelMixingSubscription_ = ipc->subscribeOnPackets("data_ch_com",
 			std::bind(&IDCComm::sendPacket, this, std::placeholders::_1));
 
 	if (!channelMixingSubscription_.connected())

@@ -26,12 +26,11 @@
 #ifndef SRC_CORE_TOOLS_EMULATIONINTERFACE_EMULATIONINTERFACEHELPER_H_
 #define SRC_CORE_TOOLS_EMULATIONINTERFACE_EMULATIONINTERFACEHELPER_H_
 
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
 #include "uavAP/Core/IDC/IDC.h"
 #include "uavAP/Core/IDC/NetworkLayer/NetworkFactory.h"
 #include "EduInterface.h"
 #include "uavAP/Core/TimeProvider/TimeProviderFactory.h"
-#include "uavAP/Core/DataPresentation/DataPresentationFactory.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 #include "uavAP/Core/Scheduler/SchedulerFactory.h"
 #include "uavAP/Core/Framework/Helper.h"
 
@@ -42,7 +41,7 @@ public:
 	{
 		addDefault<SchedulerFactory>();
 		addDefault<TimeProviderFactory>();
-		addDefault<DataPresentationFactory<Content, Target>>();
+		addDefaultCreator<DataPresentation>();
 		addFactory<NetworkFactory>();
 
 		addDefaultCreator<IDC>();

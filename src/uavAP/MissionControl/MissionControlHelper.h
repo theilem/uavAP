@@ -26,8 +26,7 @@
 #ifndef UAVAP_MISSIONCONTROL_MISSIONCONTROLHELPER_H_
 #define UAVAP_MISSIONCONTROL_MISSIONCONTROLHELPER_H_
 
-#include "uavAP/Core/DataPresentation/ContentMapping.h"
-#include "uavAP/Core/DataPresentation/DataPresentationFactory.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 #include "uavAP/Core/Framework/Helper.h"
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/Scheduler/SchedulerFactory.h"
@@ -52,7 +51,7 @@ public:
 
 		addDefault<SchedulerFactory>();
 		addDefault<TimeProviderFactory>();
-		addDefault<DataPresentationFactory<Content, Target>>();
+		addDefaultCreator<DataPresentation>();
 
 		addCreator<ManeuverPlanner>();
 		addCreator<LocalFrameManager>();

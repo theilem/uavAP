@@ -22,10 +22,9 @@
  *  Created on: Aug 14, 2018
  *      Author: simonyu
  */
-
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/FlightAnalysis/StateAnalysis/SteadyStateAnalysis.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/IPC/IPC.h"
 
 std::shared_ptr<SteadyStateAnalysis>
 SteadyStateAnalysis::create(const Configuration& config)
@@ -86,7 +85,7 @@ SteadyStateAnalysis::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		sensorDataSubscription_ = ipc->subscribeOnSharedMemory<SensorData>("sensor_data",
+		sensorDataSubscription_ = ipc->subscribe<SensorData>("sensor_data",
 				std::bind(&SteadyStateAnalysis::onSensorData, this, std::placeholders::_1));
 
 		if (!sensorDataSubscription_.connected())
@@ -95,7 +94,7 @@ SteadyStateAnalysis::run(RunStage stage)
 			return true;
 		}
 
-		overrideSubscription_ = ipc->subscribeOnPacket("active_override",
+		overrideSubscription_ = ipc->subscribeOnPackets("active_override",
 				std::bind(&SteadyStateAnalysis::onOverride, this, std::placeholders::_1));
 
 		if (!overrideSubscription_.connected())
@@ -104,7 +103,7 @@ SteadyStateAnalysis::run(RunStage stage)
 			return true;
 		}
 
-		pidStatiSubscription_ = ipc->subscribeOnPacket("pid_stati",
+		pidStatiSubscription_ = ipc->subscribeOnPackets("pid_stati",
 				std::bind(&SteadyStateAnalysis::onPIDStati, this, std::placeholders::_1));
 
 		if (!pidStatiSubscription_.connected())

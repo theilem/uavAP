@@ -27,7 +27,6 @@
 #define UAVAP_MISSIONCONTROL_CONDITIONMANAGER_CONDITIONMANAGER_H_
 
 #include <boost/signals2.hpp>
-#include <boost/property_tree/ptree.hpp>
 
 #include "uavAP/Core/DataPresentation/Packet.h"
 #include "uavAP/Core/IPC/Subscription.h"

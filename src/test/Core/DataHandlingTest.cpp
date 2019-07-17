@@ -6,15 +6,16 @@
  */
 
 #include <boost/test/unit_test.hpp>
-#include <uavAP/Core/DataHandling/DataHandling.h>
 #include <uavAP/Core/DataPresentation/Content.h>
-#include <uavAP/Core/DataPresentation/APDataPresentation/APDataPresentation.h>
 #include <uavAP/Core/EnumMap.hpp>
 #include <uavAP/Core/Framework/Helper.h>
-#include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/Core/IPC/Publisher.h>
 #include <uavAP/Core/Runner/SimpleRunner.h>
 #include <uavAP/Core/Scheduler/MicroSimulator.h>
+#include <uavAP/Core/SensorData.h>
+#include <uavAP/Core/DataHandling/DataHandling.h>
+#include <uavAP/Core/IPC/IPC.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 #include <functional>
 
 namespace
@@ -27,7 +28,7 @@ public:
 		addDefaultCreator<MicroSimulator>();
 		addCreator<DataHandling>();
 		addDefaultCreator<IPC>();
-		addDefaultCreator<APDataPresentation<Content, Target>>();
+		addDefaultCreator<DataPresentation>();
 	}
 };
 
@@ -56,10 +57,11 @@ commandFunction(const SensorData& data)
 //sendPacket(const Packet& packet)
 
 void
-onPacket(const Packet& packet, std::shared_ptr<IDataPresentation<Content, Target>> dp)
+onPacket(const Packet& packet, std::shared_ptr<DataPresentation> dp)
 {
-	Content content;
-	SensorData data = boost::any_cast<SensorData>(dp->deserialize(packet, content));
+	auto p = packet;
+	Content content = dp->extractHeader<Content>(p);
+	SensorData data = dp->deserialize<SensorData>(p);
 	BOOST_CHECK_EQUAL(data.position.x(), 5);
 	BOOST_CHECK_EQUAL(data.position.y(), 2);
 	BOOST_CHECK_EQUAL(data.position.z(), 1);
@@ -74,10 +76,10 @@ BOOST_AUTO_TEST_CASE(data_handling_test001)
 
 	auto dataHandling = agg.getOne<DataHandling>();
 	auto ipc = agg.getOne<IPC>();
-	auto dp = agg.getOne<IDataPresentation<Content, Target>>();
+	auto dp = agg.getOne<DataPresentation>();
 
 //	dataHandling->addStatusFunction(std::function<SensorData()>(statusFunction));
-	dataHandling->addStatusFunction<SensorData>(std::bind(statusFunction));
+	dataHandling->addStatusFunction<SensorData>(std::bind(statusFunction), Content::SENSOR_DATA);
 
 	dataHandling->subscribeOnCommand(Content::SENSOR_DATA, std::function<void
 	(const SensorData&)>(commandFunction));
@@ -87,15 +89,16 @@ BOOST_AUTO_TEST_CASE(data_handling_test001)
 	SimpleRunner runner(agg);
 
 	BOOST_REQUIRE(!runner.runAllStages());
-	ipc->subscribeOnPacket("flight_control_to_comm", std::bind(onPacket, std::placeholders::_1, dp));
+	ipc->subscribeOnPackets("flight_control_to_comm", std::bind(onPacket, std::placeholders::_1, dp));
 
 	auto scheduler = agg.getOne<MicroSimulator>();
 
 	SensorData data;
 	data.position =
 	{	6,2,1};
-	Packet testPacket = dp->serialize(data, Content::SENSOR_DATA);
-	scheduler->schedule(std::bind(static_cast<void(Publisher::*)(const boost::any&)>(&Publisher::publish), &pub, testPacket), Milliseconds(50));
+	Packet testPacket = dp->serialize(data);
+	dp->addHeader(testPacket, Content::SENSOR_DATA);
+	scheduler->schedule(std::bind(static_cast<void(Publisher<Packet>::*)(const Packet&)>(&Publisher<Packet>::publish), &pub, testPacket), Milliseconds(50));
 
 
 	scheduler->simulate(Seconds(10));

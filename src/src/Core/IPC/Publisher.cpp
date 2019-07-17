@@ -24,33 +24,4 @@
  */
 #include "uavAP/Core/IPC/Publisher.h"
 
-Publisher::Publisher(std::shared_ptr<IPublisherImpl> impl) :
-		publisherImpl_(impl)
-{
-}
 
-void
-Publisher::publish(const boost::any& obj)
-{
-	if (auto impl = publisherImpl_.lock())
-	{
-		impl->publish(obj);
-	}
-	else
-	{
-		APLOG_ERROR << "Cannot publish because Impl is not set.";
-	}
-}
-
-void
-Publisher::publish(const std::vector<boost::any>& vec)
-{
-	if (auto impl = publisherImpl_.lock())
-	{
-		impl->publish(vec);
-	}
-	else
-	{
-		APLOG_ERROR << "Cannot publish because Impl is not set.";
-	}
-}

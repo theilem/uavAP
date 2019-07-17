@@ -161,9 +161,9 @@ private:
 
 	std::shared_ptr<RectanguloidCondition> safetyCondition_;
 
-	Publisher overridePublisher_;
-	Publisher maneuverAnalysisPublisher_;
-	Publisher advancedControlPublisher_;
+	Publisher<Packet> overridePublisher_;
+	Publisher<Packet> maneuverAnalysisPublisher_;
+	Publisher<AdvancedControl> advancedControlPublisher_;
 	Subscription controllerOutputSubscription_;
 	Subscription advancedControlSubscription_;
 

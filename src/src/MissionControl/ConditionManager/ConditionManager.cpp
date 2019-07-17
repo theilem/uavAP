@@ -24,10 +24,10 @@
  */
 
 #include "uavAP/Core/Frames/InertialFrame.h"
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
+#include "uavAP/Core/IPC/IPC.h"
 
 std::shared_ptr<ConditionManager>
 ConditionManager::create(const Configuration& config)
@@ -80,7 +80,7 @@ ConditionManager::run(RunStage stage)
 	{
 		auto ipc = ipcHandle_.get();
 
-		sensorDataSubscription_ = ipc->subscribeOnSharedMemory<SensorData>("sensor_data",
+		sensorDataSubscription_ = ipc->subscribe<SensorData>("sensor_data",
 				std::bind(&ConditionManager::onSensorData, this, std::placeholders::_1));
 
 		if (!sensorDataSubscription_.connected())
@@ -90,7 +90,7 @@ ConditionManager::run(RunStage stage)
 			return true;
 		}
 
-		steadyStateSubscription_ = ipc->subscribeOnPacket("steady_state",
+		steadyStateSubscription_ = ipc->subscribeOnPackets("steady_state",
 				std::bind(&ConditionManager::onSteadyState, this, std::placeholders::_1));
 
 		if (!steadyStateSubscription_.connected())

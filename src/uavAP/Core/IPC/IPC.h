@@ -34,7 +34,13 @@
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/interprocess/shared_memory_object.hpp>
 #include <boost/interprocess/sync/sharable_lock.hpp>
-#include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
+#include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
+#include <uavAP/Core/IPC/IPCOptions.h>
+#include <uavAP/Core/IPC/IPCParams.h>
+#include <uavAP/Core/Object/AggregatableObject.hpp>
+#include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
+#include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
 
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
@@ -50,13 +56,15 @@
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 
-class IPC: public IRunnableObject, public IAggregatableObject
+class SignalHandler;
+
+class IPC: public IRunnableObject, public AggregatableObject<IScheduler, DataPresentation,
+		SignalHandler>, public ConfigurableObject<IPCParams>
 {
 
 public:
 
 	static constexpr TypeId typeId = "ipc";
-
 
 	IPC();
 
@@ -65,177 +73,116 @@ public:
 	static std::shared_ptr<IPC>
 	create(const Configuration& config);
 
-	template<class Object>
+	template<typename Type>
 	Subscription
-	subscribeOnSharedMemory(const std::string& id, const std::function<void
-	(const Object&)>& slot);
-
-	template<class Object>
-	Subscription
-	subscribeOnMessageQueue(const std::string& id, const std::function<void
-	(const Object&)>& slot);
+	subscribe(const std::string& id, const std::function<void
+	(const Type&)>& slot, const IPCOptions& options = IPCOptions());
 
 	Subscription
-	subscribeOnPacket(const std::string& id, const std::function<void
-	(const Packet&)>& slot);
+	subscribeOnPackets(const std::string& id, const std::function<void
+	(const Packet&)>& slot, const IPCOptions& options = IPCOptions());
 
-	template<class Object>
-	Publisher
-	publishOnSharedMemory(const std::string& id);
+	template<typename Type>
+	Publisher<Type>
+	publish(const std::string& id, const IPCOptions& options = IPCOptions());
 
-	template<class Object>
-	Publisher
-	publishOnMessageQueue(const std::string& id, unsigned int numOfMessages);
-
-	Publisher
-	publishPackets(const std::string& id);
+	Publisher<Packet>
+	publishPackets(const std::string& id, const IPCOptions& options = IPCOptions());
 
 	bool
 	run(RunStage stage) override;
 
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg);
+private:
+
+	Subscription
+	subscribeOnSharedMemory(const std::string& id, const std::function<void
+	(const Packet&)>& slot);
+
+	Subscription
+	subscribeOnMessageQueue(const std::string& id, const std::function<void
+	(const Packet&)>& slot);
+
+	std::shared_ptr<IPublisherImpl>
+	publishOnSharedMemory(const std::string& id, unsigned maxPacketSize);
+
+	std::shared_ptr<IPublisherImpl>
+	publishOnMessageQueue(const std::string& id, unsigned maxPacketSize, unsigned numPackets);
 
 	void
 	sigintHandler(int sig);
 
-private:
+	template<typename Type>
+	void
+	forwardFromPacket(const Packet& packet, const std::function<void
+	(const Type&)>& func) const;
+
+	template<typename Type>
+	Packet
+	forwardToPacket(const Type& val) const;
 
 	std::vector<std::shared_ptr<IPublisherImpl>> publications_;
 
 	std::mutex subscribeMutex_;
 	std::map<std::string, std::shared_ptr<ISubscriptionImpl>> subscriptions_;
 
-	ObjectHandle<IScheduler> scheduler_;
-
-	bool subscribedOnSigint_;
-
-	std::size_t packetSize_;
-	unsigned int packetQueueSize_;
 };
 
-template<class Object>
+
+template<typename Type>
+inline Publisher<Type>
+IPC::publish(const std::string& id, const IPCOptions& options)
+{
+	auto packetSize = forwardToPacket(Type()).getSize();
+	auto forwarding = std::bind(&IPC::forwardToPacket<Type>, this, std::placeholders::_1);
+	if (options.multiTarget)
+	{
+		return Publisher<Type>(publishOnSharedMemory(id, packetSize), forwarding);
+	}
+	else
+	{
+		return Publisher<Type>(publishOnMessageQueue(id, packetSize, params.maxNumPackets()), forwarding);
+	}
+}
+
+template<typename Type>
 inline Subscription
-IPC::subscribeOnSharedMemory(const std::string& id, const std::function<void
-(const Object&)>& slot)
+IPC::subscribe(const std::string& id, const std::function<void
+(const Type&)>& slot, const IPCOptions& options)
 {
-	std::shared_ptr<SharedMemorySubscriptionImpl<Object>> impl;
-
-	std::lock_guard<std::mutex> lock(subscribeMutex_);
-
-	auto subscription = subscriptions_.find(id);
-	if (subscription != subscriptions_.end())
+	auto packetSlot = std::bind(&IPC::forwardFromPacket<Type>, this, std::placeholders::_1, slot);
+	if (options.multiTarget)
 	{
-		impl = std::dynamic_pointer_cast<SharedMemorySubscriptionImpl<Object>>(
-				subscription->second);
-		if (!impl)
-		{
-			APLOG_ERROR << "Subscription id found for another subscription method.";
-			return Subscription();
-		}
-		auto con = impl->subscribe(slot);
-		return Subscription(subscription->second, con);
+		return subscribeOnSharedMemory(id, packetSlot);
 	}
 	else
 	{
-		try
-		{
-			impl = std::make_shared<SharedMemorySubscriptionImpl<Object>>(id);
-			subscriptions_.insert(
-					std::make_pair(id, std::static_pointer_cast<ISubscriptionImpl>(impl)));
-		} catch (boost::interprocess::interprocess_exception&)
-		{
-			return Subscription();
-		}
+		return subscribeOnMessageQueue(id, packetSlot);
 	}
-
-	auto con = impl->subscribe(slot);
-
-	if (auto sched = scheduler_.get())
-	{
-		sched->schedule(std::bind(&SharedMemorySubscriptionImpl<Object>::start, impl),
-				Milliseconds(0));
-		return Subscription(std::static_pointer_cast<ISubscriptionImpl>(impl), con);
-	}
-
-	APLOG_ERROR << "Scheduler missing. Cannot start subscription.";
-	return Subscription(std::static_pointer_cast<ISubscriptionImpl>(impl), con);
 }
 
-template<class Object>
-inline Publisher
-IPC::publishOnSharedMemory(const std::string& id)
+template<typename Type>
+inline void
+IPC::forwardFromPacket(const Packet& packet, const std::function<void
+(const Type&)>& func) const
 {
-	auto impl = std::make_shared<SharedMemoryPublisherImpl<Object>>(id, Object());
-	publications_.push_back(impl);
-	return Publisher(impl);
-}
 
-template<class Object>
-Subscription
-IPC::subscribeOnMessageQueue(const std::string& id, const std::function<void
-(const Object&)>& slot)
-{
-	std::shared_ptr<MessageQueueSubscriptionImpl<Object>> impl;
-
-	std::lock_guard<std::mutex> lock(subscribeMutex_);
-
-	auto subscription = subscriptions_.find(id);
-	if (subscription != subscriptions_.end())
-	{
-		impl = std::dynamic_pointer_cast<MessageQueueSubscriptionImpl<Object>>(
-				subscription->second);
-		if (!impl)
-		{
-			APLOG_ERROR << "Subscription id found for another subscription method.";
-			return Subscription();
-		}
-	}
+	if (auto dp = get<DataPresentation>())
+		func(dp->deserialize<Type>(packet));
 	else
-	{
-		try
-		{
-			impl = std::make_shared<MessageQueueSubscriptionImpl<Object>>(id);
-			subscriptions_.insert(
-					std::make_pair(id, std::static_pointer_cast<ISubscriptionImpl>(impl)));
-		} catch (boost::interprocess::interprocess_exception&)
-		{
-			return Subscription();
-		}
-	}
+		func(dp::deserialize<Type>(packet));
 
-	auto con = impl->subscribe(slot);
-
-	if (auto sched = scheduler_.get())
-	{
-		sched->schedule(std::bind(&MessageQueueSubscriptionImpl<Object>::start, impl),
-				Milliseconds(0));
-		return Subscription(std::static_pointer_cast<ISubscriptionImpl>(impl), con);
-	}
-
-	APLOG_ERROR << "Scheduler missing. Cannot start subscription.";
-	return Subscription(std::static_pointer_cast<ISubscriptionImpl>(impl), con);
 }
 
-template<class Object>
-Publisher
-IPC::publishOnMessageQueue(const std::string& id, unsigned int numOfMessages)
+template<typename Type>
+inline Packet
+IPC::forwardToPacket(const Type& val) const
 {
-	std::shared_ptr<MessageQueuePublisherImpl<Object>> impl;
-	try
-	{
-		impl = std::make_shared<MessageQueuePublisherImpl<Object>>(id, numOfMessages,
-				sizeof(VectorWrapper<Object> ));
-	} catch (boost::interprocess::interprocess_exception&)
-	{
-		APLOG_WARN << "Message queue with id: " << id << " already exists. Creating new.";
-		boost::interprocess::message_queue::remove(id.c_str());
-		impl = std::make_shared<MessageQueuePublisherImpl<Object>>(id, numOfMessages,
-				sizeof(VectorWrapper<Object> ));
-	}
+	if (auto dp = get<DataPresentation>())
+		return dp->serialize(val);
+	else
+		return dp::serialize(val);
 
-	publications_.push_back(impl);
-	return Publisher(impl);
 }
+
 
 #endif /* UAVAP_CORE_IPC_IPC_H_ */

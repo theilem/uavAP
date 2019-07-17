@@ -26,13 +26,13 @@
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include <vector>
 
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 #include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
+#include "uavAP/Core/IPC/IPC.h"
 
 ManeuverPlanner::ManeuverPlanner() :
 		analysis_(), overrideInterrupted_(false), manualActive_(false), maneuverActive_(false), lastManualActive_(
@@ -151,7 +151,7 @@ ManeuverPlanner::run(RunStage stage)
 		auto ipc = ipc_.get();
 
 		overridePublisher_ = ipc->publishPackets("override");
-		advancedControlPublisher_ = ipc->publishOnSharedMemory<AdvancedControl>(
+		advancedControlPublisher_ = ipc->publish<AdvancedControl>(
 				"advanced_control_maneuver");
 		maneuverAnalysisPublisher_ = ipc->publishPackets("maneuver_analysis_status");
 
@@ -161,7 +161,7 @@ ManeuverPlanner::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		controllerOutputSubscription_ = ipc->subscribeOnPacket("controller_output",
+		controllerOutputSubscription_ = ipc->subscribeOnPackets("controller_output",
 				std::bind(&ManeuverPlanner::onControllerOutputPacket, this, std::placeholders::_1));
 
 		if (!controllerOutputSubscription_.connected())
@@ -170,7 +170,7 @@ ManeuverPlanner::run(RunStage stage)
 			return true;
 		}
 
-		advancedControlSubscription_ = ipc->subscribeOnSharedMemory<AdvancedControl>(
+		advancedControlSubscription_ = ipc->subscribe<AdvancedControl>(
 				"advanced_control",
 				std::bind(&ManeuverPlanner::onAdvancedControl, this, std::placeholders::_1));
 

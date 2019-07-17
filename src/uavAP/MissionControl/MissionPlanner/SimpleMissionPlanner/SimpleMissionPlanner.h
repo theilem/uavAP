@@ -66,8 +66,6 @@ private:
 	ObjectHandle<IGlobalPlanner> globalPlanner_;
 
 	Mission defaultMission_;
-
-	Publisher missionPublisher_;
 };
 
 #endif /* UAVAP_MISSIONCONTROL_MISSIONPLANNER_SIMPLEMISSIONPLANNER_SIMPLEMISSIONPLANNER_H_ */

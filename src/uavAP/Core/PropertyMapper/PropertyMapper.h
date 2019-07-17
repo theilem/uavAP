@@ -148,7 +148,13 @@ private:
 	template<typename Type>
 	bool
 	addSpecific(const std::string& key,
-			typename std::enable_if<!is_special_param<Type>::value, Type>::type& val,
+			typename std::enable_if<std::is_enum<Type>::value, Type>::type& val,
+			bool mandatory);
+
+	template<typename Type>
+	bool
+	addSpecific(const std::string& key,
+			typename std::enable_if<!is_special_param<Type>::value && !std::is_enum<Type>::value, Type>::type& val,
 			bool mandatory);
 
 };
@@ -569,7 +575,16 @@ template<typename Config>
 template<typename Type>
 bool
 PropertyMapper<Config>::addSpecific(const std::string& key,
-		typename std::enable_if<!is_special_param<Type>::value, Type>::type& val, bool mandatory)
+		typename std::enable_if<std::is_enum<Type>::value, Type>::type& val, bool mandatory)
+{
+	return addEnum(key, val, mandatory);
+}
+
+template<typename Config>
+template<typename Type>
+bool
+PropertyMapper<Config>::addSpecific(const std::string& key,
+		typename std::enable_if<!is_special_param<Type>::value && !std::is_enum<Type>::value, Type>::type& val, bool mandatory)
 {
 	return add<Type>(key, val, mandatory);
 }

@@ -29,8 +29,7 @@
 #include <uavAP/MissionControl/GlobalPlanner/GlobalPlannerFactory.h>
 #include <uavAP/MissionControl/LocalFrameManager/LocalFrameManager.h>
 #include <uavAP/MissionControl/MissionPlanner/MissionPlannerFactory.h>
-#include "uavAP/Core/DataPresentation/ContentMapping.h"
-#include "uavAP/Core/DataPresentation/DataPresentationFactory.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 #include "uavAP/Core/Framework/Helper.h"
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/Scheduler/SchedulerFactory.h"
@@ -55,7 +54,7 @@ public:
 		addDefault<TimeProviderFactory>();
 		addDefaultCreator<IPC>();
 		addDefault<SensingActuationIOFactory>();
-		addDefault<DataPresentationFactory<Content, Target>>();
+		addDefaultCreator<DataPresentation>();
 	}
 };
 

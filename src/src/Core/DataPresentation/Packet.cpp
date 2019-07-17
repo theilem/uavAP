@@ -43,7 +43,7 @@ Packet::getBuffer() const
 }
 
 const char*
-Packet::getStart()
+Packet::getStart() const
 {
 	return buffer_.data();
 }
@@ -76,4 +76,16 @@ Packet::getCRC16() const
 	boost::crc_ccitt_type crc;
 	crc.process_bytes(static_cast<const void*>(buffer_.c_str()), getSize());
 	return static_cast<uint16_t>(crc.checksum());
+}
+
+std::string&
+Packet::getBuffer()
+{
+	return buffer_;
+}
+
+void*
+Packet::getStartAddress()
+{
+	return const_cast<void*>(static_cast<const void*>(buffer_.c_str()));
 }

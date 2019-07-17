@@ -22,12 +22,12 @@
  *  Created on: Aug 20, 2018
  *      Author: mircot
  */
-#include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include <uavAP/Core/Scheduler/IScheduler.h>
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/MissionControl/Geofencing/Geofencing.h>
 #include <uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h>
+#include <uavAP/Core/IPC/IPC.h>
 #include <limits>
 
 Geofencing::Geofencing() :
@@ -40,7 +40,7 @@ Geofencing::Geofencing() :
 bool
 Geofencing::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	pm.add<double>("roll_max", rollMax_, true);
 	pm.add<double>("evaluation_threshold", evaluationThreshold_, true);
 	pm.add<double>("distance_threshold", distanceThreshold_, true);
@@ -93,7 +93,7 @@ Geofencing::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		ipc->subscribeOnSharedMemory<SensorData>("sensor_data",
+		ipc->subscribe<SensorData>("sensor_data",
 				std::bind(&Geofencing::onSensorData, this, std::placeholders::_1));
 
 		auto mp = maneuverPlanner_.get();

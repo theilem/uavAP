@@ -22,18 +22,16 @@
  * @author Mirco Theile, mirco.theile@tum.de
  * @brief Description
  */
-#include <uavAP/Core/DataHandling/DataHandling.h>
-#include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/Core/LockTypes.h>
-#include <uavAP/Core/PropertyMapper/PropertyMapperProto.h>
 #include <uavAP/Core/Scheduler/IScheduler.h>
 #include <uavAP/FlightControl/Controller/IController.h>
 #include <uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h>
 #include "uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlanner.h"
 #include <uavAP/MissionControl/ManeuverPlanner/Override.h>
-#include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
 #include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
+#include <uavAP/Core/DataHandling/DataHandling.h>
+#include <uavAP/Core/IPC/IPC.h>
 
 ManeuverLocalPlanner::ManeuverLocalPlanner()
 {
@@ -134,21 +132,21 @@ ManeuverLocalPlanner::run(RunStage stage)
 
 		auto ipc = get<IPC>();
 
-		ipc->subscribeOnPacket("trajectory",
+		ipc->subscribeOnPackets("trajectory",
 				std::bind(&ManeuverLocalPlanner::onTrajectoryPacket, this, std::placeholders::_1));
 
-		ipc->subscribeOnPacket("override",
+		ipc->subscribeOnPackets("override",
 				std::bind(&ManeuverLocalPlanner::onOverridePacket, this, std::placeholders::_1));
 
 		if (auto dh = get<DataHandling>())
 		{
 			dh->addStatusFunction<ManeuverLocalPlannerStatus>(
-					std::bind(&ManeuverLocalPlanner::getStatus, this));
+					std::bind(&ManeuverLocalPlanner::getStatus, this), Content::MANEUVER_LOCAL_PLANNER_STATUS);
 			dh->subscribeOnCommand<ManeuverLocalPlannerParams>(Content::TUNE_MANEUVER_LOCAL_PLANNER,
 					std::bind(&ManeuverLocalPlanner::setParams, this, std::placeholders::_1));
 			dh->addTriggeredStatusFunction<Trajectory, DataRequest>(
 					std::bind(&ManeuverLocalPlanner::trajectoryRequest, this,
-							std::placeholders::_1), Content::REQUEST_DATA);
+							std::placeholders::_1), Content::TRAJECTORY, Content::REQUEST_DATA);
 		}
 
 		break;

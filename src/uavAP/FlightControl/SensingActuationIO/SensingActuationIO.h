@@ -83,8 +83,8 @@ private:
 	ObjectHandle<DataHandling> dataHandling_;
 
 	Subscription sensorSubscription_;
-	Publisher actuationPublisher_;
-	Publisher advancedControlPublisher_;
+	Publisher<ControllerOutput> actuationPublisher_;
+	Publisher<AdvancedControl> advancedControlPublisher_;
 
 	OnSensorData onSensorData_;
 

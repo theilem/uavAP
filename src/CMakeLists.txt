@@ -48,12 +48,10 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
 include_directories(	${CMAKE_SOURCE_DIR}
 						${Boost_INCLUDE_DIRS}
-						${EIGEN_INCLUDE_DIRS}
-						${Protobuf_INCLUDE_DIRS})
+						${EIGEN_INCLUDE_DIRS})
 			
 
 link_directories(	${Boost_LIBRARY_DIRS}
-					${Protobuf_LIBRARY_DIRS}
 					)
 					
 if(LINK_STATIC)
@@ -62,7 +60,6 @@ if(LINK_STATIC)
 				libboost_date_time.a
 				libboost_chrono.a
 				)
-	set(PROTOBUF libprotobuf.a)
 	set(ARB 	libarb.a
 				libmpfr.a
 				libgmp.a
@@ -73,7 +70,6 @@ else(LINK_STATIC)
 				boost_date_time
 				boost_chrono
 				)
-	set(PROTOBUF protobuf)
 	set(ARB 	arb
 				mpfr
 				gmp

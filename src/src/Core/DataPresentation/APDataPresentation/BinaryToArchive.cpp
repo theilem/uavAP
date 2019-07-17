@@ -45,7 +45,7 @@ BinaryToArchive::setOptions(const ArchiveOptions& opts)
 BinaryToArchive&
 BinaryToArchive::operator <<(const double& doub)
 {
-	if (options_.compressDouble_)
+	if (options_.compressDouble())
 	{
 		float flo = static_cast<float>(doub);
 		dp::store(*this, reinterpret_cast<char*>(&flo), sizeof(float));

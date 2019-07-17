@@ -22,9 +22,8 @@
  *  Created on: Sep 6, 2017
  *      Author: mircot
  */
-#include "uavAP/Core/DataPresentation/ContentMapping.h"
+#include <uavAP/Core/DataPresentation/Content.h>
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/MissionControl/LocalFrameManager/LocalFrameManager.h"
 #include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
 #include "uavAP/MissionControl/MissionPlanner/IMissionPlanner.h"
@@ -32,8 +31,8 @@
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/Geofencing/Geofencing.h"
-#include "uavAP/Core/DataPresentation/IDataPresentation.h"
-#include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
+#include "uavAP/Core/IPC/IPC.h"
 
 MissionControlDataHandling::MissionControlDataHandling() :
 		lastOverrideSeqNr_(0), period_(Milliseconds(100))
@@ -56,7 +55,7 @@ MissionControlDataHandling::create(const Configuration& configuration)
 bool
 MissionControlDataHandling::configure(const Configuration& configuration)
 {
-	PropertyMapper propertyMapper(configuration);
+	PropertyMapper<Configuration> propertyMapper(configuration);
 	propertyMapper.add("period", period_, false);
 
 	return propertyMapper.map();
@@ -105,7 +104,7 @@ MissionControlDataHandling::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		missionControlSubscription_ = ipc->subscribeOnPacket("data_com_mc",
+		missionControlSubscription_ = ipc->subscribeOnPackets("data_com_mc",
 				boost::bind(&MissionControlDataHandling::receiveAndDistribute, this, _1));
 
 		if (!missionControlSubscription_.connected())
@@ -160,13 +159,14 @@ MissionControlDataHandling::collectAndSend()
 
 	auto mp = maneuverPlanner_.get();
 	auto override = mp->getOverride();
-	Packet packet = dp->serialize(override, Content::OVERRIDE);
+	Packet packet = dp->serialize(override);
+	dp->addHeader(packet, Content::OVERRIDE);
 	publisher_.publish(packet);
 
 	if (mp->getOverrideNr() != lastOverrideSeqNr_)
 	{
 		lastOverrideSeqNr_ = mp->getOverrideNr();
-		overridePublisher_.publish(dp::serialize(override));
+		overridePublisher_.publish(dp->serialize(override));
 	}
 
 	//Trajectory hack: Orbit of geofencing
@@ -176,7 +176,8 @@ MissionControlDataHandling::collectAndSend()
 		return;
 	}
 
-	Packet misPack = dp->serialize(geo->criticalPoints(), Content::MISSION);
+	Packet misPack = dp->serialize(geo->criticalPoints());
+	dp->addHeader(misPack, Content::MISSION);
 	publisher_.publish(misPack);
 
 }
@@ -192,14 +193,14 @@ MissionControlDataHandling::receiveAndDistribute(const Packet& packet)
 		return;
 	}
 
-	Content content = Content::INVALID;
-	auto any = dp->deserialize(packet, content);
+	Packet p = packet;
+	Content content = dp->extractHeader<Content>(p);
 
 	switch (content)
 	{
 	case Content::REQUEST_DATA:
 	{
-		auto request = boost::any_cast<DataRequest>(any);
+		auto request = dp->deserialize<DataRequest>(p);
 		switch (request)
 		{
 		case DataRequest::MISSION:
@@ -220,7 +221,7 @@ MissionControlDataHandling::receiveAndDistribute(const Packet& packet)
 	}
 	case Content::OVERRIDE:
 	{
-		auto manOverride = boost::any_cast<Override>(any);
+		auto manOverride = dp->deserialize<Override>(p);
 		auto mp = maneuverPlanner_.get();
 		if (!mp)
 		{
@@ -232,7 +233,7 @@ MissionControlDataHandling::receiveAndDistribute(const Packet& packet)
 	}
 	case Content::SELECT_MANEUVER_SET:
 	{
-		auto maneuverSet = boost::any_cast<std::string>(any);
+		auto maneuverSet = dp->deserialize<std::string>(p);
 		auto mp = maneuverPlanner_.get();
 		if (!mp)
 		{
@@ -244,7 +245,7 @@ MissionControlDataHandling::receiveAndDistribute(const Packet& packet)
 	}
 	case Content::SELECT_MISSION:
 	{
-		auto mission = boost::any_cast<std::string>(any);
+		auto mission = dp->deserialize<std::string>(p);
 		auto mp = missionPlanner_.get();
 		if (!mp)
 		{
@@ -256,7 +257,7 @@ MissionControlDataHandling::receiveAndDistribute(const Packet& packet)
 	}
 	case Content::LOCAL_FRAME:
 	{
-		auto frame = boost::any_cast<VehicleOneFrame>(any);
+		auto frame = dp->deserialize<VehicleOneFrame>(p);
 		auto lfm = localFrameManager_.get();
 		if (!lfm)
 		{
@@ -276,7 +277,7 @@ MissionControlDataHandling::receiveAndDistribute(const Packet& packet)
 
 void
 MissionControlDataHandling::collectAndSendMission(
-		std::shared_ptr<IDataPresentation<Content, Target>> dp)
+		std::shared_ptr<DataPresentation> dp)
 {
 	APLOG_DEBUG << "Collect and send Mission";
 	auto gp = globalPlanner_.get();
@@ -287,13 +288,14 @@ MissionControlDataHandling::collectAndSendMission(
 	}
 
 	Mission mission = gp->getMission();
-	Packet packet = dp->serialize(mission, Content::MISSION);
+	Packet packet = dp->serialize(mission);
+	dp->addHeader(packet, Content::MISSION);
 	publisher_.publish(packet);
 }
 
 void
 MissionControlDataHandling::collectAndSendSafetyBounds(
-		std::shared_ptr<IDataPresentation<Content, Target>> dp)
+		std::shared_ptr<DataPresentation> dp)
 {
 	APLOG_DEBUG << "Collect and Send Safety Bounds.";
 
@@ -306,13 +308,14 @@ MissionControlDataHandling::collectAndSendSafetyBounds(
 	}
 
 	auto safetyBounds = maneuverPlanner->getSafetyBounds();
-	Packet packet = dp->serialize(safetyBounds, Content::SAFETY_BOUNDS);
+	Packet packet = dp->serialize(safetyBounds);
+	dp->addHeader(packet, Content::SAFETY_BOUNDS);
 	publisher_.publish(packet);
 }
 
 void
 MissionControlDataHandling::collectAndSendLocalFrame(
-		std::shared_ptr<IDataPresentation<Content, Target> > dp)
+		std::shared_ptr<DataPresentation > dp)
 {
 	auto lmf = localFrameManager_.get();
 	if (!lmf)
@@ -322,6 +325,7 @@ MissionControlDataHandling::collectAndSendLocalFrame(
 	}
 
 	auto frame = lmf->getFrame();
-	Packet packet = dp->serialize(frame, Content::LOCAL_FRAME);
+	Packet packet = dp->serialize(frame);
+	dp->addHeader(packet, Content::LOCAL_FRAME);
 	publisher_.publish(packet);
 }

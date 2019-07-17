@@ -22,8 +22,6 @@
  *  Created on: Sep 15, 2017
  *      Author: mircot
  */
-#include <uavAP/Core/DataHandling/DataHandling.h>
-#include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h>
 #include "uavAP/FlightControl/Controller/PIDController/RatePIDController/detail/RateCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/RatePIDController/RatePIDController.h"
@@ -31,6 +29,8 @@
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 #include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
+#include "uavAP/Core/DataHandling/DataHandling.h"
+#include <uavAP/Core/IPC/IPC.h>
 
 RatePIDController::RatePIDController()
 {
@@ -92,7 +92,7 @@ RatePIDController::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		overrideSubscription_ = ipc->subscribeOnPacket("override",
+		overrideSubscription_ = ipc->subscribeOnPackets("override",
 				std::bind(&RatePIDController::onOverridePacket, this, std::placeholders::_1));
 
 		if (!overrideSubscription_.connected())
@@ -104,7 +104,7 @@ RatePIDController::run(RunStage stage)
 		if (auto dh = dataHandling_.get())
 		{
 			dh->addStatusFunction<std::map<PIDs, PIDStatus>>(
-					std::bind(&IPIDCascade::getPIDStatus, pidCascade_));
+					std::bind(&IPIDCascade::getPIDStatus, pidCascade_), Content::PID_STATUS);
 			dh->subscribeOnCommand<PIDTuning>(Content::TUNE_PID,
 					std::bind(&RatePIDController::tunePID, this, std::placeholders::_1));
 		}
