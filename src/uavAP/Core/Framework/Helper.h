@@ -249,7 +249,7 @@ Helper::addConfigurable()
 		return;
 	}
 
-	CreatorAgg creator = std::bind(&Helper::createConfigurable<Configurable>, this, std::placeholders::_1);
+	CreatorAgg creator = &Helper::createConfigurable<Configurable>;
 
 	creators_.insert(std::make_pair(type, creator));
 }
