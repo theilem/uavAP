@@ -98,6 +98,12 @@ protected:
 	void
 	addDefaultCreator();
 
+
+
+	template<class Configurable>
+	void
+	addConfigurable();
+
 private:
 
 	/**
@@ -109,6 +115,11 @@ private:
 	template<class FactoryType>
 	static std::shared_ptr<IAggregatableObject>
 	createAggregatable(FactoryType factory, const Configuration& config);
+
+
+	template<class Configurable>
+	static std::shared_ptr<IAggregatableObject>
+	createConfigurable(const Configuration& config);
 
 	/**
 	 * @brief Merging to configuration trees, adding global configuration subtrees to the configuration tree
@@ -225,6 +236,34 @@ Helper::addDefaultCreator()
 
 	CreatorAgg creator = &Aggregatable::create;
 	creators_.insert(std::make_pair(type, creator));
+}
+
+template<class Configurable>
+inline void
+Helper::addConfigurable()
+{
+	std::string type = Configurable::typeId;
+	if (creators_.find(type) != creators_.end())
+	{
+		APLOG_ERROR << "Same id for different configurable added. Ignore.";
+		return;
+	}
+
+	CreatorAgg creator = std::bind(&Helper::createConfigurable<Configurable>, this, std::placeholders::_1);
+
+	creators_.insert(std::make_pair(type, creator));
+}
+
+template<class Configurable>
+inline std::shared_ptr<IAggregatableObject>
+Helper::createConfigurable(const Configuration& config)
+{
+	auto obj = std::make_shared<Configurable>();
+	if (!obj->configure(config))
+	{
+		APLOG_ERROR << Configurable::typeId << ": configuration failed.";
+	}
+	return obj;
 }
 
 #endif /* UAVAP_CORE_FRAMEWORK_HELPER_H_ */
