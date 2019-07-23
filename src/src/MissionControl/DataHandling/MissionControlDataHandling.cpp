@@ -30,7 +30,7 @@
 #include "uavAP/MissionControl/DataHandling/MissionControlDataHandling.h"
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
-#include "uavAP/MissionControl/Geofencing/Geofencing.h"
+//#include "uavAP/MissionControl/Geofencing/Geofencing.h"
 #include "uavAP/Core/DataPresentation/DataPresentation.h"
 #include "uavAP/Core/IPC/IPC.h"
 
@@ -144,7 +144,7 @@ MissionControlDataHandling::notifyAggregationOnUpdate(const Aggregator& agg)
 	missionPlanner_.setFromAggregationIfNotSet(agg);
 	localFrameManager_.setFromAggregationIfNotSet(agg);
 	conditionManager_.setFromAggregationIfNotSet(agg);
-	geofencing_.setFromAggregationIfNotSet(agg);
+//	geofencing_.setFromAggregationIfNotSet(agg);
 }
 
 void
@@ -170,7 +170,7 @@ MissionControlDataHandling::collectAndSend()
 	}
 
 	//Trajectory hack: Orbit of geofencing
-	auto geo = geofencing_.get();
+/*	auto geo = geofencing_.get();
 	if (!geo)
 	{
 		return;
@@ -179,7 +179,7 @@ MissionControlDataHandling::collectAndSend()
 	Packet misPack = dp->serialize(geo->criticalPoints());
 	dp->addHeader(misPack, Content::MISSION);
 	publisher_.publish(misPack);
-
+*/
 }
 
 void

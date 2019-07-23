@@ -55,7 +55,7 @@ MessageQueueComm::create(const Configuration& configuration)
 bool
 MessageQueueComm::configure(const Configuration& configuration)
 {
-	PropertyMapper pm(configuration);
+	PropertyMapper<Configuration> pm(configuration);
 
 	return pm.map();
 }

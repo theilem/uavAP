@@ -52,7 +52,7 @@ SteadyStateCondition::create(const Configuration& config)
 bool
 SteadyStateCondition::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
 	pm.add<bool>("steady_state", steadyState_, true);
 	pm.add("minimum_duration", minimumDuration_, false);

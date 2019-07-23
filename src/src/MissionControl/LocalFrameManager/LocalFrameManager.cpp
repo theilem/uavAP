@@ -35,7 +35,7 @@ LocalFrameManager::LocalFrameManager() :
 bool
 LocalFrameManager::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	double yaw = 0;
 	Vector3 origin(0,0,0);
 	pm.add<double>("yaw", yaw, true);

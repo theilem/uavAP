@@ -55,11 +55,11 @@ ApExtManager::configure(const Configuration& config)
 	uavapAPI_.subscribeOnAdvancedControl(
 			std::bind(&ApExtManager::onAdvancedControl, this, std::placeholders::_1));
 
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	boost::property_tree::ptree rotationOffsetConfig;
 	if (pm.add("rotation_offset", rotationOffsetConfig, false))
 	{
-		PropertyMapper rotPm(rotationOffsetConfig);
+		PropertyMapper<Configuration> rotPm(rotationOffsetConfig);
 		double w, x, y, z;
 		rotPm.add<double>("w", w, true);
 		rotPm.add<double>("x", x, true);

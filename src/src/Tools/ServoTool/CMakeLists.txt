@@ -18,4 +18,4 @@
 #-------------------------------------------------------------------------------
 add_executable(ServoTool ServoTool)
 
-target_link_libraries(ServoTool  uavap_core uavap_core_proto)
+target_link_libraries(ServoTool  uavap_core) #uavap_core_proto)

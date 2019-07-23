@@ -94,7 +94,7 @@ Metrics::reset()
 bool
 Metrics::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
 	std::string metrics;
 	std::string metricsGroup;

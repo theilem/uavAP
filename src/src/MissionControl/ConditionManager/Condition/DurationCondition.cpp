@@ -45,7 +45,7 @@ DurationCondition::create(const Configuration& config)
 bool
 DurationCondition::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
 	pm.add("duration", duration_, true);
 

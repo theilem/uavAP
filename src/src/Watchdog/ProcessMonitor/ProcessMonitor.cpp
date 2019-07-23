@@ -35,7 +35,7 @@ ProcessMonitor::ProcessMonitor() :
 bool
 ProcessMonitor::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	boost::property_tree::ptree processConfig;
 
 	pm.add("binary_path", binaryPath_, false);

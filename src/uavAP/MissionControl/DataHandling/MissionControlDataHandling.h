@@ -45,7 +45,7 @@ class ManeuverPlanner;
 class IMissionPlanner;
 class LocalFrameManager;
 class ConditionManager;
-class Geofencing;
+//class Geofencing;
 
 class MissionControlDataHandling: public IAggregatableObject, public IRunnableObject
 {
@@ -91,7 +91,7 @@ private:
 	ObjectHandle<DataPresentation> dataPresentation_;
 	ObjectHandle<LocalFrameManager> localFrameManager_;
 	ObjectHandle<ConditionManager> conditionManager_;
-	ObjectHandle<Geofencing> geofencing_;
+//	ObjectHandle<Geofencing> geofencing_;
 
 	Subscription missionControlSubscription_;
 	Publisher<Packet> publisher_;

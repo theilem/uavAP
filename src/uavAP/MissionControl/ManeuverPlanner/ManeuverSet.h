@@ -44,8 +44,8 @@ struct Maneuver
 	bool
 	configure(const Configuration& config)
 	{
-		PropertyMapper pm(config);
-		boost::property_tree::ptree conditionTree;
+		PropertyMapper<Configuration> pm(config);
+		Configuration conditionTree;
 		static ConditionFactory factory;
 
 		pm.add<Override>("override", override, true);

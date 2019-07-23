@@ -35,20 +35,20 @@ add_library(uavap_mission_control SHARED ${MISSION_CONTROL_SRC})
 
 target_link_libraries(uavap_mission_control 	uavap_core)
 
-add_library(uavap_mission_control_geo SHARED ${MISSION_CONTROL_GEO_SRC})
+#add_library(uavap_mission_control_geo EXCLUDE_FROM_ALL SHARED ${MISSION_CONTROL_GEO_SRC})
 
-target_link_libraries(uavap_mission_control_geo 	uavap_core
-												${ARB})
+#target_link_libraries(uavap_mission_control_geo 	uavap_core
+#												${ARB})
 
 add_executable(MissionControl   MissionControl.cpp
 								DataHandling/MissionControlDataHandling.cpp)
 
 target_link_libraries(MissionControl    uavap_flight_analysis
 										uavap_mission_control
-										uavap_mission_control_geo
+#										uavap_mission_control_geo
                                         )
                                         
 		
-install(TARGETS MissionControl uavap_mission_control uavap_mission_control_geo
+install(TARGETS MissionControl uavap_mission_control #uavap_mission_control_geo
 		RUNTIME DESTINATION bin/uavAP
 		LIBRARY DESTINATION lib)
