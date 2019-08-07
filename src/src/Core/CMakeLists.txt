@@ -17,7 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
 set(CORE_SRC "")
-set(CORE_PROTO_SRC "")
 
 add_subdirectory(Scheduler)
 add_subdirectory(PropertyMapper)
@@ -37,13 +36,7 @@ set(CORE_SRC 	${CORE_SRC}
 				${CMAKE_CURRENT_SOURCE_DIR}/SensorData.cpp
 				)
 
-set(CORE_PROTO_SRC 	${CORE_PROTO_SRC}
-					${CMAKE_CURRENT_SOURCE_DIR}/LinearAlgebraProto.cpp
-					)
 				
-				
-include_directories(${CMAKE_SOURCE_DIR}/uavAP/Core/protobuf/messages)
-
 add_library(uavap_core SHARED ${CORE_SRC})
 
 target_link_libraries(uavap_core 	${BOOST}
@@ -52,6 +45,8 @@ target_link_libraries(uavap_core 	${BOOST}
 									rt
 									dl									
 									)
+
+add_custom_target(core DEPENDS uavap_core uavap_framework_api)
 									
 									
 install(TARGETS uavap_core 

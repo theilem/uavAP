@@ -22,15 +22,15 @@ add_executable(EduInterface	main.cpp
 							
 add_library(api_edu SHARED api_edu.cpp)
 									
-target_link_libraries(EduInterface 	uavap_core
+target_link_libraries(EduInterface 	uavap_core 
 									uavap_flight_analysis
 									api_edu)
 
-install(TARGETS EduInterface 
+install(TARGETS EduInterface OPTIONAL
 		RUNTIME DESTINATION bin/uavAP)
 		
-install(TARGETS api_edu 
+install(TARGETS api_edu OPTIONAL
 		LIBRARY DESTINATION lib)
 		
-install(FILES edu.json
+install(FILES edu.json OPTIONAL
 		DESTINATION config)

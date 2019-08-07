@@ -24,11 +24,11 @@ target_link_libraries(autopilot	uavap_flight_analysis
 									uavap_flight_control
 									)
 
-install(TARGETS autopilot  
+install(TARGETS autopilot  OPTIONAL
 		RUNTIME DESTINATION bin/uavAP
 		LIBRARY DESTINATION lib)
 		
-install(FILES autopilot.json DESTINATION config) 
+install(FILES autopilot.json OPTIONAL DESTINATION config) 
 
 		
 configure_file(${PROJECT_SOURCE_DIR}/test/FullAutopilot/autopilot.json ${CMAKE_BINARY_DIR}/test/FullAutopilot/autopilot.json COPYONLY)

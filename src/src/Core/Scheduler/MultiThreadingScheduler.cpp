@@ -181,7 +181,7 @@ MultiThreadingScheduler::runSchedule()
 							boost::bind(&MultiThreadingScheduler::periodicTask, this, eventBody));
 					if (int r = pthread_setschedparam(eventBody->periodicThread.native_handle(), SCHED_FIFO, &schedulingParams_))
 					{
-						APLOG_ERROR << "Cannot set sched params: " << r;
+						APLOG_DEBUG << "Cannot set sched params: " << r;
 					}
 				}
 				//Reschedule Task

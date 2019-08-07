@@ -23,5 +23,5 @@ add_executable(Watchdog         ProcessMonitor/ProcessInfo.cpp
                                 
 target_link_libraries(Watchdog  uavap_core)
 
-install(TARGETS Watchdog DESTINATION bin/uavAP)                        
+install(TARGETS Watchdog OPTIONAL DESTINATION bin/uavAP OPTIONAL)                        
                         

@@ -38,6 +38,6 @@ target_link_libraries(FlightControl	uavap_flight_analysis
 									uavap_flight_control
 									)
 
-install(TARGETS FlightControl uavap_flight_control 
+install(TARGETS FlightControl uavap_flight_control OPTIONAL
 		RUNTIME DESTINATION bin/uavAP
-		LIBRARY DESTINATION lib)
+		LIBRARY DESTINATION lib )
