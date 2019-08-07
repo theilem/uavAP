@@ -44,6 +44,16 @@ using LockGuard = int;
 
 #include <mutex>
 
+#if __cplusplus >= 201703L
+
+#include <shared_mutex>
+
+using SharedMutex = std::shared_mutex;
+#else
+
+using SharedMutex = std::mutex;
+#endif
+
 using Mutex = std::mutex;
 using Lock = std::unique_lock<Mutex>;
 using LockGuard = std::lock_guard<Mutex>;

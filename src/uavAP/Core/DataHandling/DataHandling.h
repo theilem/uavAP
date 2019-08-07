@@ -20,7 +20,7 @@
 #include <uavAP/Core/Runner/IRunnableObject.h>
 #include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
 #include <uavAP/Core/Time.h>
-#include <unordered_map>
+#include <map>
 
 class IScheduler;
 
@@ -85,7 +85,7 @@ private:
 	std::vector<std::function<Packet
 	()>> statusPackaging_;
 
-	std::unordered_map<Content, std::vector<std::function<void
+	std::map<Content, std::vector<std::function<void
 	(const Packet&)>>> subscribers_;
 
 	Publisher<Packet> publisher_;

@@ -51,7 +51,9 @@ PluginManager::addPlugin(const std::string& path)
 
 	if (!handle)
 	{
+#ifndef NO_DL
 		APLOG_ERROR << "Cannot load shared object at: " << path << ": " << dlerror();
+#endif
 		return false;
 	}
 	APLOG_TRACE << "Handle found";
@@ -70,13 +72,21 @@ PluginManager::PluginHandle
 PluginManager::loadPlugin(const std::string& path)
 {
 	APLOG_TRACE << "Opening shared object from: " << path;
+#ifndef NO_DL
 	return dlopen(path.c_str() , RTLD_NOW);
+#else
+	return nullptr;
+#endif
 }
 
 bool
 PluginManager::registerCreators(PluginHandle handle)
 {
+#ifndef NO_DL
 	void* registerPlugin = dlsym(handle, "register_plugin");
+#else
+	void* registerPlugin = nullptr;
+#endif
 
 	if (registerPlugin == nullptr)
 	{

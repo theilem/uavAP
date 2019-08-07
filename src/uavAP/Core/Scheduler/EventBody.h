@@ -48,10 +48,10 @@ struct EventBody
 	std::condition_variable intervalCondition;
 
 	EventBody(const std::function<void
-	()>& b);
+	()>& b, const sched_param* param = nullptr);
 
 	EventBody(const std::function<void
-	()>& b, const Duration& p);
+	()>& b, const Duration& p, const sched_param* param = nullptr);
 
 };
 

@@ -107,6 +107,8 @@ private:
 	TimePoint startingTime_;
 
 	bool mainThread_;
+
+	sched_param schedulingParams_;
 };
 
 #endif /* UAVAP_CORE_SCHEDULER_MULTITHREADINGSCHEDULER_H_ */

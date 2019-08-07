@@ -48,7 +48,7 @@ Event
 MultiThreadingScheduler::schedule(const std::function<void
 ()>& task, Duration initialFromNow)
 {
-	auto body = std::make_shared<EventBody>(task);
+	auto body = std::make_shared<EventBody>(task, &schedulingParams_);
 	auto element = createSchedule(initialFromNow, body);
 
 	std::unique_lock<std::mutex> lock(eventsMutex_);
@@ -61,7 +61,7 @@ Event
 MultiThreadingScheduler::schedule(const std::function<void
 ()>& task, Duration initialFromNow, Duration period)
 {
-	auto body = std::make_shared<EventBody>(task, period);
+	auto body = std::make_shared<EventBody>(task, period, &schedulingParams_);
 	auto element = createSchedule(initialFromNow, body);
 
 	std::unique_lock<std::mutex> lock(eventsMutex_);
@@ -91,14 +91,19 @@ MultiThreadingScheduler::run(RunStage stage)
 			APLOG_ERROR << "TimeProvider missing.";
 			return true;
 		}
+		schedulingParams_.sched_priority = 99;
 		break;
 	case RunStage::NORMAL:
 		break;
 	case RunStage::FINAL:
 		started_ = true;
 		if (!mainThread_)
+		{
 			invokerThread_ = std::thread(
 					boost::bind(&MultiThreadingScheduler::runSchedule, this));
+
+			pthread_setschedparam(invokerThread_.native_handle(), SCHED_FIFO, &schedulingParams_);
+		}
 
 		break;
 	default:
@@ -174,6 +179,10 @@ MultiThreadingScheduler::runSchedule()
 					//Thread not started yet
 					eventBody->periodicThread = std::thread(
 							boost::bind(&MultiThreadingScheduler::periodicTask, this, eventBody));
+					if (int r = pthread_setschedparam(eventBody->periodicThread.native_handle(), SCHED_FIFO, &schedulingParams_))
+					{
+						APLOG_ERROR << "Cannot set sched params: " << r;
+					}
 				}
 				//Reschedule Task
 				auto element = std::make_pair(it->first + *eventBody->period, eventBody);

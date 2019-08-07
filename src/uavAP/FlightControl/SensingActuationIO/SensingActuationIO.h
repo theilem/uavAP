@@ -28,6 +28,7 @@
 
 #include <boost/signals2.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/LockTypes.h>
 
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
@@ -36,8 +37,6 @@
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
-
-#include <shared_mutex>
 
 struct ControllerOutput;
 struct AdvancedControl;
@@ -88,7 +87,7 @@ private:
 
 	OnSensorData onSensorData_;
 
-	mutable std::shared_mutex mutex_;
+	mutable SharedMutex mutex_;
 	SensorData sensorData_;
 
 };

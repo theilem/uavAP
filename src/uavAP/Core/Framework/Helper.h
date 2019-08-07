@@ -28,6 +28,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include "uavAP/Core/Framework/Factory.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include <functional>
 #include <map>
 #include <string>
@@ -127,7 +128,7 @@ private:
 	 * @param globalConf Global configuration to be appended to the config
 	 */
 	void
-	mergeGlobalConfig(boost::property_tree::ptree& config,
+	mergeGlobalConfig(Configuration& config,
 			const Configuration& globalConf);
 
 	//! Creator functor to create an IAggregatableObject
@@ -179,7 +180,7 @@ Helper::addDefault(PluginRestriction restriction)
 	}
 
 	FactoryType factory;
-	boost::property_tree::ptree emptyConf;
+	Configuration emptyConf;
 	DefaultCreatorAgg defaultCreator = std::bind(&Helper::createAggregatable<FactoryType>, factory,
 			emptyConf);
 
@@ -230,7 +231,7 @@ Helper::addDefaultCreator()
 		return;
 	}
 
-	boost::property_tree::ptree emptyConf;
+	Configuration emptyConf;
 	DefaultCreatorAgg defaultCreator = std::bind(&Aggregatable::create, emptyConf);
 	defaultCreators_.insert(std::make_pair(type, defaultCreator));
 
