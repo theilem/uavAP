@@ -99,7 +99,15 @@ protected:
 	void
 	setDefault();
 
+	template<class SpecificType>
+	void
+	addConfigurable();
+
 private:
+
+	template<class Configurable>
+	static std::shared_ptr<Configurable>
+	createConfigurable(const Configuration& config);
 
 	std::map<std::string, Creator> creatorMap_; //!< Map containing all the creators and their ids
 
@@ -232,6 +240,34 @@ Factory<Type>::getTypeIds() const
 		typeIds.push_back(it.first);
 
 	return typeIds;
+}
+
+template<class Type>
+template<class SpecificType>
+inline void
+Factory<Type>::addConfigurable()
+{
+	std::string type = SpecificType::typeId;
+	if (creatorMap_.find(type) != creatorMap_.end())
+	{
+		APLOG_ERROR << "Same id for different creator added. Ignore.";
+		return;
+	}
+
+	creatorMap_.insert(std::make_pair(type, &Factory<Type>::createConfigurable<SpecificType>));
+}
+
+template<class Type>
+template<class Configurable>
+inline std::shared_ptr<Configurable>
+Factory<Type>::createConfigurable(const Configuration& config)
+{
+	auto obj = std::make_shared<Configurable>();
+	if (!obj->configure(config))
+	{
+		APLOG_ERROR << Configurable::typeId << ": configuration failed.";
+	}
+	return obj;
 }
 
 #endif /* UAVAP_CORE_FRAMEWORK_FACTORY_H_ */

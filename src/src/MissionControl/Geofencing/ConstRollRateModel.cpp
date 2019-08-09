@@ -67,7 +67,7 @@ ConstRollRateModel::create(const Configuration& config)
 bool
 ConstRollRateModel::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	pm.add<double>("roll_rate", rollRate_, true);
 	pm.add<double>("roll_max", rollMax_, true);
 	pm.add<long int>("precision", precision_, true);

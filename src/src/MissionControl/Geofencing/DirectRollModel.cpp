@@ -30,7 +30,7 @@ DirectRollModel::create(const Configuration& config)
 bool
 DirectRollModel::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
 	pm.add<double>("roll_max", rollMax_, true);
 	pm.add<double>("g", g_, false);
