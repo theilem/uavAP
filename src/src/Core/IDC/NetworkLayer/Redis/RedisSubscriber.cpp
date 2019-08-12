@@ -14,6 +14,8 @@ RedisSubscriber::RedisSubscriber(const RedisChannelParams& params)
 			[](const std::string& host, std::size_t port, cpp_redis::connect_state status)
 			{	if (status == cpp_redis::connect_state::dropped)
 				{	APLOG_ERROR << "Client disconnected from " << host << ": " << port;}});
+	if (!params.auth_.empty())
+		subscriber_.auth(params.auth_);
 	subscriber_.subscribe(params.channel_,
 			std::bind(&RedisSubscriber::onChannel, this, std::placeholders::_1,
 					std::placeholders::_2));

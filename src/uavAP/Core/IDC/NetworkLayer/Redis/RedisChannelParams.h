@@ -15,6 +15,9 @@ struct RedisChannelParams
 	static constexpr const char* const DEFAULT_HOST_IP = "127.0.0.1";
 	std::string hostIP_ = DEFAULT_HOST_IP;
 
+	static constexpr const char* const DEFAULT_AUTH = "";
+	std::string auth_ = DEFAULT_AUTH;
+
 	static constexpr unsigned int DEFAULT_PORT = 6379;
 	unsigned int port_ = DEFAULT_PORT;
 

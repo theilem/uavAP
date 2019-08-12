@@ -12,6 +12,7 @@ RedisChannelParams::configure(const Configuration& config)
 {
 	PropertyMapper<Configuration> pm(config);
 	pm.add("host_ip", hostIP_, false);
+	pm.add("auth", auth_, false);
 	pm.add<unsigned int>("port", port_, false);
 	pm.add("channel", channel_, true);
 

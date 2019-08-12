@@ -36,8 +36,12 @@ public:
 	startHandler();
 private:
 
+	void
+	onConnectionEvent(const std::string& host, std::size_t port, cpp_redis::connect_state status);
+
 	cpp_redis::client client_;
 	std::string channel_;
+	std::string auth_;
 
 };
 
