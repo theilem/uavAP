@@ -9,7 +9,6 @@
 #define UAVAP_CORE_OBJECT_AGGREGATABLEOBJECTIMPL_HPP_
 #include <uavAP/Core/Object/AggregatableObject.hpp>
 
-
 template<class ... Objects>
 inline void
 AggregatableObject<Objects...>::notifyAggregationOnUpdate(const Aggregator& agg)
@@ -18,7 +17,7 @@ AggregatableObject<Objects...>::notifyAggregationOnUpdate(const Aggregator& agg)
 }
 
 template<class ... Objects>
-template <class Agg>
+template<class Agg>
 void
 AggregatableObject<Objects...>::notifyAggregationOnUpdate(const Agg& agg)
 {
@@ -46,16 +45,16 @@ template<class Check>
 inline bool
 AggregatableObject<Objects...>::checkIsSet() const
 {
-	return container_.template isSet<Check>();
+	return isSet<Check>();
+//	return true;
 }
 
 template<class ... Objects>
-template<class Check, class ... Others>
+template<class Check, class More, class ... Others>
 inline bool
 AggregatableObject<Objects...>::checkIsSet() const
 {
-	return container_.template isSet<Check>() && checkIsSet<Others...>;
+	return this->template isSet<Check>() && this->template checkIsSet<More, Others...>();
 }
-
 
 #endif /* UAVAP_CORE_OBJECT_AGGREGATABLEOBJECTIMPL_HPP_ */

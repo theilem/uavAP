@@ -104,6 +104,10 @@ MultiThreadingScheduler::run(RunStage stage)
 
 			pthread_setschedparam(invokerThread_.native_handle(), SCHED_FIFO, &schedulingParams_);
 		}
+		else
+		{
+			pthread_setschedparam(pthread_self(), SCHED_FIFO, &schedulingParams_);
+		}
 
 		break;
 	default:

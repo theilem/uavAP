@@ -39,7 +39,7 @@ public:
 	bool
 	checkIsSet() const;
 
-	template<class Check, class... Others>
+	template<class Check, class More, class... Others>
 	bool
 	checkIsSet() const;
 

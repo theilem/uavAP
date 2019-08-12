@@ -83,6 +83,8 @@ set(REDIS 	libcpp_redis.a
 if(NODEBUG)
 	add_definitions(-DNODEBUG)
 endif(NODEBUG)
+
+set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY true)
 		
 add_subdirectory(src)
 add_subdirectory(test)

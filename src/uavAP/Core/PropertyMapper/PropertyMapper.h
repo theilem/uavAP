@@ -139,6 +139,19 @@ private:
 		static constexpr bool value = sizeof(chk<Type>(0)) == sizeof(char);
 	};
 
+	template<typename T>
+	struct is_vector: public std::false_type
+	{
+	};
+
+	/**
+	 * @brief is_vector struct true_type because T is a vector
+	 */
+	template<typename T, typename A>
+	struct is_vector<std::vector<T, A>> : public std::true_type
+	{
+	};
+
 	template<typename Type>
 	bool
 	addSpecific(const std::string& key,
@@ -154,7 +167,13 @@ private:
 	template<typename Type>
 	bool
 	addSpecific(const std::string& key,
-			typename std::enable_if<!is_special_param<Type>::value && !std::is_enum<Type>::value, Type>::type& val,
+			typename std::enable_if<is_vector<Type>::value, Type>::type& val,
+			bool mandatory);
+
+	template<typename Type>
+	bool
+	addSpecific(const std::string& key,
+			typename std::enable_if<!is_special_param<Type>::value && !std::is_enum<Type>::value && !is_vector<Type>::value, Type>::type& val,
 			bool mandatory);
 
 };
@@ -584,7 +603,16 @@ template<typename Config>
 template<typename Type>
 bool
 PropertyMapper<Config>::addSpecific(const std::string& key,
-		typename std::enable_if<!is_special_param<Type>::value && !std::is_enum<Type>::value, Type>::type& val, bool mandatory)
+		typename std::enable_if<is_vector<Type>::value, Type>::type& val, bool mandatory)
+{
+	return addVector(key, val, mandatory);
+}
+
+template<typename Config>
+template<typename Type>
+bool
+PropertyMapper<Config>::addSpecific(const std::string& key,
+		typename std::enable_if<!is_special_param<Type>::value && !std::is_enum<Type>::value && !is_vector<Type>::value, Type>::type& val, bool mandatory)
 {
 	return add<Type>(key, val, mandatory);
 }
