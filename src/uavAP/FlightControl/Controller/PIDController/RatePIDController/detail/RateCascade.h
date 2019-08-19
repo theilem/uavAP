@@ -84,6 +84,8 @@ private:
 	std::map<ControllerOutputsWaveforms, std::shared_ptr<Control::Output>> outputWaveforms_;
 	std::map<ControllerConstraints, std::shared_ptr<Control::Constraint>> constraints_;
 
+	std::shared_ptr<Control::ManualSwitch> throttleManualSwitch_;
+
 	std::shared_ptr<Control::Constraint> rollTargetConstraint_;
 	std::shared_ptr<Control::Constraint> rollRateTargetConstraint_;
 	std::shared_ptr<Control::Constraint> rollOutputConstraint_;
@@ -107,6 +109,8 @@ private:
 	double throttleOutConstraint_;
 	double beta_;
 	double rollTarget_;
+
+	bool useRPMController_;
 };
 
 #endif /* UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_RATEPIDCONTROLLER_DETAIL_RATECASCADE_H_ */

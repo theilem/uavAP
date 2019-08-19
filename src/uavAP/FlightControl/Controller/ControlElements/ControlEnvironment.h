@@ -69,6 +69,9 @@ public:
 	std::shared_ptr<Constant>
 	addConstant(double val);
 
+	std::shared_ptr<ManualSwitch>
+	addManualSwitch(Element inTrue, Element inFalse);
+
 	std::shared_ptr<Constraint>
 	addConstraint(Element in, double min, double max);
 

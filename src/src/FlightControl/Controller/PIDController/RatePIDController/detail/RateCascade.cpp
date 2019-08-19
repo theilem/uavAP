@@ -39,7 +39,7 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 				30.0), hardRollRateConstraint_(30.0), hardPitchConstraint_(30.0), hardPitchRateConstraint_(
 				30.0), rollConstraint_(30.0), rollRateConstraint_(30.0), rollOutConstraint_(1.0), pitchConstraint_(
 				30.0), pitchRateConstraint_(30.0), pitchOutConstraint_(1.0), yawOutConstraint_(1.0), throttleOutConstraint_(
-				1.0), rollTarget_(0)
+				1.0), rollTarget_(0), useRPMController_(false)
 {
 	APLOG_TRACE << "Create RateCascade";
 
@@ -99,10 +99,17 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 	auto velocityPID = controlEnv_.addPID(velocityTarget, velocityInput, accelerationInput,
 			defaultParams);
 
+	/* RPM Control */
+	auto rpmInput = controlEnv_.addInput(&sensorData->rpm);
+	auto rpmTarget = controlEnv_.addConstant(0);
+	auto rpmPID = controlEnv_.addPID(rpmTarget, rpmInput, defaultParams);
+
 	/* Throttle Output */
-	auto velocityOffset = controlEnv_.addConstant(1);
-	auto velocityDifference = controlEnv_.addDifference(velocityPID, velocityOffset);
-	throttleOutputConstraint_ = controlEnv_.addConstraint(velocityDifference, -1, 1);
+	throttleManualSwitch_ = controlEnv_.addManualSwitch(rpmPID, velocityPID);
+	throttleManualSwitch_->switchTo(useRPMController_);
+	auto throttleOffset = controlEnv_.addConstant(1);
+	auto throttleDifference = controlEnv_.addDifference(throttleManualSwitch_, throttleOffset);
+	throttleOutputConstraint_ = controlEnv_.addConstraint(throttleDifference, -1, 1);
 	auto throttleOut = controlEnv_.addOutput(throttleOutputConstraint_, &output->throttleOutput);
 
 	/* Rudder Output */
@@ -143,6 +150,7 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 	pids_.insert(std::make_pair(PIDs::PITCH, pitchPID));
 	pids_.insert(std::make_pair(PIDs::PITCH_RATE, pitchRatePID));
 	pids_.insert(std::make_pair(PIDs::VELOCITY, velocityPID));
+	pids_.insert(std::make_pair(PIDs::RPM, rpmPID));
 	pids_.insert(std::make_pair(PIDs::RUDDER, rudderPID));
 
 }
@@ -161,6 +169,10 @@ RateCascade::configure(const boost::property_tree::ptree& config)
 	pm.add<double>("pitch_constraint", pitchConstraint_, false);
 	pm.add<double>("roll_rate_constraint", rollRateConstraint_, false);
 	pm.add<double>("pitch_rate_constraint", pitchRateConstraint_, false);
+
+	pm.add<bool>("use_rpm_controller", useRPMController_, false);
+
+	throttleManualSwitch_->switchTo(useRPMController_);
 
 	boost::property_tree::ptree pidConfig;
 	pm.add("pids", pidConfig, false);

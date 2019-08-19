@@ -113,6 +113,12 @@ ControlEnvironment::addConstant(double val)
 	return std::make_shared<Constant>(val);
 }
 
+std::shared_ptr<ManualSwitch>
+ControlEnvironment::addManualSwitch(Element inTrue, Element inFalse)
+{
+	return std::make_shared<ManualSwitch>(inTrue, inFalse);
+}
+
 std::shared_ptr<Constraint>
 ControlEnvironment::addConstraint(Element in, double min, double max)
 {
