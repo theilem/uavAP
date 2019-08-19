@@ -55,7 +55,7 @@ IDC::run(RunStage stage)
 		}
 		if (!transport_.isSet())
 		{
-			if (!self_.isSet())
+			if (!network_.isSet())
 			{
 				APLOG_ERROR << "Transport and Network layer missing. IDC needs one.";
 				return true;

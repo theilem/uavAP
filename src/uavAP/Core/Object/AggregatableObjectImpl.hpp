@@ -8,6 +8,7 @@
 #ifndef UAVAP_CORE_OBJECT_AGGREGATABLEOBJECTIMPL_HPP_
 #define UAVAP_CORE_OBJECT_AGGREGATABLEOBJECTIMPL_HPP_
 #include <uavAP/Core/Object/AggregatableObject.hpp>
+#include <uavAP/Core/Logging/APLogger.h>
 
 template<class ... Objects>
 inline void
@@ -45,8 +46,10 @@ template<class Check>
 inline bool
 AggregatableObject<Objects...>::checkIsSet() const
 {
-	return isSet<Check>();
-//	return true;
+	if (isSet<Check>())
+		return true;
+	APLOG_ERROR << Check::typeId << " Missing";
+	return false;
 }
 
 template<class ... Objects>
@@ -54,7 +57,7 @@ template<class Check, class More, class ... Others>
 inline bool
 AggregatableObject<Objects...>::checkIsSet() const
 {
-	return this->template isSet<Check>() && this->template checkIsSet<More, Others...>();
+	return this->template checkIsSet<Check>() && this->template checkIsSet<More, Others...>();
 }
 
 #endif /* UAVAP_CORE_OBJECT_AGGREGATABLEOBJECTIMPL_HPP_ */

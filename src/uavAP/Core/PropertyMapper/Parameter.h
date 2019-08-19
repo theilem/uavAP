@@ -62,4 +62,14 @@ struct is_parameter<Parameter<Type>> : public std::true_type
 {
 };
 
+template<typename Type>
+using enable_if_is_parameter = typename std::enable_if<is_parameter<Type>::value, Type>::type;
+template<typename Type>
+using enable_if_not_is_parameter = typename std::enable_if<!is_parameter<Type>::value, Type>::type;
+
+template<typename Type>
+using enable_if_is_parameter_set = typename std::enable_if<is_parameter_set<Type>::value, Type>::type;
+template<typename Type>
+using enable_if_not_is_parameter_set = typename std::enable_if<!is_parameter_set<Type>::value, Type>::type;
+
 #endif /* UAVAP_CORE_PROPERTYMAPPER_PARAMETER_H_ */

@@ -32,6 +32,7 @@
 #include <uavAP/Core/PropertyMapper/ParameterRef.h>
 #include <uavAP/Core/Time.h>
 #include "uavAP/Core/Logging/APLogger.h"
+#include "uavAP/Core/TypeTraits.hpp"
 #include <Eigen/Core>
 #include <type_traits>
 
@@ -62,7 +63,15 @@ public:
 
 	template<typename T>
 	bool
-	addVector(const std::string& key, std::vector<T>& val, bool mandatory);
+	addVector(const std::string& key, std::vector<enable_if_is_parameter_set<typename T::value_type>>& val, bool mandatory);
+
+	template<typename T>
+	bool
+	addVector(const std::string& key, std::vector<enable_if_not_is_parameter_set<typename T::value_type>>& val, bool mandatory);
+
+//	template<typename T>
+//	bool
+//	addVector(const std::string& key, std::vector<T>& val, bool mandatory);
 
 	bool
 	addVector(const std::string&key, std::vector<Configuration>& val, bool mandatory);
@@ -105,7 +114,7 @@ public:
 	operator&(Param& param);
 
 	template<typename Param>
-	typename std::enable_if<is_parameter_set<typename Param::ValueType>::value, bool>::type
+	enable_if_is_parameter_set<typename Param::ValueType>
 	operator&(Param& param);
 
 	template<typename Param>
@@ -139,19 +148,6 @@ private:
 		static constexpr bool value = sizeof(chk<Type>(0)) == sizeof(char);
 	};
 
-	template<typename T>
-	struct is_vector: public std::false_type
-	{
-	};
-
-	/**
-	 * @brief is_vector struct true_type because T is a vector
-	 */
-	template<typename T, typename A>
-	struct is_vector<std::vector<T, A>> : public std::true_type
-	{
-	};
-
 	template<typename Type>
 	bool
 	addSpecific(const std::string& key,
@@ -161,20 +157,18 @@ private:
 	template<typename Type>
 	bool
 	addSpecific(const std::string& key,
-			typename std::enable_if<std::is_enum<Type>::value, Type>::type& val,
-			bool mandatory);
+			typename std::enable_if<std::is_enum<Type>::value, Type>::type& val, bool mandatory);
+
+	template<typename Type>
+	bool
+	addSpecific(const std::string& key, enable_if_is_vector<Type>& val, bool mandatory);
 
 	template<typename Type>
 	bool
 	addSpecific(const std::string& key,
-			typename std::enable_if<is_vector<Type>::value, Type>::type& val,
-			bool mandatory);
-
-	template<typename Type>
-	bool
-	addSpecific(const std::string& key,
-			typename std::enable_if<!is_special_param<Type>::value && !std::is_enum<Type>::value && !is_vector<Type>::value, Type>::type& val,
-			bool mandatory);
+			typename std::enable_if<
+					!is_special_param<Type>::value && !std::is_enum<Type>::value
+							&& !is_vector<Type>::value, Type>::type& val, bool mandatory);
 
 };
 
@@ -234,11 +228,10 @@ PropertyMapper<Config>::add(const std::string& key,
 template<typename Config>
 template<typename T>
 inline bool
-PropertyMapper<Config>::addVector(const std::string& key, std::vector<T>& val, bool mandatory)
+PropertyMapper<Config>::addVector(const std::string& key, std::vector<enable_if_is_parameter_set<typename T::value_type>>& val, bool mandatory)
 {
-#ifndef ERIKA
 	val.clear();
-	boost::optional<const Config&> value;
+	Optional<const Config&> value;
 	if (key.empty())
 		value = p_;
 	else
@@ -248,11 +241,40 @@ PropertyMapper<Config>::addVector(const std::string& key, std::vector<T>& val, b
 		const Config& config = *value;
 		for (auto& it : config)
 		{
-			val.push_back(it.second.template get_value<T>());
+			PropertyMapper<Config> pm(it.second);
+			val.push_back(typename T::value_type());
+			val.back().configure(pm);
 		}
 		return true;
 	}
-#endif
+	if (mandatory)
+	{
+		APLOG_ERROR << "PM: mandatory " << key << " missing";
+		mandatoryCheck_ = false;
+	}
+	return false;
+}
+
+template<typename Config>
+template<typename T>
+inline bool
+PropertyMapper<Config>::addVector(const std::string& key, std::vector<enable_if_not_is_parameter_set<typename T::value_type>>& val, bool mandatory)
+{
+	val.clear();
+	Optional<const Config&> value;
+	if (key.empty())
+		value = p_;
+	else
+		value = p_.get_child_optional(key);
+	if (value)
+	{
+		const Config& config = *value;
+		for (auto& it : config)
+		{
+			val.push_back(it.second.template get_value<typename T::value_type>());
+		}
+		return true;
+	}
 	if (mandatory)
 	{
 		APLOG_ERROR << "PM: mandatory " << key << " missing";
@@ -481,7 +503,7 @@ bool
 PropertyMapper<Config>::add(const std::string& key, Vector3& val, bool mandatory)
 {
 	std::vector<double> vec;
-	if (!addVector(key, vec, mandatory))
+	if (!this->template addVector<std::vector<double>>(key, vec, mandatory))
 		return false;
 
 	if (vec.size() == 3)
@@ -502,7 +524,7 @@ bool
 PropertyMapper<Config>::add(const std::string& key, Vector2& val, bool mandatory)
 {
 	std::vector<double> vec;
-	if (!addVector(key, vec, mandatory))
+	if (!this->template addVector<std::vector<double>>(key, vec, mandatory))
 		return false;
 
 	if (vec.size() == 2)
@@ -546,8 +568,9 @@ PropertyMapper<Config>::isEmpty() const
 
 template<typename Config>
 template<typename Param>
-inline typename std::enable_if<!(is_parameter_set<typename Param::ValueType>::value
-		|| is_parameter_set_ref<typename Param::ValueType>::value), bool>::type
+inline typename std::enable_if<
+		!(is_parameter_set<typename Param::ValueType>::value
+				|| is_parameter_set_ref<typename Param::ValueType>::value), bool>::type
 PropertyMapper<Config>::operator &(Param& param)
 {
 	return addSpecific<typename Param::ValueType>(param.id, param.value, param.mandatory);
@@ -555,7 +578,7 @@ PropertyMapper<Config>::operator &(Param& param)
 
 template<typename Config>
 template<typename Param>
-inline typename std::enable_if<is_parameter_set<typename Param::ValueType>::value, bool>::type
+inline enable_if_is_parameter_set<typename Param::ValueType>
 PropertyMapper<Config>::operator &(Param& param)
 {
 	auto pm = getChild(param.id, param.mandatory);
@@ -602,17 +625,19 @@ PropertyMapper<Config>::addSpecific(const std::string& key,
 template<typename Config>
 template<typename Type>
 bool
-PropertyMapper<Config>::addSpecific(const std::string& key,
-		typename std::enable_if<is_vector<Type>::value, Type>::type& val, bool mandatory)
+PropertyMapper<Config>::addSpecific(const std::string& key, enable_if_is_vector<Type>& val,
+		bool mandatory)
 {
-	return addVector(key, val, mandatory);
+	return addVector<Type>(key, val, mandatory);
 }
 
 template<typename Config>
 template<typename Type>
 bool
 PropertyMapper<Config>::addSpecific(const std::string& key,
-		typename std::enable_if<!is_special_param<Type>::value && !std::is_enum<Type>::value && !is_vector<Type>::value, Type>::type& val, bool mandatory)
+		typename std::enable_if<
+				!is_special_param<Type>::value && !std::is_enum<Type>::value
+						&& !is_vector<Type>::value, Type>::type& val, bool mandatory)
 {
 	return add<Type>(key, val, mandatory);
 }
