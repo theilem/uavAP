@@ -68,7 +68,7 @@ struct CubicSpline: public IPathSection
 
 			double grad = (p.dot(p_prime)) / (p_prime.dot(p_prime) + p.dot(p_2prime));
 
-			if (grad == NAN)
+			if (std::isnan(grad))
 				break;
 
 			u = u - grad;
