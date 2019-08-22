@@ -101,8 +101,9 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 
 	/* RPM Control */
 	auto rpmInput = controlEnv_.addInput(&sensorData->rpm);
+	auto rpmInputFilter = controlEnv_.addFilter(rpmInput, 0.5);
 	auto rpmTarget = controlEnv_.addConstant(0);
-	auto rpmPID = controlEnv_.addPID(rpmTarget, rpmInput, defaultParams);
+	auto rpmPID = controlEnv_.addPID(rpmTarget, rpmInputFilter, defaultParams);
 
 	/* Throttle Output */
 	throttleManualSwitch_ = controlEnv_.addManualSwitch(rpmPID, velocityPID);
