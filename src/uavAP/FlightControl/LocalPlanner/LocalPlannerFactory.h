@@ -38,7 +38,7 @@ public:
 	LocalPlannerFactory()
 	{
 		addCreator<LinearLocalPlanner>();
-		addCreator<ManeuverLocalPlanner>();
+		addConfigurable<ManeuverLocalPlanner>();
 	}
 
 };

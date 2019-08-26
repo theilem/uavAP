@@ -37,17 +37,6 @@ ManeuverLocalPlanner::ManeuverLocalPlanner()
 {
 }
 
-std::shared_ptr<ManeuverLocalPlanner>
-ManeuverLocalPlanner::create(const Configuration& config)
-{
-	auto mp = std::make_shared<ManeuverLocalPlanner>();
-	if (!mp->configure(config))
-	{
-		APLOG_ERROR << "ManeuverLocalPlanner configuration failed";
-	}
-	return mp;
-}
-
 void
 ManeuverLocalPlanner::setTrajectory(const Trajectory& traj)
 {
@@ -84,24 +73,9 @@ ManeuverLocalPlanner::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!isSet<IController>())
+		if (!checkIsSet<IController, ISensingActuationIO, IScheduler, IPC>())
 		{
-			APLOG_ERROR << "LinearLocalPlanner: Controller missing";
-			return true;
-		}
-		if (!isSet<ISensingActuationIO>())
-		{
-			APLOG_ERROR << "LinearLocalPlanner: FlightControlData missing";
-			return true;
-		}
-		if (!isSet<IScheduler>())
-		{
-			APLOG_ERROR << "LinearLocalPlanner: Scheduler missing";
-			return true;
-		}
-		if (!isSet<IPC>())
-		{
-			APLOG_ERROR << "LinearLocalPlanner: IPC missing";
+			APLOG_ERROR << "LinearLocalPlanner: Dependency missing";
 			return true;
 		}
 		if (!isSet<DataHandling>())
@@ -141,7 +115,8 @@ ManeuverLocalPlanner::run(RunStage stage)
 		if (auto dh = get<DataHandling>())
 		{
 			dh->addStatusFunction<ManeuverLocalPlannerStatus>(
-					std::bind(&ManeuverLocalPlanner::getStatus, this), Content::MANEUVER_LOCAL_PLANNER_STATUS);
+					std::bind(&ManeuverLocalPlanner::getStatus, this),
+					Content::MANEUVER_LOCAL_PLANNER_STATUS);
 			dh->subscribeOnCommand<ManeuverLocalPlannerParams>(Content::TUNE_MANEUVER_LOCAL_PLANNER,
 					std::bind(&ManeuverLocalPlanner::setParams, this, std::placeholders::_1));
 			dh->addTriggeredStatusFunction<Trajectory, DataRequest>(

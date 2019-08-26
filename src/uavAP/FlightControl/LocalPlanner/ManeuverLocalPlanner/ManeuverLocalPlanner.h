@@ -63,9 +63,6 @@ public:
 
 	ManeuverLocalPlanner();
 
-	static std::shared_ptr<ManeuverLocalPlanner>
-	create(const Configuration& config);
-
 	void
 	setTrajectory(const Trajectory& traj) override;
 

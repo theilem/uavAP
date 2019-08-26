@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
 
-add_executable(autopilot    Autopilot.cpp
+add_executable(autopilot EXCLUDE_FROM_ALL   Autopilot.cpp
                                 )
 
 target_link_libraries(autopilot	uavap_flight_analysis
