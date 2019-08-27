@@ -26,9 +26,9 @@
 #ifndef UAVAP_FLIGHTCONTROL_FLIGHTCONTROLDATA_H_
 #define UAVAP_FLIGHTCONTROL_FLIGHTCONTROLDATA_H_
 
-#include <boost/thread/shared_mutex.hpp>
 #include <boost/signals2.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/LockTypes.h>
 
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
@@ -38,9 +38,10 @@
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 
-
 struct ControllerOutput;
+struct AdvancedControl;
 class IPC;
+class DataHandling;
 
 class SensingActuationIO: public ISensingActuationIO,
 		public IAggregatableObject,
@@ -74,14 +75,19 @@ private:
 	void
 	onSensorData(const SensorData& data);
 
+	void
+	onAdvancedControl(const AdvancedControl& control);
+
 	ObjectHandle<IPC> ipc_;
+	ObjectHandle<DataHandling> dataHandling_;
 
 	Subscription sensorSubscription_;
-	Publisher actuationPublisher_;
+	Publisher<ControllerOutput> actuationPublisher_;
+	Publisher<AdvancedControl> advancedControlPublisher_;
 
 	OnSensorData onSensorData_;
 
-	mutable boost::shared_mutex mutex_;
+	mutable SharedMutex mutex_;
 	SensorData sensorData_;
 
 };

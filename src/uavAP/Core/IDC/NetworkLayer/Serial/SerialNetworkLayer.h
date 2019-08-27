@@ -27,7 +27,6 @@
 
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <boost/signals2/signal.hpp>
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/IDC/NetworkLayer/Serial/SerialHandler.h"
@@ -35,6 +34,7 @@
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 #include <unordered_map>
 
 
@@ -54,10 +54,10 @@ public:
 	 * @return IInterDeviceComm ptr of a SerialIDC
 	 */
 	static std::shared_ptr<INetworkLayer>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	bool
 	sendPacket(const std::string& id, const Packet& packet) override;

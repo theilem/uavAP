@@ -7,14 +7,18 @@
 
 #ifndef UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_ARCHIVEOPTIONS_H_
 #define UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_ARCHIVEOPTIONS_H_
+#include <uavAP/Core/PropertyMapper/Parameter.h>
 
 struct ArchiveOptions
 {
-	static constexpr bool COMPRESS_DOUBLE_DEFAULT = false;
-	bool compressDouble_ = COMPRESS_DOUBLE_DEFAULT;
+	Parameter<bool> compressDouble = {false, "compress_double", false};
 
-	ArchiveOptions&
-	compressDouble(bool compress);
+	template <typename Config>
+	inline void
+	configure(Config& c)
+	{
+		c & compressDouble;
+	}
 };
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_ARCHIVEOPTIONS_H_ */

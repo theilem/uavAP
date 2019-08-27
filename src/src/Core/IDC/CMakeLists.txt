@@ -20,6 +20,10 @@ set(CORE_SRC 	${CORE_SRC}
 				${CMAKE_CURRENT_SOURCE_DIR}/NetworkLayer/Serial/SerialHandler.cpp
 				${CMAKE_CURRENT_SOURCE_DIR}/NetworkLayer/Serial/SerialNetworkLayer.cpp
 				${CMAKE_CURRENT_SOURCE_DIR}/NetworkLayer/Serial/SerialNetworkParams.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/NetworkLayer/Redis/RedisPublisher.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/NetworkLayer/Redis/RedisSubscriber.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/NetworkLayer/Redis/RedisNetworkLayer.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/NetworkLayer/Redis/RedisChannelParams.cpp
 				${CMAKE_CURRENT_SOURCE_DIR}/IDC.cpp
 				${CMAKE_CURRENT_SOURCE_DIR}/IDCSender.cpp
 				PARENT_SCOPE)

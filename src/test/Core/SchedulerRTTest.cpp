@@ -54,8 +54,7 @@ BOOST_AUTO_TEST_CASE(MultiThreadedRTTest001)
 	auto tp = std::make_shared<SystemTimeProvider>();
 	auto sched = std::make_shared<MultiThreadingScheduler>();
 	auto runner = std::make_shared<AggregatableRunner>();
-	Aggregator::aggregate(
-	{ tp, sched, runner });
+	Aggregator::aggregate( { tp, sched, runner });
 	APLogger::instance()->setLogLevel(LogLevel::WARN);
 
 	TimePoint checkIn10msec;
@@ -87,7 +86,7 @@ BOOST_AUTO_TEST_CASE(MultiThreadedRTTest001)
 	sched->stop();
 
 	//Check average
-	double tolerance = 0.002;
+	double tolerance = 0.02;
 	BOOST_CHECK_LE((double )sum10msec / count10msec, tolerance * 10000);
 	BOOST_CHECK_LE((double )sum25msec / count25msec, tolerance * 25000);
 	BOOST_CHECK_LE((double )sum77msec / count77msec, tolerance * 77000);

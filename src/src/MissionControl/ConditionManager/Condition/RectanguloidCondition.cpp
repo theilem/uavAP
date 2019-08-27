@@ -23,11 +23,12 @@
  *      Author: simonyu
  */
 
-#include "uavAP/Core/LinearAlgebra.h"
+#include <uavAP/Core/PropertyMapper/ParameterRef.h>
+#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include "uavAP/Core/Logging/APLogger.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
+#include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlannerParams.h"
 
 RectanguloidCondition::RectanguloidCondition() :
 		connection_(), rectanguloid_(), trigger_(), inTriggered_(false), outTriggered_(
@@ -38,12 +39,11 @@ RectanguloidCondition::RectanguloidCondition() :
 RectanguloidCondition::RectanguloidCondition(const Rectanguloid& rectanguloid) :
 		rectanguloid_(rectanguloid), inTriggered_(false), outTriggered_(false)
 {
-	rectanguloid_.set_major_side_orientation(
-			rectanguloid_.major_side_orientation() * M_PI / 180);
+	rectanguloid_.majorSideOrientation *=( M_PI / 180);
 }
 
 std::shared_ptr<RectanguloidCondition>
-RectanguloidCondition::create(const boost::property_tree::ptree& config)
+RectanguloidCondition::create(const Configuration& config)
 {
 	auto rectanguloidCondition = std::make_shared<RectanguloidCondition>();
 
@@ -56,20 +56,15 @@ RectanguloidCondition::create(const boost::property_tree::ptree& config)
 }
 
 bool
-RectanguloidCondition::configure(const boost::property_tree::ptree& config)
+RectanguloidCondition::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
-	pm.add("rectanguloid", rectanguloid_, true);
+	ParameterRef<Rectanguloid> rect(rectanguloid_, {}, "rectanguloid", true);
 
-	if (!rectanguloid_.has_center())
-	{
-		APLOG_ERROR << "RectanguloidCondition: Rectanguloid Center Missing.";
-		return false;
-	}
+	pm & rect;
 
-	rectanguloid_.set_major_side_orientation(
-			rectanguloid_.major_side_orientation() * M_PI / 180);
+	rectanguloid_.majorSideOrientation *= (M_PI / 180);
 
 	return pm.map();
 }
@@ -92,15 +87,15 @@ RectanguloidCondition::deactivate()
 void
 RectanguloidCondition::onSensorData(const SensorData& data)
 {
-	double majorLengthHalf = rectanguloid_.major_side_length() / 2;
-	double minorLengthHalf = rectanguloid_.minor_side_length() / 2;
-	double heightHalf = rectanguloid_.height() / 2;
+	double majorLengthHalf = rectanguloid_.majorSideLength / 2;
+	double minorLengthHalf = rectanguloid_.minorSideLength / 2;
+	double heightHalf = rectanguloid_.height / 2;
 	Vector3 position = data.position;
-	Vector3 center = toVector(rectanguloid_.center());
+	const Vector3& center = rectanguloid_.center;
 	Vector3 distanceToCenter = position - center;
 	Vector2 distanceToCenter2D = distanceToCenter.head(2);
 	Vector2 distanceToCenter2DRotated = rotate2Drad(distanceToCenter2D,
-			- rectanguloid_.major_side_orientation());
+			- rectanguloid_.majorSideOrientation);
 
 	bool inRectanguloid = (std::fabs(distanceToCenter2DRotated.x()) < majorLengthHalf)
 			&& (std::fabs(distanceToCenter2DRotated.y()) < minorLengthHalf)

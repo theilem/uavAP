@@ -32,9 +32,9 @@
 
 struct ControllerTarget : SerializeCustom
 {
-	double velocity;
-	double yawRate;
-	double climbAngle;
+	FloatingType velocity;
+	FloatingType yawRate;
+	FloatingType climbAngle;
 
 	uint32_t sequenceNr; //Trace sequence number to get timing
 

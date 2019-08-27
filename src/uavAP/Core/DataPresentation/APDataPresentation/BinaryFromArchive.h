@@ -26,7 +26,6 @@
 #ifndef UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BINARYFROMARCHIVE_H_
 #define UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_BINARYFROMARCHIVE_H_
 
-#include <google/protobuf/message.h>
 #include <uavAP/Core/DataPresentation/APDataPresentation/ArchiveOptions.h>
 #include <stdexcept>
 #include <string>
@@ -73,25 +72,17 @@ public:
 	void
 	consume(unsigned long bytes);
 
+	void
+	read(char* val, unsigned long bytes);
+
 	/**
 	 * @brief Flush out operator used for non protobuf objects
 	 * @param val Non protobuf object
 	 * @return From archive
 	 */
 	template<class Type>
-	typename std::enable_if<!std::is_base_of<google::protobuf::Message, Type>::value,
-			BinaryFromArchive>::type&
+	BinaryFromArchive&
 	operator >>(Type& val);
-
-	/**
-	 * @brief Flush out operator used for protobuf objects
-	 * @param val Protobuf object
-	 * @return From archive
-	 */
-	template<class Type>
-	typename std::enable_if<std::is_base_of<google::protobuf::Message, Type>::value,
-			BinaryFromArchive>::type&
-	operator >>(Type& message);
 
 	BinaryFromArchive&
 	operator >>(double& doub);

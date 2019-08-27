@@ -34,12 +34,17 @@
 enum class Target
 {
 	INVALID,        //!< INVALID
+	BROADCAST,		//!< Broadcast to everyone
 	FLIGHT_ANALYSIS, //!< Forward to FlightAnalysis
 	FLIGHT_CONTROL, //!< Forward to FlightControl
 	MISSION_CONTROL, //!< Forward to MissionControl
 	COMMUNICATION,  //!< Forward to Communication
 	API             //!< Forward to API
 };
+
+ENUMMAP_INIT(Target, {{Target::BROADCAST, "broadcast"}, {Target::FLIGHT_ANALYSIS, "flight_analysis"}, {Target::FLIGHT_CONTROL,
+		"flight_control"}, {Target::MISSION_CONTROL, "mission_control"}, {Target::COMMUNICATION,
+		"communication"}, {Target::API, "api"}});
 
 /**
  * @brief Content definitions.
@@ -53,7 +58,8 @@ enum class Content
 	TRAJECTORY,             	//!< TRAJECTORY
 	PID_STATUS,             	//!< PID_STATUS
 	INSPECTING_METRICS,			//!< INSPECTING_METRICS
-	LOCAL_PLANNER_STATUS,   	//!< LOCAL_PLANNER_STATUS
+	LINEAR_LOCAL_PLANNER_STATUS,   	//!< LOCAL_PLANNER_STATUS
+	MANEUVER_LOCAL_PLANNER_STATUS,
 	SAFETY_BOUNDS,          	//!< SAFETY_BOUNDS
 	CONTROLLER_OUTPUT,      	//!< CONTROLLER_OUTPUT
 	CONTROLLER_OUTPUT_TRIM,     //!< CONTROLLER_OUTPUT_TRIM
@@ -64,7 +70,8 @@ enum class Content
 	TUNE_PID,               	//!< TUNE_PID
 	TUNE_PITCH_CONSTRAINT,  	//!< TUNE_PITCH_CONSTRAINT
 	TUNE_ROLL_CONSTRAINT,   	//!< TUNE_ROLL_CONSTRAINT
-	TUNE_LOCAL_PLANNER,     	//!< TUNE_LOCAL_PLANNER
+	TUNE_LINEAR_LOCAL_PLANNER,     	//!< TUNE_LOCAL_PLANNER
+	TUNE_MANEUVER_LOCAL_PLANNER,     	//!< TUNE_LOCAL_PLANNER
 	REQUEST_DATA,           	//!< REQUEST_DATA
 	ADVANCED_CONTROL,
 
@@ -74,7 +81,8 @@ enum class Content
 	SELECT_MISSION,         	//!< SELECT_MISSION
 
 	//GS to FlightAnalysis
-	SELECT_INSPECTING_METRICS 	//!< SELECT_INSPECTING_METRICS
+	SELECT_INSPECTING_METRICS, 	//!< SELECT_INSPECTING_METRICS
+	WIND_INFO
 };
 
 /**

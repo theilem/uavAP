@@ -27,7 +27,6 @@
 #include "uavAP/Core/Runner/SynchronizedRunnerMaster.h"
 #include "uavAP/Watchdog/ProcessMonitor/ProcessMonitor.h"
 
-#include <boost/thread.hpp>
 
 ProcessMonitor* monitor;
 
@@ -72,7 +71,7 @@ main(int argc, char** argv)
 	}
 
 	APLOG_DEBUG << monitor->getNumOfProcesses() << " processes launched.";
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 	if (!monitor->checkAlive())
 	{
@@ -92,7 +91,7 @@ main(int argc, char** argv)
 	std::string input;
 	while (1)
 	{
-		boost::this_thread::sleep(Milliseconds(10));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		monitor->checkAlive();
 	}
 

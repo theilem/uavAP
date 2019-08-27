@@ -26,16 +26,17 @@
 #ifndef AUTOPILOT_INTERFACE_INCLUDE_AUTOPILOT_INTERFACE_AUTOPILOTINTERFACE_H_
 #define AUTOPILOT_INTERFACE_INCLUDE_AUTOPILOT_INTERFACE_AUTOPILOTINTERFACE_H_
 #include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/DataPresentation/Packet.h>
 #include <uavAP/Core/Object/IAggregatableObject.h>
 #include <uavAP/Core/Object/ObjectHandle.h>
 #include <uavAP/Core/Runner/IRunnableObject.h>
+#include <uavAP/Core/SensorData.h>
 
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
-#include <uavAP/Core/DataPresentation/APDataPresentation/APDataPresentation.h>
-#include <uavAP/Core/Scheduler/IScheduler.h>
 
 struct ControllerOutputEdu;
 class INetworkLayer;
+class DataPresentation;
+class SignalHandler;
 class IDC;
 
 class EduInterface: public IAggregatableObject, public IRunnableObject
@@ -49,10 +50,10 @@ public:
 	~EduInterface();
 
 	static std::shared_ptr<EduInterface>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;
@@ -80,8 +81,9 @@ private:
 	bool setup_;
 	bool subscribedOnSigint_;
 
-	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
+	ObjectHandle<DataPresentation> dataPresentation_;
 	ObjectHandle<IDC> idc_;
+	ObjectHandle<SignalHandler> signalHandler_;
 };
 
 #endif /* AUTOPILOT_INTERFACE_INCLUDE_AUTOPILOT_INTERFACE_AUTOPILOTINTERFACE_H_ */

@@ -29,36 +29,37 @@
 namespace Control
 {
 
-Constant::Constant(double val) :
+Constant::Constant(FloatingType val) :
 		val_(val)
 {
 }
 
-double
+FloatingType
 Constant::getValue()
 {
 	return std::isnan(val_) ? 0 : val_;
 }
 
-Constraint::Constraint(Element in, double min, double max) :
+Constraint::Constraint(Element in, FloatingType min, FloatingType max) :
 		in_(in), override_(false), overrideMin_(0), overrideMax_(0)
 {
 	setHardContraintValue(min, max);
 	setContraintValue(min, max);
 }
 
-Constraint::Constraint(Element in, double min, double max, double hardMin, double hardMax) :
+Constraint::Constraint(Element in, FloatingType min, FloatingType max, FloatingType hardMin,
+		FloatingType hardMax) :
 		in_(in), override_(false), overrideMin_(0), overrideMax_(0)
 {
 	setHardContraintValue(hardMin, hardMax);
 	setContraintValue(min, max);
 }
 
-double
+FloatingType
 Constraint::getValue()
 {
-	double val = in_->getValue();
-	double ret = 0;
+	FloatingType val = in_->getValue();
+	FloatingType ret = 0;
 
 	if (override_)
 	{
@@ -73,35 +74,35 @@ Constraint::getValue()
 }
 
 void
-Constraint::setHardContraintValue(double hardMinmax)
+Constraint::setHardContraintValue(FloatingType hardMinmax)
 {
 	hardMax_ = hardMinmax;
 	hardMin_ = -hardMinmax;
 }
 
 void
-Constraint::setHardContraintValue(double hardMin, double hardMax)
+Constraint::setHardContraintValue(FloatingType hardMin, FloatingType hardMax)
 {
 	hardMax_ = hardMax;
 	hardMin_ = hardMin;
 }
 
 void
-Constraint::setContraintValue(double minmax)
+Constraint::setContraintValue(FloatingType minmax)
 {
 	max_ = minmax > hardMax_ ? hardMax_ : minmax;
 	min_ = -minmax < hardMin_ ? hardMin_ : -minmax;
 }
 
 void
-Constraint::setContraintValue(double min, double max)
+Constraint::setContraintValue(FloatingType min, FloatingType max)
 {
 	max_ = max > hardMax_ ? hardMax_ : max;
 	min_ = min < hardMin_ ? hardMin_ : min;
 }
 
 void
-Constraint::overrideContraintValue(double overrideMinmax)
+Constraint::overrideContraintValue(FloatingType overrideMinmax)
 {
 	overrideMax_ = overrideMinmax > hardMax_ ? hardMax_ : overrideMinmax;
 	overrideMin_ = -overrideMinmax < hardMin_ ? hardMin_ : -overrideMinmax;
@@ -109,7 +110,7 @@ Constraint::overrideContraintValue(double overrideMinmax)
 }
 
 void
-Constraint::overrideContraintValue(double overrideMin, double overrideMax)
+Constraint::overrideContraintValue(FloatingType overrideMin, FloatingType overrideMax)
 {
 	overrideMax_ = overrideMax > hardMax_ ? hardMax_ : overrideMax;
 	overrideMin_ = overrideMin < hardMin_ ? hardMin_ : overrideMin;
@@ -127,34 +128,34 @@ Difference::Difference(Element in1, Element in2) :
 {
 }
 
-double
+FloatingType
 Difference::getValue()
 {
-	double ret = in1_->getValue() - in2_->getValue();
+	FloatingType ret = in1_->getValue() - in2_->getValue();
 	return std::isnan(ret) ? 0 : ret;
 }
 
-Gain::Gain(Element in, double gain) :
+Gain::Gain(Element in, FloatingType gain) :
 		in_(in), gain_(gain)
 {
 }
 
-double
+FloatingType
 Gain::getValue()
 {
 	return gain_ * in_->getValue();
 }
 
-Input::Input(double* in) :
+Input::Input(FloatingType* in) :
 		in_(in)
 {
 
 }
 
-double
+FloatingType
 Input::getValue()
 {
-	double ret = *in_;
+	FloatingType ret = *in_;
 	return std::isnan(ret) ? 0 : ret;
 }
 
@@ -163,10 +164,10 @@ Sum::Sum(Element in1, Element in2) :
 {
 }
 
-double
+FloatingType
 Sum::getValue()
 {
-	double ret = in1_->getValue() + in2_->getValue();
+	FloatingType ret = in1_->getValue() + in2_->getValue();
 	return std::isnan(ret) ? 0 : ret;
 }
 
@@ -175,10 +176,10 @@ ManualSwitch::ManualSwitch(Element inTrue, Element inFalse) :
 {
 }
 
-double
+FloatingType
 ManualSwitch::getValue()
 {
-	double ret = state_ ? inTrue_->getValue() : inFalse_->getValue();
+	FloatingType ret = state_ ? inTrue_->getValue() : inFalse_->getValue();
 	return std::isnan(ret) ? 0 : ret;
 }
 

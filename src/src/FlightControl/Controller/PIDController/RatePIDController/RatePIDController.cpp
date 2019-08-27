@@ -22,20 +22,22 @@
  *  Created on: Sep 15, 2017
  *      Author: mircot
  */
-#include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h>
 #include "uavAP/FlightControl/Controller/PIDController/RatePIDController/detail/RateCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/RatePIDController/RatePIDController.h"
 #include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
+#include "uavAP/Core/DataHandling/DataHandling.h"
+#include <uavAP/Core/IPC/IPC.h>
 
 RatePIDController::RatePIDController()
 {
 }
 
 std::shared_ptr<RatePIDController>
-RatePIDController::create(const boost::property_tree::ptree& config)
+RatePIDController::create(const Configuration& config)
 {
 	auto flightController = std::make_shared<RatePIDController>();
 	flightController->configure(config);
@@ -44,7 +46,7 @@ RatePIDController::create(const boost::property_tree::ptree& config)
 }
 
 bool
-RatePIDController::configure(const boost::property_tree::ptree& config)
+RatePIDController::configure(const Configuration& config)
 {
 	pidCascade_ = std::make_shared<RateCascade>(&sensorData_, velocityInertial_,
 			accelerationInertial_, &controllerTarget_, &controllerOutput_);
@@ -74,12 +76,15 @@ RatePIDController::run(RunStage stage)
 			APLOG_ERROR << "RatePIDController: ipc missing";
 			return true;
 		}
+		if (!dataHandling_.isSet())
+		{
+			APLOG_DEBUG << "RatePIDController: DataHandling not set. Debugging disabled.";
+		}
 
 		auto ipc = ipc_.get();
 
-		controllerOutputPublisherMP_ = ipc->publishPackets("controller_output_mp");
-		controllerOutputPublisherTA_ = ipc->publishPackets("controller_output_ta");
-		controllerOutputPublisherMA_ = ipc->publishPackets("controller_output_ma");
+		controllerOutputPublisher_ = ipc->publish<ControllerOutput>("controller_output");
+		pidStatiPublisher_ = ipc->publishPackets("pid_stati");
 
 		break;
 	}
@@ -87,16 +92,22 @@ RatePIDController::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		overrideSubscription_ = ipc->subscribeOnPacket("override",
-				std::bind(&RatePIDController::onOverridePacket, this,
-						std::placeholders::_1));
+		overrideSubscription_ = ipc->subscribeOnPackets("override",
+				std::bind(&RatePIDController::onOverridePacket, this, std::placeholders::_1));
 
 		if (!overrideSubscription_.connected())
 		{
-			APLOG_ERROR << "PIDController: maneuver activation subscription failed";
-			return true;
+			APLOG_WARN << "PIDController: maneuver activation subscription failed";
+//			return true;
 		}
 
+		if (auto dh = dataHandling_.get())
+		{
+			dh->addStatusFunction<std::map<PIDs, PIDStatus>>(
+					std::bind(&IPIDCascade::getPIDStatus, pidCascade_), Content::PID_STATUS);
+			dh->subscribeOnCommand<PIDTuning>(Content::TUNE_PID,
+					std::bind(&RatePIDController::tunePID, this, std::placeholders::_1));
+		}
 
 		break;
 	}
@@ -132,6 +143,7 @@ RatePIDController::notifyAggregationOnUpdate(const Aggregator& agg)
 	sensAct_.setFromAggregationIfNotSet(agg);
 	scheduler_.setFromAggregationIfNotSet(agg);
 	ipc_.setFromAggregationIfNotSet(agg);
+	dataHandling_.setFromAggregationIfNotSet(agg);
 }
 
 std::shared_ptr<IPIDCascade>
@@ -173,15 +185,9 @@ RatePIDController::calculateControl()
 	targetLock.unlock();
 
 	sensAct->setControllerOutput(controllerOutput_);
-	controllerOutputPublisherMP_.publish(dp::serialize(controllerOutput_));
-	controllerOutputPublisherTA_.publish(dp::serialize(controllerOutput_));
-	controllerOutputPublisherMA_.publish(dp::serialize(controllerOutput_));
+	controllerOutputPublisher_.publish(controllerOutput_);
 
-	APLOG_TRACE << "Roll Output: " << controllerOutput_.rollOutput;
-	APLOG_TRACE << "Pitch Output: " << controllerOutput_.pitchOutput;
-	APLOG_TRACE << "Yaw Output: " << controllerOutput_.yawOutput;
-	APLOG_TRACE << "Throttle Output: " << controllerOutput_.throttleOutput;
-	APLOG_TRACE << " ";
+	pidStatiPublisher_.publish(dp::serialize(pidCascade_->getPIDStatus()));
 }
 
 void
@@ -190,4 +196,10 @@ RatePIDController::onOverridePacket(const Packet& packet)
 	auto override = dp::deserialize<Override>(packet);
 	LockGuard lock(controllerTargetMutex_);
 	pidCascade_->setManeuverOverride(override);
+}
+
+void
+RatePIDController::tunePID(const PIDTuning& params)
+{
+	pidCascade_->tunePID(static_cast<PIDs>(params.pid), params.params);
 }

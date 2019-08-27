@@ -26,16 +26,15 @@
 #ifndef UAVAP_FLIGHTCONTROL_FLIGHTCONTROLHELPER_H_
 #define UAVAP_FLIGHTCONTROL_FLIGHTCONTROLHELPER_H_
 
-#include "uavAP/Core/DataPresentation/ContentMapping.h"
-#include "uavAP/Core/DataPresentation/DataPresentationFactory.h"
 #include "uavAP/Core/Framework/Helper.h"
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/Scheduler/SchedulerFactory.h"
 #include "uavAP/Core/TimeProvider/TimeProviderFactory.h"
 #include "uavAP/FlightControl/Controller/ControllerFactory.h"
-#include "uavAP/FlightControl/DataHandling/FlightControlDataHandling.h"
+#include "uavAP/Core/DataHandling/DataHandling.h"
 #include "uavAP/FlightControl/LocalPlanner/LocalPlannerFactory.h"
 #include "uavAP/FlightControl/SensingActuationIO/SensingActuationIOFactory.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
+#include "uavAP/Core/IPC/IPC.h"
 
 class FlightControlHelper: public Helper
 {
@@ -49,8 +48,8 @@ public:
 		addDefault<TimeProviderFactory>();
 		addDefaultCreator<IPC>();
 		addDefault<SensingActuationIOFactory>();
-		addDefaultCreator<FlightControlDataHandling>();
-		addDefault<DataPresentationFactory<Content, Target>>();
+		addCreator<DataHandling>();
+		addDefaultCreator<DataPresentation>();
 	}
 };
 

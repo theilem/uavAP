@@ -42,13 +42,7 @@
 #include <mutex>
 
 class IScheduler;
-enum class Content
-;
-enum class Target
-;
-
-template<typename C, typename T>
-class IDataPresentation;
+class DataPresentation;
 class IDC;
 class IPC;
 
@@ -61,10 +55,10 @@ public:
 	IDCComm();
 
 	static std::shared_ptr<IDCComm>
-	create(const boost::property_tree::ptree& configuration);
+	create(const Configuration& configuration);
 
 	bool
-	configure(const boost::property_tree::ptree& configuration);
+	configure(const Configuration& configuration);
 
 	bool
 	run(RunStage stage) override;
@@ -86,16 +80,16 @@ private:
 	ObjectHandle<IPC> ipc_;
 	ObjectHandle<IDC> idc_;
 	ObjectHandle<IScheduler> scheduler_;
-	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
+	ObjectHandle<DataPresentation> dataPresentation_;
 
 	Subscription flightAnalysisSubscription_;
 	Subscription flightControlSubscription_;
 	Subscription missionControlSubscription_;
 	Subscription channelMixingSubscription_;
-	Publisher flightAnalysisPublisher_;
-	Publisher flightControlPublisher_;
-	Publisher missionControlPublisher_;
-	Publisher apiPublisher_;
+	Publisher<Packet> flightAnalysisPublisher_;
+	Publisher<Packet> flightControlPublisher_;
+	Publisher<Packet> missionControlPublisher_;
+	Publisher<Packet> apiPublisher_;
 
 	std::mutex senderMutex_;
 	IDCSender sender_;

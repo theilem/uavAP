@@ -25,25 +25,27 @@
  *  Description
  */
 
+//#include <uavAP/Core/DataHandling/DataHandling.h>
 #include <iostream>
 #include <cmath>
-#include <mutex>
 
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
-#include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/detail/AirplaneSimplePIDCascade.h"
-//#include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/detail/HelicopterSimplePIDCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/SimplePIDController.h"
+#include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
+#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 
 SimplePIDController::SimplePIDController() :
-		airplane_(true)
+		pidCascade_(&sensorData_, velocityInertial_, accelerationInertial_, &controllerTarget_,
+				&controllerOutput_)
 {
 }
 
 std::shared_ptr<SimplePIDController>
-SimplePIDController::create(const boost::property_tree::ptree& configuration)
+SimplePIDController::create(const Configuration& configuration)
 {
 	auto flightController = std::make_shared<SimplePIDController>();
 	flightController->configure(configuration);
@@ -52,23 +54,9 @@ SimplePIDController::create(const boost::property_tree::ptree& configuration)
 }
 
 bool
-SimplePIDController::configure(const boost::property_tree::ptree& config)
+SimplePIDController::configure(const Configuration& config)
 {
-	PropertyMapper propertyMapper(config);
-	propertyMapper.add<bool>("airplane", airplane_, false);
-
-	if (airplane_)
-	{
-		pidCascade_ = std::make_shared<AirplaneSimplePIDCascade>(&sensorData_, velocityInertial_,
-				accelerationInertial_, &controllerTarget_, &controllerOutput_);
-	}
-	else
-	{
-//		pidCascade_ = std::make_shared<HelicopterSimplePIDCascade>(&sensorData_, &controllerTarget_,
-//				&controllerOutput_);
-	}
-
-	return pidCascade_->configure(config);
+	return pidCascade_.configure(config);
 }
 
 bool
@@ -78,26 +66,32 @@ SimplePIDController::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!sensAct_.isSet())
+		if (!isSet<ISensingActuationIO>())
 		{
 			APLOG_ERROR << "SimplePIDController: Failed to Load SensingActuationIO";
 
 			return true;
 		}
-		if (!scheduler_.isSet())
-		{
-			APLOG_ERROR << "SimplePIDController: Failed to Load Scheduler";
 
-			return true;
-		}
+//		if (!isSet<DataHandling>())
+//		{
+//			APLOG_DEBUG << "SimplePIDController: DataHandling not set. Debugging disabled.";
+//		}
 
 		break;
 	}
 	case RunStage::NORMAL:
 	{
-		auto scheduler = scheduler_.get();
-		scheduler->schedule(std::bind(&SimplePIDController::calculateControl, this), Milliseconds(0),
-				Milliseconds(10));
+//		auto io = get<ISensingActuationIO>();
+//		io->subscribeOnSensorData(std::bind(&SimplePIDController::calculateControl, this));
+
+//		if (auto dh = get<DataHandling>())
+//		{
+//			dh->addStatusFunction<std::map<PIDs, PIDStatus>>(
+//					std::bind(&IPIDCascade::getPIDStatus, pidCascade_));
+//			dh->subscribeOnCommand<PIDTuning>(Content::TUNE_PID,
+//					std::bind(&SimplePIDController::tunePID, this, std::placeholders::_1));
+//		}
 
 		break;
 	}
@@ -119,6 +113,7 @@ SimplePIDController::setControllerTarget(const ControllerTarget& target)
 {
 	LockGuard lock(controllerTargetMutex_);
 	controllerTarget_ = target;
+	calculateControl();
 }
 
 ControllerOutput
@@ -127,16 +122,16 @@ SimplePIDController::getControllerOutput()
 	return controllerOutput_;
 }
 
-std::shared_ptr<IPIDCascade>
-SimplePIDController::getCascade()
-{
-	return pidCascade_;
-}
+//std::shared_ptr<IPIDCascade>
+//SimplePIDController::getCascade()
+//{
+//	return pidCascade_;
+//}
 
 void
 SimplePIDController::calculateControl()
 {
-	auto sensAct = sensAct_.get();
+	auto sensAct = get<ISensingActuationIO>();
 
 	if (!sensAct)
 	{
@@ -147,30 +142,24 @@ SimplePIDController::calculateControl()
 
 	sensorData_ = sensAct->getSensorData();
 
-	Eigen::Matrix3d m;
-	m = Eigen::AngleAxisd(sensorData_.attitude.x(), Vector3::UnitX())
-			* Eigen::AngleAxisd(sensorData_.attitude.y(), Vector3::UnitY())
-			* Eigen::AngleAxisd(sensorData_.attitude.z(), Vector3::UnitZ());
+	Matrix3 m(
+			(AngleAxis(sensorData_.attitude.x(), Vector3::UnitX())
+					* AngleAxis(sensorData_.attitude.y(), Vector3::UnitY())
+					* AngleAxis(sensorData_.attitude.z(), Vector3::UnitZ())).toRotationMatrix());
 
 	velocityInertial_ = m.transpose() * sensorData_.velocity;
 	accelerationInertial_ = m.transpose() * sensorData_.acceleration;
 	accelerationInertial_[2] *= -1;
 	Lock targetLock(controllerTargetMutex_);
 
-	if (!pidCascade_)
-	{
-		APLOG_ERROR << "ControlEnv not set.";
-		return;
-	}
-	pidCascade_->evaluate();
+	pidCascade_.evaluate();
 	targetLock.unlock();
 
 	sensAct->setControllerOutput(controllerOutput_);
 }
 
 void
-SimplePIDController::notifyAggregationOnUpdate(const Aggregator& agg)
+SimplePIDController::tunePID(const PIDTuning& params)
 {
-	sensAct_.setFromAggregationIfNotSet(agg);
-	scheduler_.setFromAggregationIfNotSet(agg);
+	pidCascade_.tunePID(static_cast<PIDs>(params.pid), params.params);
 }

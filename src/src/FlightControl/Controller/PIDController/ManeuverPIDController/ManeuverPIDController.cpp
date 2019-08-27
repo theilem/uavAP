@@ -22,20 +22,22 @@
  *  Created on: Sep 15, 2017
  *      Author: mircot
  */
-#include "uavAP/Core/IPC/IPC.h"
+#include <uavAP/Core/LockTypes.h>
 #include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/detail/ManeuverCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/ManeuverPIDController.h"
-#include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
-#include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
+#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
+#include "uavAP/Core/DataHandling/DataHandling.h"
+#include "uavAP/Core/IPC/IPC.h"
 
 ManeuverPIDController::ManeuverPIDController()
 {
 }
 
 std::shared_ptr<ManeuverPIDController>
-ManeuverPIDController::create(const boost::property_tree::ptree& config)
+ManeuverPIDController::create(const Configuration& config)
 {
 	auto flightController = std::make_shared<ManeuverPIDController>();
 	flightController->configure(config);
@@ -44,7 +46,7 @@ ManeuverPIDController::create(const boost::property_tree::ptree& config)
 }
 
 bool
-ManeuverPIDController::configure(const boost::property_tree::ptree& config)
+ManeuverPIDController::configure(const Configuration& config)
 {
 	pidCascade_ = std::make_shared<ManeuverCascade>(&sensorData_, velocityInertial_,
 			accelerationInertial_, &controllerTarget_, &controllerOutput_);
@@ -59,23 +61,27 @@ ManeuverPIDController::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!sensAct_.isSet())
+		if (!isSet<ISensingActuationIO>())
 		{
 			APLOG_ERROR << "PIDController: Failed to Load SensingActuationIO";
 			return true;
 		}
-		if (!scheduler_.isSet())
+		if (!isSet<IScheduler>())
 		{
 			APLOG_ERROR << "PIDController: Failed to Load Scheduler";
 			return true;
 		}
-		if (!ipc_.isSet())
+		if (!isSet<IPC>())
 		{
 			APLOG_ERROR << "PIDController: ipc missing";
 			return true;
 		}
+		if (!isSet<DataHandling>())
+		{
+			APLOG_DEBUG << "ManeuverPIDController: DataHandling not set. Debugging disabled.";
+		}
 
-		auto ipc = ipc_.get();
+		auto ipc = get<IPC>();
 
 		controllerOutputPublisher_ = ipc->publishPackets("controller_output");
 
@@ -83,8 +89,8 @@ ManeuverPIDController::run(RunStage stage)
 	}
 	case RunStage::NORMAL:
 	{
-		auto ipc = ipc_.get();
-		overrideSubscription_ = ipc->subscribeOnPacket("override",
+		auto ipc = get<IPC>();
+		overrideSubscription_ = ipc->subscribeOnPackets("override",
 				std::bind(&ManeuverPIDController::onOverridePacket, this, std::placeholders::_1));
 
 		if (!overrideSubscription_.connected())
@@ -92,9 +98,19 @@ ManeuverPIDController::run(RunStage stage)
 			APLOG_DEBUG << "Override not present.";
 		}
 
-		auto scheduler = scheduler_.get();
+		auto scheduler = get<IScheduler>();
 //		scheduler->schedule(std::bind(&ManeuverPIDController::calculateControl, this),
 //				Milliseconds(0), Milliseconds(10));
+
+
+
+		if (auto dh = get<DataHandling>())
+		{
+			dh->addStatusFunction<std::map<PIDs, PIDStatus>>(
+					std::bind(&IPIDCascade::getPIDStatus, pidCascade_), Content::PID_STATUS);
+			dh->subscribeOnCommand<PIDTuning>(Content::TUNE_PID,
+					std::bind(&ManeuverPIDController::tunePID, this, std::placeholders::_1));
+		}
 
 		break;
 	}
@@ -126,23 +142,9 @@ ManeuverPIDController::getControllerOutput()
 }
 
 void
-ManeuverPIDController::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	sensAct_.setFromAggregationIfNotSet(agg);
-	scheduler_.setFromAggregationIfNotSet(agg);
-	ipc_.setFromAggregationIfNotSet(agg);
-}
-
-std::shared_ptr<IPIDCascade>
-ManeuverPIDController::getCascade()
-{
-	return pidCascade_;
-}
-
-void
 ManeuverPIDController::calculateControl()
 {
-	auto sensAct = sensAct_.get();
+	auto sensAct = get<ISensingActuationIO>();
 
 	if (!sensAct)
 	{
@@ -152,10 +154,10 @@ ManeuverPIDController::calculateControl()
 
 	sensorData_ = sensAct->getSensorData();
 
-	Eigen::Matrix3d m;
-	m = Eigen::AngleAxisd(-sensorData_.attitude.x(), Vector3::UnitX())
-			* Eigen::AngleAxisd(-sensorData_.attitude.y(), Vector3::UnitY())
-			* Eigen::AngleAxisd(-sensorData_.attitude.z(), Vector3::UnitZ());
+	Matrix3 m;
+	m = AngleAxis(-sensorData_.attitude.x(), Vector3::UnitX())
+			* AngleAxis(-sensorData_.attitude.y(), Vector3::UnitY())
+			* AngleAxis(-sensorData_.attitude.z(), Vector3::UnitZ());
 
 	accelerationInertial_ = m * sensorData_.acceleration;
 	Lock targetLock(controllerTargetMutex_);
@@ -172,13 +174,22 @@ ManeuverPIDController::calculateControl()
 	targetLock.unlock();
 
 	sensAct->setControllerOutput(controllerOutput_);
-	controllerOutputPublisher_.publish(dp::serialize(controllerOutput_));
+
+	auto dp = get<DataPresentation>();
+	controllerOutputPublisher_.publish(dp->serialize(controllerOutput_));
 }
 
 void
 ManeuverPIDController::onOverridePacket(const Packet& packet)
 {
-	auto override = dp::deserialize<Override>(packet);
+	auto dp = get<DataPresentation>();
+	auto override = dp->deserialize<Override>(packet);
 	LockGuard lock(controllerTargetMutex_);
 	pidCascade_->setManeuverOverride(override);
+}
+
+void
+ManeuverPIDController::tunePID(const PIDTuning& params)
+{
+	pidCascade_->tunePID(static_cast<PIDs>(params.pid), params.params);
 }

@@ -22,40 +22,20 @@
  *  Created on: Aug 6, 2017
  *      Author: mircot
  */
+#include <uavAP/Core/Object/SignalHandler.h>
 #include "uavAP/Core/Object/Aggregator.h"
-#include <csignal>
 
-static Aggregator* aggSigHandler = nullptr;
-
-void
-sigIntHandler(int sig)
-{
-	if (aggSigHandler)
-	{
-		aggSigHandler->callSigHandlers(sig);
-	}
-	exit(sig);
-}
 
 Aggregator::Aggregator()
 {
-	if (!aggSigHandler)
-	{
-		aggSigHandler = this;
-		std::signal(SIGINT, sigIntHandler);
-		std::signal(SIGTERM, sigIntHandler);
-	}
+	add(std::make_shared<SignalHandler>());
 }
 
 void
 Aggregator::add(std::shared_ptr<IAggregatableObject> obj)
 {
-	container_.push_back(obj);
-
-	for (auto it : container_)
-	{
-		it->notifyAggregationOnUpdate(*this);
-	}
+	container_.add(obj);
+	container_.notifyAggregationOnUpdate(*this);
 }
 
 Aggregator
@@ -70,26 +50,9 @@ Aggregator::aggregate(std::vector<std::shared_ptr<IAggregatableObject> > aggrega
 }
 
 void
-Aggregator::add(std::vector<std::shared_ptr<IAggregatableObject> > objs)
+Aggregator::add(const ObjectContainer& obj)
 {
-	container_.insert(container_.end(), objs.begin(), objs.end());
-
-	for (auto it : container_)
-	{
-		it->notifyAggregationOnUpdate(*this);
-	}
-}
-
-void
-Aggregator::subscribeOnSigint(const OnSIGINT::slot_type& slot) const
-{
-	onSigint_.connect(slot);
-}
-
-void
-Aggregator::callSigHandlers(int sig)
-{
-	onSigint_(sig);
+	container_.add(obj);
 }
 
 void
@@ -102,5 +65,11 @@ void
 Aggregator::mergeInto(Aggregator& agg)
 {
 	agg.add(container_);
+	container_.clear();
+}
+
+void
+Aggregator::clear()
+{
 	container_.clear();
 }

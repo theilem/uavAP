@@ -26,12 +26,15 @@
 #ifndef UAVAP_MISSIONCONTROL_MANEUVERPLANNER_MANEUVERPLANNER_H_
 #define UAVAP_MISSIONCONTROL_MANEUVERPLANNER_MANEUVERPLANNER_H_
 
+#include "uavAP/Core/LockTypes.h"
+#include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
+#include <uavAP/MissionControl/Geofencing/Rectanguloid.h>
+#include <uavAP/MissionControl/ManeuverPlanner/ManeuverPlannerParams.h>
 #include <string>
 #include <unordered_map>
 
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/IPC/Subscription.h"
-#include "uavAP/Core/protobuf/messages/ManeuverPlanner.pb.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
@@ -44,7 +47,7 @@ class IPC;
 class ConditionManager;
 class RectanguloidCondition;
 
-class ManeuverPlanner: public IAggregatableObject, public IRunnableObject
+class ManeuverPlanner: public IAggregatableObject, public IRunnableObject, public ConfigurableObject<ManeuverPlannerParams>
 {
 public:
 
@@ -53,10 +56,10 @@ public:
 	ManeuverPlanner();
 
 	static std::shared_ptr<ManeuverPlanner>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;
@@ -126,23 +129,21 @@ private:
 			const std::map<ControllerOutputs, bool>& overrideMap, const ControllerOutput& outputOverride);
 
 	void
-	onControllerOutputPacket(const Packet& packet);
+	onControllerOutput(const ControllerOutput& packet);
 
 	void
-	onControllerOutputTrimPacket(const Packet& packet);
+	onControllerOutputTrim(const ControllerOutput& packet);
 
 	void
 	onAdvancedControl(const AdvancedControl& advanced);
 
 	using ManeuverSetMap = std::unordered_map<std::string, ManeuverSet>;
 
-	ManeuverPlannerParams params_;
-
 	Override override_;
-	mutable std::mutex overrideMutex_;
+	mutable Mutex overrideMutex_;
 
 	AdvancedControl advancedControl_;
-	mutable std::mutex advancedControlMutex_;
+	mutable Mutex advancedControlMutex_;
 
 	bool maneuverAnalysis_;
 	mutable std::mutex maneuverAnalysisMutex_;
@@ -154,7 +155,7 @@ private:
 	mutable std::mutex trimAnalysisMutex_;
 
 	ControllerOutput controllerOutput_;
-	mutable std::mutex controllerOutputMutex_;
+	mutable Mutex controllerOutputMutex_;
 
 	ControllerOutput controllerOutputTrim_;
 	mutable std::mutex controllerOutputTrimMutex_;
@@ -181,15 +182,15 @@ private:
 	bool maneuverRestart_;
 
 	unsigned int overrideSeqNr_;
-	mutable std::mutex overrideSeqNrMutex_;
+	mutable Mutex overrideSeqNrMutex_;
 
 	std::shared_ptr<RectanguloidCondition> safetyCondition_;
 
-	Publisher overridePublisher_;
-	Publisher maneuverAnalysisPublisher_;
-	Publisher maneuverAnalysisStatusPublisher_;
-	Publisher trimAnalysisPublisher_;
-	Publisher advancedControlPublisher_;
+	Publisher<Packet> overridePublisher_;
+	Publisher<bool> maneuverAnalysisPublisher_;
+	Publisher<AdvancedControl> advancedControlPublisher_;
+	Publisher<Packet> maneuverAnalysisStatusPublisher_;
+	Publisher<bool> trimAnalysisPublisher_;
 	Subscription controllerOutputSubscription_;
 	Subscription controllerOutputTrimSubscription_;
 	Subscription advancedControlSubscription_;

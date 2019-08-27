@@ -34,6 +34,7 @@
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 
 class IPC;
 class IScheduler;
@@ -71,7 +72,7 @@ private:
 
 	ObjectHandle<IPC> ipc_;
 	ObjectHandle<IScheduler> scheduler_;
-	Publisher framePublisher_;
+	Publisher<VehicleOneFrame> framePublisher_;
 	VehicleOneFrame frame_;
 	mutable std::mutex frameMutex_;
 };

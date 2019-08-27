@@ -27,8 +27,8 @@
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_ADVANCEDCONTROL_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_ADVANCEDCONTROL_H_
 
+#include <uavAP/Core/PropertyMapper/Configuration.h>
 #include <map>
-#include <boost/property_tree/ptree.hpp>
 
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/EnumMap.hpp"
@@ -89,9 +89,9 @@ struct AdvancedControl
 	double specialValue = 0.0;
 
 	bool
-	configure(const boost::property_tree::ptree& config)
+	configure(const Configuration& config)
 	{
-		PropertyMapper pm(config);
+		PropertyMapper<Configuration> pm(config);
 
 		for (auto& it : config)
 		{
@@ -101,11 +101,11 @@ struct AdvancedControl
 			{
 			case AdvancedControls::CAMBER_CONTROL:
 			{
-				boost::property_tree::ptree camberConfig;
+				Configuration camberConfig;
 
 				if (pm.add(it.first, camberConfig, true))
 				{
-					PropertyMapper camberPm(camberConfig);
+					PropertyMapper<Configuration> camberPm(camberConfig);
 					std::string camberString;
 
 					camberPm.add("control", camberString, true);
@@ -117,11 +117,11 @@ struct AdvancedControl
 			}
 			case AdvancedControls::SPECIAL_CONTROL:
 			{
-				boost::property_tree::ptree specialConfig;
+				Configuration specialConfig;
 
 				if (pm.add(it.first, specialConfig, true))
 				{
-					PropertyMapper specialPm(specialConfig);
+					PropertyMapper<Configuration> specialPm(specialConfig);
 					std::string specialString;
 
 					specialPm.add("control", specialString, true);

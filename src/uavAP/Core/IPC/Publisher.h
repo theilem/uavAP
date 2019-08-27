@@ -26,28 +26,52 @@
 #ifndef UAVAP_CORE_IPC_PUBLISHER_H_
 #define UAVAP_CORE_IPC_PUBLISHER_H_
 
-#include "uavAP/Core/IPC/detail/IPublisherImpl.h"
+#include <uavAP/Core/IPC/detail/IPublisherImpl.h>
+#include <uavAP/Core/Object/ObjectHandle.h>
 #include "uavAP/Core/Logging/APLogger.h"
 
 #include <memory>
 #include <vector>
 
+template<typename Pub>
 class Publisher
 {
 public:
+
 	Publisher() = default;
 
-	Publisher(std::shared_ptr<IPublisherImpl> impl);
+	Publisher(std::shared_ptr<IPublisherImpl> impl, std::function<Packet(const Pub&)> forwarding);
 
 	void
-	publish(const boost::any& obj);
-
-	void
-	publish(const std::vector<boost::any>& vec);
+	publish(const Pub& obj);
 
 private:
 
 	std::weak_ptr<IPublisherImpl> publisherImpl_;
+
+	std::function<Packet(const Pub&)> forwarding_;
 };
+
+template<typename Pub>
+inline
+Publisher<Pub>::Publisher(std::shared_ptr<IPublisherImpl> impl, std::function<Packet(const Pub&)> forwarding) :
+
+		publisherImpl_(impl), forwarding_(forwarding)
+{
+}
+
+template<typename Pub>
+inline void
+Publisher<Pub>::publish(const Pub& obj)
+{
+	if (auto impl = publisherImpl_.lock())
+	{
+		impl->publish(forwarding_(obj));
+	}
+	else
+	{
+		APLOG_ERROR << "Cannot publish because Impl is not set.";
+	}
+}
 
 #endif /* UAVAP_CORE_IPC_PUBLISHER_H_ */

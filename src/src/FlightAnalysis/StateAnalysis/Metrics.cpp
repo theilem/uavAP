@@ -23,11 +23,12 @@
  *      Author: simonyu
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "uavAP/FlightAnalysis/StateAnalysis/Metrics.h"
 
 template<class Group, typename Type>
 void
-mapMetricsValue(PropertyMapper& pm, const std::string& metrics, const std::string& metricsMember,
+mapMetricsValue(PropertyMapper<boost::property_tree::ptree>& pm, const std::string& metrics, const std::string& metricsMember,
 		Group& metricsGroup)
 {
 	auto metricsValueEnum = EnumMap<Type>::convert(metricsMember);
@@ -91,9 +92,9 @@ Metrics::reset()
 }
 
 bool
-Metrics::configure(const boost::property_tree::ptree& config)
+Metrics::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
 	std::string metrics;
 	std::string metricsGroup;

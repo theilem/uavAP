@@ -26,7 +26,7 @@
 #ifndef UAVAP_CORE_FRAMEWORK_PLUGINMANAGER_H_
 #define UAVAP_CORE_FRAMEWORK_PLUGINMANAGER_H_
 
-#include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/PropertyMapper/Configuration.h>
 #include <functional>
 
 class PluginManager
@@ -36,7 +36,7 @@ public:
 	PluginManager() = default;
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	using PluginHandle = void*;
 	using FunctionPtr = void (*)();

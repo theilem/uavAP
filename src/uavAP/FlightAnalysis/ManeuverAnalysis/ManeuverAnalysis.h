@@ -30,8 +30,9 @@
 #include <iostream>
 #include <fstream>
 
+#include "uavAP/Core/LockTypes.h"
+#include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/EnumMap.hpp"
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
@@ -61,6 +62,9 @@ ENUMMAP_INIT(Maneuvers, { {Maneuvers::GEOFENCING, "geofencing"},
 		{Maneuvers::ADVANCED_CONTROL, "advanced_control"},
 		{Maneuvers::FLIGHT_TESTING, "flight_testing"}});
 
+class IPC;
+class IScheduler;
+
 class ManeuverAnalysis: public IAggregatableObject, public IRunnableObject
 {
 public:
@@ -70,10 +74,10 @@ public:
 	ManeuverAnalysis();
 
 	static std::shared_ptr<ManeuverAnalysis>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	bool
 	run(RunStage stage) override;
@@ -87,10 +91,10 @@ private:
 	onSensorData(const SensorData& data);
 
 	void
-	onControllerOutput(const Packet& output);
+	onControllerOutput(const ControllerOutput& output);
 
 	void
-	onManeuverAnalysis(const Packet& analysis);
+	onManeuverAnalysis(const bool& analysis);
 
 	void
 	onManeuverAnalysisStatus(const Packet& status);
@@ -119,15 +123,16 @@ private:
 	Subscription maneuverAnalysisStatusSubscription_;
 
 	ObjectHandle<IPC> ipcHandle_;
+	ObjectHandle<IScheduler> scheduler_;
 
 	ControllerOutput controllerOutput_;
-	std::mutex controllerOutputMutex_;
+	Mutex controllerOutputMutex_;
 
 	bool analysis_;
-	std::mutex maneuverAnalysisMutex_;
+	Mutex maneuverAnalysisMutex_;
 
 	ManeuverAnalysisStatus analysisStatus_;
-	std::mutex maneuverAnalysisStatusMutex_;
+	Mutex maneuverAnalysisStatusMutex_;
 
 	bool collectInit_;
 	unsigned counter_;
@@ -135,6 +140,10 @@ private:
 
 	std::string logPath_;
 	std::ofstream logFile_;
+
+	SensorData sensorData_;
+	Mutex sensorDataMutex_;
+
 };
 
 #endif /* UAVAP_FLIGHTANALYSIS_MANEUVERANALYSIS_MANEUVERANALYSIS_H_ */

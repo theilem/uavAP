@@ -28,6 +28,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include "uavAP/Core/Framework/Factory.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include <functional>
 #include <map>
 #include <string>
@@ -56,7 +57,7 @@ public:
 	 * @return Aggregator containing the objects
 	 */
 	Aggregator
-	createAggregation(const boost::property_tree::ptree& config);
+	createAggregation(const Configuration& config);
 
 	void
 	setDefaultPluginRestriction(PluginRestriction plug);
@@ -98,6 +99,12 @@ protected:
 	void
 	addDefaultCreator();
 
+
+
+	template<class Configurable>
+	void
+	addConfigurable();
+
 private:
 
 	/**
@@ -108,7 +115,12 @@ private:
 	 */
 	template<class FactoryType>
 	static std::shared_ptr<IAggregatableObject>
-	createAggregatable(FactoryType factory, const boost::property_tree::ptree& config);
+	createAggregatable(FactoryType factory, const Configuration& config);
+
+
+	template<class Configurable>
+	static std::shared_ptr<IAggregatableObject>
+	createConfigurable(const Configuration& config);
 
 	/**
 	 * @brief Merging to configuration trees, adding global configuration subtrees to the configuration tree
@@ -116,11 +128,11 @@ private:
 	 * @param globalConf Global configuration to be appended to the config
 	 */
 	void
-	mergeGlobalConfig(boost::property_tree::ptree& config,
-			const boost::property_tree::ptree& globalConf);
+	mergeGlobalConfig(Configuration& config,
+			const Configuration& globalConf);
 
 	//! Creator functor to create an IAggregatableObject
-	using CreatorAgg = std::function<std::shared_ptr<IAggregatableObject>(const boost::property_tree::ptree&)>;
+	using CreatorAgg = std::function<std::shared_ptr<IAggregatableObject>(const Configuration&)>;
 
 	//! Map containing the Creators that do not need factories mapped to their ID.
 	std::map<std::string, CreatorAgg> creators_;
@@ -168,7 +180,7 @@ Helper::addDefault(PluginRestriction restriction)
 	}
 
 	FactoryType factory;
-	boost::property_tree::ptree emptyConf;
+	Configuration emptyConf;
 	DefaultCreatorAgg defaultCreator = std::bind(&Helper::createAggregatable<FactoryType>, factory,
 			emptyConf);
 
@@ -181,7 +193,7 @@ Helper::addDefault(PluginRestriction restriction)
 
 template<class FactoryType>
 inline std::shared_ptr<IAggregatableObject>
-Helper::createAggregatable(FactoryType factory, const boost::property_tree::ptree& config)
+Helper::createAggregatable(FactoryType factory, const Configuration& config)
 {
 	auto obj = factory.create(config);
 	if (auto aggObj = std::dynamic_pointer_cast<IAggregatableObject>(obj))
@@ -219,12 +231,40 @@ Helper::addDefaultCreator()
 		return;
 	}
 
-	boost::property_tree::ptree emptyConf;
+	Configuration emptyConf;
 	DefaultCreatorAgg defaultCreator = std::bind(&Aggregatable::create, emptyConf);
 	defaultCreators_.insert(std::make_pair(type, defaultCreator));
 
 	CreatorAgg creator = &Aggregatable::create;
 	creators_.insert(std::make_pair(type, creator));
+}
+
+template<class Configurable>
+inline void
+Helper::addConfigurable()
+{
+	std::string type = Configurable::typeId;
+	if (creators_.find(type) != creators_.end())
+	{
+		APLOG_ERROR << "Same id for different configurable added. Ignore.";
+		return;
+	}
+
+	CreatorAgg creator = &Helper::createConfigurable<Configurable>;
+
+	creators_.insert(std::make_pair(type, creator));
+}
+
+template<class Configurable>
+inline std::shared_ptr<IAggregatableObject>
+Helper::createConfigurable(const Configuration& config)
+{
+	auto obj = std::make_shared<Configurable>();
+	if (!obj->configure(config))
+	{
+		APLOG_ERROR << Configurable::typeId << ": configuration failed.";
+	}
+	return obj;
 }
 
 #endif /* UAVAP_CORE_FRAMEWORK_HELPER_H_ */

@@ -26,8 +26,8 @@
 #ifndef UAVAP_CORE_DATAPRESENTATION_DATAFILTER_LOWPASSDATAFILTER_LOWPASSDATAFILTER_H_
 #define UAVAP_CORE_DATAPRESENTATION_DATAFILTER_LOWPASSDATAFILTER_LOWPASSDATAFILTER_H_
 
-#include <boost/property_tree/ptree.hpp>
-
+#include "uavAP/Core/LinearAlgebra.h"
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 #include "uavAP/Core/DataPresentation/DataFilter/IDataFilter.h"
 
 class LowPassDataFilter: public IDataFilter
@@ -38,30 +38,30 @@ public:
 
 	LowPassDataFilter();
 
-	LowPassDataFilter(double initialValue, double alpha);
+	LowPassDataFilter(FloatingType initialValue, FloatingType alpha);
 
 	static std::shared_ptr<LowPassDataFilter>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	void
-	initialize(double initialValue) override;
+	initialize(FloatingType initialValue) override;
 
 	void
-	tune(double alpha) override;
+	tune(FloatingType alpha) override;
 
 	void
-	filterData(double rawData) override;
+	filterData(FloatingType rawData) override;
 
-	double
+	FloatingType
 	getFilteredData() override;
 
 private:
 
-	double filteredData_;
-	double alpha_;
+	FloatingType filteredData_;
+	FloatingType alpha_;
 };
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_DATAFILTER_LOWPASSDATAFILTER_LOWPASSDATAFILTER_H_ */

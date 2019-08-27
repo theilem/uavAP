@@ -27,6 +27,11 @@
 #define UAVAP_FLIGHTCONTROL_IO_SENSINGACTUATIONIO_ISENSINGACTUATIONIO_H_
 #include "uavAP/Core/SensorData.h"
 
+#ifndef ERIKA
+#include <boost/signals2/signal.hpp>
+#endif
+
+
 struct ControllerOutput;
 
 class ISensingActuationIO
@@ -44,10 +49,16 @@ public:
 	virtual SensorData
 	getSensorData() const = 0;
 
+#ifdef ERIKA
+	using OnSensorDataSlot = std::function<void(const SensorData&)>;
+	using OnSensorDataConnection = int;
+#else
 	using OnSensorData = boost::signals2::signal<void(const SensorData&)>;
-
-	virtual boost::signals2::connection
-	subscribeOnSensorData(const OnSensorData::slot_type& slot) = 0;
+	using OnSensorDataSlot = boost::signals2::signal<void(const SensorData&)>::slot_type;
+	using OnSensorDataConnection = boost::signals2::connection;
+#endif
+	virtual OnSensorDataConnection
+	subscribeOnSensorData(const OnSensorDataSlot& slot) = 0;
 };
 
 #endif /* UAVAP_FLIGHTCONTROL_IO_SENSINGACTUATIONIO_ISENSINGACTUATIONIO_H_ */

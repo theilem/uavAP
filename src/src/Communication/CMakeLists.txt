@@ -24,6 +24,6 @@ target_link_libraries(Communication    uavap_flight_analysis
 									   uavap_core
                                        )
                                         
-install(TARGETS Communication 
+install(TARGETS Communication OPTIONAL
 		RUNTIME DESTINATION bin/uavAP
 		LIBRARY DESTINATION lib)

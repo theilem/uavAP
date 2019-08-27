@@ -22,16 +22,17 @@
  * @author Mirco Theile, mirco.theile@tum.de
  * @brief
  */
+#include <boost/property_tree/ptree.hpp>
 #include <dlfcn.h>
 
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include "uavAP/Core/Framework/PluginManager.h"
 
 bool
-PluginManager::configure(const boost::property_tree::ptree& config)
+PluginManager::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
-	boost::property_tree::ptree plugins;
+	PropertyMapper<Configuration> pm(config);
+	Configuration plugins;
 	pm.add("plugins", plugins, true);
 
 	for (const auto& it : plugins)
@@ -50,7 +51,9 @@ PluginManager::addPlugin(const std::string& path)
 
 	if (!handle)
 	{
+#ifndef NO_DL
 		APLOG_ERROR << "Cannot load shared object at: " << path << ": " << dlerror();
+#endif
 		return false;
 	}
 	APLOG_TRACE << "Handle found";
@@ -69,13 +72,21 @@ PluginManager::PluginHandle
 PluginManager::loadPlugin(const std::string& path)
 {
 	APLOG_TRACE << "Opening shared object from: " << path;
+#ifndef NO_DL
 	return dlopen(path.c_str() , RTLD_NOW);
+#else
+	return nullptr;
+#endif
 }
 
 bool
 PluginManager::registerCreators(PluginHandle handle)
 {
+#ifndef NO_DL
 	void* registerPlugin = dlsym(handle, "register_plugin");
+#else
+	void* registerPlugin = nullptr;
+#endif
 
 	if (registerPlugin == nullptr)
 	{

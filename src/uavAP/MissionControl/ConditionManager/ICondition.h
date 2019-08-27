@@ -26,6 +26,7 @@
 #ifndef UAVAP_MISSIONCONTROL_CONDITIONMANAGER_CONDITION_ICONDITION_H_
 #define UAVAP_MISSIONCONTROL_CONDITIONMANAGER_CONDITION_ICONDITION_H_
 
+#include <boost/property_tree/ptree.hpp>
 #include <vector>
 #include <functional>
 
@@ -40,6 +41,7 @@ public:
 	~ICondition() = default;
 
 	using ConditionTrigger = std::function<void(int)>;
+	using Configuration = boost::property_tree::ptree;
 
 	virtual void
 	activate(ConditionManager*, const ConditionTrigger&) = 0;

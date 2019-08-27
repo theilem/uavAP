@@ -1,7 +1,0 @@
-syntax="proto3";
-
-message VelocityBody{
-	double velocity_x = 1;
-	double velocity_y = 2;
-	double velocity_z = 3;
-}

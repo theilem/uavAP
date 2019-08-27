@@ -22,13 +22,14 @@
  *  Created on: Sep 18, 2017
  *      Author: mircot
  */
+#include <boost/property_tree/ptree.hpp>
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/MissionControl/MissionPlanner/Mission.h"
 
 bool
-Waypoint::configure(const boost::property_tree::ptree& config)
+Waypoint::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	pm.add<double>("n", location[1], true);
 	pm.add<double>("e", location[0], true);
 	if (!pm.add<double>("d", location[2], false))
@@ -41,7 +42,7 @@ Waypoint::configure(const boost::property_tree::ptree& config)
 	if (pm.add("direction", directionConfig, false))
 	{
 		Vector3 dir;
-		PropertyMapper pmDir(directionConfig);
+		PropertyMapper<Configuration> pmDir(directionConfig);
 		pmDir.add<double>("n", dir[1], true);
 		pmDir.add<double>("e", dir[0], true);
 		if (!pmDir.add<double>("d", dir[2], false))
@@ -61,22 +62,22 @@ Waypoint::configure(const boost::property_tree::ptree& config)
 }
 
 bool
-Mission::configure(const boost::property_tree::ptree& config)
+Mission::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	pm.add<double>("velocity", velocity, true);
 	pm.add<bool>("infinite", infinite, true);
 
 	Waypoint offset;
 	bool hasOffset = false;
-	boost::property_tree::ptree offsetWaypoint;
+	Configuration offsetWaypoint;
 	if (pm.add("offset", offsetWaypoint, false))
 	{
 		if (offset.configure(offsetWaypoint))
 			hasOffset = true;
 	}
 
-	boost::property_tree::ptree waypointConfig;
+	Configuration waypointConfig;
 	if (pm.add("waypoints", waypointConfig, true))
 	{
 		for (auto& it : waypointConfig)

@@ -35,6 +35,13 @@ class ObjectHandle
 {
 public:
 
+	ObjectHandle() = default;
+
+	ObjectHandle(std::shared_ptr<Handle> handle) :
+			handle_(handle)
+	{
+	}
+
 	inline void
 	setFromAggregationIfNotSet(const Aggregator& agg, Handle* self = nullptr)
 	{

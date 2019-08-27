@@ -23,8 +23,8 @@
  *      Author: simonyu
  */
 
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/FlightAnalysis/TrimAnalysis/TrimAnalysis.h"
+#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 
 TrimAnalysis::TrimAnalysis() :
@@ -66,7 +66,7 @@ TrimAnalysis::run(RunStage stage)
 
 		auto ipc = ipc_.get();
 
-		controllerOutputTrimPublisher_ = ipc->publishPackets("controller_output_trim");
+		controllerOutputTrimPublisher_ = ipc->publish<ControllerOutput>("controller_output_trim");
 
 		break;
 	}
@@ -74,7 +74,7 @@ TrimAnalysis::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		controllerOutputSubscription_ = ipc->subscribeOnPacket("controller_output_ta",
+		controllerOutputSubscription_ = ipc->subscribe<ControllerOutput>("controller_output",
 				std::bind(&TrimAnalysis::onControllerOutput, this, std::placeholders::_1));
 
 		if (!controllerOutputSubscription_.connected())
@@ -83,7 +83,7 @@ TrimAnalysis::run(RunStage stage)
 			return true;
 		}
 
-		trimAnalysisSubscription_ = ipc->subscribeOnPacket("trim_analysis",
+		trimAnalysisSubscription_ = ipc->subscribe<bool>("trim_analysis",
 				std::bind(&TrimAnalysis::onTrimAnalysis, this, std::placeholders::_1));
 
 		if (!controllerOutputSubscription_.connected())
@@ -115,15 +115,15 @@ TrimAnalysis::notifyAggregationOnUpdate(const Aggregator& agg)
 }
 
 void
-TrimAnalysis::onControllerOutput(const Packet& output)
+TrimAnalysis::onControllerOutput(const ControllerOutput& output)
 {
-	std::unique_lock<std::mutex> trimAnalysisLock(trimAnalysisMutex_);
+	Lock trimAnalysisLock(trimAnalysisMutex_);
 	bool trimAnalysis = trimAnalysis_;
 	trimAnalysisLock.unlock();
 
 	bool trimAnalysisLast = trimAnalysisLast_;
 
-	std::unique_lock<std::mutex> controllerOutputLock(controllerOutputMutex_);
+	Lock controllerOutputLock(controllerOutputMutex_);
 	if (trimAnalysisLast == false && trimAnalysis == true)
 	{
 		analysisInit();
@@ -142,10 +142,10 @@ TrimAnalysis::onControllerOutput(const Packet& output)
 }
 
 void
-TrimAnalysis::onTrimAnalysis(const Packet& analysis)
+TrimAnalysis::onTrimAnalysis(const bool& analysis)
 {
-	std::unique_lock<std::mutex> lock(trimAnalysisMutex_);
-	trimAnalysis_ = dp::deserialize<bool>(analysis);
+	Lock lock(trimAnalysisMutex_);
+	trimAnalysis_ = analysis;
 	lock.unlock();
 }
 
@@ -163,9 +163,8 @@ TrimAnalysis::analysisInit()
 }
 
 void
-TrimAnalysis::analysisNormal(const Packet& output)
+TrimAnalysis::analysisNormal(const ControllerOutput& controllerOutput)
 {
-	ControllerOutput controllerOutput = dp::deserialize<ControllerOutput>(output);
 	controllerOutputTrim_.rollOutput += controllerOutput.rollOutput;
 	controllerOutputTrim_.pitchOutput += controllerOutput.pitchOutput;
 	controllerOutputTrim_.yawOutput += controllerOutput.yawOutput;
@@ -193,5 +192,5 @@ TrimAnalysis::analysisFinal()
 	controllerOutputTrim_.pitchOutput /= controllerOutputCount_.pitchOutput;
 	controllerOutputTrim_.yawOutput /= controllerOutputCount_.yawOutput;
 	controllerOutputTrim_.throttleOutput /= controllerOutputCount_.throttleOutput;
-	controllerOutputTrimPublisher_.publish(dp::serialize(controllerOutputTrim_));
+	controllerOutputTrimPublisher_.publish(controllerOutputTrim_);
 }

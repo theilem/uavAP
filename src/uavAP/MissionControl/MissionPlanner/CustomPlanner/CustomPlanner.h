@@ -57,7 +57,7 @@ public:
 	CustomPlanner();
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	ADD_CREATE_WITH_CONFIG(CustomPlanner)
 
@@ -97,6 +97,7 @@ private:
 	onSensorData(const SensorData& data);
 
 	double defaultVelocity_;
+	double defaultAltitude_;
 	bool useApproach_;
 
 	ObjectHandle<IPC> ipc_;

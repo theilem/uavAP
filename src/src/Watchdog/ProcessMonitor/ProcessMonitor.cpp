@@ -33,9 +33,9 @@ ProcessMonitor::ProcessMonitor() :
 }
 
 bool
-ProcessMonitor::configure(const boost::property_tree::ptree& config)
+ProcessMonitor::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	boost::property_tree::ptree processConfig;
 
 	pm.add("binary_path", binaryPath_, false);
@@ -142,10 +142,10 @@ ProcessMonitor::startAll()
 bool
 ProcessMonitor::tryJoinAll(Duration timeout)
 {
-	TimePoint t = boost::get_system_time();
+	TimePoint t = Clock::now();
 
 	bool allJoined = true;
-	while (boost::get_system_time() - t < timeout)
+	while (Clock::now() - t < timeout)
 	{
 		allJoined = true;
 		for (auto& it : processes_)

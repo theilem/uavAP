@@ -30,24 +30,26 @@
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include <memory>
 
-struct HelicopterLocalPlannerStatus
+struct LinearLocalPlannerStatus : public SerializeCustom
 {
-	Vector2 directionTarget;
-
+	FloatingType headingTarget;
 	uint8_t currentPathSection;
-
-	ControllerTarget controllerTarget;
+	Vector3 velocityTarget;
+	FloatingType yawRateTarget;
+	bool isInApproach;
 };
 
 namespace dp
 {
 template<class Archive, typename Type>
 inline void
-serialize(Archive& ar, HelicopterLocalPlannerStatus& t)
+serialize(Archive& ar, LinearLocalPlannerStatus& t)
 {
-	ar & t.controllerTarget;
+	ar & t.headingTarget;
 	ar & t.currentPathSection;
-	ar & t.directionTarget;
+	ar & t.velocityTarget;
+	ar & t.yawRateTarget;
+	ar & t.isInApproach;
 }
 }
 

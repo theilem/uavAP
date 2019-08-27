@@ -51,11 +51,11 @@ BOOST_AUTO_TEST_CASE(MultiThreadedTest001)
 
 	int count1 = 0;
 
-	sched->schedule(boost::bind(schedulingCount, boost::ref(count1)), Milliseconds(0));
+	sched->schedule(std::bind(schedulingCount, boost::ref(count1)), Milliseconds(0));
 
 	runner->runAllStages();
 
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 	BOOST_CHECK_EQUAL(count1, 1);
 
@@ -82,20 +82,20 @@ BOOST_AUTO_TEST_CASE(MultiThreadedTest002)
 
 	runner->runAllStages();
 
-	boost::this_thread::sleep(Milliseconds(10));
-	BOOST_CHECK_EQUAL(tp->now() - start, Milliseconds(0));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	BOOST_CHECK(tp->now() - start== Milliseconds(0));
 	BOOST_CHECK_EQUAL(count1, 1);
 
 	tp->releaseWait();
 
-	boost::this_thread::sleep(Milliseconds(10));
-	BOOST_CHECK_EQUAL(tp->now() - start, Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	BOOST_CHECK(tp->now() - start == Milliseconds(10));
 	BOOST_CHECK_EQUAL(count1, 2);
 
 	tp->releaseWait();
 
-	boost::this_thread::sleep(Milliseconds(10));
-	BOOST_CHECK_EQUAL(tp->now() - start, Milliseconds(20));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	BOOST_CHECK(tp->now() - start == Milliseconds(20));
 	BOOST_CHECK_EQUAL(count1, 3);
 
 	sched->stop();
@@ -118,26 +118,26 @@ BOOST_AUTO_TEST_CASE(MultiThreadedTest003)
 
 	tp->stopOnWait();
 
-	sched->schedule(boost::bind(schedulingCount, boost::ref(count1)), Milliseconds(5),
+	sched->schedule(std::bind(schedulingCount, boost::ref(count1)), Milliseconds(5),
 			Milliseconds(10));
 
 	runner->runAllStages();
 
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	BOOST_CHECK_EQUAL(count1, 0);
 
 	tp->releaseWait();
-	boost::this_thread::sleep(Milliseconds(10));
-	BOOST_CHECK_EQUAL(tp->now() - start, Milliseconds(5));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	BOOST_CHECK(tp->now() - start== Milliseconds(5));
 	BOOST_CHECK_EQUAL(count1, 1);
 
-	sched->schedule(boost::bind(schedulingCount, boost::ref(count2)), Milliseconds(0),
+	sched->schedule(std::bind(schedulingCount, boost::ref(count2)), Milliseconds(0),
 			Milliseconds(20));
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	BOOST_CHECK_EQUAL(count2, 1);
 	tp->releaseWait();
-	boost::this_thread::sleep(Milliseconds(10));
-	BOOST_CHECK_EQUAL(tp->now() - start, Milliseconds(15));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	BOOST_CHECK(tp->now() - start==Milliseconds(15));
 
 	BOOST_CHECK_EQUAL(count1, 2);
 	BOOST_CHECK_EQUAL(count2, 1);
@@ -165,26 +165,26 @@ BOOST_AUTO_TEST_CASE(MultiThreadedTest004)
 
 	BOOST_REQUIRE(!runner->runAllStages());
 
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	BOOST_CHECK_EQUAL(count1, 0);
 
 	tp->releaseWait();
-	boost::this_thread::sleep(Milliseconds(10));
-	BOOST_CHECK_EQUAL(tp->now() - start, Milliseconds(5));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	BOOST_CHECK(tp->now() - start== Milliseconds(5));
 	BOOST_CHECK_EQUAL(count1, 1);
 
 	event.cancel();
 	BOOST_CHECK(event.isCancled());
 	tp->releaseWait();
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-	BOOST_CHECK_EQUAL(tp->now() - start, Milliseconds(15));
+	BOOST_CHECK(tp->now() - start== Milliseconds(15));
 	BOOST_CHECK_EQUAL(count1, 1);
 
 	tp->releaseWait();
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-	BOOST_CHECK_EQUAL(tp->now() - start, Milliseconds(15));
+	BOOST_CHECK(tp->now() - start== Milliseconds(15));
 	BOOST_CHECK_EQUAL(count1, 1);
 
 	sched->stop();

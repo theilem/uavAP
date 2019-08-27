@@ -28,8 +28,6 @@
 
 #include "uavAP/MissionControl/MissionPlanner/Mission.h"
 
-class SharedMemoryHandler;
-
 class IGlobalPlanner
 {
 public:

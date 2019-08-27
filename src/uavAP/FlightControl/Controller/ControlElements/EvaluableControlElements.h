@@ -26,10 +26,10 @@
 #ifndef CONTROL_EVALUABLECONTROLELEMENTS_H_
 #define CONTROL_EVALUABLECONTROLELEMENTS_H_
 
+#include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
 #include <cmath>
 #include <iostream>
 #include "uavAP/Core/Time.h"
-#include <boost/property_tree/ptree.hpp>
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightControl/Controller/ControlElements/IEvaluableControlElement.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
@@ -44,16 +44,16 @@ class Filter: public IEvaluableControlElement
 
 public:
 
-	Filter(Element in, double alpha);
+	Filter(Element in, FloatingType alpha);
 
 	void
 	evaluate() override;
 
-	double
+	FloatingType
 	getValue() override;
 
 	void
-	setAlpha(double alpha);
+	setAlpha(FloatingType alpha);
 
 private:
 
@@ -61,9 +61,9 @@ private:
 
 	bool init_;
 
-	double smoothData_;
+	FloatingType smoothData_;
 
-	double alpha_;
+	FloatingType alpha_;
 };
 
 class Output: public IEvaluableControlElement
@@ -71,19 +71,19 @@ class Output: public IEvaluableControlElement
 
 public:
 
-	Output(Element in, double* out);
+	Output(Element in, FloatingType* out);
 
 	void
-	overrideOutput(double newOutput);
+	overrideOutput(FloatingType newOutput);
 
 	void
 	setWaveform(Waveforms waveform);
 
 	void
-	setWavelength(double wavelength);
+	setWavelength(FloatingType wavelength);
 
 	void
-	setPhase(double phase);
+	setPhase(FloatingType phase);
 
 	void
 	disableOverride();
@@ -91,64 +91,55 @@ public:
 	void
 	evaluate() override;
 
-	double
+	FloatingType
 	getValue() override;
 
 private:
 
-	double
+	FloatingType
 	getWaveformOutput();
 
 	Element in_;
 	TimePoint start_;
 	Waveforms waveform_;
-	double* out_;
+	FloatingType* out_;
 	bool override_;
-	double overrideOut_;
-	double wavelength_;
-	double phase_;
+	FloatingType overrideOut_;
+	FloatingType wavelength_;
+	FloatingType phase_;
 };
 
-class PID: public IEvaluableControlElement
+struct PIDParameters
+{
+	Parameter<FloatingType> kp = {1, "kp", true};
+	Parameter<FloatingType> ki = {0, "ki", false};
+	Parameter<FloatingType> kd = {0, "kd", false};
+	Parameter<FloatingType> imax = {std::numeric_limits<FloatingType>::max(), "imax", false};
+	Parameter<FloatingType> ff = {0, "ff", false};
+
+	template <typename Config>
+	inline void
+	configure(Config& c)
+	{
+		c & kp;
+		c & ki;
+		c & kd;
+		c & imax;
+		c & ff;
+	}
+};
+
+class PID: public IEvaluableControlElement, public ConfigurableObject<PIDParameters>
 {
 public:
 
-	struct Parameters
-	{
-		double kp, ki, kd, imax, ff;
+	PID(Element target, Element current, const PIDParameters& params, Duration* timeDiff);
 
-		Parameters() :
-				kp(0), ki(0), kd(0), imax(INFINITY), ff(0)
-		{
-		}
-
-		bool
-		configure(const boost::property_tree::ptree& p)
-		{
-			PropertyMapper pm(p);
-			pm.add<double>("kp", kp, true);
-			pm.add<double>("ki", ki, false);
-			pm.add<double>("kd", kd, false);
-			pm.add<double>("imax", imax, false);
-			pm.add<double>("ff", ff, false);
-			return pm.map();
-		}
-	};
-
-	PID(Element target, Element current, const Parameters& params, Duration* timeDiff);
-
-	PID(Element target, Element current, Element differential, const Parameters& params,
+	PID(Element target, Element current, Element differential, const PIDParameters& params,
 			Duration* timeDiff);
 
-	/*
-	 * Setters for control gains
-	 */
-
 	void
-	setControlParameters(const Parameters& params);
-
-	void
-	overrideTarget(double newTarget);
+	overrideTarget(FloatingType newTarget);
 
 	void
 	disableOverride();
@@ -156,7 +147,7 @@ public:
 	void
 	evaluate() override;
 
-	double
+	FloatingType
 	getValue() override;
 
 	PIDStatus
@@ -183,41 +174,25 @@ private:
 
 	Element derivative_;
 
-	//PID Parameters
-	Parameters params_;
-
 	Duration* timeDiff_;
 
 	//Internal PID state
-	double targetValue_;
+	FloatingType targetValue_;
 
-	double currentError_;
+	FloatingType currentError_;
 
-	double integrator_;
+	FloatingType integrator_;
 
-	double lastError_;
+	FloatingType lastError_;
 
 	//Latest calculated output value
-	double output_;
+	FloatingType output_;
 
 	bool override_;
-	double overrideTarget_;
+	FloatingType overrideTarget_;
 };
 
 }
 
-namespace dp
-{
-template<class Archive, typename Type>
-inline void
-serialize(Archive& ar, Control::PID::Parameters& t)
-{
-	ar & t.kp;
-	ar & t.ki;
-	ar & t.kd;
-	ar & t.imax;
-	ar & t.ff;
-}
-}
 
 #endif /* CONTROL_EVALUABLECONTROLELEMENT_H_ */

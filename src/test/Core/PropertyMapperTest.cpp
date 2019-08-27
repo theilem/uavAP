@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(vector_of_double)
 	boost::property_tree::read_json("Core/config/pm_test.json",
 			config);
 
-	PropertyMapper pm(config);
+	PropertyMapper<boost::property_tree::ptree> pm(config);
 	std::vector<double> vec;
 	BOOST_REQUIRE(pm.addVector<double>("vec_double", vec, true));
 
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(vector_of_vector2)
 	boost::property_tree::read_json("Core/config/pm_test.json",
 			config);
 
-	PropertyMapper pm(config);
+	PropertyMapper<boost::property_tree::ptree> pm(config);
 	std::vector<boost::property_tree::ptree> edges;
 	pm.addVector("edges", edges, true);
 
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(vector_of_vector2)
 
 	for (const auto& it : edges)
 	{
-		PropertyMapper edge(it);
+		PropertyMapper<boost::property_tree::ptree> edge(it);
 		Vector2 e;
 		if (edge.add("",e,true))
 			vec.push_back(e);

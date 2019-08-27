@@ -27,6 +27,7 @@
 
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
+#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
@@ -41,8 +42,7 @@ ManeuverCascade::ManeuverCascade(SensorData* sensorData, Vector3& velInertial, V
 {
 	APLOG_TRACE << "Create ManeuverCascade";
 
-	Control::PID::Parameters defaultParams;
-	defaultParams.kp = 1;
+	Control::PIDParameters defaultParams;
 
 	/* Roll Control */
 	auto rollTarget = controlEnv_.addInput(&rollTarget_);
@@ -125,34 +125,35 @@ ManeuverCascade::ManeuverCascade(SensorData* sensorData, Vector3& velInertial, V
 }
 
 bool
-ManeuverCascade::configure(const boost::property_tree::ptree& config)
+ManeuverCascade::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	pm.add<double>("hard_roll_constraint", hardRollConstraint_, false);
 	pm.add<double>("hard_pitch_constraint", hardPitchConstraint_, false);
 
-	boost::property_tree::ptree pidConfig;
+	Configuration pidConfig;
 	pm.add("pids", pidConfig, false);
 
 	rollConstraint_->setContraintValue(hardRollConstraint_ * M_PI / 180.0);
 	pitchConstraint_->setContraintValue(hardPitchConstraint_ * M_PI / 180.0);
 
-	Control::PID::Parameters params;
-	for (auto it : pidConfig)
+	for (const auto& it : pidConfig)
 	{
-		if (!params.configure(it.second))
+		auto pid = pids_.find(EnumMap<PIDs>::convert(it.first));
+
+		if (pid == pids_.end())
 		{
-			APLOG_ERROR << it.first << " configuration not valid.";
+			APLOG_ERROR << "Unknown pidIndicator. Ignore";
 			continue;
 		}
 
-		tunePID(EnumMap<PIDs>::convert(it.first), params);
+		pid->second->configure(it.second);
 	}
 	return true;
 }
 
 bool
-ManeuverCascade::tunePID(PIDs pidIndicator, const Control::PID::Parameters& params)
+ManeuverCascade::tunePID(PIDs pidIndicator, const Control::PIDParameters& params)
 {
 	auto it = pids_.find(pidIndicator);
 
@@ -162,7 +163,7 @@ ManeuverCascade::tunePID(PIDs pidIndicator, const Control::PID::Parameters& para
 		return false;
 	}
 
-	it->second->setControlParameters(params);
+	it->second->setParams(params);
 	return true;
 }
 

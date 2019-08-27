@@ -25,8 +25,8 @@
 #include <uavAP/Core/Frames/InertialFrame.h>
 #include <uavAP/Core/Runner/SimpleRunner.h>
 #include <uavAP/FlightControl/Controller/AdvancedControl.h>
-#include "uavAP/API/APIHelper.h"
 #include "uavAP/API/AutopilotAPI.hpp"
+#include "uavAP/API/APIHelper.h"
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include <functional>
@@ -62,7 +62,7 @@ void
 AutopilotAPI::initialize()
 {
 	auto ipc = aggregator_.getOne<IPC>();
-	sensorDataPublisher_ = ipc->publishOnSharedMemory<SensorData>("sensor_data");
+	sensorDataPublisher_ = ipc->publish<SensorData>("sensor_data");
 	tryConnectControllerOut();
 	tryConnectAdvancedControl();
 	tryConnectLocalFrame();
@@ -75,7 +75,7 @@ AutopilotAPI::tryConnectControllerOut()
 {
 	APLOG_DEBUG << "Try connect to controller out.";
 	auto ipc = aggregator_.getOne<IPC>();
-	controllerOutSubscription_ = ipc->subscribeOnSharedMemory<ControllerOutput>("actuation",
+	controllerOutSubscription_ = ipc->subscribe<ControllerOutput>("actuation",
 			std::bind(&AutopilotAPI::onControllerOut, this, std::placeholders::_1));
 	if (!controllerOutSubscription_.connected())
 	{
@@ -89,7 +89,7 @@ void
 AutopilotAPI::tryConnectAdvancedControl()
 {
 	auto ipc = aggregator_.getOne<IPC>();
-	advancedControlSubscription_ = ipc->subscribeOnSharedMemory<AdvancedControl>("advanced_control_maneuver",
+	advancedControlSubscription_ = ipc->subscribe<AdvancedControl>("advanced_control_maneuver",
 			std::bind(&AutopilotAPI::onAdvancedControl, this, std::placeholders::_1));
 	if (!advancedControlSubscription_.connected())
 	{
@@ -102,7 +102,7 @@ void
 AutopilotAPI::tryConnectLocalFrame()
 {
 	auto ipc = aggregator_.getOne<IPC>();
-	localFrameSubscription_ = ipc->subscribeOnSharedMemory<VehicleOneFrame>("local_frame",
+	localFrameSubscription_ = ipc->subscribe<VehicleOneFrame>("local_frame",
 			std::bind(&AutopilotAPI::onLocalFrame, this, std::placeholders::_1));
 	if (!localFrameSubscription_.connected())
 	{

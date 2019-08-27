@@ -29,7 +29,7 @@
 #include <boost/process.hpp>
 #include "uavAP/Core/Time.h"
 #include <string>
-#include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/PropertyMapper/Configuration.h>
 
 struct ProcessInfo
 {
@@ -43,7 +43,7 @@ struct ProcessInfo
 	ProcessInfo(const std::string& name);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	bool
 	startChild(const std::string& binaryPath, const std::string& configPath);

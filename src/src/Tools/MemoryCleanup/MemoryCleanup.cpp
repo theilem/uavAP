@@ -25,6 +25,7 @@
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/interprocess/shared_memory_object.hpp>
 #include "uavAP/Core/Logging/APLogger.h"
+#include <iostream>
 #include <vector>
 
 const static std::vector<std::string> sharedMem =

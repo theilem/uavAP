@@ -30,23 +30,10 @@
 #include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
 
 template<class Type>
-inline typename std::enable_if<!std::is_base_of<google::protobuf::Message, Type>::value,
-		BinaryToArchive>::type&
+BinaryToArchive&
 BinaryToArchive::operator <<(const Type& cval)
 {
 	dp::serialize<BinaryToArchive, Type>(*this, const_cast<Type&>(cval));
-	return *this;
-}
-
-template<class Type>
-inline typename std::enable_if<std::is_base_of<google::protobuf::Message, Type>::value,
-		BinaryToArchive>::type&
-BinaryToArchive::operator <<(const Type& message)
-{
-	std::string s;
-	message.SerializeToString(&s);
-	*this << static_cast<uint16_t>(s.size());
-	string_ += s;
 	return *this;
 }
 

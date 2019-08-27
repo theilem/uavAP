@@ -23,11 +23,7 @@
  *      Author: mircot
  */
 
-#include <boost/bind/bind.hpp>
-#include <boost/core/ref.hpp>
-#include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/test/unit_test.hpp>
-#include <boost/thread.hpp>
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/Object/Aggregator.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
@@ -73,7 +69,7 @@ public:
 	bool
 	run(RunStage stage)
 	{
-		boost::this_thread::sleep(Seconds(2));
+		std::this_thread::sleep_for(std::chrono::seconds(2));
 		lastRunStage = stage;
 		return false;
 	}
@@ -117,7 +113,7 @@ BOOST_AUTO_TEST_CASE(SynchRunner)
 
 	BOOST_REQUIRE(!master.runStage(RunStage::INIT));
 
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 	BOOST_CHECK_EQUAL((int )runObj1->lastRunStage, (int )RunStage::INIT);
 	BOOST_CHECK_EQUAL((int )runObj2->lastRunStage, (int )RunStage::INIT);
@@ -126,7 +122,7 @@ BOOST_AUTO_TEST_CASE(SynchRunner)
 
 	BOOST_REQUIRE(!master.runStage(RunStage::NORMAL));
 
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 	BOOST_CHECK_EQUAL((int )runObj1->lastRunStage, (int )RunStage::NORMAL);
 	BOOST_CHECK_EQUAL((int )runObj2->lastRunStage, (int )RunStage::NORMAL);
@@ -135,7 +131,7 @@ BOOST_AUTO_TEST_CASE(SynchRunner)
 
 	BOOST_REQUIRE(!master.runStage(RunStage::FINAL));
 
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 	BOOST_CHECK_EQUAL((int )runObj1->lastRunStage, (int )RunStage::FINAL);
 	BOOST_CHECK_EQUAL((int )runObj2->lastRunStage, (int )RunStage::FINAL);
@@ -162,21 +158,21 @@ BOOST_AUTO_TEST_CASE(SynchRunnerTimeout)
 
 	SynchronizedRunnerMaster master(2);
 
-	boost::shared_ptr<SynchronizedRunner> runner1(new SynchronizedRunner);
-	boost::shared_ptr<SynchronizedRunner> runner2(new SynchronizedRunner);
+	auto runner1 = std::make_shared<SynchronizedRunner>();
+	auto runner2 = std::make_shared<SynchronizedRunner>();
 
-	boost::thread run1(
-			boost::bind(&SynchronizedRunner::runSynchronized, runner1, boost::ref(agg1)));
-	boost::thread run2(
-			boost::bind(&SynchronizedRunner::runSynchronized, runner2, boost::ref(agg2)));
+	std::thread run1(
+			std::bind(&SynchronizedRunner::runSynchronized, runner1, std::ref(agg1)));
+	std::thread run2(
+			std::bind(&SynchronizedRunner::runSynchronized, runner2, std::ref(agg2)));
 
 	APLogger::instance()->setLogLevel(LogLevel::NONE);
 	//Should timeout due to runObj1
 	BOOST_CHECK(master.runStage(RunStage::INIT));
 	APLogger::instance()->setLogLevel(LogLevel::WARN);
 
-	run1.interrupt();
-	run2.interrupt();
+	run1.join();
+	run2.join();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

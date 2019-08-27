@@ -46,10 +46,10 @@ public:
 	SensorDataCondition();
 
 	static std::shared_ptr<SensorDataCondition>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	void
 	activate(ConditionManager* conditionManager, const ConditionTrigger& conditionTrigger) override;
@@ -73,7 +73,7 @@ private:
 	double
 	filterSensorData(const double& sensorData);
 
-	boost::property_tree::ptree config_;
+	Configuration config_;
 	boost::signals2::connection connection_;
 	std::shared_ptr<IDataFilter> dataFilter_;
 	DataFilterFactory dataFilterFactory_;
@@ -90,7 +90,7 @@ template<typename Data>
 inline bool
 SensorDataCondition::evaluateSensorData(const Data& sensorData)
 {
-	PropertyMapper pm(config_);
+	PropertyMapper<Configuration> pm(config_);
 	bool evaluation = false;
 	Data threshold;
 
@@ -156,7 +156,7 @@ template<typename Data>
 inline bool
 SensorDataCondition::evaluateSensorDataWithTolerance(const Data& sensorData)
 {
-	PropertyMapper pm(config_);
+	PropertyMapper<Configuration> pm(config_);
 	bool evaluation = false;
 	Data threshold;
 	Data thresholdUpper;

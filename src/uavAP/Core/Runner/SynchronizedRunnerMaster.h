@@ -36,13 +36,14 @@
 struct Synchronizer
 {
 	RunStage runStage;
+	bool failure;
 	boost::interprocess::interprocess_condition runStageChanged;
 	boost::interprocess::interprocess_mutex runStageMutex;
 
 	boost::interprocess::interprocess_semaphore finishedStage;
 
 	Synchronizer() :
-			runStage(RunStage::SYNCHRONIZE), finishedStage(0)
+			runStage(RunStage::SYNCHRONIZE), failure(false), finishedStage(0)
 	{
 	}
 };

@@ -37,13 +37,7 @@
 #include <memory>
 
 class IScheduler;
-enum class Content
-;
-enum class Target
-;
-
-template<typename C, typename T>
-class IDataPresentation;
+class DataPresentation;
 
 class MessageQueueComm: public IComm, public IAggregatableObject, public IRunnableObject
 {
@@ -54,10 +48,10 @@ public:
 	MessageQueueComm();
 
 	static std::shared_ptr<MessageQueueComm>
-	create(const boost::property_tree::ptree& configuration);
+	create(const Configuration& configuration);
 
 	bool
-	configure(const boost::property_tree::ptree& configuration);
+	configure(const Configuration& configuration);
 
 	bool
 	run(RunStage stage) override;
@@ -81,19 +75,19 @@ private:
 
 	ObjectHandle<IPC> ipc_;
 	ObjectHandle<IScheduler> scheduler_;
-	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
+	ObjectHandle<DataPresentation> dataPresentation_;
 
 	Subscription flightAnalysisSubscription_;
 	Subscription flightControlSubscription_;
 	Subscription missionControlSubscription_;
 	Subscription channelMixingSubscription_;
-	Publisher flightAnalysisPublisher_;
-	Publisher flightControlPublisher_;
-	Publisher missionControlPublisher_;
-	Publisher apiPublisher_;
+	Publisher<Packet> flightAnalysisPublisher_;
+	Publisher<Packet> flightControlPublisher_;
+	Publisher<Packet> missionControlPublisher_;
+	Publisher<Packet> apiPublisher_;
 
 	Subscription groundStationSubscription_;
-	Publisher groundStationPublisher_;
+	Publisher<Packet> groundStationPublisher_;
 
 	bool groundStationConnected_;
 

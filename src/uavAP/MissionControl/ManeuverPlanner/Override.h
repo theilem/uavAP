@@ -26,7 +26,7 @@
 #ifndef UAVAP_MISSIONCONTROL_MISSIONPLANNER_OVERRIDE_H_
 #define UAVAP_MISSIONCONTROL_MISSIONPLANNER_OVERRIDE_H_
 
-#include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/PropertyMapper/Configuration.h>
 
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightControl/Controller/ControllerConstraint.h"
@@ -85,7 +85,7 @@ struct Override
 	double phase;
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	bool
 	isEmpty() const;
@@ -93,7 +93,7 @@ struct Override
 
 template<class Group, typename Type>
 void
-mapOverrideValue(PropertyMapper& pm, const std::string& override,
+mapOverrideValue(PropertyMapper<Configuration>& pm, const std::string& override,
 		const std::string& overrideMember, Group& overrideGroup)
 {
 	auto overrideValueEnum = EnumMap<Type>::convert(overrideMember);
@@ -113,7 +113,7 @@ mapOverrideValue(PropertyMapper& pm, const std::string& override,
 
 template<class Group, typename Type, typename Enum>
 void
-mapOverrideEnum(PropertyMapper& pm, const std::string& override,
+mapOverrideEnum(PropertyMapper<Configuration>& pm, const std::string& override,
 		const std::string& overrideMember, Group& overrideGroup)
 {
 	auto overrideValueEnum = EnumMap<Type>::convert(overrideMember);

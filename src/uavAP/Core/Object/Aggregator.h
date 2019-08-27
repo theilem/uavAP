@@ -26,19 +26,18 @@
 #ifndef UAVAP_CORE_OBJECT_AGGREGATOR_H_
 #define UAVAP_CORE_OBJECT_AGGREGATOR_H_
 
-#include <boost/signals2.hpp>
+#include <uavAP/Core/Object/DynamicContainer/DynamicObjectContainer.h>
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 
 #include <memory>
 #include <vector>
 
-void
-sigIntHandler(int sig) __attribute__((noreturn));
-
 class Aggregator
 {
 public:
+
+	using ObjectContainer = DynamicObjectContainer;
 
 	Aggregator();
 
@@ -50,7 +49,7 @@ public:
 	add(std::shared_ptr<IAggregatableObject> obj);
 
 	void
-	add(std::vector<std::shared_ptr<IAggregatableObject> > obj);
+	add(const ObjectContainer& obj);
 
 	template<class Type>
 	std::shared_ptr<Type>
@@ -63,26 +62,21 @@ public:
 	static Aggregator
 	aggregate(std::vector<std::shared_ptr<IAggregatableObject> > aggregation);
 
-	using OnSIGINT = boost::signals2::signal<void(int)>;
-
-	void
-	subscribeOnSigint(const OnSIGINT::slot_type& slot) const;
-
-	void
-	callSigHandlers(int sig);
-
 	void
 	merge(Aggregator& agg);
 
 	void
 	mergeInto(Aggregator& agg);
 
+	/**
+	 * @brief Clear the container. Will destroy all the objects.
+	 */
+	void
+	clear();
+
 private:
 
-	std::vector<std::shared_ptr<IAggregatableObject> > container_;
-
-	mutable OnSIGINT onSigint_;
-
+	ObjectContainer container_;
 };
 
 template<class Type>
@@ -99,33 +93,14 @@ template<class Type>
 inline std::shared_ptr<Type>
 Aggregator::getOne(Type* self) const
 {
-	for (auto it : container_)
-	{
-		if (auto ret = std::dynamic_pointer_cast<Type>(it))
-		{
-			if (ret.get() == self)
-				continue;
-			return ret;
-		}
-	}
-	return nullptr;
+	return container_.template getOne<Type>(self);
 }
 
 template<class Type>
 inline std::vector<std::shared_ptr<Type> >
 Aggregator::getAll(Type* self) const
 {
-	std::vector<std::shared_ptr<Type> > vec;
-	for (auto it : container_)
-	{
-		if (auto ret = std::dynamic_pointer_cast<Type>(it))
-		{
-			if (ret.get() == self)
-				continue;
-			vec.push_back(ret);
-		}
-	}
-	return vec;
+	return container_.template getAll<Type>(self);
 }
 
 #endif /* UAVAP_CORE_OBJECT_AGGREGATOR_H_ */

@@ -23,7 +23,6 @@
  *      Author: mircot
  */
 
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
 #include "uavAP/MissionControl/GlobalPlanner/FilletGlobalPlanner/FilletGlobalPlanner.h"
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/Line.h"
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/Curve.h"
@@ -40,7 +39,7 @@ FilletGlobalPlanner::FilletGlobalPlanner() :
 }
 
 std::shared_ptr<FilletGlobalPlanner>
-FilletGlobalPlanner::create(const boost::property_tree::ptree& config)
+FilletGlobalPlanner::create(const Configuration& config)
 {
 	auto planner = std::make_shared<FilletGlobalPlanner>();
 	if (!planner->configure(config))
@@ -51,9 +50,9 @@ FilletGlobalPlanner::create(const boost::property_tree::ptree& config)
 }
 
 bool
-FilletGlobalPlanner::configure(const boost::property_tree::ptree& config)
+FilletGlobalPlanner::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	pm.add<double>("fillet_radius", filletRadius_, true);
 
 	return pm.map();
@@ -179,16 +178,6 @@ FilletGlobalPlanner::setMission(const Mission& mission)
 	APLOG_DEBUG << "Send trajectory";
 	auto packet = dp::serialize(Trajectory(traj, mission.infinite));
 	trajectoryPublisher_.publish(packet);
-}
-
-void
-FilletGlobalPlanner::collectWaypoint(const VectorWrapper<Waypoint>& wp)
-{
-	if (wp.indicator == VectorWrapperIndicator::BEGIN)
-		mission_.waypoints.clear();
-	mission_.waypoints.push_back(static_cast<const Waypoint&>(wp));
-	if (wp.indicator == VectorWrapperIndicator::END)
-		setMission(mission_);
 }
 
 void

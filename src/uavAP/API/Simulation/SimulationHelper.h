@@ -26,11 +26,10 @@
 #ifndef UAVAP_FLIGHTCONTROL_FLIGHTCONTROLHELPER_H_
 #define UAVAP_FLIGHTCONTROL_FLIGHTCONTROLHELPER_H_
 
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
 #include <uavAP/Core/IDC/NetworkFactory.h>
 #include "uavAP/API/ChannelMixing.h"
 #include "uavAP/API/Simulation/Connector/SimulationConnector.h"
-#include "uavAP/Core/DataPresentation/DataPresentationFactory.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 #include "uavAP/Core/Framework/Helper.h"
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/Scheduler/SchedulerFactory.h"
@@ -48,7 +47,7 @@ public:
 		addDefault<TimeProviderFactory>();
 		addDefaultCreator<IPC>();
 		addDefault<NetworkFactory>();
-		addDefault<DataPresentationFactory<Content, Target>>();
+		addDefault<DataPresentation>();
 	}
 };
 

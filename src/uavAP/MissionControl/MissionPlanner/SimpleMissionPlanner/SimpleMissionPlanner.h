@@ -46,7 +46,7 @@ public:
 	SimpleMissionPlanner();
 
 	static std::shared_ptr<SimpleMissionPlanner>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;
@@ -66,8 +66,6 @@ private:
 	ObjectHandle<IGlobalPlanner> globalPlanner_;
 
 	Mission defaultMission_;
-
-	Publisher missionPublisher_;
 };
 
 #endif /* UAVAP_MISSIONCONTROL_MISSIONPLANNER_SIMPLEMISSIONPLANNER_SIMPLEMISSIONPLANNER_H_ */

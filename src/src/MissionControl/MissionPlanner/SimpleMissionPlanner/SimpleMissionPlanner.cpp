@@ -78,7 +78,7 @@ SimpleMissionPlanner::run(RunStage stage)
 }
 
 std::shared_ptr<SimpleMissionPlanner>
-SimpleMissionPlanner::create(const boost::property_tree::ptree& config)
+SimpleMissionPlanner::create(const Configuration& config)
 {
 	return std::make_shared<SimpleMissionPlanner>();
 }

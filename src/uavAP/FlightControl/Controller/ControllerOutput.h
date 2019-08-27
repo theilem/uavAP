@@ -69,10 +69,10 @@ ENUMMAP_INIT(Waveforms, { {Waveforms::NONE, "none"}, {Waveforms::SINE, "sine"}, 
 
 struct ControllerOutput: SerializeCustom
 {
-	double rollOutput;
-	double pitchOutput;
-	double yawOutput;
-	double throttleOutput;
+	FloatingType rollOutput;
+	FloatingType pitchOutput;
+	FloatingType yawOutput;
+	FloatingType throttleOutput;
 
 	uint32_t sequenceNr; //Trace sequence number to get timing
 

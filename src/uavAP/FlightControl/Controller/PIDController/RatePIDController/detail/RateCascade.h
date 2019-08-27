@@ -47,22 +47,22 @@ public:
 			ControllerTarget* target, ControllerOutput* output);
 
 	bool
-	configure(const boost::property_tree::ptree& config) override;
+	configure(const Configuration& config) override;
 
 	bool
-	tunePID(PIDs pid, const Control::PID::Parameters& params) override;
+	tunePID(PIDs pid, const Control::PIDParameters& params) override;
 
 	bool
-	tuneRollBounds(double min, double max) override;
+	tuneRollBounds(FloatingType min, FloatingType max) override;
 
 	bool
-	tunePitchBounds(double min, double max) override;
+	tunePitchBounds(FloatingType min, FloatingType max) override;
 
 	bool
-	tuneRollRateBounds(double min, double max);
+	tuneRollRateBounds(FloatingType min, FloatingType max);
 
 	bool
-	tunePitchRateBounds(double min, double max);
+	tunePitchRateBounds(FloatingType min, FloatingType max);
 
 	PIDStati
 	getPIDStatus() override;
@@ -95,20 +95,20 @@ private:
 	std::shared_ptr<Control::Constraint> yawOutputConstraint_;
 	std::shared_ptr<Control::Constraint> throttleOutputConstraint_;
 
-	double hardRollConstraint_;
-	double hardRollRateConstraint_;
-	double hardPitchConstraint_;
-	double hardPitchRateConstraint_;
-	double rollConstraint_;
-	double rollRateConstraint_;
-	double rollOutConstraint_;
-	double pitchConstraint_;
-	double pitchRateConstraint_;
-	double pitchOutConstraint_;
-	double yawOutConstraint_;
-	double throttleOutConstraint_;
-	double beta_;
-	double rollTarget_;
+	FloatingType hardRollConstraint_;
+	FloatingType hardRollRateConstraint_;
+	FloatingType hardPitchConstraint_;
+	FloatingType hardPitchRateConstraint_;
+	FloatingType rollConstraint_;
+	FloatingType rollRateConstraint_;
+	FloatingType rollOutConstraint_;
+	FloatingType pitchConstraint_;
+	FloatingType pitchRateConstraint_;
+	FloatingType pitchOutConstraint_;
+	FloatingType yawOutConstraint_;
+	FloatingType throttleOutConstraint_;
+	FloatingType beta_;
+	FloatingType rollTarget_;
 
 	bool useRPMController_;
 };

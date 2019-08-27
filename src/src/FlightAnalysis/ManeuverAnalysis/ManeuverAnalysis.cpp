@@ -28,6 +28,7 @@
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightAnalysis/ManeuverAnalysis/ManeuverAnalysis.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/IPC/IPC.h"
 
 ManeuverAnalysis::ManeuverAnalysis() :
 		analysis_(false), collectInit_(false), counter_(0), maneuver_(Maneuvers::GEOFENCING)
@@ -35,7 +36,7 @@ ManeuverAnalysis::ManeuverAnalysis() :
 }
 
 std::shared_ptr<ManeuverAnalysis>
-ManeuverAnalysis::create(const boost::property_tree::ptree& config)
+ManeuverAnalysis::create(const Configuration& config)
 {
 	auto maneuverAnalysis = std::make_shared<ManeuverAnalysis>();
 
@@ -48,9 +49,9 @@ ManeuverAnalysis::create(const boost::property_tree::ptree& config)
 }
 
 bool
-ManeuverAnalysis::configure(const boost::property_tree::ptree& config)
+ManeuverAnalysis::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	std::string maneuver;
 
 	pm.add("log_path", logPath_, true);
@@ -78,6 +79,11 @@ ManeuverAnalysis::run(RunStage stage)
 			APLOG_ERROR << "IPC Missing.";
 			return true;
 		}
+		if (!scheduler_.isSet())
+		{
+			APLOG_ERROR << "Scheduler Missing.";
+			return true;
+		}
 
 		break;
 	}
@@ -85,7 +91,7 @@ ManeuverAnalysis::run(RunStage stage)
 	{
 		auto ipc = ipcHandle_.get();
 
-		sensorDataSubscription_ = ipc->subscribeOnSharedMemory<SensorData>("sensor_data",
+		sensorDataSubscription_ = ipc->subscribe<SensorData>("sensor_data",
 				std::bind(&ManeuverAnalysis::onSensorData, this, std::placeholders::_1));
 
 		if (!sensorDataSubscription_.connected())
@@ -94,7 +100,7 @@ ManeuverAnalysis::run(RunStage stage)
 			return true;
 		}
 
-		controllerOutputSubscription_ = ipc->subscribeOnPacket("controller_output_ma",
+		controllerOutputSubscription_ = ipc->subscribe<ControllerOutput>("controller_output",
 				std::bind(&ManeuverAnalysis::onControllerOutput, this, std::placeholders::_1));
 
 		if (!controllerOutputSubscription_.connected())
@@ -103,7 +109,7 @@ ManeuverAnalysis::run(RunStage stage)
 			return true;
 		}
 
-		maneuverAnalysisSubscription_ = ipc->subscribeOnPacket("maneuver_analysis",
+		maneuverAnalysisSubscription_ = ipc->subscribe<bool>("maneuver_analysis",
 				std::bind(&ManeuverAnalysis::onManeuverAnalysis, this, std::placeholders::_1));
 
 		if (!maneuverAnalysisSubscription_.connected())
@@ -112,7 +118,7 @@ ManeuverAnalysis::run(RunStage stage)
 			return true;
 		}
 
-		maneuverAnalysisStatusSubscription_ = ipc->subscribeOnPacket("maneuver_analysis_status",
+		maneuverAnalysisStatusSubscription_ = ipc->subscribeOnPackets("maneuver_analysis_status",
 				std::bind(&ManeuverAnalysis::onManeuverAnalysisStatus, this,
 						std::placeholders::_1));
 
@@ -137,16 +143,17 @@ void
 ManeuverAnalysis::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	ipcHandle_.setFromAggregationIfNotSet(agg);
+	scheduler_.setFromAggregationIfNotSet(agg);
 }
 
 void
 ManeuverAnalysis::onSensorData(const SensorData& data)
 {
-	std::unique_lock<std::mutex> maneuverAnalysisLock(maneuverAnalysisMutex_);
+	Lock maneuverAnalysisLock(maneuverAnalysisMutex_);
 	bool analysis = analysis_;
 	maneuverAnalysisLock.unlock();
 
-	std::unique_lock<std::mutex> maneuverAnalysisStatusLock(maneuverAnalysisStatusMutex_);
+	Lock maneuverAnalysisStatusLock(maneuverAnalysisStatusMutex_);
 	ManeuverAnalysisStatus analysisStatus = analysisStatus_;
 	maneuverAnalysisStatusLock.unlock();
 
@@ -160,31 +167,31 @@ ManeuverAnalysis::onSensorData(const SensorData& data)
 	}
 	else if (!analysis && collectInit_)
 	{
-		collectStateFinal(data);
+		collectStateFinal(sensorData_);
 	}
 }
 
 void
-ManeuverAnalysis::onManeuverAnalysis(const Packet& analysis)
+ManeuverAnalysis::onManeuverAnalysis(const bool& analysis)
 {
-	std::unique_lock<std::mutex> lock(maneuverAnalysisMutex_);
-	analysis_ = dp::deserialize<bool>(analysis);
+	Lock lock(maneuverAnalysisMutex_);
+	analysis_ = analysis;
 	lock.unlock();
 }
 
 void
 ManeuverAnalysis::onManeuverAnalysisStatus(const Packet& status)
 {
-	std::unique_lock<std::mutex> lock(maneuverAnalysisStatusMutex_);
+	Lock lock(maneuverAnalysisStatusMutex_);
 	analysisStatus_ = dp::deserialize<ManeuverAnalysisStatus>(status);
 	lock.unlock();
 }
 
 void
-ManeuverAnalysis::onControllerOutput(const Packet& output)
+ManeuverAnalysis::onControllerOutput(const ControllerOutput& output)
 {
-	std::unique_lock<std::mutex> lock(controllerOutputMutex_);
-	controllerOutput_ = dp::deserialize<ControllerOutput>(output);
+	Lock lock(controllerOutputMutex_);
+	controllerOutput_ = output;
 	lock.unlock();
 }
 
@@ -201,7 +208,8 @@ ManeuverAnalysis::collectStateInit(const SensorData& data, const std::string& ma
 
 	std::string maneuverName = std::to_string(counter_) + "_" + maneuver;
 	std::string logFileName = logPath_ + maneuverName + ".log";
-	std::string time = to_simple_string(data.timestamp);
+	auto t = std::chrono::system_clock::to_time_t(data.timestamp);
+	std::string time = std::ctime(&t);
 
 	logFile_.open(logFileName);
 	logFile_.precision(15);
@@ -238,6 +246,8 @@ ManeuverAnalysis::collectStateInit(const SensorData& data, const std::string& ma
 		break;
 	}
 	}
+
+	logFile_ << "collectStateNormal:" << std::endl;
 
 	collectInit_ = true;
 }
@@ -338,8 +348,6 @@ ManeuverAnalysis::collectGeofencing(const SensorData& data, const CollectStates&
 				<< data.attitude.z() << "	" << data.groundSpeed << "	" << data.angularRate.x()
 				<< std::endl;
 
-		logFile_ << "collectStateNormal:" << std::endl;
-
 		break;
 	}
 	case CollectStates::NORMAL:
@@ -379,8 +387,6 @@ ManeuverAnalysis::collectAdvancedControl(const SensorData& data, const CollectSt
 				<< data.attitude.z() << "	" << data.batteryVoltage << "	" << data.batteryCurrent
 				<< "	" << data.throttle << "	" << data.rpm << std::endl;
 
-		logFile_ << "collectStateNormal:" << std::endl;
-
 		break;
 	}
 	case CollectStates::NORMAL:
@@ -406,7 +412,7 @@ ManeuverAnalysis::collectAdvancedControl(const SensorData& data, const CollectSt
 void
 ManeuverAnalysis::collectFlightTesting(const SensorData& data, const CollectStates& states)
 {
-	std::unique_lock<std::mutex> lock(controllerOutputMutex_);
+	Lock lock(controllerOutputMutex_);
 	ControllerOutput controllerOutput = controllerOutput_;
 	lock.unlock();
 
@@ -434,7 +440,7 @@ ManeuverAnalysis::collectFlightTesting(const SensorData& data, const CollectStat
 				<< data.acceleration.z() << "	" << data.attitude.x() << "	" << data.attitude.y()
 				<< "	" << data.attitude.z() << "	" << data.angularRate.x() << "	"
 				<< data.angularRate.y() << "	" << data.angularRate.z() << "	"
-				<< to_simple_string(data.timestamp) << "	" << data.airSpeed << "	"
+				<< data.timestamp.time_since_epoch().count() << "	" << data.airSpeed << "	"
 				<< data.groundSpeed << "	" << data.batteryVoltage << "	" << data.batteryCurrent
 				<< "	" << data.aileron << "	" << data.elevator << "	" << data.rudder << "	"
 				<< data.throttle << "	" << data.rpm << "	" << controllerOutput.rollOutput << "	"
@@ -453,7 +459,7 @@ ManeuverAnalysis::collectFlightTesting(const SensorData& data, const CollectStat
 				<< data.acceleration.z() << "	" << data.attitude.x() << "	" << data.attitude.y()
 				<< "	" << data.attitude.z() << "	" << data.angularRate.x() << "	"
 				<< data.angularRate.y() << "	" << data.angularRate.z() << "	"
-				<< to_simple_string(data.timestamp) << "	" << data.airSpeed << "	"
+				<< data.timestamp.time_since_epoch().count() << "	" << data.airSpeed << "	"
 				<< data.groundSpeed << "	" << data.batteryVoltage << "	" << data.batteryCurrent
 				<< "	" << data.aileron << "	" << data.elevator << "	" << data.rudder << "	"
 				<< data.throttle << "	" << data.rpm << "	" << controllerOutput.rollOutput << "	"
@@ -470,7 +476,7 @@ ManeuverAnalysis::collectFlightTesting(const SensorData& data, const CollectStat
 				<< data.acceleration.z() << "	" << data.attitude.x() << "	" << data.attitude.y()
 				<< "	" << data.attitude.z() << "	" << data.angularRate.x() << "	"
 				<< data.angularRate.y() << "	" << data.angularRate.z() << "	"
-				<< to_simple_string(data.timestamp) << "	" << data.airSpeed << "	"
+				<< data.timestamp.time_since_epoch().count() << "	" << data.airSpeed << "	"
 				<< data.groundSpeed << "	" << data.batteryVoltage << "	" << data.batteryCurrent
 				<< "	" << data.aileron << "	" << data.elevator << "	" << data.rudder << "	"
 				<< data.throttle << "	" << data.rpm << "	" << controllerOutput.rollOutput << "	"

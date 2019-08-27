@@ -23,14 +23,16 @@
  *      Author: simonyu
  */
 
+#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include <vector>
 
-#include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
+#include "uavAP/Core/IPC/IPC.h"
 
 ManeuverPlanner::ManeuverPlanner() :
 		maneuverAnalysis_(false), maneuverAnalysisStatus_(), trimAnalysis_(false), overrideInterrupted_(
@@ -41,7 +43,7 @@ ManeuverPlanner::ManeuverPlanner() :
 }
 
 std::shared_ptr<ManeuverPlanner>
-ManeuverPlanner::create(const boost::property_tree::ptree& config)
+ManeuverPlanner::create(const Configuration& config)
 {
 	auto maneuverPlanner = std::make_shared<ManeuverPlanner>();
 
@@ -56,15 +58,17 @@ ManeuverPlanner::create(const boost::property_tree::ptree& config)
 bool
 ManeuverPlanner::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	Configuration maneuverSetTree;
 
-	if (pm.configure(params_, true))
+	bool paramsSet = static_cast<ConfigurableObject<ManeuverPlannerParams>*>(this)->configure(
+			config);
+	if (paramsSet)
 	{
-		manualRestart_ = params_.manual_restart();
-		maneuverRestart_ = params_.maneuver_restart();
+		manualRestart_ = params.manualRestart();
+		maneuverRestart_ = params.maneuverRestart();
 
-		safetyCondition_ = std::make_shared<RectanguloidCondition>(params_.safety_bounds());
+		safetyCondition_ = std::make_shared<RectanguloidCondition>(params.safetyBounds());
 	}
 
 	if (pm.add("maneuvers", maneuverSetTree, false))
@@ -87,7 +91,7 @@ ManeuverPlanner::configure(const Configuration& config)
 		currentManeuver_ = boost::none;
 	}
 
-	return pm.map();
+	return pm.map() && paramsSet;
 }
 
 void
@@ -119,11 +123,10 @@ ManeuverPlanner::run(RunStage stage)
 		auto ipc = ipc_.get();
 
 		overridePublisher_ = ipc->publishPackets("override");
-		advancedControlPublisher_ = ipc->publishOnSharedMemory<AdvancedControl>(
-				"advanced_control_maneuver");
-		maneuverAnalysisPublisher_ = ipc->publishPackets("maneuver_analysis");
+		advancedControlPublisher_ = ipc->publish<AdvancedControl>("advanced_control_maneuver");
+		maneuverAnalysisPublisher_ = ipc->publish<bool>("maneuver_analysis");
 		maneuverAnalysisStatusPublisher_ = ipc->publishPackets("maneuver_analysis_status");
-		trimAnalysisPublisher_ = ipc->publishPackets("trim_analysis");
+		trimAnalysisPublisher_ = ipc->publish<bool>("trim_analysis");
 
 		break;
 	}
@@ -131,8 +134,8 @@ ManeuverPlanner::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		controllerOutputSubscription_ = ipc->subscribeOnPacket("controller_output_mp",
-				std::bind(&ManeuverPlanner::onControllerOutputPacket, this, std::placeholders::_1));
+		controllerOutputSubscription_ = ipc->subscribe<ControllerOutput>("controller_output",
+				std::bind(&ManeuverPlanner::onControllerOutput, this, std::placeholders::_1));
 
 		if (!controllerOutputSubscription_.connected())
 		{
@@ -140,9 +143,9 @@ ManeuverPlanner::run(RunStage stage)
 			return true;
 		}
 
-		controllerOutputTrimSubscription_ = ipc->subscribeOnPacket("controller_output_trim",
-				std::bind(&ManeuverPlanner::onControllerOutputTrimPacket, this,
-						std::placeholders::_1));
+		controllerOutputTrimSubscription_ = ipc->subscribe<ControllerOutput>(
+				"controller_output_trim",
+				std::bind(&ManeuverPlanner::onControllerOutputTrim, this, std::placeholders::_1));
 
 		if (!controllerOutputTrimSubscription_.connected())
 		{
@@ -150,8 +153,7 @@ ManeuverPlanner::run(RunStage stage)
 			return true;
 		}
 
-		advancedControlSubscription_ = ipc->subscribeOnSharedMemory<AdvancedControl>(
-				"advanced_control",
+		advancedControlSubscription_ = ipc->subscribe<AdvancedControl>("advanced_control",
 				std::bind(&ManeuverPlanner::onAdvancedControl, this, std::placeholders::_1));
 
 		if (!advancedControlSubscription_.connected())
@@ -160,7 +162,7 @@ ManeuverPlanner::run(RunStage stage)
 			return true;
 		}
 
-		if (params_.use_safety_bounds())
+		if (params.useSafetyBounds())
 		{
 			auto conditionManager = conditionManager_.get();
 
@@ -189,9 +191,9 @@ ManeuverPlanner::run(RunStage stage)
 		bool trimAnalysis = trimAnalysis_;
 		trimAnalysisLock.unlock();
 
-		maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
+		maneuverAnalysisPublisher_.publish(maneuverAnalysis);
 		maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
-		trimAnalysisPublisher_.publish(dp::serialize(trimAnalysis));
+		trimAnalysisPublisher_.publish(trimAnalysis);
 
 		break;
 	}
@@ -332,7 +334,7 @@ ManeuverPlanner::getOverrideNr() const
 Rectanguloid
 ManeuverPlanner::getSafetyBounds() const
 {
-	return params_.safety_bounds();
+	return params.safetyBounds();
 }
 
 ControllerOutput
@@ -371,7 +373,7 @@ ManeuverPlanner::startManeuverAnalysis()
 	bool maneuverAnalysis = maneuverAnalysis_;
 	maneuverAnalysisLock.unlock();
 
-	maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
+	maneuverAnalysisPublisher_.publish(maneuverAnalysis);
 }
 
 void
@@ -382,7 +384,7 @@ ManeuverPlanner::stopManeuverAnalysis()
 	bool maneuverAnalysis = maneuverAnalysis_;
 	maneuverAnalysisLock.unlock();
 
-	maneuverAnalysisPublisher_.publish(dp::serialize(maneuverAnalysis));
+	maneuverAnalysisPublisher_.publish(maneuverAnalysis);
 }
 
 void
@@ -410,7 +412,7 @@ ManeuverPlanner::startOverride()
 
 		overridePublisher_.publish(dp::serialize(override));
 		maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
-		trimAnalysisPublisher_.publish(dp::serialize(trimAnalysis));
+		trimAnalysisPublisher_.publish(trimAnalysis);
 
 		std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
 		overrideSeqNr_++;
@@ -466,7 +468,7 @@ ManeuverPlanner::stopOverride()
 	overridePublisher_.publish(dp::serialize(override));
 	advancedControlPublisher_.publish(advancedControl);
 	maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
-	trimAnalysisPublisher_.publish(dp::serialize(trimAnalysis));
+	trimAnalysisPublisher_.publish(trimAnalysis);
 
 	std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
 	overrideSeqNr_++;
@@ -663,7 +665,7 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 	overridePublisher_.publish(dp::serialize(override));
 	advancedControlPublisher_.publish(advancedControl);
 	maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
-	trimAnalysisPublisher_.publish(dp::serialize(trimAnalysis));
+	trimAnalysisPublisher_.publish(trimAnalysis);
 
 	std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
 	overrideSeqNr_++;
@@ -719,15 +721,15 @@ ManeuverPlanner::deactivateManeuverOverride()
 	bool trimAnalysis = trimAnalysis_;
 	trimAnalysisLock.unlock();
 
-	trimAnalysisPublisher_.publish(dp::serialize(trimAnalysis));
+	trimAnalysisPublisher_.publish(trimAnalysis);
 }
 
 void
 ManeuverPlanner::safetyTrigger(int trigger)
 {
-	if ((trigger == RectanguloidCondition::ENTER_RECTANGULOID && params_.perform_in_safety_bounds())
+	if ((trigger == RectanguloidCondition::ENTER_RECTANGULOID && params.performInSafetyBounds())
 			|| (trigger == RectanguloidCondition::EXIT_RECTANGULOID
-					&& !params_.perform_in_safety_bounds()))
+					&& !params.performInSafetyBounds()))
 	{
 		resumeOverride();
 	}
@@ -789,21 +791,17 @@ ManeuverPlanner::overrideControllerOutput(Override& override,
 }
 
 void
-ManeuverPlanner::onControllerOutputPacket(const Packet& packet)
+ManeuverPlanner::onControllerOutput(const ControllerOutput& controllerOutput)
 {
-	auto controllerOutput = dp::deserialize<ControllerOutput>(packet);
-
-	std::unique_lock<std::mutex> lock(controllerOutputMutex_);
+	Lock lock(controllerOutputMutex_);
 	controllerOutput_ = controllerOutput;
 	lock.unlock();
 }
 
 void
-ManeuverPlanner::onControllerOutputTrimPacket(const Packet& packet)
+ManeuverPlanner::onControllerOutputTrim(const ControllerOutput& controllerOutputTrim)
 {
-	auto controllerOutputTrim = dp::deserialize<ControllerOutput>(packet);
-
-	std::unique_lock<std::mutex> lock(controllerOutputTrimMutex_);
+	Lock lock(controllerOutputTrimMutex_);
 	controllerOutputTrim_ = controllerOutputTrim;
 	lock.unlock();
 }

@@ -1,0 +1,6 @@
+{
+	"network":
+	{
+		"type" : "redis"
+	}	
+}

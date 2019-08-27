@@ -25,9 +25,11 @@
 
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
-#include <boost/thread/lock_types.hpp>
+#include <boost/thread/thread_time.hpp>
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/Runner/SynchronizedRunnerMaster.h"
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <mutex>
 
 SynchronizedRunnerMaster::SynchronizedRunnerMaster(int numOfRunners) :
 		timeout_(Seconds(1)), numOfRunners_(numOfRunners)
@@ -77,18 +79,26 @@ SynchronizedRunnerMaster::runStage(RunStage stage)
 	mapped_region region(sync_, read_write);
 	auto synchronizer = static_cast<Synchronizer*>(region.get_address());
 
-	boost::unique_lock<boost::interprocess::interprocess_mutex> lock(synchronizer->runStageMutex);
+	std::unique_lock<boost::interprocess::interprocess_mutex> lock(synchronizer->runStageMutex);
 	synchronizer->runStage = stage;
 	synchronizer->runStageChanged.notify_all();
 	lock.unlock();
 
-	TimePoint timeout = boost::get_system_time() + timeout_;
+	boost::posix_time::ptime timeout = boost::get_system_time()
+			+ boost::posix_time::milliseconds(
+					std::chrono::duration_cast<Milliseconds>(timeout_).count());
+//	TimePoint timeout = Clock::now() + timeout_;
 
 	for (int i = 0; i < numOfRunners_; ++i)
 	{
 		if (!synchronizer->finishedStage.timed_wait(timeout))
 		{
 			APLOG_ERROR << numOfRunners_ - i << " Module(s) timed out at runstage " << (int) stage;
+			std::unique_lock<boost::interprocess::interprocess_mutex> lock(
+					synchronizer->runStageMutex);
+			synchronizer->failure = true;
+			synchronizer->runStageChanged.notify_all();
+			lock.unlock();
 			return true;
 		}
 	}

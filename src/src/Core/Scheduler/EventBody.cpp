@@ -26,13 +26,17 @@
 #include "uavAP/Core/Scheduler/EventBody.h"
 
 EventBody::EventBody(const std::function<void
-()>& b) :
+()>& b, const sched_param* param) :
 		body(b), isCanceled(false), isStarted(false), missedDeadline(false)
 {
+	if (param)
+		pthread_setschedparam(periodicThread.native_handle(), SCHED_FIFO, param);
 }
 
 EventBody::EventBody(const std::function<void
-()>& b, const Duration& p) :
+()>& b, const Duration& p, const sched_param* param) :
 		body(b), period(p), isCanceled(false), isStarted(false), missedDeadline(false)
 {
+	if (param)
+		pthread_setschedparam(periodicThread.native_handle(), SCHED_FIFO, param);
 }

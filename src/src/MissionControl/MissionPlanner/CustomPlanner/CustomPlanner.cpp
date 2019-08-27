@@ -35,19 +35,20 @@
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
 
 CustomPlanner::CustomPlanner() :
-		defaultVelocity_(0), useApproach_(false)
+		defaultVelocity_(0), defaultAltitude_(100.0), useApproach_(false)
 {
 }
 
 bool
-CustomPlanner::configure(const boost::property_tree::ptree& config)
+CustomPlanner::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
 	pm.add<double>("default_velocity", defaultVelocity_, true);
+	pm.add<double>("default_altitude", defaultAltitude_, true);
 	pm.add<bool>("use_approach", useApproach_, true);
 	Mission defaultMission;
-	Waypoint centerWP(Vector3(0, 0, 100), defaultVelocity_);
+	Waypoint centerWP(Vector3(0, 0, defaultAltitude_), defaultVelocity_);
 	defaultMission.waypoints.push_back(centerWP);
 	missionMap_.insert(std::make_pair("default", defaultMission));
 
@@ -61,7 +62,15 @@ CustomPlanner::configure(const boost::property_tree::ptree& config)
 		missionMap_.insert(std::make_pair(it.first, mis));
 	}
 
-	currentMission_ = missionMap_.find("default");
+	std::string defMission;
+	if (pm.add("default_mission", defMission, false))
+	{
+		currentMission_ = missionMap_.find(defMission);
+	}
+	else
+	{
+		currentMission_ = missionMap_.find("default");
+	}
 
 	return pm.map();
 }
@@ -105,7 +114,7 @@ CustomPlanner::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		sensorDataSubscription_ = ipc->subscribeOnSharedMemory<SensorData>("sensor_data",
+		sensorDataSubscription_ = ipc->subscribe<SensorData>("sensor_data",
 				std::bind(&CustomPlanner::onSensorData, this, std::placeholders::_1));
 
 		if (!sensorDataSubscription_.connected())

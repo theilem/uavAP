@@ -27,7 +27,6 @@
 #define UAVAP_MISSIONCONTROL_CONDITIONMANAGER_CONDITIONMANAGER_H_
 
 #include <boost/signals2.hpp>
-#include <boost/property_tree/ptree.hpp>
 
 #include "uavAP/Core/DataPresentation/Packet.h"
 #include "uavAP/Core/IPC/Subscription.h"
@@ -51,10 +50,10 @@ public:
 	using OnSteadyState = boost::signals2::signal<void (const Packet&)>;
 
 	static std::shared_ptr<ConditionManager>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;

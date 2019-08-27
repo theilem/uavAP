@@ -26,25 +26,29 @@
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_MANEUVERPIDCONTROLLER_MANEUVERPIDCONTROLLER_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_MANEUVERPIDCONTROLLER_MANEUVERPIDCONTROLLER_H_
 
+#include "uavAP/Core/LockTypes.h"
+#include "uavAP/Core/Object/AggregatableObject.hpp"
+#include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/MissionControl/ManeuverPlanner/Override.h"
-#include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDController.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDCascade.h"
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 
 class ManeuverCascade;
 class ISensingActuationIO;
 class IScheduler;
 class IPC;
+class DataHandling;
 class Packet;
 
-class ManeuverPIDController: public IPIDController, public IAggregatableObject, public IRunnableObject
+class ManeuverPIDController: public IPIDController, public AggregatableObject<IPC, IScheduler, ISensingActuationIO, DataHandling>, public IRunnableObject
 {
 public:
 
@@ -53,10 +57,10 @@ public:
 	ManeuverPIDController();
 
 	static std::shared_ptr<ManeuverPIDController>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config) override;
+	configure(const Configuration& config) override;
 
 	bool
 	run(RunStage stage) override;
@@ -67,12 +71,6 @@ public:
 	ControllerOutput
 	getControllerOutput() override;
 
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
-
-	std::shared_ptr<IPIDCascade>
-	getCascade() override;
-
 private:
 
 	void
@@ -81,18 +79,17 @@ private:
 	void
 	onOverridePacket(const Packet& packet);
 
-	ObjectHandle<ISensingActuationIO> sensAct_;
-	ObjectHandle<IScheduler> scheduler_;
-	ObjectHandle<IPC> ipc_;
+	void
+	tunePID(const PIDTuning& params);
 
-	std::mutex controllerTargetMutex_;
+	Mutex controllerTargetMutex_;
 	ControllerTarget controllerTarget_;
 	SensorData sensorData_;
 	Vector3 velocityInertial_;
 	Vector3 accelerationInertial_;
 	ControllerOutput controllerOutput_;
 
-	Publisher controllerOutputPublisher_;
+	Publisher<Packet> controllerOutputPublisher_;
 	Subscription overrideSubscription_;
 
 	std::shared_ptr<ManeuverCascade> pidCascade_;

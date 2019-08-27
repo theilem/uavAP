@@ -20,7 +20,9 @@ set(CORE_SRC 	${CORE_SRC}
 				${CMAKE_CURRENT_SOURCE_DIR}/IPC.cpp
 				${CMAKE_CURRENT_SOURCE_DIR}/Publisher.cpp
 				${CMAKE_CURRENT_SOURCE_DIR}/Subscription.cpp
-				${CMAKE_CURRENT_SOURCE_DIR}/detail/PacketSubscriptionImpl.cpp
-				${CMAKE_CURRENT_SOURCE_DIR}/detail/PacketPublisherImpl.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/detail/MessageQueueSubscriptionImpl.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/detail/SharedMemorySubscriptionImpl.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/detail/MessageQueuePublisherImpl.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/detail/SharedMemoryPublisherImpl.cpp
 				PARENT_SCOPE)
 

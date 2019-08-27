@@ -26,6 +26,7 @@
 #ifndef UAVAP_FLIGHTANALYSIS_STATEANALYSIS_STEADYSTATEANALYSIS_H_
 #define UAVAP_FLIGHTANALYSIS_STATEANALYSIS_STEADYSTATEANALYSIS_H_
 
+#include <uavAP/Core/LockTypes.h>
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/IPC/Subscription.h"
@@ -45,10 +46,10 @@ public:
 	static constexpr TypeId typeId = "steady_state_analysis";
 
 	static std::shared_ptr<SteadyStateAnalysis>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;
@@ -96,7 +97,7 @@ private:
 	Subscription sensorDataSubscription_;
 	Subscription overrideSubscription_;
 	Subscription pidStatiSubscription_;
-	Publisher steadyStatePublisher_;
+	Publisher<Packet> steadyStatePublisher_;
 
 	Override override_;
 	PIDStati pidStati_;
@@ -104,10 +105,10 @@ private:
 	SteadyStateMetrics* inspectingMetrics_;
 	mutable SteadyStateMetrics lastInspectingMetrics_;
 
-	std::mutex overrideMutex_;
-	std::mutex pidStatiMutex_;
-	std::mutex metricsMutex_;
-	mutable std::mutex inspectingMetricsMutex_;
+	Mutex overrideMutex_;
+	Mutex pidStatiMutex_;
+	Mutex metricsMutex_;
+	mutable Mutex inspectingMetricsMutex_;
 
 	TimePoint overrideTimeStamp_;
 
@@ -180,7 +181,7 @@ SteadyStateAnalysis::inTolerance(const double& value, const TimePoint& time,
 
 			if (!foundRiseTime)
 			{
-				metricsPair->second.riseTime = (time - overrideTimeStamp_).total_milliseconds();
+				metricsPair->second.riseTime = std::chrono::duration_cast<Milliseconds>(time - overrideTimeStamp_).count();
 				metricsPair->second.foundRiseTime = true;
 			}
 
@@ -208,13 +209,13 @@ SteadyStateAnalysis::inSteadyState(const TimePoint& time, const std::map<Enum, d
 
 		metricsPair->second.isReset = false;
 
-		if ((time - toleranceTimeStamp).total_milliseconds() > inToleranceDuration_)
+		if (std::chrono::duration_cast<Milliseconds>(time - toleranceTimeStamp).count() > inToleranceDuration_)
 		{
 			metricsPair->second.inSteadyState = true;
 
 			if (!foundSettlingTime)
 			{
-				metricsPair->second.settlingTime = (time - overrideTimeStamp_).total_milliseconds()
+				metricsPair->second.settlingTime = std::chrono::duration_cast<Milliseconds>(time - overrideTimeStamp_).count()
 						- inToleranceDuration_;
 
 				metricsPair->second.foundSettlingTime = true;

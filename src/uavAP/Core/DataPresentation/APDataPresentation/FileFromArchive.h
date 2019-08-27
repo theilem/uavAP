@@ -25,7 +25,6 @@
 
 #ifndef UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_FILEFROMARCHIVE_H_
 #define UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_FILEFROMARCHIVE_H_
-#include <google/protobuf/message.h>
 #include "uavAP/Core/DataPresentation/APDataPresentation/ArchiveOptions.h"
 #include <iostream>
 #include <type_traits>
@@ -45,14 +44,8 @@ public:
 	read(char* val, unsigned long bytes);
 
 	template<class Type>
-	typename std::enable_if<!std::is_base_of<google::protobuf::Message, Type>::value,
-	FileFromArchive>::type&
+	FileFromArchive&
 	operator >>(Type& val);
-
-	template<class Type>
-	typename std::enable_if<std::is_base_of<google::protobuf::Message, Type>::value,
-			FileFromArchive>::type&
-	operator >>(Type& message);
 
 	FileFromArchive&
 	operator >>(double& doub);

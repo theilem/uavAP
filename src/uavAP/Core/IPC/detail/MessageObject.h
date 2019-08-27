@@ -28,50 +28,31 @@
 #include <boost/interprocess/sync/interprocess_sharable_mutex.hpp>
 #include <atomic>
 
-template<class Object>
-struct MessageObject: public Object
+struct MessageObjectHeader
 {
-
 	boost::interprocess::interprocess_condition_any cnd;
 	boost::interprocess::interprocess_sharable_mutex mtx;
 
 	std::atomic_bool active;
 
-	MessageObject() :
-			Object(), active(true)
+	std::size_t maxPacketSize;
+
+	MessageObjectHeader() :
+			active(true), maxPacketSize(0)
 	{
 	}
-
-};
-
-//template<class Object>
-//struct MessageObject
-//{
-
-//    boost::interprocess::interprocess_condition_any cnd;
-//    boost::interprocess::interprocess_sharable_mutex mtx;
-
-//    Object
-//    get() const;
-
-//    void
-//    set(const Object& obj);
-
-//    MessageObject():
-//        active(true)
-//    {}
-
-//};
-
-enum class VectorWrapperIndicator
-{
-	BEGIN = 0, ADD, END
 };
 
 template<class Object>
-struct VectorWrapper: public Object
+struct MessageObject: public Object
 {
-	VectorWrapperIndicator indicator;
+	MessageObjectHeader header;
+
+	MessageObject() :
+			Object()
+	{
+	}
+
 };
 
 #endif /* UAVAP_CORE_IPC_MESSAGEOBJECT_H_ */

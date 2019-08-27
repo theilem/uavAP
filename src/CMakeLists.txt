@@ -21,14 +21,18 @@ project (uavAP)
 
 #######Build configuration########
 
-set(LIBRARY_ROOT_DIR "/" CACHE FILEPATH "Library root for eigen, boost, protobuf")
+#set(LIBRARY_ROOT_DIR "/" CACHE FILEPATH "Library root for eigen, boost, protobuf")
+
+option(NO_DL "Deactivate dynamic linking in the Plugin Manager." OFF)
+
+if(NO_DL)
+	add_definitions(-DNO_DL)
+endif(NO_DL)
 
 #Set Variable inputs
 set(EIGEN_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/eigen3/")
 set(Boost_LIBRARY_DIRS "${LIBRARY_ROOT_DIR}/usr/local/lib/")
 set(Boost_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/")
-set(Protobuf_LIBRARY_DIRS "${LIBRARY_ROOT_DIR}/usr/local/lib/")
-set(Protobuf_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/")
 
 if(CMAKE_COMPILER_IS_GNUCC)
 	if(CMAKE_C_COMPILER_VERSION VERSION_GREATER 7.9.9)
@@ -43,48 +47,44 @@ if(CMAKE_COMPILER_IS_GNUCC)
 
 endif(CMAKE_COMPILER_IS_GNUCC)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -std=c++14 -fPIC -Wall -Wno-int-in-bool-context")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -std=c++11 -fPIC -Wall -Wno-int-in-bool-context")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall -Wl,--no-as-needed")
 
 include_directories(	${CMAKE_SOURCE_DIR}
 						${Boost_INCLUDE_DIRS}
-						${EIGEN_INCLUDE_DIRS}
-						${Protobuf_INCLUDE_DIRS})
+						${EIGEN_INCLUDE_DIRS})
 			
 
 link_directories(	${Boost_LIBRARY_DIRS}
-					${Protobuf_LIBRARY_DIRS}
 					)
 					
 if(LINK_STATIC)
 	set(BOOST 	libboost_filesystem.a
-				libboost_thread.a
 				libboost_system.a
-				libboost_date_time.a
-				libboost_chrono.a
 				)
-	set(PROTOBUF libprotobuf.a)
 	set(ARB 	libarb.a
 				libmpfr.a
 				libgmp.a
 				libflint.a)
 else(LINK_STATIC)
 	set(BOOST 	boost_filesystem
-				boost_thread
 				boost_system
-				boost_date_time
-				boost_chrono
 				)
-	set(PROTOBUF protobuf)
 	set(ARB 	arb
 				mpfr
 				gmp
 				flint)
 endif(LINK_STATIC)
 
+set(REDIS 	libcpp_redis.a
+			tacopie
+			)
+
 if(NODEBUG)
 	add_definitions(-DNODEBUG)
 endif(NODEBUG)
+
+set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY true)
 		
 add_subdirectory(src)
 add_subdirectory(test)

@@ -25,10 +25,10 @@
 
 #include <uavAP/Core/Scheduler/IScheduler.h>
 #include "uavAP/Core/Logging/APLogger.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/SteadyStateCondition.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 
 SteadyStateCondition::SteadyStateCondition() :
 		connection_(), steadyState_(true), trigger_(), event_(), minimumDuration_(
@@ -37,7 +37,7 @@ SteadyStateCondition::SteadyStateCondition() :
 }
 
 std::shared_ptr<SteadyStateCondition>
-SteadyStateCondition::create(const boost::property_tree::ptree& config)
+SteadyStateCondition::create(const Configuration& config)
 {
 	auto steadyStateCondition = std::make_shared<SteadyStateCondition>();
 
@@ -50,9 +50,9 @@ SteadyStateCondition::create(const boost::property_tree::ptree& config)
 }
 
 bool
-SteadyStateCondition::configure(const boost::property_tree::ptree& config)
+SteadyStateCondition::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
 	pm.add<bool>("steady_state", steadyState_, true);
 	pm.add("minimum_duration", minimumDuration_, false);

@@ -23,19 +23,13 @@
  *      Author: mircot
  */
 
-#include <boost/date_time/date_defs.hpp>
-#include <boost/date_time/gregorian/greg_date.hpp>
-#include <boost/date_time/posix_time/conversion.hpp>
-#include <boost/date_time/posix_time/posix_time_duration.hpp>
-#include <boost/date_time/time.hpp>
-#include <boost/date_time/time_duration.hpp>
-#include <boost/operators.hpp>
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/Scheduler/MicroSimulator.h"
+#include "uavAP/Core/Scheduler/EventBody.h"
 #include <utility>
 
 MicroSimulator::MicroSimulator() :
-		now_(Date(2000, boost::gregorian::Jan, 1), Seconds(0)), runs_(0), stopOnWait_(false), waitCondition_(
+		now_(), runs_(0), stopOnWait_(false), waitCondition_(
 				nullptr), waitReleased_(false)
 {
 }
@@ -120,7 +114,7 @@ MicroSimulator::startSchedule()
 void
 MicroSimulator::releaseWait()
 {
-	boost::unique_lock<boost::mutex> lock(waitCondMutex_);
+	std::unique_lock<std::mutex> lock(waitCondMutex_);
 	if (!waitCondition_)
 	{
 		APLOG_WARN << "Nobody waiting on release";
@@ -137,8 +131,8 @@ MicroSimulator::now()
 }
 
 bool
-MicroSimulator::waitFor(Duration duration, boost::condition_variable& interrupt,
-		boost::unique_lock<boost::mutex>& lock)
+MicroSimulator::waitFor(Duration duration, std::condition_variable& interrupt,
+		std::unique_lock<std::mutex>& lock)
 {
 	if (stopOnWait_)
 	{
@@ -153,8 +147,8 @@ MicroSimulator::waitFor(Duration duration, boost::condition_variable& interrupt,
 }
 
 bool
-MicroSimulator::waitUntil(TimePoint timePoint, boost::condition_variable& interrupt,
-		boost::unique_lock<boost::mutex>& lock)
+MicroSimulator::waitUntil(TimePoint timePoint, std::condition_variable& interrupt,
+		std::unique_lock<std::mutex>& lock)
 {
 	if (stopOnWait_)
 	{

@@ -32,24 +32,10 @@
 #include <fstream>
 
 template<class Type>
-typename std::enable_if<!std::is_base_of<google::protobuf::Message, Type>::value,
-		FileFromArchive>::type&
+FileFromArchive&
 FileFromArchive::operator >>(Type& val)
 {
 	dp::serialize<FileFromArchive, Type>(*this, val);
-	return *this;
-}
-
-template<class Type>
-typename std::enable_if<std::is_base_of<google::protobuf::Message, Type>::value,
-		FileFromArchive>::type&
-FileFromArchive::operator >>(Type& message)
-{
-	uint16_t size;
-	*this >> size;
-	std::string input(' ', size);
-	read(&input[0], size);
-	message.ParseFromString(input);
 	return *this;
 }
 
@@ -66,7 +52,5 @@ FileFromArchive::operator <<(Type& val)
 {
 	return *this;
 }
-
-
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_DETAIL_FILEFROMARCHIVEIMPL_HPP_ */

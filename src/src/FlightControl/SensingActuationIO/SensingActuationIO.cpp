@@ -23,9 +23,11 @@
  *      Author: mircot
  */
 #include <uavAP/Core/LockTypes.h>
-#include "uavAP/Core/IPC/IPC.h"
+#include <uavAP/FlightControl/Controller/AdvancedControl.h>
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h"
+#include <uavAP/Core/DataHandling/DataHandling.h>
+#include "uavAP/Core/IPC/IPC.h"
 
 SensingActuationIO::SensingActuationIO()
 {
@@ -35,6 +37,7 @@ void
 SensingActuationIO::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	ipc_.setFromAggregationIfNotSet(agg);
+	dataHandling_.setFromAggregationIfNotSet(agg);
 }
 
 bool
@@ -50,21 +53,33 @@ SensingActuationIO::run(RunStage stage)
 			APLOG_ERROR << "SensingActuationIO: IPC is missing.";
 			return true;
 		}
+		if (!dataHandling_.isSet())
+		{
+			APLOG_DEBUG << "SensingActuationIO: DataHandling not set. Debugging disabled.";
+		}
 		auto ipc = ipc_.get();
 
-		actuationPublisher_ = ipc->publishOnSharedMemory<ControllerOutput>("actuation");
+		actuationPublisher_ = ipc->publish<ControllerOutput>("actuation");
+		advancedControlPublisher_ = ipc->publish<AdvancedControl>("advanced_control");
 
 		break;
 	}
 	case RunStage::NORMAL:
 	{
 		auto ipc = ipc_.get();
-		sensorSubscription_ = ipc->subscribeOnSharedMemory<SensorData>("sensor_data",
+		sensorSubscription_ = ipc->subscribe<SensorData>("sensor_data",
 				boost::bind(&SensingActuationIO::onSensorData, this, _1));
 		if (!sensorSubscription_.connected())
 		{
 			APLOG_ERROR << "SensorData in shared memory missing. Cannot continue.";
 			return true;
+		}
+		if (auto dh = dataHandling_.get())
+		{
+			dh->addStatusFunction<SensorData>(
+					std::bind(&SensingActuationIO::getSensorData, this), Content::SENSOR_DATA);
+			dh->subscribeOnCommand<AdvancedControl>(Content::ADVANCED_CONTROL,
+					std::bind(&SensingActuationIO::onAdvancedControl, this, std::placeholders::_1));
 		}
 		break;
 	}
@@ -91,7 +106,7 @@ SensingActuationIO::setControllerOutput(const ControllerOutput& out)
 void
 SensingActuationIO::onSensorData(const SensorData& data)
 {
-	boost::unique_lock<boost::shared_mutex> lock(mutex_);
+	std::unique_lock<SharedMutex> lock(mutex_);
 	sensorData_ = data;
 	lock.unlock();
 	onSensorData_(data);
@@ -106,6 +121,17 @@ SensingActuationIO::subscribeOnSensorData(const OnSensorData::slot_type& slot)
 SensorData
 SensingActuationIO::getSensorData() const
 {
-	SharedLockGuard lock(mutex_);
+	std::unique_lock<SharedMutex> lock(mutex_);
 	return sensorData_;
+}
+
+void
+SensingActuationIO::onAdvancedControl(const AdvancedControl& control)
+{
+	APLOG_TRACE << "Camber Control: " << EnumMap<CamberControl>::convert(control.camberSelection);
+	APLOG_TRACE << "Special Control: " << EnumMap<SpecialControl>::convert(control.specialSelection);
+	APLOG_TRACE << "Throw Control: " << EnumMap<ThrowsControl>::convert(control.throwsSelection);
+	APLOG_TRACE << "Camber Value: " << control.camberValue;
+	APLOG_TRACE << "Special Value: " << control.specialValue;
+	advancedControlPublisher_.publish(control);
 }

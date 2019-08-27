@@ -27,7 +27,6 @@
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_ILOCALPLANNER_H_
 
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
-#include "uavAP/Core/protobuf/messages/LocalPlanner.pb.h"
 
 class ILocalPlanner
 {
@@ -43,12 +42,13 @@ public:
 
 	virtual Trajectory
 	getTrajectory() const = 0;
-
+/*
 	virtual LocalPlannerStatus
 	getStatus() const = 0;
 
 	virtual bool
 	tune(const LocalPlannerParams& params) = 0;
+*/
 };
 
 #endif /* UAVAP_FLIGHTCONTROL_LOCALPLANNER_ILOCALPLANNER_H_ */

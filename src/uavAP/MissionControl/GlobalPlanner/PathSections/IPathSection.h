@@ -53,16 +53,16 @@ struct IPathSection
 	virtual Vector3
 	getDirection() const = 0;
 
-	virtual double
+	virtual FloatingType
 	getSlope() const = 0;
 
-	virtual double
+	virtual FloatingType
 	getCurvature() const = 0;
 
 	virtual Vector3
 	getEndPoint() const = 0;
 
-	virtual double
+	virtual FloatingType
 	getVelocity() const = 0;
 
 };

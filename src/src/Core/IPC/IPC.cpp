@@ -23,13 +23,13 @@
  *      Author: mircot
  */
 
-#include "uavAP/Core/IPC/detail/PacketPublisherImpl.h"
-#include "uavAP/Core/IPC/detail/PacketSubscriptionImpl.h"
+#include <uavAP/Core/Object/SignalHandler.h>
+#include <uavAP/Core/Scheduler/IScheduler.h>
 #include "uavAP/Core/IPC/IPC.h"
+#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <csignal>
 
-IPC::IPC() :
-		subscribedOnSigint_(false), packetSize_(16000), packetQueueSize_(10)
+IPC::IPC()
 {
 }
 
@@ -43,9 +43,15 @@ IPC::~IPC()
 }
 
 std::shared_ptr<IPC>
-IPC::create(const boost::property_tree::ptree&)
+IPC::create(const Configuration& config)
 {
-	return std::make_shared<IPC>();
+	auto ipc = std::make_shared<IPC>();
+	if (!ipc->configure(config))
+	{
+		APLOG_ERROR << "IPC configuration failed.";
+	}
+
+	return ipc;
 }
 
 bool
@@ -54,9 +60,13 @@ IPC::run(RunStage stage)
 	switch (stage)
 	{
 	case RunStage::INIT:
-		if (!scheduler_.isSet())
+		if (!isSet<IScheduler>())
 		{
 			APLOG_WARN << "IPC is missing Scheduler. Retry functionality deactivated.";
+		}
+		if (auto sh = get<SignalHandler>())
+		{
+			sh->subscribeOnSigint(std::bind(&IPC::sigintHandler, this, std::placeholders::_1));
 		}
 		break;
 	default:
@@ -65,77 +75,48 @@ IPC::run(RunStage stage)
 	return false;
 }
 
-void
-IPC::notifyAggregationOnUpdate(const Aggregator& agg)
+Publisher<Packet>
+IPC::publishPackets(const std::string& id, const IPCOptions& options)
 {
-	scheduler_.setFromAggregationIfNotSet(agg);
-
-	if (!subscribedOnSigint_)
+	if (options.multiTarget)
 	{
-		agg.subscribeOnSigint(std::bind(&IPC::sigintHandler, this, std::placeholders::_1));
-		subscribedOnSigint_ = true;
-	}
-}
-
-Subscription
-IPC::subscribeOnPacket(std::string id, const boost::function<void
-(const Packet&)>& slot)
-{
-	std::shared_ptr<PacketSubscriptionImpl> impl;
-
-	std::lock_guard<std::mutex> lock(subscribeMutex_);
-
-	auto subscription = subscriptions_.find(id);
-	if (subscription != subscriptions_.end())
-	{
-		impl = std::dynamic_pointer_cast<PacketSubscriptionImpl>(subscription->second);
-		if (!impl)
-		{
-			APLOG_ERROR << "Subscription id found for another subscription method.";
-			return Subscription();
-		}
+		return Publisher<Packet>(publishOnSharedMemory(id, params.maxPacketSize()),
+				[](const Packet& p)
+				{	return p;});
 	}
 	else
 	{
-		try
-		{
-			impl = std::make_shared<PacketSubscriptionImpl>(id, packetSize_);
-			subscriptions_.insert(
-					std::make_pair(id, std::static_pointer_cast<ISubscriptionImpl>(impl)));
-		} catch (boost::interprocess::interprocess_exception&)
-		{
-			return Subscription();
-		}
+		return Publisher<Packet>(
+				publishOnMessageQueue(id, params.maxPacketSize(), params.maxNumPackets()),
+				[](const Packet& p)
+				{	return p;});
 	}
-
-	auto con = impl->subscribe(slot);
-
-	if (auto sched = scheduler_.get())
-	{
-		sched->schedule(std::bind(&PacketSubscriptionImpl::start, impl), Milliseconds(0));
-		return Subscription(std::static_pointer_cast<ISubscriptionImpl>(impl), con);
-	}
-
-	APLOG_ERROR << "Scheduler missing. Cannot start subscription.";
-	return Subscription(std::static_pointer_cast<ISubscriptionImpl>(impl), con);
 }
 
-Publisher
-IPC::publishPackets(std::string id)
+std::shared_ptr<IPublisherImpl>
+IPC::publishOnSharedMemory(const std::string& id, unsigned maxPacketSize)
 {
-	std::shared_ptr<PacketPublisherImpl> impl;
+	auto impl = std::make_shared<SharedMemoryPublisherImpl>(id, maxPacketSize);
+	publications_.push_back(impl);
+	return impl;
+}
+
+std::shared_ptr<IPublisherImpl>
+IPC::publishOnMessageQueue(const std::string& id, unsigned maxPacketSize, unsigned numPackets)
+{
+	std::shared_ptr<MessageQueuePublisherImpl> impl;
 	try
 	{
-		impl = std::make_shared<PacketPublisherImpl>(id, packetQueueSize_, packetSize_);
+		impl = std::make_shared<MessageQueuePublisherImpl>(id, numPackets, maxPacketSize);
 	} catch (boost::interprocess::interprocess_exception&)
 	{
 		APLOG_WARN << "Message queue with id: " << id << " already exists. Creating new.";
 		boost::interprocess::message_queue::remove(id.c_str());
-		impl = std::make_shared<PacketPublisherImpl>(id, packetQueueSize_, packetSize_);
+		impl = std::make_shared<MessageQueuePublisherImpl>(id, numPackets, maxPacketSize);
 	}
 
 	publications_.push_back(impl);
-	return Publisher(impl);
+	return impl;
 }
 
 void
@@ -148,4 +129,100 @@ IPC::sigintHandler(int sig)
 		publications_.clear();
 	}
 	exit(sig);
+}
+
+Subscription
+IPC::subscribeOnPackets(const std::string& id, const std::function<void
+(const Packet&)>& slot, const IPCOptions& options)
+{
+	if (options.multiTarget)
+	{
+		return subscribeOnSharedMemory(id, slot);
+	}
+	else
+	{
+		return subscribeOnMessageQueue(id, slot);
+	}
+}
+
+Subscription
+IPC::subscribeOnSharedMemory(const std::string& id, const std::function<void
+(const Packet&)>& slot)
+{
+	std::shared_ptr<ISubscriptionImpl> impl;
+
+	std::lock_guard<std::mutex> lock(subscribeMutex_);
+
+	auto subscription = subscriptions_.find(id);
+	if (subscription != subscriptions_.end())
+	{
+		impl = subscription->second;
+		auto con = impl->subscribe(slot);
+		return Subscription(subscription->second, con);
+	}
+	else
+	{
+		try
+		{
+			auto sub = std::make_shared<SharedMemorySubscriptionImpl>(id);
+			if (auto sched = get<IScheduler>())
+			{
+				sched->schedule(std::bind(&SharedMemorySubscriptionImpl::start, sub), Milliseconds(0));
+			}
+			else
+			{
+				APLOG_ERROR << "Scheduler missing. Cannot start subscription.";
+			}
+			impl = sub;
+			subscriptions_.insert(std::make_pair(id, impl));
+		} catch (boost::interprocess::interprocess_exception&)
+		{
+			return Subscription();
+		}
+	}
+
+	auto con = impl->subscribe(slot);
+
+	return Subscription(impl, con);
+}
+
+Subscription
+IPC::subscribeOnMessageQueue(const std::string& id, const std::function<void
+(const Packet&)>& slot)
+{
+	std::shared_ptr<ISubscriptionImpl> impl;
+
+	std::lock_guard<std::mutex> lock(subscribeMutex_);
+
+	auto subscription = subscriptions_.find(id);
+	if (subscription != subscriptions_.end())
+	{
+		impl = subscription->second;
+		auto con = impl->subscribe(slot);
+		return Subscription(subscription->second, con);
+	}
+	else
+	{
+		try
+		{
+			auto sub = std::make_shared<MessageQueueSubscriptionImpl>(id, params.maxPacketSize());
+			if (auto sched = get<IScheduler>())
+			{
+				sched->schedule(std::bind(&MessageQueueSubscriptionImpl::start, sub), Milliseconds(0));
+			}
+			else
+			{
+				APLOG_ERROR << "Scheduler missing. Cannot start subscription.";
+			}
+			impl = sub;
+			subscriptions_.insert(std::make_pair(id, impl));
+		} catch (boost::interprocess::interprocess_exception&)
+		{
+			return Subscription();
+		}
+	}
+
+	auto con = impl->subscribe(slot);
+
+	return Subscription(impl, con);
 }

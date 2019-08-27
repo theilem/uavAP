@@ -25,7 +25,7 @@
 
 #ifndef UAVAP_CORE_FRAMEWORK_FACTORY_H_
 #define UAVAP_CORE_FRAMEWORK_FACTORY_H_
-#include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/PropertyMapper/Configuration.h>
 #include "uavAP/Core/Framework/PluginRestriction.h"
 #include "uavAP/Core/Framework/FrameworkExceptions.h"
 #include "uavAP/Core/Logging/APLogger.h"
@@ -60,7 +60,7 @@ public:
 	 * @return Created object
 	 */
 	std::shared_ptr<Type>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	void
 	setPluginRestriction(PluginRestriction plug);
@@ -80,7 +80,7 @@ public:
 protected:
 
 	//!Defines the function that can be registered
-	using Creator = std::function<std::shared_ptr<Type>(const boost::property_tree::ptree&) >;
+	using Creator = std::function<std::shared_ptr<Type>(const Configuration&) >;
 
 	/**
 	 * @brief Adds a creator function with a string id.
@@ -99,7 +99,15 @@ protected:
 	void
 	setDefault();
 
+	template<class SpecificType>
+	void
+	addConfigurable();
+
 private:
+
+	template<class Configurable>
+	static std::shared_ptr<Configurable>
+	createConfigurable(const Configuration& config);
 
 	std::map<std::string, Creator> creatorMap_; //!< Map containing all the creators and their ids
 
@@ -115,7 +123,7 @@ std::map<std::string, typename Factory<Type>::Creator> Factory<Type>::pluginMap_
 
 template<class Type>
 inline std::shared_ptr<Type>
-Factory<Type>::create(const boost::property_tree::ptree& config)
+Factory<Type>::create(const Configuration& config)
 {
 	if (creatorMap_.empty() && pluginRestriction_ != PluginRestriction::ALLOWED)
 	{
@@ -232,6 +240,34 @@ Factory<Type>::getTypeIds() const
 		typeIds.push_back(it.first);
 
 	return typeIds;
+}
+
+template<class Type>
+template<class SpecificType>
+inline void
+Factory<Type>::addConfigurable()
+{
+	std::string type = SpecificType::typeId;
+	if (creatorMap_.find(type) != creatorMap_.end())
+	{
+		APLOG_ERROR << "Same id for different creator added. Ignore.";
+		return;
+	}
+
+	creatorMap_.insert(std::make_pair(type, &Factory<Type>::createConfigurable<SpecificType>));
+}
+
+template<class Type>
+template<class Configurable>
+inline std::shared_ptr<Configurable>
+Factory<Type>::createConfigurable(const Configuration& config)
+{
+	auto obj = std::make_shared<Configurable>();
+	if (!obj->configure(config))
+	{
+		APLOG_ERROR << Configurable::typeId << ": configuration failed.";
+	}
+	return obj;
 }
 
 #endif /* UAVAP_CORE_FRAMEWORK_FACTORY_H_ */

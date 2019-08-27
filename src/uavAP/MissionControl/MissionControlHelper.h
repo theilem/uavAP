@@ -26,8 +26,7 @@
 #ifndef UAVAP_MISSIONCONTROL_MISSIONCONTROLHELPER_H_
 #define UAVAP_MISSIONCONTROL_MISSIONCONTROLHELPER_H_
 
-#include "uavAP/Core/DataPresentation/ContentMapping.h"
-#include "uavAP/Core/DataPresentation/DataPresentationFactory.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 #include "uavAP/Core/Framework/Helper.h"
 #include "uavAP/Core/IPC/IPC.h"
 #include "uavAP/Core/Scheduler/SchedulerFactory.h"
@@ -36,8 +35,8 @@
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/GlobalPlanner/GlobalPlannerFactory.h"
 #include "uavAP/MissionControl/MissionPlanner/MissionPlannerFactory.h"
-#include "uavAP/MissionControl/Geofencing/Geofencing.h"
-#include "uavAP/MissionControl/Geofencing/GeofencingModelFactory.h"
+//#include "uavAP/MissionControl/Geofencing/Geofencing.h"
+//#include "uavAP/MissionControl/Geofencing/GeofencingModelFactory.h"
 #include "uavAP/MissionControl/LocalFrameManager/LocalFrameManager.h"
 #include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
 
@@ -52,14 +51,14 @@ public:
 
 		addDefault<SchedulerFactory>();
 		addDefault<TimeProviderFactory>();
-		addDefault<DataPresentationFactory<Content, Target>>();
+		addDefaultCreator<DataPresentation>();
 
 		addCreator<ManeuverPlanner>();
 		addCreator<LocalFrameManager>();
 		addFactory<MissionPlannerFactory>();
 		addFactory<GlobalPlannerFactory>();
-		addFactory<GeofencingModelFactory>();
-		addCreator<Geofencing>();
+//		addFactory<GeofencingModelFactory>();
+//		addCreator<Geofencing>();
 	}
 };
 

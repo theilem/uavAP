@@ -25,9 +25,9 @@
  *  Description
  */
 
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
+#include <uavAP/Core/DataPresentation/Content.h>
 #include "uavAP/Communication/Comm/MessageQueueComm/MessageQueueComm.h"
-#include "uavAP/Core/DataPresentation/IDataPresentation.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightControl/Controller/IController.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
@@ -40,7 +40,7 @@ MessageQueueComm::MessageQueueComm() :
 }
 
 std::shared_ptr<MessageQueueComm>
-MessageQueueComm::create(const boost::property_tree::ptree& configuration)
+MessageQueueComm::create(const Configuration& configuration)
 {
 	auto comm = std::make_shared<MessageQueueComm>();
 
@@ -53,9 +53,9 @@ MessageQueueComm::create(const boost::property_tree::ptree& configuration)
 }
 
 bool
-MessageQueueComm::configure(const boost::property_tree::ptree& configuration)
+MessageQueueComm::configure(const Configuration& configuration)
 {
-	PropertyMapper pm(configuration);
+	PropertyMapper<Configuration> pm(configuration);
 
 	return pm.map();
 }
@@ -92,7 +92,7 @@ MessageQueueComm::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		flightAnalysisSubscription_ = ipc->subscribeOnPacket("data_fa_com",
+		flightAnalysisSubscription_ = ipc->subscribeOnPackets("data_fa_com",
 				std::bind(&MessageQueueComm::sendPacket, this, std::placeholders::_1));
 
 		if (!flightAnalysisSubscription_.connected())
@@ -100,7 +100,7 @@ MessageQueueComm::run(RunStage stage)
 			APLOG_WARN << "Cannot connect to data_fa_com. Ignoring.";
 		}
 
-		flightControlSubscription_ = ipc->subscribeOnPacket("data_fc_com",
+		flightControlSubscription_ = ipc->subscribeOnPackets("data_fc_com",
 				std::bind(&MessageQueueComm::sendPacket, this, std::placeholders::_1));
 
 		if (!flightControlSubscription_.connected())
@@ -109,7 +109,7 @@ MessageQueueComm::run(RunStage stage)
 			return true;
 		}
 
-		missionControlSubscription_ = ipc->subscribeOnPacket("data_mc_com",
+		missionControlSubscription_ = ipc->subscribeOnPackets("data_mc_com",
 				std::bind(&MessageQueueComm::sendPacket, this, std::placeholders::_1));
 
 		if (!missionControlSubscription_.connected())
@@ -155,7 +155,8 @@ MessageQueueComm::receivePacket(const Packet& packet)
 		return;
 	}
 
-	Target target = dp->getTarget(const_cast<Packet&>(packet));
+	Packet p = packet;
+	Target target = dp->extractHeader<Target>(p);
 
 	switch (target)
 	{
@@ -195,7 +196,7 @@ MessageQueueComm::tryConnectChannelMixing()
 		APLOG_ERROR << "IPC missing.";
 		return;
 	}
-	channelMixingSubscription_ = ipc->subscribeOnPacket("data_ch_com",
+	channelMixingSubscription_ = ipc->subscribeOnPackets("data_ch_com",
 			std::bind(&MessageQueueComm::sendPacket, this, std::placeholders::_1));
 
 	if (!channelMixingSubscription_.connected())
@@ -214,7 +215,7 @@ MessageQueueComm::tryConnectGroundStation()
 		APLOG_ERROR << "IPC missing.";
 		return;
 	}
-	groundStationSubscription_ = ipc->subscribeOnPacket("groundstation_autopilot",
+	groundStationSubscription_ = ipc->subscribeOnPackets("groundstation_autopilot",
 			std::bind(&MessageQueueComm::receivePacket, this, std::placeholders::_1));
 
 	if (!groundStationSubscription_.connected())

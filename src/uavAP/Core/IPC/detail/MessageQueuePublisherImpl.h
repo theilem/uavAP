@@ -27,23 +27,17 @@
 #define UAVAP_CORE_IPC_MESSAGEQUEUEPUBLISHERIMPL_H_
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include "uavAP/Core/IPC/detail/IPublisherImpl.h"
-#include "uavAP/Core/IPC/detail/MessageObject.h"
-#include "uavAP/Core/Logging/APLogger.h"
 
-template<class Object>
 class MessageQueuePublisherImpl: public IPublisherImpl
 {
 public:
 
-	MessageQueuePublisherImpl(std::string id, unsigned int numOfMessages, std::size_t elementSize);
+	MessageQueuePublisherImpl(const std::string& id, unsigned int numOfMessages, std::size_t elementSize);
 
 	~MessageQueuePublisherImpl();
 
 	void
-	publish(const boost::any& obj) override;
-
-	void
-	publish(const std::vector<boost::any>& vec) override;
+	publish(const Packet& obj) override;
 
 private:
 
@@ -51,75 +45,8 @@ private:
 
 	std::string id_;
 
+	std::size_t maxPacketSize_;
+
 };
-
-template<class Object>
-inline
-MessageQueuePublisherImpl<Object>::MessageQueuePublisherImpl(std::string id,
-		unsigned int numOfMessages, std::size_t elementSize) :
-		messageQueue_(boost::interprocess::create_only, id.c_str(), numOfMessages, elementSize), id_(
-				id)
-{
-}
-
-template<class Object>
-inline
-MessageQueuePublisherImpl<Object>::~MessageQueuePublisherImpl()
-{
-	if (messageQueue_.remove(id_.c_str()))
-		APLOG_DEBUG << id_ << " message queue removed.";
-}
-
-template<class Object>
-inline void
-MessageQueuePublisherImpl<Object>::publish(const boost::any& obj)
-{
-	Object casted;
-	try
-	{
-		casted = boost::any_cast<Object>(obj);
-	} catch (boost::bad_any_cast&)
-	{
-		APLOG_ERROR << "Wrong data type of the Object to be published.";
-		return;
-	}
-	unsigned int priority = 1; //TODO Adjust priority?
-	if (!messageQueue_.try_send(static_cast<const void*>(&casted), sizeof(casted), priority))
-	{
-		APLOG_WARN << "Message queue full. Do not send.";
-	}
-}
-
-template<class Object>
-inline void
-MessageQueuePublisherImpl<Object>::publish(const std::vector<boost::any>& vec)
-{
-	try
-	{
-		unsigned int priority = 1; //TODO Adjust priority?
-		VectorWrapper<Object> wrapper;
-		Object* obj = &wrapper;
-		for (auto it = vec.begin(); it != vec.end(); ++it)
-		{
-			*obj = boost::any_cast<Object>(*it);
-			if (it == vec.begin())
-				wrapper.indicator = VectorWrapperIndicator::BEGIN;
-			else if (it == vec.end() - 1)
-				wrapper.indicator = VectorWrapperIndicator::END;
-			else
-				wrapper.indicator = VectorWrapperIndicator::ADD;
-			if (!messageQueue_.try_send(static_cast<const void*>(&wrapper),
-					sizeof(VectorWrapper<Object> ), priority))
-			{
-				APLOG_WARN << "Message queue full. Do not send.";
-			}
-		}
-	} catch (boost::bad_any_cast&)
-	{
-		APLOG_ERROR << "Wrong data type of the Object to be published.";
-		return;
-	}
-
-}
 
 #endif /* UAVAP_CORE_IPC_MESSAGEQUEUEPUBLISHERIMPL_H_ */

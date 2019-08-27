@@ -18,8 +18,6 @@
 #-------------------------------------------------------------------------------
 set(FLIGHT_CONTROL_SRC 	${FLIGHT_CONTROL_SRC}
 						${CMAKE_CURRENT_SOURCE_DIR}/LinearLocalPlanner/LinearLocalPlanner.cpp
-						${CMAKE_CURRENT_SOURCE_DIR}/LinearLocalPlanner/detail/AirplaneLocalPlannerImpl.cpp
 						${CMAKE_CURRENT_SOURCE_DIR}/ManeuverLocalPlanner/ManeuverLocalPlanner.cpp
-#						${CMAKE_CURRENT_SOURCE_DIR}/LinearLocalPlanner/detail/HelicopterLocalPlannerImpl.cpp
 						PARENT_SCOPE)
 

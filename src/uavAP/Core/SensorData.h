@@ -18,9 +18,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 /**
  * @file SensorData.h
- * @brief SensorData and SensorDataLight definitions
+ * @brief SensorData definitions
  *
- * Defines SensorData and SensorDataLight and provides conversions between float and double datatypes
  * @date 23 June 2017
  * @author Mirco Theile, mirco.theile@tum.de
  */
@@ -115,30 +114,22 @@ struct SensorData
 	Vector3 acceleration; 	//!< Body Frame
 	Vector3 attitude; 		//!< [X: Roll, Y: Pitch, Z: Yaw]
 	Vector3 angularRate; 	//!< [X: Roll, Y: Pitch, Z: Yaw]
-	TimePoint timestamp; 	//!< Timestamp of sensor data, Format: [2019-Mar-13 18:21:21.354043]
+	TimePoint timestamp; 	//!< Timestamp of sensor data
 	uint32_t sequenceNr; 	//!< Sequence number of the struct
 	bool hasGPSFix; 		//!< Shows whether the GPS has a fix
 	bool autopilotActive; 	//!< Shows if the autopilot is active, always true in simulation
-	double airSpeed; 		//!< total velocity w.r.t. wind
-	double groundSpeed; 	//!< total velocity w.r.t. ground
-	double angleOfAttack; 	//!< current angle of attack
-	double propulsionPower; //!< measured or estimated current propulsion power
-	double consumedEnergy; 	//!< measured or estimated total used energy for propulsion
-	double batteryVoltage;	//!< current battery voltage
-	double batteryCurrent;	//!< current battery current
-	double aileron;			//!< current aileron position
-	double elevator;		//!< current elevator position
-	double rudder;			//!< current rudder position
-	double throttle;		//!< current throttle position
-	double rpm;				//!< current motor rotation speed
-
-	SensorData() :
-				position(0, 0, 0), velocity(0, 0, 0), acceleration(0, 0, 0), attitude(0, 0, 0), angularRate(
-						0, 0, 0), sequenceNr(0), hasGPSFix(false), autopilotActive(false), airSpeed(0), groundSpeed(
-						0), angleOfAttack(0), propulsionPower(0), consumedEnergy(0), batteryVoltage(0), batteryCurrent(
-						0), aileron(0), elevator(0), rudder(0), throttle(0), rpm(0)
-	{
-	}
+	FloatingType airSpeed; 		//!< total velocity w.r.t. wind
+	FloatingType groundSpeed; 	//!< total velocity w.r.t. ground
+	FloatingType angleOfAttack; 	//!< current angle of attack
+	FloatingType propulsionPower; //!< measured or estimated current propulsion power
+	FloatingType consumedEnergy; 	//!< measured or estimated total used energy for propulsion
+	FloatingType batteryVoltage;	//!< current battery voltage
+	FloatingType batteryCurrent;	//!< current battery current
+	FloatingType aileron;			//!< current aileron position
+	FloatingType elevator;		//!< current elevator position
+	FloatingType rudder;			//!< current rudder position
+	FloatingType throttle;		//!< current throttle position
+	FloatingType rpm;				//!< current motor rotation speed
 };
 
 SensorData&

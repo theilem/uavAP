@@ -26,11 +26,12 @@
 #ifndef UAVAP_FLIGHTANALYSIS_TRIMANALYSIS_TRIMANALYSIS_H_
 #define UAVAP_FLIGHTANALYSIS_TRIMANALYSIS_TRIMANALYSIS_H_
 
-#include "uavAP/Core/DataPresentation/Packet.h"
+#include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
+#include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/IPC/Subscription.h"
-#include "uavAP/FlightControl/Controller/ControllerOutput.h"
+#include "uavAP/Core/DataPresentation/Packet.h"
 
 class IPC;
 
@@ -44,10 +45,10 @@ public:
 	TrimAnalysis();
 
 	static std::shared_ptr<TrimAnalysis>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	bool
 	run(RunStage stage) override;
@@ -58,16 +59,16 @@ public:
 private:
 
 	void
-	onControllerOutput(const Packet& output);
+	onControllerOutput(const ControllerOutput& output);
 
 	void
-	onTrimAnalysis(const Packet& analysis);
+	onTrimAnalysis(const bool& analysis);
 
 	void
 	analysisInit();
 
 	void
-	analysisNormal(const Packet& output);
+	analysisNormal(const ControllerOutput& controllerOutput);
 
 	void
 	analysisFinal();
@@ -76,13 +77,13 @@ private:
 
 	ControllerOutput controllerOutputTrim_;
 	ControllerOutput controllerOutputCount_;
-	std::mutex controllerOutputMutex_;
+	Mutex controllerOutputMutex_;
 
 	bool trimAnalysis_;
 	bool trimAnalysisLast_;
-	std::mutex trimAnalysisMutex_;
+	Mutex trimAnalysisMutex_;
 
-	Publisher controllerOutputTrimPublisher_;
+	Publisher<ControllerOutput> controllerOutputTrimPublisher_;
 	Subscription controllerOutputSubscription_;
 	Subscription trimAnalysisSubscription_;
 

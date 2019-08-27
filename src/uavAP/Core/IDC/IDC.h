@@ -25,11 +25,12 @@
 
 #ifndef UAVAP_CORE_IDC_IDC_H_
 #define UAVAP_CORE_IDC_IDC_H_
-#include <boost/property_tree/ptree.hpp>
 #include <uavAP/Core/IDC/IDCSender.h>
 #include <uavAP/Core/Object/IAggregatableObject.h>
 #include <uavAP/Core/Object/ObjectHandle.h>
 #include <uavAP/Core/Runner/IRunnableObject.h>
+
+#include <boost/signals2.hpp>
 
 class INetworkLayer;
 class ITransportLayer;
@@ -43,7 +44,7 @@ public:
 	static constexpr TypeId typeId = "idc";
 
 	static std::shared_ptr<IDC>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;

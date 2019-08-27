@@ -25,16 +25,21 @@
 
 #ifndef UAVAP_MISSIONCONTROL_GLOBALPLANNER_SPLINEGLOBALPLANNER_SPLINEGLOBALPLANNER_H_
 #define UAVAP_MISSIONCONTROL_GLOBALPLANNER_SPLINEGLOBALPLANNER_SPLINEGLOBALPLANNER_H_
-#include "uavAP/Core/IPC/Publisher.h"
+#include <uavAP/Core/Object/AggregatableObject.hpp>
+#include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
+#include <uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlannerParams.h>
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 
-class IPC;
+class ILocalPlanner;
 
-class SplineGlobalPlanner: public IGlobalPlanner, public IAggregatableObject, public IRunnableObject
+class SplineGlobalPlanner: public IGlobalPlanner,
+		public AggregatableObject<ILocalPlanner>,
+		public ConfigurableObject<SplineGlobalPlannerParams>,
+		public IRunnableObject
 {
 public:
 
@@ -43,16 +48,10 @@ public:
 	SplineGlobalPlanner();
 
 	static std::shared_ptr<IGlobalPlanner>
-	create(const boost::property_tree::ptree& config);
-
-	bool
-	configure(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
 	run(RunStage stage) override;
-
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	void
 	setMission(const Mission& mission) override;
@@ -68,16 +67,7 @@ private:
 	Trajectory
 	createCatmulRomSplines(const Mission& mission);
 
-	double tau_;
-	uint8_t inclusionLength_;
-	bool smoothenZ_;
-	bool naturalSplines_;
-
 	Mission mission_;
-
-	ObjectHandle<IPC> ipc_;
-
-	Publisher trajectoryPublisher_;
 
 };
 

@@ -28,7 +28,7 @@
 #include <uavAP/Core/Logging/APLogger.h>
 
 std::shared_ptr<IDC>
-IDC::create(const boost::property_tree::ptree&)
+IDC::create(const Configuration&)
 {
 	return std::make_shared<IDC>();
 }
@@ -55,7 +55,7 @@ IDC::run(RunStage stage)
 		}
 		if (!transport_.isSet())
 		{
-			if (!self_.isSet())
+			if (!network_.isSet())
 			{
 				APLOG_ERROR << "Transport and Network layer missing. IDC needs one.";
 				return true;

@@ -47,7 +47,7 @@ ap_ext_setup()
 	{
 		boost::property_tree::ptree conf;
 		boost::property_tree::read_json(configPath, conf);
-		PropertyMapper pm(conf);
+		PropertyMapper<boost::property_tree::ptree> pm(conf);
 		if (!pm.add("interface", interfaceConf, true))
 			return -1;
 

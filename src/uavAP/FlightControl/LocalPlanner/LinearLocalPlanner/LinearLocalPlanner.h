@@ -28,8 +28,9 @@
 #ifndef UAVAP_FLIGHTCONTROL_LOCALPLANNER_LINEARLOCALPLANNER_LINEARLOCALPLANNER_H_
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_LINEARLOCALPLANNER_LINEARLOCALPLANNER_H_
 
-#include <boost/property_tree/ptree.hpp>
-#include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/ILinearPlannerImpl.h"
+#include <uavAP/Core/Object/AggregatableObject.hpp>
+#include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
+#include <uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlannerParams.h>
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlannerStatus.h"
 
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
@@ -40,16 +41,16 @@
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/LockTypes.h"
 
-class FlightControlData;
 class IScheduler;
 class IController;
-class IPC;
 class ISensingActuationIO;
 class Packet;
 struct SensorData;
 struct ControllerTarget;
 
-class LinearLocalPlanner: public ILocalPlanner, public IRunnableObject, public IAggregatableObject
+class LinearLocalPlanner: public ILocalPlanner, public IRunnableObject, public AggregatableObject<
+		ISensingActuationIO, IController, IScheduler>, public ConfigurableObject<
+		LinearLocalPlannerParams>
 {
 public:
 
@@ -57,10 +58,8 @@ public:
 
 	LinearLocalPlanner();
 
-	bool
-	configure(const boost::property_tree::ptree& config);
-
-	ADD_CREATE_WITH_CONFIG(LinearLocalPlanner)
+	static std::shared_ptr<LinearLocalPlanner>
+	create(const Configuration& config);
 
 	bool
 	run(RunStage stage) override;
@@ -74,28 +73,13 @@ public:
 	Trajectory
 	getTrajectory() const override;
 
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
-
-	std::shared_ptr<ILinearPlannerImpl>
-	getImpl();
-
-	LocalPlannerStatus
-	getStatus() const override;
-
-	bool
-	tune(const LocalPlannerParams& params) override;
-
 private:
 
 	void
-	createLocalPlan(const Vector3& position, double heading, bool hasGPSFix, uint32_t seqNum);
+	createLocalPlan(const Vector3& position, FloatingType heading, bool hasGPSFix, uint32_t seqNum);
 
 	void
 	nextSection();
-
-	void
-	onTrajectoryPacket(const Packet& packet);
 
 	void
 	onSensorData(const SensorData& sd);
@@ -103,21 +87,17 @@ private:
 	void
 	update();
 
-	ObjectHandle<ISensingActuationIO> sensing_;
-	ObjectHandle<IController> controller_;
-	ObjectHandle<IScheduler> scheduler_;
-	ObjectHandle<IPC> ipc_;
+	ControllerTarget
+	evaluate(const Vector3& position, FloatingType heading, std::shared_ptr<IPathSection> section);
 
-	std::shared_ptr<ILinearPlannerImpl> localPlannerImpl_;
+	FloatingType headingTarget_;
 
 	Trajectory trajectory_;
 	PathSectionIterator currentSection_;
 	bool inApproach_;
-	std::mutex trajectoryMutex_;
+	Mutex trajectoryMutex_;
 	ControllerTarget controllerTarget_;
 
-	bool airplane_;
-	unsigned int period_;
 	uint8_t currentPathSectionIdx_;
 };
 

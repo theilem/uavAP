@@ -42,7 +42,7 @@ public:
 			ControllerOutput* output);
 
 	bool
-	configure(const boost::property_tree::ptree& config) override;
+	configure(const Configuration& config) override;
 
 	bool
 	tunePID(int pid, const Control::PID::Parameters& params) override;

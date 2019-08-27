@@ -26,16 +26,37 @@
 #ifndef UAVAP_CORE_LOCKTYPES_H_
 #define UAVAP_CORE_LOCKTYPES_H_
 
-#include <boost/thread/lock_types.hpp>
-#include <boost/thread/shared_lock_guard.hpp>
-#include <boost/thread/shared_mutex.hpp>
+#ifdef NO_LOCKING
+
+using Mutex = int;
+
+struct FakeLock
+{
+	FakeLock(const Mutex& mut){}
+
+	void
+	unlock(){}
+};
+using Lock = FakeLock;
+using LockGuard = int;
+
+#else
+
 #include <mutex>
 
-using Lock = std::unique_lock<std::mutex>;
-using LockGuard = std::lock_guard<std::mutex>;
-using SharedLock = boost::shared_lock<boost::shared_mutex>;
-using SharedLockGuard = boost::shared_lock_guard<boost::shared_mutex>;
-using ExclusiveLock = boost::unique_lock<boost::shared_mutex>;
-using ExclusiveLockGuard = boost::lock_guard<boost::shared_mutex>;
+#if __cplusplus >= 201703L
+
+#include <shared_mutex>
+
+using SharedMutex = std::shared_mutex;
+#else
+
+using SharedMutex = std::mutex;
+#endif
+
+using Mutex = std::mutex;
+using Lock = std::unique_lock<Mutex>;
+using LockGuard = std::lock_guard<Mutex>;
+#endif
 
 #endif /* UAVAP_CORE_LOCKTYPES_H_ */

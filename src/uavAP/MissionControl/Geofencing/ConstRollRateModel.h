@@ -33,6 +33,7 @@
 #include "uavAP/Core/Frames/VehicleOneFrame.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/MissionControl/Geofencing/IGeofencingModel.h"
+#include <mutex>
 
 class ConstRollRateModel: public IGeofencingModel, public IAggregatableObject
 {
@@ -45,10 +46,10 @@ public:
 	~ConstRollRateModel();
 
 	static std::shared_ptr<ConstRollRateModel>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;

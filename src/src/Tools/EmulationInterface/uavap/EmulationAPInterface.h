@@ -35,8 +35,7 @@
 #include <uavAP/API/ap_ext/ap_ext.h>
 #include <uavAP/API/ap_ext/ServoMapping.h>
 #include <uavAP/API/ChannelMixing.h>
-#include <uavAP/Core/DataPresentation/APDataPresentation/APDataPresentation.h>
-#include <uavAP/Core/DataPresentation/ContentMapping.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 #include <uavAP/Core/IDC/Serial/SerialIDC.h>
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/Core/Scheduler/IScheduler.h>
@@ -52,10 +51,10 @@ public:
 	~EmulationAPInterface();
 
 	static std::shared_ptr<EmulationAPInterface>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config);
+	configure(const Configuration& config);
 
 	void
 	notifyAggregationOnUpdate(const Aggregator& agg) override;

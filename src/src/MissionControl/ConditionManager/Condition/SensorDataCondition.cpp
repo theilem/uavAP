@@ -35,7 +35,7 @@ SensorDataCondition::SensorDataCondition() :
 }
 
 std::shared_ptr<SensorDataCondition>
-SensorDataCondition::create(const boost::property_tree::ptree& config)
+SensorDataCondition::create(const Configuration& config)
 {
 	auto sensorDataCondition = std::make_shared<SensorDataCondition>();
 
@@ -48,10 +48,10 @@ SensorDataCondition::create(const boost::property_tree::ptree& config)
 }
 
 bool
-SensorDataCondition::configure(const boost::property_tree::ptree& config)
+SensorDataCondition::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
-	boost::property_tree::ptree dataFilterTree;
+	PropertyMapper<Configuration> pm(config);
+	Configuration dataFilterTree;
 
 	config_ = config;
 

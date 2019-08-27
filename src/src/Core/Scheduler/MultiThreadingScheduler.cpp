@@ -34,11 +34,12 @@ MultiThreadingScheduler::MultiThreadingScheduler() :
 
 MultiThreadingScheduler::~MultiThreadingScheduler()
 {
-	stop();
+	if (started_)
+		stop();
 }
 
 std::shared_ptr<IScheduler>
-MultiThreadingScheduler::create(const boost::property_tree::ptree&)
+MultiThreadingScheduler::create(const Configuration&)
 {
 	return std::make_shared<MultiThreadingScheduler>();
 }
@@ -47,10 +48,10 @@ Event
 MultiThreadingScheduler::schedule(const std::function<void
 ()>& task, Duration initialFromNow)
 {
-	auto body = std::make_shared<EventBody>(task);
+	auto body = std::make_shared<EventBody>(task, &schedulingParams_);
 	auto element = createSchedule(initialFromNow, body);
 
-	boost::unique_lock<boost::mutex> lock(eventsMutex_);
+	std::unique_lock<std::mutex> lock(eventsMutex_);
 	events_.insert(element);
 	wakeupCondition_.notify_all();
 	return Event(body);
@@ -60,10 +61,10 @@ Event
 MultiThreadingScheduler::schedule(const std::function<void
 ()>& task, Duration initialFromNow, Duration period)
 {
-	auto body = std::make_shared<EventBody>(task, period);
+	auto body = std::make_shared<EventBody>(task, period, &schedulingParams_);
 	auto element = createSchedule(initialFromNow, body);
 
-	boost::unique_lock<boost::mutex> lock(eventsMutex_);
+	std::unique_lock<std::mutex> lock(eventsMutex_);
 	events_.insert(element);
 	wakeupCondition_.notify_all();
 	return Event(body);
@@ -72,7 +73,7 @@ MultiThreadingScheduler::schedule(const std::function<void
 void
 MultiThreadingScheduler::stop()
 {
-	boost::unique_lock<boost::mutex> lock(eventsMutex_);
+	std::unique_lock<std::mutex> lock(eventsMutex_);
 	started_ = false;
 	wakeupCondition_.notify_all();
 	lock.unlock();
@@ -90,14 +91,23 @@ MultiThreadingScheduler::run(RunStage stage)
 			APLOG_ERROR << "TimeProvider missing.";
 			return true;
 		}
+		schedulingParams_.sched_priority = 99;
 		break;
 	case RunStage::NORMAL:
 		break;
 	case RunStage::FINAL:
 		started_ = true;
 		if (!mainThread_)
-			invokerThread_ = boost::thread(
+		{
+			invokerThread_ = std::thread(
 					boost::bind(&MultiThreadingScheduler::runSchedule, this));
+
+			pthread_setschedparam(invokerThread_.native_handle(), SCHED_FIFO, &schedulingParams_);
+		}
+		else
+		{
+			pthread_setschedparam(pthread_self(), SCHED_FIFO, &schedulingParams_);
+		}
 
 		break;
 	default:
@@ -124,7 +134,7 @@ MultiThreadingScheduler::runSchedule()
 
 	APLOG_TRACE << "Starting Scheduling";
 
-	boost::unique_lock<boost::mutex> lock(eventsMutex_);
+	std::unique_lock<std::mutex> lock(eventsMutex_);
 
 	startingTime_ = timeProvider->now();
 	for (;;)
@@ -146,8 +156,8 @@ MultiThreadingScheduler::runSchedule()
 				if (eventBody->isStarted.load())
 				{
 					//Thread is already started
-					boost::unique_lock<boost::mutex> lock(eventBody->executionMutex,
-							boost::try_to_lock);
+					std::unique_lock<std::mutex> lock(eventBody->executionMutex,
+							std::try_to_lock);
 					if (lock)
 					{
 						//The task is waiting at the condition variable
@@ -171,8 +181,12 @@ MultiThreadingScheduler::runSchedule()
 				else
 				{
 					//Thread not started yet
-					eventBody->periodicThread = boost::thread(
+					eventBody->periodicThread = std::thread(
 							boost::bind(&MultiThreadingScheduler::periodicTask, this, eventBody));
+					if (int r = pthread_setschedparam(eventBody->periodicThread.native_handle(), SCHED_FIFO, &schedulingParams_))
+					{
+						APLOG_DEBUG << "Cannot set sched params: " << r;
+					}
 				}
 				//Reschedule Task
 				auto element = std::make_pair(it->first + *eventBody->period, eventBody);
@@ -183,7 +197,7 @@ MultiThreadingScheduler::runSchedule()
 				//Not a periodic thread
 				if (!it->second->isCanceled.load())
 				{
-					boost::thread(it->second->body).detach();
+					std::thread(it->second->body).detach();
 				}
 			}
 			//Remove current schedule from events as it was handeled
@@ -215,7 +229,7 @@ MultiThreadingScheduler::createSchedule(Duration start, std::shared_ptr<EventBod
 		return std::make_pair(start, body);
 	}
 
-	Duration fromStart = start;
+	Nanoseconds fromStart = start;
 
 	if (started_)
 	{
@@ -230,7 +244,7 @@ void
 MultiThreadingScheduler::periodicTask(std::shared_ptr<EventBody> body)
 {
 	body->isStarted.store(true);
-	boost::unique_lock<boost::mutex> lock(body->executionMutex);
+	std::unique_lock<std::mutex> lock(body->executionMutex);
 	while (!body->isCanceled.load())
 	{
 		body->body();

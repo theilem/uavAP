@@ -32,13 +32,13 @@ LowPassDataFilter::LowPassDataFilter() :
 {
 }
 
-LowPassDataFilter::LowPassDataFilter(double initialValue, double alpha) :
+LowPassDataFilter::LowPassDataFilter(FloatingType initialValue, FloatingType alpha) :
 		filteredData_(initialValue), alpha_(alpha)
 {
 }
 
 std::shared_ptr<LowPassDataFilter>
-LowPassDataFilter::create(const boost::property_tree::ptree& config)
+LowPassDataFilter::create(const Configuration& config)
 {
 	auto lowPassDataFilter = std::make_shared<LowPassDataFilter>();
 
@@ -51,34 +51,34 @@ LowPassDataFilter::create(const boost::property_tree::ptree& config)
 }
 
 bool
-LowPassDataFilter::configure(const boost::property_tree::ptree& config)
+LowPassDataFilter::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
-	pm.add<double>("alpha", alpha_, true);
+	pm.add<FloatingType>("alpha", alpha_, true);
 
 	return pm.map();
 }
 
 void
-LowPassDataFilter::initialize(double initialValue)
+LowPassDataFilter::initialize(FloatingType initialValue)
 {
 	filteredData_ = initialValue;
 }
 
 void
-LowPassDataFilter::tune(double alpha)
+LowPassDataFilter::tune(FloatingType alpha)
 {
 	alpha_ = alpha;
 }
 
 void
-LowPassDataFilter::filterData(double rawData)
+LowPassDataFilter::filterData(FloatingType rawData)
 {
 	filteredData_ = alpha_ * rawData + (1 - alpha_) * filteredData_;
 }
 
-double
+FloatingType
 LowPassDataFilter::getFilteredData()
 {
 	return filteredData_;

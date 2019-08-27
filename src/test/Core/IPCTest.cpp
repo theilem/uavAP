@@ -23,7 +23,6 @@
  *      Author: mircot
  */
 
-#include <boost/bind/bind.hpp>
 #include <boost/test/unit_test.hpp>
 #include "uavAP/Core/LinearAlgebra.h"
 #include "uavAP/Core/Runner/SimpleRunner.h"
@@ -31,16 +30,30 @@
 #include "uavAP/Core/Time.h"
 #include "uavAP/Core/TimeProvider/SystemTimeProvider.h"
 
-#include "uavAP/Core/IPC/IPC.h"
-
-BOOST_AUTO_TEST_SUITE(IPCTest)
-
 struct Test
 {
 	int val1;
 	double val2;
 	Vector3 val3;
 } test;
+
+namespace dp
+{
+template<class Archive, typename Type>
+inline void
+serialize(Archive& ar, Test& t)
+{
+	ar & t.val1;
+	ar & t.val2;
+	ar & t.val3;
+}
+}
+
+#include "uavAP/Core/IPC/IPC.h"
+#include <functional>
+
+BOOST_AUTO_TEST_SUITE(IPCTest)
+
 
 std::vector<Test> testVec;
 
@@ -76,13 +89,13 @@ BOOST_AUTO_TEST_CASE(test001)
 	auto agg = Aggregator::aggregate(
 	{ ipc, tp, sched });
 
-	Publisher publisher = ipc->publishOnSharedMemory<Test>("test");
+	auto publisher = ipc->publish<Test>("test");
 
 	int counter1 = 0;
 	int counter2 = 0;
-	Subscription sub1 = ipc->subscribeOnSharedMemory<Test>("test",
+	Subscription sub1 = ipc->subscribe<Test>("test",
 			boost::bind(&checkValue, _1, boost::ref(counter1)));
-	Subscription sub2 = ipc->subscribeOnSharedMemory<Test>("test",
+	Subscription sub2 = ipc->subscribe<Test>("test",
 			boost::bind(&checkValue, _1, boost::ref(counter2)));
 	BOOST_REQUIRE(sub1.connected());
 	BOOST_REQUIRE(sub2.connected());
@@ -95,12 +108,12 @@ BOOST_AUTO_TEST_CASE(test001)
 	BOOST_CHECK_EQUAL(counter1, 0);
 	BOOST_CHECK_EQUAL(counter2, 0);
 
-	boost::this_thread::sleep(Milliseconds(5));
+	std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
 	BOOST_CHECK_EQUAL(counter1, 0);
 	BOOST_CHECK_EQUAL(counter2, 0);
 	publisher.publish(test);
-	boost::this_thread::sleep(Milliseconds(5));
+	std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
 	BOOST_CHECK_EQUAL(counter1, 1);
 	BOOST_CHECK_EQUAL(counter2, 1);
@@ -110,7 +123,7 @@ BOOST_AUTO_TEST_CASE(test001)
 	test.val3 = Vector3(2, 3, 4);
 
 	publisher.publish(test);
-	boost::this_thread::sleep(Milliseconds(5));
+	std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
 	BOOST_CHECK_EQUAL(counter1, 2);
 	BOOST_CHECK_EQUAL(counter2, 2);
@@ -124,24 +137,26 @@ BOOST_AUTO_TEST_CASE(test002)
 	auto agg = Aggregator::aggregate(
 	{ ipc, tp, sched });
 
-	Publisher publisher = ipc->publishOnMessageQueue<Test>("test2", 10);
+	IPCOptions opt;
+	opt.multiTarget = false; // setting to message queue
+	auto publisher = ipc->publish<Test>("test2", opt);
 	int counter1 = 0;
-	Subscription sub = ipc->subscribeOnMessageQueue<Test>("test2",
-			boost::bind(&checkValue, _1, boost::ref(counter1)));
+	Subscription sub = ipc->subscribe<Test>("test2",
+			std::bind(&checkValue, std::placeholders::_1, std::ref(counter1)), opt);
 	BOOST_REQUIRE(sub.connected());
 	SimpleRunner run(agg);
 	BOOST_REQUIRE(!run.runAllStages());
 	test.val1 = 1;
 	test.val2 = 1.2;
 	test.val3 = Vector3(1, 2, 3);
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	publisher.publish(test);
 	publisher.publish(test);
 	publisher.publish(test);
 	publisher.publish(test);
 	publisher.publish(test);
 	publisher.publish(test);
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 	BOOST_CHECK_EQUAL(counter1, 6);
 
@@ -150,7 +165,7 @@ BOOST_AUTO_TEST_CASE(test002)
 	test.val3 = Vector3(2, 3, 4);
 
 	publisher.publish(test);
-	boost::this_thread::sleep(Milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 	BOOST_CHECK_EQUAL(counter1, 7);
 }

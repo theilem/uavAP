@@ -64,10 +64,19 @@ public:
 	getBuffer() const;
 
 	/**
+	 * @return Return a reference to the buffer_
+	 */
+	std::string&
+	getBuffer();
+
+	/**
 	 * @return Return a const char pointer to the starting character of buffer_
 	 */
 	const char*
-	getStart();
+	getStart() const;
+
+	void*
+	getStartAddress();
 
 	/**
 	 * @brief Get the size of the current buffer_.

@@ -43,7 +43,7 @@ EmulationAPInterface::~EmulationAPInterface()
 }
 
 std::shared_ptr<EmulationAPInterface>
-EmulationAPInterface::create(const boost::property_tree::ptree& config)
+EmulationAPInterface::create(const Configuration& config)
 {
 	auto emulation = std::make_shared<EmulationAPInterface>();
 	if (!emulation->configure(config))
@@ -52,7 +52,7 @@ EmulationAPInterface::create(const boost::property_tree::ptree& config)
 }
 
 bool
-EmulationAPInterface::configure(const boost::property_tree::ptree& config)
+EmulationAPInterface::configure(const Configuration& config)
 {
 	PropertyMapper pm(config);
 	pm.add("serial_port", serialPort_, true);

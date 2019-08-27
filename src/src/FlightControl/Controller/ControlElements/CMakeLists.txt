@@ -22,7 +22,7 @@ add_library(control SHARED 	ControlEnvironment.cpp
 					
 target_link_libraries(control)
 
-install(TARGETS control
+install(TARGETS control OPTIONAL
 		LIBRARY DESTINATION lib
 		)
                                 

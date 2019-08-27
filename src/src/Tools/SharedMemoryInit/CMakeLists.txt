@@ -18,4 +18,4 @@
 #-------------------------------------------------------------------------------
 add_executable(SharedMemoryInit SharedMemoryInit)
 
-target_link_libraries(SharedMemoryInit uavap_core)
+target_link_libraries(SharedMemoryInit uavap_core) #uavap_core_proto)

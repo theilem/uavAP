@@ -24,29 +24,29 @@ add_subdirectory(Logging)
 add_subdirectory(Runner)
 add_subdirectory(IPC)
 add_subdirectory(IDC)
-add_subdirectory(protobuf)
 add_subdirectory(Object)
 add_subdirectory(TimeProvider)
 add_subdirectory(Framework)
 add_subdirectory(DataPresentation)
+add_subdirectory(DataHandling)
 add_subdirectory(Frames)
 
 set(CORE_SRC 	${CORE_SRC}
 				${CMAKE_CURRENT_SOURCE_DIR}/LinearAlgebra.cpp
 				${CMAKE_CURRENT_SOURCE_DIR}/SensorData.cpp
 				)
-				
-				
-include_directories(${CMAKE_SOURCE_DIR}/uavAP/Core/protobuf/messages)
 
+				
 add_library(uavap_core SHARED ${CORE_SRC})
 
 target_link_libraries(uavap_core 	${BOOST}
-									${PROTOBUF}
+									${REDIS}
 									pthread
 									rt
 									dl									
 									)
+
+add_custom_target(core DEPENDS uavap_core uavap_framework_api)
 									
 									
 install(TARGETS uavap_core 

@@ -50,7 +50,7 @@ Helper::createAggregation(const std::string& configPath)
 }
 
 Aggregator
-Helper::createAggregation(const boost::property_tree::ptree& conf)
+Helper::createAggregation(const Configuration& conf)
 {
 	Aggregator agg;
 
@@ -106,7 +106,7 @@ Helper::createAggregation(const boost::property_tree::ptree& conf)
 
 void
 Helper::mergeGlobalConfig(boost::property_tree::ptree& config,
-		const boost::property_tree::ptree& globalConf)
+		const Configuration& globalConf)
 {
 	for (auto& confIt : config)
 	{

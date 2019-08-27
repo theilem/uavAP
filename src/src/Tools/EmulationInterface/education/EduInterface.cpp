@@ -23,15 +23,19 @@
  *      Author: mircot
  */
 
-#include <uavAP/Core/IDC/IDC.h>
-#include <uavAP/Core/IDC/NetworkLayer/INetworkLayer.h>
-#include <uavAP/Core/LinearAlgebra.h>
-#include <uavAP/FlightControl/Controller/ControllerOutput.h>
-
 #include "EduInterface.h"
 #include "api_edu.h"
 #include "ControllerOutputEdu.h"
 #include "SensorDataEdu.h"
+#include <uavAP/Core/DataPresentation/Content.h>
+#include <uavAP/Core/IDC/IDC.h>
+#include <uavAP/Core/IDC/NetworkLayer/INetworkLayer.h>
+#include <uavAP/Core/LinearAlgebra.h>
+#include <uavAP/Core/Object/SignalHandler.h>
+#include <uavAP/FlightControl/Controller/ControllerOutput.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
+#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
+
 
 EduInterface::EduInterface() :
 		setup_(false), subscribedOnSigint_(false)
@@ -48,7 +52,7 @@ EduInterface::~EduInterface()
 }
 
 std::shared_ptr<EduInterface>
-EduInterface::create(const boost::property_tree::ptree& config)
+EduInterface::create(const Configuration& config)
 {
 	auto emulation = std::make_shared<EduInterface>();
 	if (!emulation->configure(config))
@@ -57,9 +61,9 @@ EduInterface::create(const boost::property_tree::ptree& config)
 }
 
 bool
-EduInterface::configure(const boost::property_tree::ptree& config)
+EduInterface::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 	return pm.map();
 }
 
@@ -68,12 +72,7 @@ EduInterface::notifyAggregationOnUpdate(const Aggregator& agg)
 {
 	idc_.setFromAggregationIfNotSet(agg);
 	dataPresentation_.setFromAggregationIfNotSet(agg);
-
-	if (!subscribedOnSigint_)
-	{
-		agg.subscribeOnSigint(std::bind(&EduInterface::sigHandler, this, std::placeholders::_1));
-		subscribedOnSigint_ = true;
-	}
+	signalHandler_.setFromAggregationIfNotSet(agg);
 }
 
 bool
@@ -92,6 +91,11 @@ EduInterface::run(RunStage stage)
 		{
 			APLOG_ERROR << "EduInterface dataPresentation missing.";
 			return true;
+		}
+		if (auto sh = signalHandler_.get())
+		{
+			sh->subscribeOnSigint(std::bind(&EduInterface::sigHandler, this, std::placeholders::_1));
+			subscribedOnSigint_ = true;
 		}
 
 		int result = api_initialize();
@@ -168,12 +172,12 @@ EduInterface::onPacket(const Packet& packet)
 		return;
 	}
 
-	Content content = Content::INVALID;
-	auto any = dp->deserialize(packet, content);
+	auto p = packet;
+	Content content = dp->extractHeader<Content>(p);
 
 	if (content == Content::SENSOR_DATA)
 	{
-		onSensorData(boost::any_cast<SensorData>(any));
+		onSensorData(dp->deserialize<SensorData>(p));
 	}
 	else
 	{
@@ -201,7 +205,8 @@ EduInterface::sendActuation(const ControllerOutputEdu& control)
 		APLOG_ERROR << "Data presentation missing. Cannot send Actuation.";
 		return;
 	}
-	auto packet = dp->serialize(out, Content::CONTROLLER_OUTPUT);
+	auto packet = dp->serialize(out);
+	dp->addHeader(packet, Content::CONTROLLER_OUTPUT);
 
 	auto idc = idc_.get();
 	if (!idc)

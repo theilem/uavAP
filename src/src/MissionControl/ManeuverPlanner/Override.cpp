@@ -26,13 +26,14 @@
 #include <sstream>
 #include <string>
 #include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 
 #include "uavAP/MissionControl/ManeuverPlanner/Override.h"
 
 bool
-Override::configure(const boost::property_tree::ptree& config)
+Override::configure(const Configuration& config)
 {
-	PropertyMapper pm(config);
+	PropertyMapper<Configuration> pm(config);
 
 	std::string override;
 	std::string overrideGroup;

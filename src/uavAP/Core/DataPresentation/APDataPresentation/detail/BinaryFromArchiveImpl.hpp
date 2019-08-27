@@ -30,23 +30,10 @@
 #include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
 
 template<class Type>
-inline typename std::enable_if<!std::is_base_of<google::protobuf::Message, Type>::value,
-		BinaryFromArchive>::type&
+BinaryFromArchive&
 BinaryFromArchive::operator >>(Type& val)
 {
 	dp::serialize<BinaryFromArchive, Type>(*this, val);
-	return *this;
-}
-
-template<class Type>
-inline typename std::enable_if<std::is_base_of<google::protobuf::Message, Type>::value,
-		BinaryFromArchive>::type&
-BinaryFromArchive::operator >>(Type& message)
-{
-	uint16_t size;
-	*this >> size;
-	message.ParseFromString(string_.substr(idx_, idx_ + size)); //TODO: WROOOOOONG
-	idx_ += size;
 	return *this;
 }
 

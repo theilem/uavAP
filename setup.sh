@@ -55,17 +55,6 @@ if [ `cat /proc/version | grep -c "ARCH"` -gt 0 ]; then
 	cd ${SETUP_ROOT_DIR}/tmp
 fi
 
-#Get Protobuf
-wget "https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-all-3.6.1.tar.gz"
-tar -xzf protobuf-all-3.6.1.tar.gz
-cd protobuf-3.6.1
-./autogen.sh
-./configure CFLAGS="-fPIC" CXXFLAGS="-fPIC"
-make -j$CORES
-make check -j$CORES
-sudo make install -j$CORES
-cd ${SETUP_ROOT_DIR}/tmp
-
 #Get Eigen headers
 wget "http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz"
 printf "\nExtracting eigen\n"
@@ -111,6 +100,15 @@ make -j$CORES
 sudo make install -j$CORES
 cd ${SETUP_ROOT_DIR}/tmp
 
+#Redis
+git clone --recurse-submodules "https://github.com/cpp-redis/cpp_redis.git"
+cd cpp_redis
+mkdir bld
+cd bld
+cmake ../
+make -j$CORES
+sudo make install -j$CORES
+cd ${SETUP_ROOT_DIR}/tmp
 
 #Remove tmp dir
 cd ${SETUP_ROOT_DIR}

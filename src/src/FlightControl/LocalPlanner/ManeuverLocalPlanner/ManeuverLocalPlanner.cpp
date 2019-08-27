@@ -16,36 +16,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
-/*
- * ManeuverLocalPlanner.cpp
- *
- *  Created on: Aug 2, 2018
- *      Author: mircot
+/**
+ * @file ManeuverLocalPlanner.cpp
+ * @date Aug 2, 2018
+ * @author Mirco Theile, mirco.theile@tum.de
+ * @brief Description
  */
-#include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/Core/LockTypes.h>
-#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include <uavAP/Core/Scheduler/IScheduler.h>
 #include <uavAP/FlightControl/Controller/IController.h>
 #include <uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h>
 #include "uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlanner.h"
 #include <uavAP/MissionControl/ManeuverPlanner/Override.h>
-#include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
+#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
+#include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
+#include <uavAP/Core/DataHandling/DataHandling.h>
+#include <uavAP/Core/IPC/IPC.h>
 
-ManeuverLocalPlanner::ManeuverLocalPlanner() :
-		period_(0)
+ManeuverLocalPlanner::ManeuverLocalPlanner()
 {
-}
-
-bool
-ManeuverLocalPlanner::configure(const boost::property_tree::ptree& config)
-{
-	PropertyMapper pm(config);
-	pm.add<unsigned int>("period", period_, false);
-	pm.add("", params_, true);
-	pm.add<double>("safety_velocity", safetyTarget_.velocity, true);
-	pm.add<double>("safety_yaw_rate", safetyTarget_.yawRate, false);
-	return pm.map();
 }
 
 void
@@ -57,8 +46,8 @@ ManeuverLocalPlanner::setTrajectory(const Trajectory& traj)
 	lock.unlock();
 
 	Lock lockStatus(statusMutex_);
-	status_.set_current_path_section(0);
-	status_.set_is_in_approach(trajectory_.approachSection != nullptr);
+	status_.currentPathSection = 0;
+	status_.isInApproach = trajectory_.approachSection != nullptr;
 	lockStatus.unlock();
 
 	APLOG_DEBUG << "Trajectory set.";
@@ -71,31 +60,10 @@ ManeuverLocalPlanner::getTrajectory() const
 	return trajectory_;
 }
 
-LocalPlannerStatus
+ManeuverLocalPlannerStatus
 ManeuverLocalPlanner::getStatus() const
 {
-	LocalPlannerStatus status;
-
-	Lock lock(statusMutex_);
-	status.mutable_maneuver_status()->CopyFrom(status_);
-	lock.unlock();
-
-	return status;
-}
-
-bool
-ManeuverLocalPlanner::tune(const LocalPlannerParams& params)
-{
-	if (!params.has_maneuver_params())
-	{
-		APLOG_ERROR
-				<< "ManeuverLocalPlanner::tune: Tuning params do not contain Maneuver params. Ignore.";
-		return false;
-	}
-
-	LockGuard lock(paramsMutex_);
-	params_.CopyFrom(params.maneuver_params());
-	return true;
+	return status_;
 }
 
 bool
@@ -105,25 +73,14 @@ ManeuverLocalPlanner::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!controller_.isSet())
+		if (!checkIsSet<IController, ISensingActuationIO, IScheduler, IPC>())
 		{
-			APLOG_ERROR << "LinearLocalPlanner: Controller missing";
+			APLOG_ERROR << "LinearLocalPlanner: Dependency missing";
 			return true;
 		}
-		if (!sensing_.isSet())
+		if (!isSet<DataHandling>())
 		{
-			APLOG_ERROR << "LinearLocalPlanner: FlightControlData missing";
-			return true;
-		}
-		if (!scheduler_.isSet())
-		{
-			APLOG_ERROR << "LinearLocalPlanner: Scheduler missing";
-			return true;
-		}
-		if (!ipc_.isSet())
-		{
-			APLOG_ERROR << "LinearLocalPlanner: IPC missing";
-			return true;
+			APLOG_DEBUG << "ManeuverLocalPlanner: DataHandling not set. Debugging disabled.";
 		}
 
 		break;
@@ -132,28 +89,40 @@ ManeuverLocalPlanner::run(RunStage stage)
 	{
 
 		//Directly calculate local plan when sensor data comes in
-		if (period_ == 0)
+		if (params.period() == 0)
 		{
 			APLOG_DEBUG << "Calculate control on sensor data trigger";
-			auto sensing = sensing_.get();
+			auto sensing = get<ISensingActuationIO>();
 			sensing->subscribeOnSensorData(
 					boost::bind(&ManeuverLocalPlanner::onSensorData, this, _1));
 		}
 		else
 		{
-			APLOG_DEBUG << "Calculate control with period " << period_;
-			auto scheduler = scheduler_.get();
+			APLOG_DEBUG << "Calculate control with period " << params.period();
+			auto scheduler = get<IScheduler>();
 			scheduler->schedule(std::bind(&ManeuverLocalPlanner::update, this),
-					Milliseconds(period_), Milliseconds(period_));
+					Milliseconds(params.period()), Milliseconds(params.period()));
 		}
 
-		auto ipc = ipc_.get();
+		auto ipc = get<IPC>();
 
-		ipc->subscribeOnPacket("trajectory",
+		ipc->subscribeOnPackets("trajectory",
 				std::bind(&ManeuverLocalPlanner::onTrajectoryPacket, this, std::placeholders::_1));
 
-		ipc->subscribeOnPacket("override",
+		ipc->subscribeOnPackets("override",
 				std::bind(&ManeuverLocalPlanner::onOverridePacket, this, std::placeholders::_1));
+
+		if (auto dh = get<DataHandling>())
+		{
+			dh->addStatusFunction<ManeuverLocalPlannerStatus>(
+					std::bind(&ManeuverLocalPlanner::getStatus, this),
+					Content::MANEUVER_LOCAL_PLANNER_STATUS);
+			dh->subscribeOnCommand<ManeuverLocalPlannerParams>(Content::TUNE_MANEUVER_LOCAL_PLANNER,
+					std::bind(&ManeuverLocalPlanner::setParams, this, std::placeholders::_1));
+			dh->addTriggeredStatusFunction<Trajectory, DataRequest>(
+					std::bind(&ManeuverLocalPlanner::trajectoryRequest, this,
+							std::placeholders::_1), Content::TRAJECTORY, Content::REQUEST_DATA);
+		}
 
 		break;
 	}
@@ -167,15 +136,6 @@ ManeuverLocalPlanner::run(RunStage stage)
 	}
 	}
 	return false;
-}
-
-void
-ManeuverLocalPlanner::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	controller_.setFromAggregationIfNotSet(agg);
-	sensing_.setFromAggregationIfNotSet(agg);
-	scheduler_.setFromAggregationIfNotSet(agg);
-	ipc_.setFromAggregationIfNotSet(agg);
 }
 
 void
@@ -198,11 +158,13 @@ ManeuverLocalPlanner::createLocalPlan(const Vector3& position, double heading, b
 		safety = true;
 	}
 
-	std::unique_lock<std::mutex> plannerLock(overrideMutex_);
+	Lock plannerLock(overrideMutex_);
 
 	if (safety)
 	{
-		controllerTarget_ = safetyTarget_;
+		controllerTarget_.velocity = params.safetyVelocity();
+		controllerTarget_.yawRate = params.safetyYawRate();
+		controllerTarget_.climbAngle = 0;
 	}
 	else
 	{
@@ -220,11 +182,11 @@ ManeuverLocalPlanner::createLocalPlan(const Vector3& position, double heading, b
 	plannerLock.unlock();
 
 	controllerTarget_.sequenceNr = seqNum;
-	status_.set_climb_angle_target(controllerTarget_.climbAngle);
-	status_.set_velocity_target(controllerTarget_.velocity);
-	status_.set_yaw_rate_target(controllerTarget_.yawRate);
+	status_.climbAngleTarget = controllerTarget_.climbAngle;
+	status_.velocityTarget = controllerTarget_.velocity;
+	status_.yawRateTarget = controllerTarget_.yawRate;
 
-	auto controller = controller_.get();
+	auto controller = get<IController>();
 	if (!controller)
 	{
 		APLOG_ERROR << "LinearLocalPlanner: Controller missing";
@@ -239,7 +201,7 @@ ManeuverLocalPlanner::updatePathSection(const Vector3& position)
 {
 	std::shared_ptr<IPathSection> currentSection;
 
-	if (!status_.is_in_approach())
+	if (!status_.isInApproach)
 	{
 		if (currentSection_ == trajectory_.pathSections.end())
 		{
@@ -287,11 +249,11 @@ void
 ManeuverLocalPlanner::nextSection()
 {
 	//Status mutex is locked already
-	if (status_.is_in_approach())
+	if (status_.isInApproach)
 	{
 		//We were approaching the first waypoint
 		currentSection_ = trajectory_.pathSections.begin();
-		status_.set_is_in_approach(false);
+		status_.isInApproach = false;
 		return;
 	}
 
@@ -300,12 +262,12 @@ ManeuverLocalPlanner::nextSection()
 		return;
 	}
 	++currentSection_;
-	status_.set_current_path_section(status_.current_path_section() + 1);
+	++status_.currentPathSection;
 
 	if (currentSection_ == trajectory_.pathSections.end() && trajectory_.infinite)
 	{
 		currentSection_ = trajectory_.pathSections.begin();
-		status_.set_current_path_section(0);
+		status_.currentPathSection = 0;
 	}
 }
 
@@ -333,7 +295,7 @@ ManeuverLocalPlanner::calculateControllerTarget(const Vector3& position, double 
 	// Climb Rate
 	double slope = section->getSlope();
 	double climbRate = vel * slope * sqrt(1 / (1 + slope * slope))
-			+ params_.k_altitude() * positionDeviation.z();
+			+ params.kAltitude() * positionDeviation.z();
 
 	if (auto it = findInMap(plannerOverrides_, LocalPlannerTargets::SLOPE))
 	{
@@ -359,7 +321,7 @@ ManeuverLocalPlanner::calculateControllerTarget(const Vector3& position, double 
 	if (auto it = findInMap(plannerOverrides_, LocalPlannerTargets::DIRECTION_Z))
 		direction[2] = it->second;
 
-	Vector2 directionTarget = params_.k_convergence() * positionDeviation.head(2)
+	Vector2 directionTarget = params.kConvergence() * positionDeviation.head(2)
 			+ direction.head(2).normalized();
 	double headingTarget = headingFromENU(directionTarget);
 
@@ -374,7 +336,7 @@ ManeuverLocalPlanner::calculateControllerTarget(const Vector3& position, double 
 
 	// Yaw Rate
 
-	controllerTarget.yawRate = vel * curvature + params_.k_yaw_rate() * headingError;
+	controllerTarget.yawRate = vel * curvature + params.kYawrate() * headingError;
 
 	return controllerTarget;
 }
@@ -417,7 +379,7 @@ ManeuverLocalPlanner::onOverridePacket(const Packet& packet)
 void
 ManeuverLocalPlanner::update()
 {
-	auto sensing = sensing_.get();
+	auto sensing = get<ISensingActuationIO>();
 
 	if (!sensing)
 	{
@@ -427,4 +389,13 @@ ManeuverLocalPlanner::update()
 
 	SensorData data = sensing->getSensorData();
 	createLocalPlan(data.position, data.attitude.z(), data.hasGPSFix, data.sequenceNr);
+}
+
+Trajectory
+ManeuverLocalPlanner::trajectoryRequest(const DataRequest& request)
+{
+	APLOG_DEBUG << "Called trajectoryRequest with " << (int) request;
+	if (request == DataRequest::TRAJECTORY)
+		return getTrajectory();
+	return Trajectory();
 }

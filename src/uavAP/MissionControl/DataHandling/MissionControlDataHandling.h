@@ -36,14 +36,8 @@
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Time.h"
 
-enum class Content
-;
-enum class Target
-;
 
-template<typename C, typename T>
-class IDataPresentation;
-
+class DataPresentation;
 class IPC;
 class IScheduler;
 class IGlobalPlanner;
@@ -51,7 +45,7 @@ class ManeuverPlanner;
 class IMissionPlanner;
 class LocalFrameManager;
 class ConditionManager;
-class Geofencing;
+//class Geofencing;
 
 class MissionControlDataHandling: public IAggregatableObject, public IRunnableObject
 {
@@ -62,10 +56,10 @@ public:
 	MissionControlDataHandling();
 
 	static std::shared_ptr<MissionControlDataHandling>
-	create(const boost::property_tree::ptree& configuration);
+	create(const Configuration& configuration);
 
 	bool
-	configure(const boost::property_tree::ptree& configuration);
+	configure(const Configuration& configuration);
 
 	bool
 	run(RunStage stage) override;
@@ -81,27 +75,27 @@ private:
 	receiveAndDistribute(const Packet& packet);
 
 	void
-	collectAndSendMission(std::shared_ptr<IDataPresentation<Content, Target>> dp);
+	collectAndSendMission(std::shared_ptr<DataPresentation> dp);
 
 	void
-	collectAndSendSafetyBounds(std::shared_ptr<IDataPresentation<Content, Target>> dp);
+	collectAndSendSafetyBounds(std::shared_ptr<DataPresentation> dp);
 
 	void
-	collectAndSendLocalFrame(std::shared_ptr<IDataPresentation<Content, Target>> dp);
+	collectAndSendLocalFrame(std::shared_ptr<DataPresentation> dp);
 
 	ObjectHandle<IPC> ipc_;
 	ObjectHandle<IScheduler> scheduler_;
 	ObjectHandle<IGlobalPlanner> globalPlanner_;
 	ObjectHandle<ManeuverPlanner> maneuverPlanner_;
 	ObjectHandle<IMissionPlanner> missionPlanner_;
-	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
+	ObjectHandle<DataPresentation> dataPresentation_;
 	ObjectHandle<LocalFrameManager> localFrameManager_;
 	ObjectHandle<ConditionManager> conditionManager_;
-	ObjectHandle<Geofencing> geofencing_;
+//	ObjectHandle<Geofencing> geofencing_;
 
 	Subscription missionControlSubscription_;
-	Publisher publisher_;
-	Publisher overridePublisher_;
+	Publisher<Packet> publisher_;
+	Publisher<Packet> overridePublisher_;
 
 	unsigned int lastOverrideSeqNr_;
 	Duration period_;

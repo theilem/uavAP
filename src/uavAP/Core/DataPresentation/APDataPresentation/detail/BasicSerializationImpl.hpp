@@ -123,9 +123,9 @@ dp::load(Archive& ar, typename std::enable_if<is_vector<Type>::value, Type>::typ
 {
 	uint8_t size;
 	ar >> size;
-	typename Type::value_type tmp;
 	for (uint8_t i = 0; i < size; ++i)
 	{
+		typename Type::value_type tmp;
 		ar >> tmp;
 		val.push_back(tmp);
 	}
@@ -149,9 +149,41 @@ dp::serialize(Archive& ar, typename std::enable_if<is_vector<Type>::value, Type>
 	split(ar, val);
 }
 
+//template<class Archive, typename Type>
+//inline void
+//dp::load(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
+//{
+//	bool init;
+//	ar >> init;
+//	if (init)
+//	{
+//		Type temp;
+//		ar >> temp;
+//		val = temp;
+//	}
+//}
+//
+//template<class Archive, typename Type>
+//inline void
+//dp::store(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
+//{
+//	ar << val.is_initialized();
+//	if (val)
+//	{
+//		ar << *val;
+//	}
+//}
+//
+//template<class Archive, typename Type>
+//inline void
+//dp::serialize(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
+//{
+//	split(ar, val);
+//}
+
 template<class Archive, typename Type>
 inline void
-dp::load(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
+dp::load(Archive& ar, typename std::enable_if<isOptional<Type>::value, Type>::type& val)
 {
 	bool init;
 	ar >> init;
@@ -165,7 +197,7 @@ dp::load(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::t
 
 template<class Archive, typename Type>
 inline void
-dp::store(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
+dp::store(Archive& ar, typename std::enable_if<isOptional<Type>::value, Type>::type& val)
 {
 	ar << val.is_initialized();
 	if (val)
@@ -176,7 +208,7 @@ dp::store(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::
 
 template<class Archive, typename Type>
 inline void
-dp::serialize(Archive& ar, typename std::enable_if<is_optional<Type>::value, Type>::type& val)
+dp::serialize(Archive& ar, typename std::enable_if<isOptional<Type>::value, Type>::type& val)
 {
 	split(ar, val);
 }
@@ -187,10 +219,10 @@ dp::load(Archive& ar, typename std::enable_if<is_map<Type>::value, Type>::type& 
 {
 	uint8_t size;
 	ar >> size;
-	typename Type::mapped_type valTmp;
-	typename Type::key_type keyTmp;
 	for (uint8_t i = 0; i < size; ++i)
 	{
+		typename Type::mapped_type valTmp;
+		typename Type::key_type keyTmp;
 		ar >> keyTmp >> valTmp;
 		val.insert(std::make_pair(keyTmp, valTmp));
 	}
@@ -222,8 +254,8 @@ dp::load(Archive& ar,
 {
 	uint16_t size;
 	ar >> size;
-	val.append(ar.begin(), size);
-	ar.consume(size);
+	val.resize(size);
+	ar.read(const_cast<char*>(val.data()), size);
 }
 
 template<class Archive, typename Type>
@@ -250,5 +282,20 @@ dp::serialize(Archive& ar, typename std::enable_if<is_pair<Type>::value, Type>::
 	ar & val.first;
 	ar & val.second;
 }
+
+template<class Archive, typename Type>
+inline void
+dp::serialize(Archive& ar, typename std::enable_if<is_parameter<Type>::value, Type>::type& val)
+{
+	ar & val.value;
+}
+
+template<class Archive, typename Type>
+inline void
+dp::serialize(Archive& ar, typename std::enable_if<is_parameter_set<Type>::value, Type>::type& val)
+{
+	val.configure(ar);
+}
+
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_APDATAPRESENTATION_DETAIL_BASICSERIALIZATIONIMPL_HPP_ */

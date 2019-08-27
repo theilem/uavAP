@@ -46,18 +46,18 @@ struct Maneuver
 	bool analyzeTrim = false;
 
 	bool
-	configure(const boost::property_tree::ptree& config)
+	configure(const Configuration& config)
 	{
-		PropertyMapper pm(config);
-		boost::property_tree::ptree conditionTree;
-		boost::property_tree::ptree controllerOutputOverrideTree;
+		PropertyMapper<Configuration> pm(config);
+		Configuration conditionTree;
+		Configuration controllerOutputOverrideTree;
 		static ConditionFactory factory;
 
 		pm.add<Override>("override", override, true);
 
 		if (pm.add("override_controller_outputs", controllerOutputOverrideTree, false))
 		{
-			PropertyMapper controllerOutputOverridePm(controllerOutputOverrideTree);
+			PropertyMapper<Configuration> controllerOutputOverridePm(controllerOutputOverrideTree);
 
 			controllerOutputOverridePm.addEnum<ControllerOutputsOverrides>("type",
 					controllerOutputOverrideType, true);

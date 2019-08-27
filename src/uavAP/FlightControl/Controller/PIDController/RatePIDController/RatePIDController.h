@@ -26,9 +26,12 @@
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_RATEPIDCONTROLLER_RATEPIDCONTROLLER_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_RATEPIDCONTROLLER_RATEPIDCONTROLLER_H_
 
+#include <uavAP/Core/IPC/Publisher.h>
 #include <uavAP/Core/IPC/Subscription.h>
+#include <uavAP/Core/LockTypes.h>
 #include <uavAP/Core/Object/ObjectHandle.h>
 #include <uavAP/Core/SensorData.h>
+#include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
@@ -40,6 +43,7 @@ class RateCascade;
 class IScheduler;
 class IPC;
 class ISensingActuationIO;
+class DataHandling;
 class Packet;
 
 class RatePIDController: public IPIDController, public IAggregatableObject, public IRunnableObject
@@ -51,10 +55,10 @@ public:
 	RatePIDController();
 
 	static std::shared_ptr<RatePIDController>
-	create(const boost::property_tree::ptree& config);
+	create(const Configuration& config);
 
 	bool
-	configure(const boost::property_tree::ptree& config) override;
+	configure(const Configuration& config) override;
 
 	bool
 	run(RunStage stage) override;
@@ -69,7 +73,7 @@ public:
 	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	std::shared_ptr<IPIDCascade>
-	getCascade() override;
+	getCascade();
 
 private:
 
@@ -79,20 +83,23 @@ private:
 	void
 	onOverridePacket(const Packet& packet);
 
+	void
+	tunePID(const PIDTuning& params);
+
 	ObjectHandle<ISensingActuationIO> sensAct_;
 	ObjectHandle<IScheduler> scheduler_;
+	ObjectHandle<DataHandling> dataHandling_;
 	ObjectHandle<IPC> ipc_;
 
-	std::mutex controllerTargetMutex_;
+	Mutex controllerTargetMutex_;
 	ControllerTarget controllerTarget_;
 	SensorData sensorData_;
 	Vector3 velocityInertial_;
 	Vector3 accelerationInertial_;
 	ControllerOutput controllerOutput_;
 
-	Publisher controllerOutputPublisherMP_;
-	Publisher controllerOutputPublisherTA_;
-	Publisher controllerOutputPublisherMA_;
+	Publisher<ControllerOutput> controllerOutputPublisher_;
+	Publisher<Packet> pidStatiPublisher_;
 	Subscription overrideSubscription_;
 
 	std::shared_ptr<RateCascade> pidCascade_;
