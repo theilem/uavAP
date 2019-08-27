@@ -5,6 +5,7 @@
 		"hard_roll_rate_constraint": 20.0,
 		"hard_pitch_constraint": 30.0,
 		"hard_pitch_rate_constraint": 30.0,
+		"use_rpm_controller": true,
 		"pids": {
 			"climb_angle": {
 				"ff": 0,
@@ -54,6 +55,13 @@
 				"kd": 0,
 				"ki": 0.1,
 				"kp": 1
+			},
+			"rpm": {
+				"ff": 0,
+				"imax": 12,
+				"kd": 0,
+				"ki": 0.01,
+				"kp": 0.000005
 			}
 		}
 	},
