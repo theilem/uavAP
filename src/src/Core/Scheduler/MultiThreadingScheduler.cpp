@@ -23,6 +23,8 @@
  *      Author: mircot
  */
 
+#include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
+#include <uavAP/Core/TimeProvider/ITimeProvider.h>
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/Scheduler/MultiThreadingScheduler.h"
 #include <utility>
@@ -36,12 +38,6 @@ MultiThreadingScheduler::~MultiThreadingScheduler()
 {
 	if (started_)
 		stop();
-}
-
-std::shared_ptr<IScheduler>
-MultiThreadingScheduler::create(const Configuration&)
-{
-	return std::make_shared<MultiThreadingScheduler>();
 }
 
 Event
@@ -86,12 +82,12 @@ MultiThreadingScheduler::run(RunStage stage)
 	switch (stage)
 	{
 	case RunStage::INIT:
-		if (!timeProvider_.isSet())
+		if (!isSet<ITimeProvider>())
 		{
 			APLOG_ERROR << "TimeProvider missing.";
 			return true;
 		}
-		schedulingParams_.sched_priority = 99;
+		schedulingParams_.sched_priority = params.priority();
 		break;
 	case RunStage::NORMAL:
 		break;
@@ -99,14 +95,16 @@ MultiThreadingScheduler::run(RunStage stage)
 		started_ = true;
 		if (!mainThread_)
 		{
-			invokerThread_ = std::thread(
-					boost::bind(&MultiThreadingScheduler::runSchedule, this));
+			invokerThread_ = std::thread(boost::bind(&MultiThreadingScheduler::runSchedule, this));
 
-			pthread_setschedparam(invokerThread_.native_handle(), SCHED_FIFO, &schedulingParams_);
+			if (params.priority() != 20)
+				pthread_setschedparam(invokerThread_.native_handle(), SCHED_FIFO,
+						&schedulingParams_);
 		}
 		else
 		{
-			pthread_setschedparam(pthread_self(), SCHED_FIFO, &schedulingParams_);
+			if (params.priority() != 20)
+				pthread_setschedparam(pthread_self(), SCHED_FIFO, &schedulingParams_);
 		}
 
 		break;
@@ -117,15 +115,9 @@ MultiThreadingScheduler::run(RunStage stage)
 }
 
 void
-MultiThreadingScheduler::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	timeProvider_.setFromAggregationIfNotSet(agg);
-}
-
-void
 MultiThreadingScheduler::runSchedule()
 {
-	auto timeProvider = timeProvider_.get();
+	auto timeProvider = get<ITimeProvider>();
 	if (!timeProvider)
 	{
 		APLOG_ERROR << "Time Provider missing in Scheduler. Abort.";
@@ -156,8 +148,7 @@ MultiThreadingScheduler::runSchedule()
 				if (eventBody->isStarted.load())
 				{
 					//Thread is already started
-					std::unique_lock<std::mutex> lock(eventBody->executionMutex,
-							std::try_to_lock);
+					std::unique_lock<std::mutex> lock(eventBody->executionMutex, std::try_to_lock);
 					if (lock)
 					{
 						//The task is waiting at the condition variable
@@ -183,10 +174,12 @@ MultiThreadingScheduler::runSchedule()
 					//Thread not started yet
 					eventBody->periodicThread = std::thread(
 							boost::bind(&MultiThreadingScheduler::periodicTask, this, eventBody));
-					if (int r = pthread_setschedparam(eventBody->periodicThread.native_handle(), SCHED_FIFO, &schedulingParams_))
-					{
-						APLOG_DEBUG << "Cannot set sched params: " << r;
-					}
+					if (params.priority() != 20)
+						if (int r = pthread_setschedparam(eventBody->periodicThread.native_handle(),
+						SCHED_FIFO, &schedulingParams_))
+						{
+							APLOG_DEBUG << "Cannot set sched params: " << r;
+						}
 				}
 				//Reschedule Task
 				auto element = std::make_pair(it->first + *eventBody->period, eventBody);
@@ -222,7 +215,7 @@ MultiThreadingScheduler::runSchedule()
 MultiThreadingScheduler::EventMap::value_type
 MultiThreadingScheduler::createSchedule(Duration start, std::shared_ptr<EventBody> body)
 {
-	auto tp = timeProvider_.get();
+	auto tp = get<ITimeProvider>();
 	if (!tp)
 	{
 		APLOG_ERROR << "TimeProvider missing. Cannot Schedule.";

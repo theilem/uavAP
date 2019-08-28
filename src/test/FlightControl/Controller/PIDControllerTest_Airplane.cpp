@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(PControl)
 	auto scheduler = std::make_shared<MicroSimulator>();
 	auto data = std::make_shared<SensingActuationIO>();
 	auto runner = std::make_shared<AggregatableRunner>();
-	boost::property_tree::ptree configuration;
+	Configuration configuration;
 	ControllerTarget target;
 
 	/* Load General Configurations */
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(PDControl)
 	auto scheduler = std::make_shared<MicroSimulator>();
 	auto data = std::make_shared<SensingActuationIO>();
 	auto runner = std::make_shared<AggregatableRunner>();
-	boost::property_tree::ptree configuration;
+	Configuration configuration;
 	ControllerTarget target;
 
 	/* Load General Configurations */
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE(PFFControl)
 	auto scheduler = std::make_shared<MicroSimulator>();
 	auto data = std::make_shared<SensingActuationIO>();
 	auto runner = std::make_shared<AggregatableRunner>();
-	boost::property_tree::ptree configuration;
+	Configuration configuration;
 	ControllerTarget target;
 
 	/* Load General Configurations */
@@ -235,7 +235,7 @@ BOOST_AUTO_TEST_CASE(PIControl)
 	auto scheduler = std::make_shared<MicroSimulator>();
 	auto data = std::make_shared<SensingActuationIO>();
 	auto runner = std::make_shared<AggregatableRunner>();
-	boost::property_tree::ptree configuration;
+	Configuration configuration;
 	ControllerTarget target;
 
 	/* Load General Configurations */

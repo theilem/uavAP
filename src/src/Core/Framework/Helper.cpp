@@ -31,7 +31,7 @@
 Aggregator
 Helper::createAggregation(const std::string& configPath)
 {
-	boost::property_tree::ptree conf;
+	Configuration conf;
 	if (!configPath.empty())
 	{
 		boost::property_tree::read_json(configPath, conf);
@@ -41,7 +41,7 @@ Helper::createAggregation(const std::string& configPath)
 	{
 		auto globalConf = conf.get_child("global");
 		mergeGlobalConfig(conf, globalConf);
-	} catch (boost::property_tree::ptree_error&)
+	} catch (ConfigurationError&)
 	{
 		//No global config
 	}
@@ -105,7 +105,7 @@ Helper::createAggregation(const Configuration& conf)
 }
 
 void
-Helper::mergeGlobalConfig(boost::property_tree::ptree& config,
+Helper::mergeGlobalConfig(Configuration& config,
 		const Configuration& globalConf)
 {
 	for (auto& confIt : config)

@@ -7,7 +7,6 @@
 
 #ifndef UAVAP_CORE_PROPERTYMAPPER_CONFIGURABLEOBJECTIMPL_HPP_
 #define UAVAP_CORE_PROPERTYMAPPER_CONFIGURABLEOBJECTIMPL_HPP_
-#include <uavAP/Core/PropertyMapper/JsonPopulator.h>
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/PropertyMapper/ConfigurableObject.hpp"
 #include <iostream>
@@ -34,19 +33,24 @@ ConfigurableObject<ParameterSet>::setParams(const ParameterSet& set)
 	params = set;
 }
 
+//template<class ParameterSet>
+//inline std::string
+//ConfigurableObject<ParameterSet>::getJson()
+//{
+//
+//	JsonPopulator pop;
+//
+//	params.configure(pop);
+//
+//	return pop.getString();
+//
+//}
+
 template<class ParameterSet>
-inline std::string
-ConfigurableObject<ParameterSet>::getJson()
+inline const ParameterSet&
+ConfigurableObject<ParameterSet>::getParams() const
 {
-
-	JsonPopulator pop;
-
-	params.configure(pop);
-
-	std::cout << pop.getString() << std::endl;
-
-	return pop.getString();
-
+	return params;
 }
 
 #endif /* UAVAP_CORE_PROPERTYMAPPER_CONFIGURABLEOBJECTIMPL_HPP_ */

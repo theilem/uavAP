@@ -13,12 +13,14 @@
 #include "uavAP/Core/PropertyMapper/EmptyConfiguration.h"
 
 using Configuration = EmptyConfiguration;
+using ConfigurationError = int;
 
 #else
 
 #include <boost/property_tree/ptree.hpp>
 
 using Configuration = boost::property_tree::ptree;
+using ConfigurationError = boost::property_tree::ptree_error;
 
 #endif
 

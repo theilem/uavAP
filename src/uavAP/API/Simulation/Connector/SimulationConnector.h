@@ -103,7 +103,7 @@ private:
 	ObjectHandle<ITimeProvider> timeProvider_;
 	ObjectHandle<SerialNetworkLayer> idc_;
 	ObjectHandle<ChannelMixing> channelMixing_;
-	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
+	ObjectHandle<DataPresentation> dataPresentation_;
 
 	Subscription actuationSubscription_;
 	Subscription communicationSubscription_;

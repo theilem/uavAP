@@ -28,6 +28,7 @@ set (TEST_SOURCES 	TestRunner.cpp
 					#Core/FramesTest.cpp
 					Core/FrameworkAPITest.cpp
 					Core/DataHandlingTest.cpp
+					Core/JsonPopulatorTest.cpp
 					Math/BetaIncompleteTest.cpp
 					API/ApExtTest.cpp
 					)

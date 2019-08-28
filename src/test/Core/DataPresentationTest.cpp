@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE(ap_data_presentation_test_005_compress_double)
 	BOOST_CHECK_EQUAL(sdDes.position, sd.position);
 
 	DataPresentation dpCompress;
-	boost::property_tree::ptree config;
+	Configuration config;
 	config.add("compress_double", true);
 	dpCompress.configure(config);
 	Packet packet2 = dpCompress.serialize(sd);

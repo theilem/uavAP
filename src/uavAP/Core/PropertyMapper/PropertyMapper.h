@@ -36,14 +36,6 @@
 #include <Eigen/Core>
 #include <type_traits>
 
-namespace boost
-{
-namespace posix_time
-{
-class time_duration;
-}
-}
-
 template<typename Configuration>
 class PropertyMapper
 {
@@ -114,7 +106,7 @@ public:
 	operator&(Param& param);
 
 	template<typename Param>
-	enable_if_is_parameter_set<typename Param::ValueType>
+	typename std::enable_if<is_parameter_set<typename Param::ValueType>::value, bool>::type
 	operator&(Param& param);
 
 	template<typename Param>
@@ -438,7 +430,7 @@ PropertyMapper<Config>::add(const std::string& key, Config& val, bool mandatory)
 	{
 //		try
 //		{
-//			boost::property_tree::ptree conf;
+//			Configuration conf;
 //			boost::property_tree::read_json(*path, conf);
 //			val = conf;
 //			return true;
@@ -548,7 +540,7 @@ PropertyMapper<Config>::getChild(const std::string& key, bool mandatory)
 	auto value = p_.get_child_optional(key);
 	if (value)
 	{
-		PropertyMapper p(*value);
+		PropertyMapper<Config> p(*value);
 		return p;
 	}
 	if (mandatory)
@@ -578,7 +570,7 @@ PropertyMapper<Config>::operator &(Param& param)
 
 template<typename Config>
 template<typename Param>
-inline enable_if_is_parameter_set<typename Param::ValueType>
+inline typename std::enable_if<is_parameter_set<typename Param::ValueType>::value, bool>::type
 PropertyMapper<Config>::operator &(Param& param)
 {
 	auto pm = getChild(param.id, param.mandatory);

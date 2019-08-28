@@ -35,8 +35,10 @@ class SchedulerFactory: public Factory<IScheduler>
 public:
 	SchedulerFactory()
 	{
-		setDefault<MultiThreadingScheduler>();
+		addConfigurable<MultiThreadingScheduler>();
 		addCreator<MicroSimulator>();
+
+		setDefault<MultiThreadingScheduler>();
 	}
 
 };

@@ -26,6 +26,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/test/unit_test.hpp>
+#include <uavAP/Core/PropertyMapper/Configuration.h>
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 
 
@@ -34,13 +35,13 @@ BOOST_AUTO_TEST_SUITE(PropertyMapperTest)
 
 BOOST_AUTO_TEST_CASE(vector_of_double)
 {
-	boost::property_tree::ptree config;
+	Configuration config;
 	boost::property_tree::read_json("Core/config/pm_test.json",
 			config);
 
-	PropertyMapper<boost::property_tree::ptree> pm(config);
+	PropertyMapper<Configuration> pm(config);
 	std::vector<double> vec;
-	BOOST_REQUIRE(pm.addVector<double>("vec_double", vec, true));
+	BOOST_REQUIRE(pm.addVector<std::vector<double>>("vec_double", vec, true));
 
 	BOOST_REQUIRE_EQUAL(vec.size(), 4);
 	BOOST_CHECK_EQUAL(vec[0], 1.0);
@@ -52,19 +53,19 @@ BOOST_AUTO_TEST_CASE(vector_of_double)
 
 BOOST_AUTO_TEST_CASE(vector_of_vector2)
 {
-	boost::property_tree::ptree config;
+	Configuration config;
 	boost::property_tree::read_json("Core/config/pm_test.json",
 			config);
 
-	PropertyMapper<boost::property_tree::ptree> pm(config);
-	std::vector<boost::property_tree::ptree> edges;
+	PropertyMapper<Configuration> pm(config);
+	std::vector<Configuration> edges;
 	pm.addVector("edges", edges, true);
 
 	std::vector<Vector2> vec;
 
 	for (const auto& it : edges)
 	{
-		PropertyMapper<boost::property_tree::ptree> edge(it);
+		PropertyMapper<Configuration> edge(it);
 		Vector2 e;
 		if (edge.add("",e,true))
 			vec.push_back(e);

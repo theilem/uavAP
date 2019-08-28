@@ -34,6 +34,8 @@ class TimeProviderFactory: public Factory<ITimeProvider>
 public:
 	TimeProviderFactory()
 	{
+		addCreator<SystemTimeProvider>();
+
 		setDefault<SystemTimeProvider>();
 	}
 

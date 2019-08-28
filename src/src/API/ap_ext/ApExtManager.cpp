@@ -56,7 +56,7 @@ ApExtManager::configure(const Configuration& config)
 			std::bind(&ApExtManager::onAdvancedControl, this, std::placeholders::_1));
 
 	PropertyMapper<Configuration> pm(config);
-	boost::property_tree::ptree rotationOffsetConfig;
+	Configuration rotationOffsetConfig;
 	if (pm.add("rotation_offset", rotationOffsetConfig, false))
 	{
 		PropertyMapper<Configuration> rotPm(rotationOffsetConfig);

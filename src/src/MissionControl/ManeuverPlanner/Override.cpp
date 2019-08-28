@@ -32,7 +32,7 @@
 
 template<class Group, typename Type>
 void
-mapOverrideValue(PropertyMapper<boost::property_tree::ptree>& pm, const std::string& override,
+mapOverrideValue(PropertyMapper<Configuration>& pm, const std::string& override,
 		const std::string& overrideMember, Group& overrideGroup)
 {
 	auto overrideValueEnum = EnumMap<Type>::convert(overrideMember);

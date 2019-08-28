@@ -27,9 +27,9 @@
 #include <string>
 #include <boost/asio/serial_port_base.hpp>
 #include <boost/optional/optional.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <uavAP/Core/IDC/NetworkLayer/INetworkParams.h>
 #include <uavAP/Core/EnumMap.hpp>
+#include <uavAP/Core/PropertyMapper/Configuration.h>
 
 enum SerialDirection
 {

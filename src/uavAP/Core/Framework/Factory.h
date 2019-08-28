@@ -135,7 +135,7 @@ Factory<Type>::create(const Configuration& config)
 	try
 	{
 		type = config.get<std::string>("type");
-	} catch (boost::property_tree::ptree_error&)
+	} catch (ConfigurationError&)
 	{
 		if (defaultId_.empty())
 			throw InvalidTypeError("Type missing in config.");
@@ -195,7 +195,6 @@ inline void
 Factory<Type>::setDefault()
 {
 	defaultId_ = SpecificType::typeId;
-	this->addCreator<SpecificType>();
 }
 
 template<class Type>

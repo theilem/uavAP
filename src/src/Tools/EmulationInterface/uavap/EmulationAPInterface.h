@@ -82,7 +82,7 @@ private:
 
 	ChannelMixing channelMixing_;
 	ServoMapping servoMapping_;
-	ObjectHandle<IDataPresentation<Content, Target>> dataPresentation_;
+	ObjectHandle<DataPresentation> dataPresentation_;
 	ObjectHandle<IScheduler> scheduler_;
 	ObjectHandle<INetworkLayer> idc_;
 

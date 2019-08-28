@@ -37,7 +37,7 @@ Waypoint::configure(const Configuration& config)
 	else
 		location[2] *= -1;
 
-	boost::property_tree::ptree directionConfig;
+	Configuration directionConfig;
 
 	if (pm.add("direction", directionConfig, false))
 	{

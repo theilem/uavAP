@@ -62,6 +62,24 @@ public:
 	void
 	setDefaultPluginRestriction(PluginRestriction plug);
 
+	//! Creator functor to create an IAggregatableObject
+	using CreatorAgg = std::function<std::shared_ptr<IAggregatableObject>(const Configuration&)>;
+
+	//! Default creator functor to create an IAggregatableObject that does not need a configuration
+	using DefaultCreatorAgg = std::function<std::shared_ptr<IAggregatableObject>()>;
+
+	const std::map<std::string, CreatorAgg>&
+	getCreators() const
+	{
+		return creators_;
+	}
+
+	const std::map<std::string, DefaultCreatorAgg>&
+	getDefaultCreators() const
+	{
+		return defaultCreators_;
+	}
+
 protected:
 
 	/**
@@ -131,14 +149,8 @@ private:
 	mergeGlobalConfig(Configuration& config,
 			const Configuration& globalConf);
 
-	//! Creator functor to create an IAggregatableObject
-	using CreatorAgg = std::function<std::shared_ptr<IAggregatableObject>(const Configuration&)>;
-
 	//! Map containing the Creators that do not need factories mapped to their ID.
 	std::map<std::string, CreatorAgg> creators_;
-
-	//! Default creator functor to create an IAggregatableObject that does not need a configuration
-	using DefaultCreatorAgg = std::function<std::shared_ptr<IAggregatableObject>()>;
 
 	//! Map containing the Default Creators that do not need factories mapped to their ID.
 	std::map<std::string, DefaultCreatorAgg> defaultCreators_;

@@ -26,17 +26,23 @@
 #ifndef UAVAP_CORE_SCHEDULER_MULTITHREADINGSCHEDULER_H_
 #define UAVAP_CORE_SCHEDULER_MULTITHREADINGSCHEDULER_H_
 #include <boost/optional/optional.hpp>
-#include <boost/property_tree/ptree.hpp>
+#include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
+#include "uavAP/Core/Scheduler/MultiThreadingSchedulerParams.h"
+#include "uavAP/Core/Object/AggregatableObject.hpp"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Scheduler/EventBody.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
-#include "uavAP/Core/TimeProvider/ITimeProvider.h"
 #include "uavAP/Core/PropertyMapper/Configuration.h"
 #include <thread>
 
-class MultiThreadingScheduler: public IScheduler, public IAggregatableObject, public IRunnableObject
+class ITimeProvider;
+
+class MultiThreadingScheduler: public IScheduler,
+		public AggregatableObject<ITimeProvider>,
+		public ConfigurableObject<MultiThreadingSchedulerParams>,
+		public IRunnableObject
 {
 public:
 
@@ -48,9 +54,6 @@ public:
 	MultiThreadingScheduler();
 
 	~MultiThreadingScheduler();
-
-	static std::shared_ptr<IScheduler>
-	create(const Configuration& conf);
 
 	Event
 	schedule(const std::function<void
@@ -72,9 +75,6 @@ public:
 	void
 	startSchedule() override;
 
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
-
 private:
 
 	void
@@ -95,8 +95,6 @@ private:
 	handleMissedDeadline(std::shared_ptr<EventBody> body);
 
 	EventMap events_;
-
-	ObjectHandle<ITimeProvider> timeProvider_;
 
 	std::thread invokerThread_;
 

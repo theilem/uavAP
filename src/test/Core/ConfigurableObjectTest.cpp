@@ -65,8 +65,8 @@ BOOST_AUTO_TEST_SUITE(ConfigurableObjectTest)
 BOOST_AUTO_TEST_CASE(Test1)
 {
 
-	boost::property_tree::ptree config;
-	boost::property_tree::ptree subConfig;
+	Configuration config;
+	Configuration subConfig;
 
 	subConfig.add("p1", 3.2);
 	subConfig.add("p2", "test1");

@@ -52,7 +52,7 @@ CustomPlanner::configure(const Configuration& config)
 	defaultMission.waypoints.push_back(centerWP);
 	missionMap_.insert(std::make_pair("default", defaultMission));
 
-	boost::property_tree::ptree missions;
+	Configuration missions;
 	pm.add("missions", missions, false);
 
 	for (auto& it : missions)

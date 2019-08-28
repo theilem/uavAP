@@ -27,8 +27,6 @@
  */
 struct INetworkParams
 {
-	using Configuration = boost::property_tree::ptree;
-
 	virtual
 	~INetworkParams() = default;
 };
