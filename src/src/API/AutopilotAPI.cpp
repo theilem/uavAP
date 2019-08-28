@@ -35,7 +35,7 @@ AutopilotAPI::AutopilotAPI():
 localFrame_(0)
 {
 	APIHelper helper;
-	aggregator_ = helper.createAggregation(boost::property_tree::ptree());
+	aggregator_ = helper.createAggregation(Configuration());
 }
 
 boost::signals2::connection

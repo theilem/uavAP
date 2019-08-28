@@ -46,9 +46,11 @@ main(int argc, char** argv)
 	auto sched = aggregator.getOne<IScheduler>();
 	sched->setMainThread();
 
+	APLOG_DEBUG << "Run synchronized";
 	SynchronizedRunner runner;
 	if (runner.runSynchronized(aggregator))
 	{
+		APLOG_ERROR << "Something went wrong";
 		return 1;
 	}
 

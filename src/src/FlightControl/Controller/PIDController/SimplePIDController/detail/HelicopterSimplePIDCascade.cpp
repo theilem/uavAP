@@ -111,7 +111,7 @@ HelicopterSimplePIDCascade::configure(const Configuration& config)
 	pm.add<double>("climb_rate_offset", climbRateOffset_, false);
 	pm.add<double>("throttle_target", throttleTarget_, false);
 
-	boost::property_tree::ptree pidConfig;
+	Configuration pidConfig;
 	pm.add("pids", pidConfig, false);
 
 	rollConstraint_->setContraintValue(hardRollConstraint_ * M_PI / 180.0);

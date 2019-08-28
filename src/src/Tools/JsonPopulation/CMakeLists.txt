@@ -16,11 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-add_subdirectory(Listener)
-add_subdirectory(SharedMemoryInit)
-add_subdirectory(ControllerSim)
-add_subdirectory(ServoTool)
-add_subdirectory(MemoryCleanup)
-add_subdirectory(EmulationInterface)
-add_subdirectory(JsonPopulation)
+add_executable(JsonPopulation JsonPopulation.cpp)
 
+target_link_libraries(JsonPopulation  	uavap_core
+										uavap_flight_control
+										uavap_mission_control
+										)
+
+install(TARGETS JsonPopulation OPTIONAL
+		RUNTIME DESTINATION bin/uavAP
+		LIBRARY DESTINATION lib OPTIONAL)

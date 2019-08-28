@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(ConstRollRateTest001_InitialConditions)
 
 	ConstRollRateModel model;
 
-	boost::property_tree::ptree config;
+	Configuration config;
 	config.add("roll_rate", 15);
 	config.add("roll_max", 45);
 	config.add("precision", 8);
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(ConstRollRateTest002_CenterSymmetry_Left)
 
 	ConstRollRateModel model;
 
-	boost::property_tree::ptree config;
+	Configuration config;
 	config.add("roll_rate", 15);
 	config.add("roll_max", 45);
 	config.add("precision", 16);
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(ConstRollRateTest003_CenterSymmetry_Right)
 
 	ConstRollRateModel model;
 
-	boost::property_tree::ptree config;
+	Configuration config;
 	config.add("roll_rate", 15);
 	config.add("roll_max", 45);
 	config.add("precision", 16);

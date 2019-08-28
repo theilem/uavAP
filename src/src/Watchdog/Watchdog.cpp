@@ -52,7 +52,7 @@ main(int argc, char** argv)
 		return 1;
 	}
 
-	boost::property_tree::ptree conf;
+	Configuration conf;
 	boost::property_tree::read_json(argv[1], conf);
 
 	signal(SIGINT, sigHandler);

@@ -28,7 +28,7 @@
 
 template<class Group, typename Type>
 void
-mapMetricsValue(PropertyMapper<boost::property_tree::ptree>& pm, const std::string& metrics, const std::string& metricsMember,
+mapMetricsValue(PropertyMapper<Configuration>& pm, const std::string& metrics, const std::string& metricsMember,
 		Group& metricsGroup)
 {
 	auto metricsValueEnum = EnumMap<Type>::convert(metricsMember);

@@ -34,6 +34,8 @@ class SensingActuationIOFactory: public Factory<ISensingActuationIO>
 public:
 	SensingActuationIOFactory()
 	{
+		addCreator<SensingActuationIO>();
+
 		setDefault<SensingActuationIO>();
 	}
 

@@ -168,16 +168,16 @@ IDCComm::receivePacket(const Packet& packet)
 	switch (target)
 	{
 	case Target::FLIGHT_ANALYSIS:
-		flightAnalysisPublisher_.publish(packet);
+		flightAnalysisPublisher_.publish(p);
 		break;
 	case Target::FLIGHT_CONTROL:
-		flightControlPublisher_.publish(packet);
+		flightControlPublisher_.publish(p);
 		break;
 	case Target::MISSION_CONTROL:
-		missionControlPublisher_.publish(packet);
+		missionControlPublisher_.publish(p);
 		break;
 	case Target::API:
-		apiPublisher_.publish(packet);
+		apiPublisher_.publish(p);
 		break;
 	default:
 		APLOG_WARN << "Invalid Target: " << static_cast<int>(target);

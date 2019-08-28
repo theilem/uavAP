@@ -41,7 +41,6 @@ public:
 	~ICondition() = default;
 
 	using ConditionTrigger = std::function<void(int)>;
-	using Configuration = boost::property_tree::ptree;
 
 	virtual void
 	activate(ConditionManager*, const ConditionTrigger&) = 0;

@@ -25,6 +25,7 @@
 
 #ifndef UAVAP_MISSIONCONTROL_GLOBALPLANNER_SPLINEGLOBALPLANNER_SPLINEGLOBALPLANNER_H_
 #define UAVAP_MISSIONCONTROL_GLOBALPLANNER_SPLINEGLOBALPLANNER_SPLINEGLOBALPLANNER_H_
+#include <uavAP/Core/IPC/Publisher.h>
 #include <uavAP/Core/Object/AggregatableObject.hpp>
 #include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
 #include <uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlannerParams.h>
@@ -35,9 +36,10 @@
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 
 class ILocalPlanner;
+class IPC;
 
 class SplineGlobalPlanner: public IGlobalPlanner,
-		public AggregatableObject<ILocalPlanner>,
+		public AggregatableObject<ILocalPlanner, IPC>,
 		public ConfigurableObject<SplineGlobalPlannerParams>,
 		public IRunnableObject
 {
@@ -68,6 +70,8 @@ private:
 	createCatmulRomSplines(const Mission& mission);
 
 	Mission mission_;
+
+	Publisher<Packet> trajectoryPublisher_;
 
 };
 

@@ -34,6 +34,7 @@
 #include "uavAP/Core/DataPresentation/APDataPresentation/BasicSerialization.h"
 
 #ifdef FLOAT_SINGLE
+#error This is wrong
 
 using FloatingType = float;
 using Vector2 = Eigen::Matrix<float, 2, 1, Eigen::DontAlign>;

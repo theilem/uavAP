@@ -21,6 +21,13 @@ struct Parameter
 		return *this;
 	}
 
+	Parameter<Type>&
+	operator=(const Type& val)
+	{
+		value = val;
+		return *this;
+	}
+
 	inline const Type&
 	operator()() const
 	{
@@ -42,18 +49,22 @@ struct Parameter
 template<typename Type>
 struct is_parameter_set
 {
-	template<typename _1> static char &
+	template<typename _1>
+	static char &
 	chk(
 			typename std::enable_if<
-					std::is_same<void, decltype(std::declval<_1>().configure(std::declval<int&>()))>::value, int>::type);
-	template<typename > static int &
+					std::is_same<void, decltype(std::declval<_1>().configure(std::declval<int&>()))>::value,
+					int>::type);
+
+	template<typename >
+	static int &
 	chk(...);
 
 	static constexpr bool value = sizeof(chk<Type>(0)) == sizeof(char);
 };
 
 template<typename Type>
-struct is_parameter : public std::false_type
+struct is_parameter: public std::false_type
 {
 };
 
@@ -70,6 +81,6 @@ using enable_if_not_is_parameter = typename std::enable_if<!is_parameter<Type>::
 template<typename Type>
 using enable_if_is_parameter_set = typename std::enable_if<is_parameter_set<Type>::value, Type>::type;
 template<typename Type>
-using enable_if_not_is_parameter_set = typename std::enable_if<!is_parameter_set<Type>::value, Type>::type;
+using enable_if_not_is_parameter_set = typename std::enable_if<!(is_parameter_set<Type>::value), Type>::type;
 
 #endif /* UAVAP_CORE_PROPERTYMAPPER_PARAMETER_H_ */

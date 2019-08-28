@@ -9,27 +9,47 @@
 #define UAVAP_CORE_PROPERTYMAPPER_CONFIGURABLEOBJECT_HPP_
 #include <uavAP/Core/PropertyMapper/Configuration.h>
 
-template <class ParameterSet>
+template<class ParameterSet>
 class ConfigurableObject
 {
 public:
+
+	using ParamType = ParameterSet;
 
 	ConfigurableObject() = default;
 
 	ConfigurableObject(const ParameterSet& params);
 
-	bool
-	configure(const Configuration& config);
-
 	void
 	setParams(const ParameterSet& set);
 
-	std::string
-	getJson();
+	bool
+	configure(const Configuration& config);
+
+	const ParameterSet&
+	getParams() const;
 
 protected:
 
 	ParameterSet params;
+};
+
+template<typename Type>
+struct is_configurable_object
+{
+	template<typename _1>
+	static char &
+	chk(
+			typename std::enable_if<
+					std::is_same<void,
+							decltype(std::declval<typename _1::ParamType>().configure(std::declval<int&>()))>::value,
+					int>::type);
+
+	template<typename >
+	static int &
+	chk(...);
+
+	static constexpr bool value = sizeof(chk<Type>(0)) == sizeof(char);
 };
 
 #endif /* UAVAP_CORE_PROPERTYMAPPER_CONFIGURABLEOBJECT_HPP_ */

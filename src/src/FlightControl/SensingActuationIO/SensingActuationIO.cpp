@@ -68,7 +68,7 @@ SensingActuationIO::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 		sensorSubscription_ = ipc->subscribe<SensorData>("sensor_data",
-				boost::bind(&SensingActuationIO::onSensorData, this, _1));
+				std::bind(&SensingActuationIO::onSensorData, this, std::placeholders::_1));
 		if (!sensorSubscription_.connected())
 		{
 			APLOG_ERROR << "SensorData in shared memory missing. Cannot continue.";
