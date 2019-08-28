@@ -50,8 +50,8 @@ public:
 		addDefault<TimeProviderFactory>();
 		addDefaultCreator<DataPresentation>();
 
-		addFactory<NetworkFactory>();
 		addFactory<CommFactory>();
+		addFactory<NetworkFactory>();
 	}
 
 };

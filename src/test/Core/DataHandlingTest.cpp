@@ -43,8 +43,6 @@ statusFunction()
 	return data;
 }
 
-
-
 void
 commandFunction(const SensorData& data)
 {
@@ -85,11 +83,11 @@ BOOST_AUTO_TEST_CASE(data_handling_test001)
 	(const SensorData&)>(commandFunction));
 	auto pub = ipc->publishPackets("comm_to_flight_control");
 
-
 	SimpleRunner runner(agg);
 
 	BOOST_REQUIRE(!runner.runAllStages());
-	ipc->subscribeOnPackets("flight_control_to_comm", std::bind(onPacket, std::placeholders::_1, dp));
+	ipc->subscribeOnPackets("flight_control_to_comm",
+			std::bind(onPacket, std::placeholders::_1, dp));
 
 	auto scheduler = agg.getOne<MicroSimulator>();
 
@@ -98,9 +96,11 @@ BOOST_AUTO_TEST_CASE(data_handling_test001)
 	{	6,2,1};
 	Packet testPacket = dp->serialize(data);
 	dp->addHeader(testPacket, Content::SENSOR_DATA);
-	scheduler->schedule(std::bind(static_cast<void(Publisher<Packet>::*)(const Packet&)>(&Publisher<Packet>::publish), &pub, testPacket), Milliseconds(50));
-
+	scheduler->schedule(std::bind(static_cast<void
+	(Publisher<Packet>::*)(const Packet&)>(&Publisher<Packet>::publish), &pub, testPacket), Milliseconds(50));
 
 	scheduler->simulate(Seconds(10));
+
+	std::this_thread::sleep_for(Milliseconds(10));
 
 }

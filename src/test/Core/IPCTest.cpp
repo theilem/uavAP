@@ -24,6 +24,8 @@
  */
 
 #include <boost/test/unit_test.hpp>
+#include <uavAP/Core/SensorData.h>
+#include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include "uavAP/Core/LinearAlgebra.h"
 #include "uavAP/Core/Runner/SimpleRunner.h"
 #include "uavAP/Core/Scheduler/MultiThreadingScheduler.h"
@@ -63,6 +65,24 @@ checkValue(const Test& t, int& counter)
 	BOOST_CHECK_EQUAL(t.val1, test.val1);
 	BOOST_CHECK_EQUAL(t.val2, test.val2);
 	BOOST_CHECK_EQUAL(t.val3, test.val3);
+	++counter;
+}
+
+void
+checkSensorData(const SensorData& t, int& counter)
+{
+	BOOST_CHECK_EQUAL(t.position.x(), 1);
+	BOOST_CHECK_EQUAL(t.position.y(), 2);
+	BOOST_CHECK_EQUAL(t.position.z(), 3);
+	++counter;
+}
+
+void
+checkControllerOutput(const ControllerOutput& t, int& counter)
+{
+	BOOST_CHECK_EQUAL(t.pitchOutput, 1);
+	BOOST_CHECK_EQUAL(t.throttleOutput, 2);
+	BOOST_CHECK_EQUAL(t.yawOutput, 3);
 	++counter;
 }
 
@@ -130,6 +150,72 @@ BOOST_AUTO_TEST_CASE(test001)
 }
 
 BOOST_AUTO_TEST_CASE(test002)
+{
+	auto ipc = std::make_shared<IPC>();
+	auto tp = std::make_shared<SystemTimeProvider>();
+	auto sched = std::make_shared<MultiThreadingScheduler>();
+	auto dp = std::make_shared<DataPresentation>();
+	auto agg = Aggregator::aggregate(
+	{ ipc, tp, sched, dp });
+
+	IPCOptions opt;
+	opt.multiTarget = true; // setting to shared memory
+	auto publisher = ipc->publish<SensorData>("test3", opt);
+	int counter1 = 0;
+	Subscription sub = ipc->subscribe<SensorData>("test3",
+			std::bind(&checkSensorData, std::placeholders::_1, std::ref(counter1)));
+	BOOST_REQUIRE(sub.connected());
+	SimpleRunner run(agg);
+	BOOST_REQUIRE(!run.runAllStages());
+	SensorData data;
+	data.position = Vector3(1,2,3);
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	publisher.publish(data);
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+	publisher.publish(data);
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+	BOOST_CHECK_EQUAL(counter1, 2);
+
+}
+
+BOOST_AUTO_TEST_CASE(test003)
+{
+	auto ipc = std::make_shared<IPC>();
+	auto tp = std::make_shared<SystemTimeProvider>();
+	auto sched = std::make_shared<MultiThreadingScheduler>();
+	auto dp = std::make_shared<DataPresentation>();
+	auto agg = Aggregator::aggregate(
+	{ ipc, tp, sched, dp });
+
+	IPCOptions opt;
+	opt.multiTarget = true; // setting to shared memory
+	auto publisher = ipc->publish<ControllerOutput>("test55", opt);
+	int counter1 = 0;
+	Subscription sub = ipc->subscribe<ControllerOutput>("test55",
+			std::bind(&checkControllerOutput, std::placeholders::_1, std::ref(counter1)));
+	BOOST_REQUIRE(sub.connected());
+	SimpleRunner run(agg);
+	BOOST_REQUIRE(!run.runAllStages());
+	ControllerOutput data;
+	data.pitchOutput = 1;
+	data.throttleOutput = 2;
+	data.yawOutput = 3;
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	publisher.publish(data);
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+	publisher.publish(data);
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+	BOOST_CHECK_EQUAL(counter1, 2);
+
+}
+
+BOOST_AUTO_TEST_CASE(test004)
 {
 	auto ipc = std::make_shared<IPC>();
 	auto tp = std::make_shared<SystemTimeProvider>();

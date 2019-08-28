@@ -85,7 +85,7 @@ DataHandling::onPacket(const Packet& packet)
 		return;
 	}
 	auto p = packet;
-	Content content = dp->getHeader<Content>(p);
+	Content content = dp->extractHeader<Content>(p);
 
 	auto it = subscribers_.find(content);
 	if (it == subscribers_.end())

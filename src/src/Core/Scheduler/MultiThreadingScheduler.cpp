@@ -44,7 +44,7 @@ Event
 MultiThreadingScheduler::schedule(const std::function<void
 ()>& task, Duration initialFromNow)
 {
-	auto body = std::make_shared<EventBody>(task, &schedulingParams_);
+	auto body = std::make_shared<EventBody>(task);
 	auto element = createSchedule(initialFromNow, body);
 
 	std::unique_lock<std::mutex> lock(eventsMutex_);
@@ -57,7 +57,7 @@ Event
 MultiThreadingScheduler::schedule(const std::function<void
 ()>& task, Duration initialFromNow, Duration period)
 {
-	auto body = std::make_shared<EventBody>(task, period, &schedulingParams_);
+	auto body = std::make_shared<EventBody>(task, period);
 	auto element = createSchedule(initialFromNow, body);
 
 	std::unique_lock<std::mutex> lock(eventsMutex_);

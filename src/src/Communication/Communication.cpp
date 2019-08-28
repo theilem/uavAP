@@ -35,7 +35,7 @@
 int
 main(int argc, char** argv)
 {
-	APLogger::instance()->setLogLevel(LogLevel::WARN);
+	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
 	APLogger::instance()->setModuleName("Communication");
 
 	CommunicationHelper helper;
