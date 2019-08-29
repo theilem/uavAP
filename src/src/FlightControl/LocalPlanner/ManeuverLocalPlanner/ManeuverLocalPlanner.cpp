@@ -336,7 +336,7 @@ ManeuverLocalPlanner::calculateControllerTarget(const Vector3& position, double 
 
 	// Yaw Rate
 
-	controllerTarget.yawRate = vel * curvature + params.kYawrate() * headingError;
+	controllerTarget.yawRate = vel * curvature + params.kYawRate() * headingError;
 
 	return controllerTarget;
 }
