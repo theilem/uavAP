@@ -34,20 +34,20 @@ set(EIGEN_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/eigen3/")
 set(Boost_LIBRARY_DIRS "${LIBRARY_ROOT_DIR}/usr/local/lib/")
 set(Boost_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/")
 
-if(CMAKE_COMPILER_IS_GNUCC)
-	if(CMAKE_C_COMPILER_VERSION VERSION_GREATER 7.9.9)
-		message(WARNING "gcc version too new, setting gcc-7 as C compiler")
-		set(CMAKE_C_COMPILER /usr/bin/gcc-7)
-	endif(CMAKE_C_COMPILER_VERSION VERSION_GREATER 7.9.9)
+#if(CMAKE_COMPILER_IS_GNUCC)
+#	if(CMAKE_C_COMPILER_VERSION VERSION_GREATER 7.9.9)
+#		message(WARNING "gcc version too new, setting gcc-7 as C compiler")
+#		set(CMAKE_C_COMPILER /usr/bin/gcc-7)
+#	endif(CMAKE_C_COMPILER_VERSION VERSION_GREATER 7.9.9)
+#
+#	if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.9.9)
+#		message(WARNING "g++ version too new, setting g++-7 as CXX compiler")
+#		set(CMAKE_CXX_COMPILER /usr/bin/g++-7)
+#	endif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.9.9)
+#
+#endif(CMAKE_COMPILER_IS_GNUCC)
 
-	if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.9.9)
-		message(WARNING "g++ version too new, setting g++-7 as CXX compiler")
-		set(CMAKE_CXX_COMPILER /usr/bin/g++-7)
-	endif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.9.9)
-
-endif(CMAKE_COMPILER_IS_GNUCC)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -std=c++14 -fPIC -Wall -Wno-int-in-bool-context")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -std=c++14 -fPIC -Wall -Wno-int-in-bool-context -Wno-parentheses")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
 include_directories(	${CMAKE_SOURCE_DIR}
