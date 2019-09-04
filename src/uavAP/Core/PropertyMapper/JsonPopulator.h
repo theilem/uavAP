@@ -156,7 +156,7 @@ JsonPopulator::operator <<(const Type& text)
 	return *this;
 }
 
-template<class Obj, typename std::enable_if<is_configurable_object<Obj>::value, int>::type = 0>
+template<class Obj, typename std::enable_if<is_configurable_object<Obj>::value, int>::type>
 inline void
 JsonPopulator::populate()
 {
@@ -180,7 +180,7 @@ JsonPopulator::populate()
 	jsonString_ << "}";
 }
 
-template<class Obj, typename std::enable_if<!is_configurable_object<Obj>::value, int>::type = 0>
+template<class Obj, typename std::enable_if<!is_configurable_object<Obj>::value, int>::type>
 inline void
 JsonPopulator::populate()
 {
