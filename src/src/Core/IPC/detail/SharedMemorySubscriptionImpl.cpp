@@ -9,6 +9,7 @@
 #include <uavAP/Core/DataPresentation/Packet.h>
 #include <uavAP/Core/IPC/detail/MessageObject.h>
 #include <uavAP/Core/IPC/detail/SharedMemorySubscriptionImpl.h>
+#include <uavAP/Core/Logging/APLogger.h>
 
 
 
@@ -59,7 +60,7 @@ SharedMemorySubscriptionImpl::onSharedMemory()
 	mapped_region region(sharedMem_, read_write);
 	MessageObjectHeader* message = static_cast<MessageObjectHeader*>(region.get_address());
 	Packet packet;
-	packet.getBuffer().resize(message->maxPacketSize);
+	packet.getBuffer().reserve(message->maxPacketSize);
 	void* packetStart = static_cast<void*>((uint8_t*)region.get_address() + sizeof(MessageObjectHeader));
 
 	boost::interprocess::sharable_lock<boost::interprocess::interprocess_sharable_mutex> lock(
@@ -71,12 +72,13 @@ SharedMemorySubscriptionImpl::onSharedMemory()
 			return;
 		}
 
-		auto timeout = boost::get_system_time() + boost::posix_time::milliseconds(100);
+		auto timeout = boost::get_system_time() + boost::posix_time::milliseconds(10);
 		if (!message->cnd.timed_wait(lock, timeout))
 		{
 			continue;
 		}
-		memcpy(packet.getStartAddress(), packetStart, message->maxPacketSize);
+		packet.getBuffer().resize(message->packetSize);
+		memcpy(packet.getStartAddress(), packetStart, message->packetSize);
 		onSharedMem_(packet);
 	}
 }

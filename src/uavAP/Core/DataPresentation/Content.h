@@ -33,13 +33,13 @@
  */
 enum class Target
 {
-	INVALID,        //!< INVALID
-	BROADCAST,		//!< Broadcast to everyone
+	INVALID = 0,        //!< INVALID
 	FLIGHT_ANALYSIS, //!< Forward to FlightAnalysis
 	FLIGHT_CONTROL, //!< Forward to FlightControl
 	MISSION_CONTROL, //!< Forward to MissionControl
+	API,             //!< Forward to API
 	COMMUNICATION,  //!< Forward to Communication
-	API             //!< Forward to API
+	BROADCAST		//!< Broadcast to everyone
 };
 
 ENUMMAP_INIT(Target, {{Target::BROADCAST, "broadcast"}, {Target::FLIGHT_ANALYSIS, "flight_analysis"}, {Target::FLIGHT_CONTROL,

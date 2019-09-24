@@ -38,6 +38,7 @@
 #include <uavAP/Core/DataPresentation/BinarySerialization.hpp>
 #include <uavAP/Core/IPC/IPCOptions.h>
 #include <uavAP/Core/IPC/IPCParams.h>
+#include <uavAP/Core/LockTypes.h>
 #include <uavAP/Core/Object/AggregatableObject.hpp>
 #include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
 #include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
@@ -120,13 +121,20 @@ private:
 	Packet
 	forwardToPacket(const Type& val) const;
 
+	void
+	retrySubscriptions();
+
 	std::vector<std::shared_ptr<IPublisherImpl>> publications_;
 
-	std::mutex subscribeMutex_;
+	Mutex subscribeMutex_;
 	std::map<std::string, std::shared_ptr<ISubscriptionImpl>> subscriptions_;
 
-};
+	Mutex retryVectorMutex_;
+	std::vector<std::pair<std::function<void
+	(const Subscription&)>, std::function<Subscription
+	()>>> retryVector_;
 
+};
 
 template<typename Type>
 inline Publisher<Type>
@@ -140,7 +148,8 @@ IPC::publish(const std::string& id, const IPCOptions& options)
 	}
 	else
 	{
-		return Publisher<Type>(publishOnMessageQueue(id, packetSize, params.maxNumPackets()), forwarding);
+		return Publisher<Type>(publishOnMessageQueue(id, packetSize, params.maxNumPackets()),
+				forwarding);
 	}
 }
 
@@ -149,15 +158,37 @@ inline Subscription
 IPC::subscribe(const std::string& id, const std::function<void
 (const Type&)>& slot, const IPCOptions& options)
 {
-	auto packetSlot = std::bind(&IPC::forwardFromPacket<Type>, this, std::placeholders::_1, slot);
+	Subscription result;
+	std::function<void(const Packet&)> packetSlot = std::bind(&IPC::forwardFromPacket<Type>, this, std::placeholders::_1, slot);
 	if (options.multiTarget)
 	{
-		return subscribeOnSharedMemory(id, packetSlot);
+		result = subscribeOnSharedMemory(id, packetSlot);
 	}
 	else
 	{
-		return subscribeOnMessageQueue(id, packetSlot);
+		result = subscribeOnMessageQueue(id, packetSlot);
 	}
+
+	if (!result.connected() && options.retry)
+	{
+		LockGuard l(retryVectorMutex_);
+		APLOG_DEBUG << "Queuing " << id << " for retry";
+		//Schedule retry
+		if (options.multiTarget)
+		{
+			retryVector_.push_back(
+					std::make_pair(options.retrySuccessCallback,
+							std::bind(&IPC::subscribeOnSharedMemory, this, id, packetSlot)));
+		}
+		else
+		{
+			retryVector_.push_back(
+					std::make_pair(options.retrySuccessCallback,
+							std::bind(&IPC::subscribeOnMessageQueue, this, id, packetSlot)));
+		}
+	}
+
+	return result;
 }
 
 template<typename Type>
@@ -183,6 +214,5 @@ IPC::forwardToPacket(const Type& val) const
 		return dp::serialize(val);
 
 }
-
 
 #endif /* UAVAP_CORE_IPC_IPC_H_ */

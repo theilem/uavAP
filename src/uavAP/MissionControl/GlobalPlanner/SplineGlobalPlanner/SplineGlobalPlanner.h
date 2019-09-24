@@ -37,9 +37,10 @@
 
 class ILocalPlanner;
 class IPC;
+class DataPresentation;
 
 class SplineGlobalPlanner: public IGlobalPlanner,
-		public AggregatableObject<ILocalPlanner, IPC>,
+		public AggregatableObject<ILocalPlanner, IPC, DataPresentation>,
 		public ConfigurableObject<SplineGlobalPlannerParams>,
 		public IRunnableObject
 {

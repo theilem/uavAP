@@ -61,8 +61,12 @@ public:
 	bool
 	runStage(RunStage stage);
 
+	void
+	cleanUp();
+
 private:
 
+	bool shmAllocated_;
 	boost::interprocess::shared_memory_object sync_;
 
 	Duration timeout_;

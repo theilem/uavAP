@@ -26,27 +26,31 @@
 #define GROUNDCOMMUNICATION_SERIALCONNECTION_H_
 
 #include <boost/asio.hpp>
-#include <boost/bind.hpp>
 #include <boost/signals2/signal.hpp>
+#include <uavAP/Core/Object/AggregatableObject.hpp>
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/IDC/NetworkLayer/Serial/SerialHandler.h"
 #include "uavAP/Core/IDC/NetworkLayer/INetworkLayer.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
-#include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/PropertyMapper/Configuration.h"
 #include <unordered_map>
+
+class IScheduler;
+class SignalHandler;
 
 
 /**
  * @brief IDC using serial to communicate among devices
  */
-class SerialNetworkLayer: public INetworkLayer, public IAggregatableObject, public IRunnableObject
+class SerialNetworkLayer: public INetworkLayer, public AggregatableObject<IScheduler, SignalHandler>, public IRunnableObject
 {
 
 public:
 
 	static constexpr TypeId typeId = "serial";
+
+	~SerialNetworkLayer();
 
 	/**
 	 * @brief Create the SerialIDC using a config tree
@@ -71,21 +75,15 @@ public:
 	boost::signals2::connection
 	subscribeOnPacket(const std::string& id, const OnPacket::slot_type& handle) override;
 
-	/**
-	 * @brief Set IScheduler from aggregation
-	 * @param agg Aggregator containng the aggregation
-	 */
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
-
 	bool
 	run(RunStage stage) override;
 
 private:
 
-	std::unordered_map<std::string, std::shared_ptr<SerialHandler> > handler_;
+	void
+	onSigInt(int sig);
 
-	ObjectHandle<IScheduler> scheduler_; //!< scheduler from aggregation
+	std::unordered_map<std::string, std::shared_ptr<SerialHandler> > handler_;
 
 };
 

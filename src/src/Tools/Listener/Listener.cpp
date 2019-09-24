@@ -70,10 +70,15 @@ main(int argc, char** argv)
 {
 	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
 	auto ipc = std::make_shared<IPC>();
+	auto dp = std::make_shared<DataPresentation>();
 	auto tp = std::make_shared<SystemTimeProvider>();
 	auto sched = std::make_shared<MultiThreadingScheduler>();
 	auto agg = Aggregator::aggregate(
-	{ ipc, tp, sched });
+	{ ipc, dp, tp, sched });
+
+	ArchiveOptions opts;
+	opts.compressDouble = true;
+	dp->setParams(opts);
 
 	ipc->subscribe<ControllerOutput>("actuation", &dispControl);
 	ipc->subscribe<SensorData>("sensor_data", &dispSens);

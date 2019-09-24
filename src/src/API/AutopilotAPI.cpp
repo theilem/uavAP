@@ -31,11 +31,9 @@
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include <functional>
 
-AutopilotAPI::AutopilotAPI():
-localFrame_(0)
+AutopilotAPI::AutopilotAPI() :
+		localFrame_(0)
 {
-	APIHelper helper;
-	aggregator_ = helper.createAggregation(Configuration());
 }
 
 boost::signals2::connection
@@ -127,4 +125,12 @@ void
 AutopilotAPI::onLocalFrame(const VehicleOneFrame& frame)
 {
 	localFrame_ = frame;
+}
+
+void
+AutopilotAPI::configure(const Configuration& config)
+{
+	APIHelper helper;
+	aggregator_ = helper.createAggregation(config);
+
 }

@@ -73,6 +73,8 @@ public:
 
 	ManeuverAnalysis();
 
+	~ManeuverAnalysis();
+
 	static std::shared_ptr<ManeuverAnalysis>
 	create(const Configuration& config);
 

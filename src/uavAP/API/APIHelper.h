@@ -29,6 +29,7 @@
 #include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/Core/Scheduler/SchedulerFactory.h>
 #include <uavAP/Core/TimeProvider/TimeProviderFactory.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 
 class APIHelper: public Helper
 {
@@ -39,6 +40,7 @@ public:
 		addDefault<TimeProviderFactory>();
 		addDefault<SchedulerFactory>();
 		addDefaultCreator<IPC>();
+		addConfigurable<DataPresentation>();
 	}
 };
 

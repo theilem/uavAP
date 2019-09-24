@@ -22,13 +22,15 @@
  *  Created on: Aug 6, 2017
  *      Author: mircot
  */
+#include <uavAP/Core/Logging/APLogger.h>
 #include <uavAP/Core/Object/SignalHandler.h>
 #include "uavAP/Core/Object/Aggregator.h"
 
 
 Aggregator::Aggregator()
 {
-	add(std::make_shared<SignalHandler>());
+	add(std::make_shared<SignalHandler>(*this));
+	APLOG_DEBUG << "Aggregator with signal handler created";
 }
 
 void

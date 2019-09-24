@@ -24,6 +24,9 @@ public:
 
 	AutopilotAPI();
 
+	void
+	configure(const Configuration& config);
+
 	using OnControllerOut = boost::signals2::signal<void (const ControllerOutput&)>;
 
 	boost::signals2::connection

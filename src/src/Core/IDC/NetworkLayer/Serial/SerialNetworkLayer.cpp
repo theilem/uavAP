@@ -22,9 +22,11 @@
  *  Created on: Jul 31, 2017
  *      Author: mircot
  */
+#include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
 #include "uavAP/Core/IDC/NetworkLayer/Serial/SerialNetworkLayer.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
+#include "uavAP/Core/Object/SignalHandler.h"
 
 std::shared_ptr<INetworkLayer>
 SerialNetworkLayer::create(const Configuration& config)
@@ -78,12 +80,6 @@ SerialNetworkLayer::subscribeOnPacket(const std::string& id, const OnPacket::slo
 	return it->second->subscribeOnPackets(handle);
 }
 
-void
-SerialNetworkLayer::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	scheduler_.setFromAggregationIfNotSet(agg);
-}
-
 bool
 SerialNetworkLayer::run(RunStage stage)
 {
@@ -91,19 +87,25 @@ SerialNetworkLayer::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!scheduler_.isSet())
+		if (!checkIsSet<IScheduler, SignalHandler>())
 		{
-			APLOG_ERROR << "SerialNetworkLayer scheduler missing";
+			APLOG_ERROR << "SerialNetworkLayer missing Dependencies";
 			return true;
 		}
 		break;
 	}
 	case RunStage::NORMAL:
 	{
+		auto sched = get<IScheduler>();
 		for (const auto& it : handler_)
 		{
-			auto sched = scheduler_.get();
 			sched->schedule(std::bind(&SerialHandler::startHandler, it.second), Milliseconds(0));
+		}
+
+		if (auto sh = get<SignalHandler>())
+		{
+ 			sh->subscribeOnSigint(
+					std::bind(&SerialNetworkLayer::onSigInt, this, std::placeholders::_1));
 		}
 		break;
 	}
@@ -112,3 +114,22 @@ SerialNetworkLayer::run(RunStage stage)
 	}
 	return false;
 }
+
+void
+SerialNetworkLayer::onSigInt(int sig)
+{
+	if (sig == SIGINT || sig == SIGTERM)
+	{
+		APLOG_DEBUG << "Caught sigint. Canceling Serial handlers.";
+		for (const auto& it : handler_)
+		{
+			it.second->cancelHandler();
+		}
+	}
+}
+
+SerialNetworkLayer::~SerialNetworkLayer()
+{
+	handler_.clear();
+}
+

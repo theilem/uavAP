@@ -24,6 +24,7 @@
  */
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
+#include <uavAP/Core/Logging/APLogger.h>
 #include "uavAP/Core/Object/Aggregator.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Runner/SynchronizedRunner.h"
@@ -74,6 +75,7 @@ SynchronizedRunner::runSynchronized(Aggregator& agg)
 			return true;
 		lastRunStage = stage;
 
+		APLogger::instance()->flush(); //Synchronize stdio
 		synchronizer->finishedStage.post();
 	}
 	return false;

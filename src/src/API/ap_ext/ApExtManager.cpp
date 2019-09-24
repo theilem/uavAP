@@ -42,6 +42,13 @@ bool
 ApExtManager::configure(const Configuration& config)
 {
 	bool success = channelMixing_.configure(config);
+
+	PropertyMapper<Configuration> pm(config);
+
+	Configuration apiConfig;
+	pm.add("api", apiConfig, true);
+
+	uavapAPI_.configure(apiConfig);
 	uavapAPI_.initialize();
 
 	AdvancedControl advanced;
@@ -55,7 +62,6 @@ ApExtManager::configure(const Configuration& config)
 	uavapAPI_.subscribeOnAdvancedControl(
 			std::bind(&ApExtManager::onAdvancedControl, this, std::placeholders::_1));
 
-	PropertyMapper<Configuration> pm(config);
 	Configuration rotationOffsetConfig;
 	if (pm.add("rotation_offset", rotationOffsetConfig, false))
 	{

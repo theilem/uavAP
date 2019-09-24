@@ -32,7 +32,7 @@
 #include <mutex>
 
 SynchronizedRunnerMaster::SynchronizedRunnerMaster(int numOfRunners) :
-		timeout_(Seconds(1)), numOfRunners_(numOfRunners)
+		shmAllocated_(true), timeout_(Seconds(1)), numOfRunners_(numOfRunners)
 {
 	using namespace boost::interprocess;
 	try
@@ -53,7 +53,8 @@ SynchronizedRunnerMaster::SynchronizedRunnerMaster(int numOfRunners) :
 
 SynchronizedRunnerMaster::~SynchronizedRunnerMaster()
 {
-	sync_.remove(sync_.get_name());
+	if (shmAllocated_)
+		cleanUp();
 }
 
 bool
@@ -103,4 +104,11 @@ SynchronizedRunnerMaster::runStage(RunStage stage)
 		}
 	}
 	return false;
+}
+
+void
+SynchronizedRunnerMaster::cleanUp()
+{
+	sync_.remove(sync_.get_name());
+	shmAllocated_ = false;
 }

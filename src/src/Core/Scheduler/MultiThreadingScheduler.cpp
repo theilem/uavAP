@@ -23,6 +23,7 @@
  *      Author: mircot
  */
 
+#include <uavAP/Core/LockTypes.h>
 #include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
 #include <uavAP/Core/TimeProvider/ITimeProvider.h>
 #include "uavAP/Core/Logging/APLogger.h"
@@ -38,6 +39,8 @@ MultiThreadingScheduler::~MultiThreadingScheduler()
 {
 	if (started_)
 		stop();
+
+	APLOG_DEBUG << "Scheduler destroyed.";
 }
 
 Event
@@ -71,9 +74,40 @@ MultiThreadingScheduler::stop()
 {
 	std::unique_lock<std::mutex> lock(eventsMutex_);
 	started_ = false;
+
+	for (auto& event : events_)
+	{
+		Lock l(event.second->executionMutex);
+		event.second->isCanceled.store(true);
+		event.second->intervalCondition.notify_all();
+		l.unlock();
+		if (event.second->periodicThread.joinable())
+		{
+			APLOG_DEBUG << "Joining " << event.second->body.target_type().name();
+			APLogger::instance()->flush();
+			event.second->periodicThread.join();
+			APLOG_DEBUG << "Joined " << event.second->body.target_type().name();
+			APLogger::instance()->flush();
+		}
+	}
+	events_.clear();
 	wakeupCondition_.notify_all();
 	lock.unlock();
-	invokerThread_.join();
+
+	for (auto event : nonPeriodicEvents_)
+	{
+		if (event->periodicThread.joinable())
+		{
+			APLOG_DEBUG << "Joining " << event->body.target_type().name();
+			APLogger::instance()->flush();
+			event->periodicThread.join();
+			APLOG_DEBUG << "Joined " << event->body.target_type().name();
+			APLogger::instance()->flush();
+		}
+	}
+
+	if (!mainThread_)
+		invokerThread_.join();
 }
 
 bool
@@ -164,33 +198,43 @@ MultiThreadingScheduler::runSchedule()
 					//Check if isCanceled
 					if (eventBody->isCanceled.load())
 					{
-						eventBody->periodicThread.join();
+						nonPeriodicEvents_.push_back(eventBody);
 						events_.erase(events_.begin());
 						continue;
 					}
 				}
 				else
 				{
-					//Thread not started yet
-					eventBody->periodicThread = std::thread(
-							boost::bind(&MultiThreadingScheduler::periodicTask, this, eventBody));
-					if (params.priority() != 20)
-						if (int r = pthread_setschedparam(eventBody->periodicThread.native_handle(),
-						SCHED_FIFO, &schedulingParams_))
-						{
-							APLOG_DEBUG << "Cannot set sched params: " << r;
-						}
+					if (!eventBody->isCanceled.load())
+					{
+						//Thread not started yet
+						eventBody->periodicThread = std::thread(
+								std::bind(&MultiThreadingScheduler::periodicTask, this,
+										eventBody));
+						if (params.priority() != 20)
+							if (int r = pthread_setschedparam(
+									eventBody->periodicThread.native_handle(),
+									SCHED_FIFO, &schedulingParams_))
+							{
+								APLOG_DEBUG << "Cannot set sched params: " << r;
+							}
+					}
 				}
+				if (!eventBody->isCanceled.load())
+				{
 				//Reschedule Task
-				auto element = std::make_pair(it->first + *eventBody->period, eventBody);
-				events_.insert(element);
+					auto element = std::make_pair(it->first + *eventBody->period, eventBody);
+					events_.insert(element);
+				}
 			}
 			else
 			{
 				//Not a periodic thread
-				if (!it->second->isCanceled.load())
+				if (!eventBody->isCanceled.load())
 				{
-					std::thread(it->second->body).detach();
+					eventBody->periodicThread = std::thread(it->second->body);
+					nonPeriodicEvents_.push_back(eventBody);
+//					std::thread(it->second->body).detach();
 				}
 			}
 			//Remove current schedule from events as it was handeled

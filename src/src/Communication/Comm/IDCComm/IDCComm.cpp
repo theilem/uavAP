@@ -29,37 +29,13 @@
 #include <uavAP/Core/DataPresentation/Content.h>
 #include <uavAP/Core/IDC/IDC.h>
 #include <uavAP/Core/IPC/IPC.h>
+#include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
 #include "uavAP/Core/DataPresentation/DataPresentation.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightControl/Controller/IController.h"
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/LockTypes.h"
-
-IDCComm::IDCComm()
-{
-}
-
-std::shared_ptr<IDCComm>
-IDCComm::create(const Configuration& configuration)
-{
-	auto serialComm = std::make_shared<IDCComm>();
-
-	if (!serialComm->configure(configuration))
-	{
-		APLOG_ERROR << "SerialComm: Failed to Load Global Configurations";
-	}
-
-	return serialComm;
-}
-
-bool
-IDCComm::configure(const Configuration& configuration)
-{
-	PropertyMapper<Configuration> pm(configuration);
-
-	return pm.map();
-}
 
 bool
 IDCComm::run(RunStage stage)
@@ -68,29 +44,23 @@ IDCComm::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!scheduler_.isSet())
+		if (!checkIsSet<IPC, IDC, DataPresentation>())
 		{
-			APLOG_ERROR << "SerialComm: Scheduler missing.";
-			return true;
-		}
-		if (!ipc_.isSet())
-		{
-			APLOG_ERROR << "SerialComm: IPC missing";
+			APLOG_ERROR << "SerialComm: missing dependency";
 			return true;
 		}
 
-		auto ipc = ipc_.get();
-		flightAnalysisPublisher_ = ipc->publishPackets("data_com_fa");
-		flightControlPublisher_ = ipc->publishPackets("comm_to_flight_control");
-		missionControlPublisher_ = ipc->publishPackets("data_com_mc");
-		apiPublisher_ = ipc->publishPackets("data_com_api");
+		auto ipc = get<IPC>();
 
-		if (!idc_.isSet())
+		for (int k = static_cast<int>(Target::INVALID) + 1; k < static_cast<int>(Target::COMMUNICATION);
+				k++)
 		{
-			APLOG_ERROR << "SerialComm: IDC missing.";
-			return true;
+			publishers_.push_back(
+					ipc->publishPackets(
+							"comm_to_" + EnumMap<Target>::convert(static_cast<Target>(k))));
 		}
-		auto idc = idc_.get();
+
+		auto idc = get<IDC>();
 		sender_ = idc->createSender("ground_station");
 
 		idcConnection_ = idc->subscribeOnPacket("ground_station",
@@ -100,35 +70,26 @@ IDCComm::run(RunStage stage)
 	}
 	case RunStage::NORMAL:
 	{
-		auto ipc = ipc_.get();
+		auto ipc = get<IPC>();
 
-		flightAnalysisSubscription_ = ipc->subscribeOnPackets("data_fa_com",
-				std::bind(&IDCComm::sendPacket, this, std::placeholders::_1));
+		IPCOptions options;
+		options.multiTarget = true;
+		options.retry = true;
 
-		if (!flightAnalysisSubscription_.connected())
+		subscriptions_ = std::vector<Subscription>(static_cast<int>(Target::COMMUNICATION) - 1);
+		for (int k = static_cast<int>(Target::INVALID) + 1; k < static_cast<int>(Target::COMMUNICATION);
+				k++)
 		{
-			APLOG_WARN << "Cannot connect to data_fa_com. Ignoring.";
+			options.retrySuccessCallback = std::bind(&IDCComm::subscribeCallback, this, std::placeholders::_1, static_cast<Target>(k));
+
+			subscriptions_[k-1] = ipc->subscribeOnPackets(EnumMap<Target>::convert(static_cast<Target>(k)) + "_to_comm",
+					std::bind(&IDCComm::sendPacket, this, std::placeholders::_1), options);
+
+			if (!subscriptions_[k-1].connected())
+			{
+				APLOG_DEBUG << EnumMap<Target>::convert(static_cast<Target>(k)) << " not found. Retry later.";
+			}
 		}
-
-		flightControlSubscription_ = ipc->subscribeOnPackets("flight_control_to_comm",
-				std::bind(&IDCComm::sendPacket, this, std::placeholders::_1));
-
-		if (!flightControlSubscription_.connected())
-		{
-			APLOG_ERROR << "Cannot connect to data_fc_com";
-			return true;
-		}
-
-		missionControlSubscription_ = ipc->subscribeOnPackets("data_mc_com",
-				std::bind(&IDCComm::sendPacket, this, std::placeholders::_1));
-
-		if (!missionControlSubscription_.connected())
-		{
-			APLOG_ERROR << "Cannot connect to data_mc_com";
-			return true;
-		}
-
-		tryConnectChannelMixing();
 		break;
 	}
 	case RunStage::FINAL:
@@ -148,14 +109,14 @@ IDCComm::run(RunStage stage)
 void
 IDCComm::sendPacket(const Packet& packet)
 {
-	std::lock_guard<std::mutex> lock(senderMutex_);
+	LockGuard lock(senderMutex_);
 	sender_.sendPacket(packet);
 }
 
 void
 IDCComm::receivePacket(const Packet& packet)
 {
-	auto dp = dataPresentation_.get();
+	auto dp = get<DataPresentation>();
 	if (!dp)
 	{
 		APLOG_ERROR << "Data Presentation missing. Cannot handle receive.";
@@ -165,51 +126,27 @@ IDCComm::receivePacket(const Packet& packet)
 	Packet p = packet;
 	Target target = dp->extractHeader<Target>(p);
 
-	switch (target)
+	if (target == Target::BROADCAST)
 	{
-	case Target::FLIGHT_ANALYSIS:
-		flightAnalysisPublisher_.publish(p);
-		break;
-	case Target::FLIGHT_CONTROL:
-		flightControlPublisher_.publish(p);
-		break;
-	case Target::MISSION_CONTROL:
-		missionControlPublisher_.publish(p);
-		break;
-	case Target::API:
-		apiPublisher_.publish(p);
-		break;
-	default:
-		APLOG_WARN << "Invalid Target: " << static_cast<int>(target);
-		break;
+		for (auto& pub : publishers_)
+		{
+			pub.publish(p);
+		}
+	}
+	else if (target == Target::INVALID || target == Target::COMMUNICATION)
+	{
+		APLOG_ERROR << "Invalid Target";
+	}
+	else
+	{
+		publishers_[static_cast<int>(target) - 1].publish(p);
 	}
 
 }
 
 void
-IDCComm::notifyAggregationOnUpdate(const Aggregator& agg)
+IDCComm::subscribeCallback(const Subscription& sub, Target target)
 {
-	scheduler_.setFromAggregationIfNotSet(agg);
-	dataPresentation_.setFromAggregationIfNotSet(agg);
-	ipc_.setFromAggregationIfNotSet(agg);
-	idc_.setFromAggregationIfNotSet(agg);
-}
-
-void
-IDCComm::tryConnectChannelMixing()
-{
-	auto ipc = ipc_.get();
-	if (!ipc)
-	{
-		APLOG_ERROR << "IPC missing.";
-		return;
-	}
-	channelMixingSubscription_ = ipc->subscribeOnPackets("data_ch_com",
-			std::bind(&IDCComm::sendPacket, this, std::placeholders::_1));
-
-	if (!channelMixingSubscription_.connected())
-	{
-		auto sched = scheduler_.get();
-		sched->schedule(std::bind(&IDCComm::tryConnectChannelMixing, this), Seconds(1));
-	}
+	APLOG_DEBUG << "Subscribed to " << EnumMap<Target>::convert(target);
+	subscriptions_[static_cast<int>(target) - 1] = sub;
 }

@@ -56,7 +56,8 @@ APLogger::log(LogLevel level)
 {
 	if (level >= setLevel_)
 	{
-		sink_ << std::endl;
+		flush();
+		isFlushed_ = false; //There will be some input
 		if (!moduleName_.empty())
 			sink_ << "[" << moduleName_ << "]";
 		return sink_;
@@ -69,7 +70,8 @@ APLogger::log(LogLevel level, const std::string& module)
 {
 	if (level >= setLevel_ && moduleName_.compare(module) == 0)
 	{
-		sink_ << std::endl;
+		flush();
+		isFlushed_ = false; //There will be some input
 		if (!moduleName_.empty())
 			sink_ << "[" << moduleName_ << "]";
 		return sink_;
@@ -98,7 +100,16 @@ APLogger::CGuard::~CGuard()
 }
 
 void
-APLogger::setModuleName(std::string name)
+APLogger::setModuleName(const std::string& name)
 {
 	moduleName_ = name;
+}
+
+void
+APLogger::flush()
+{
+	if (isFlushed_)
+		return;
+	sink_ << std::endl;
+	isFlushed_ = true;
 }

@@ -60,15 +60,32 @@ IPC::run(RunStage stage)
 	switch (stage)
 	{
 	case RunStage::INIT:
+	{
 		if (!isSet<IScheduler>())
 		{
-			APLOG_WARN << "IPC is missing Scheduler. Retry functionality deactivated.";
-		}
-		if (auto sh = get<SignalHandler>())
-		{
-			sh->subscribeOnSigint(std::bind(&IPC::sigintHandler, this, std::placeholders::_1));
+			APLOG_WARN << "IPC is missing Scheduler. Subscription functionality disabled.";
 		}
 		break;
+	}
+	case RunStage::NORMAL:
+	{
+		if (auto sh = get<SignalHandler>())
+		{
+			APLOG_DEBUG << "IPC subscribing on SIGINT";
+			sh->subscribeOnSigint(std::bind(&IPC::sigintHandler, this, std::placeholders::_1));
+		}
+
+		if (params.retryPeriod() != 0)
+		{
+			if (auto sched = get<IScheduler>())
+			{
+				APLOG_DEBUG << "Schedule retries";
+				sched->schedule(std::bind(&IPC::retrySubscriptions, this), Milliseconds(0),
+						Milliseconds(params.retryPeriod()));
+			}
+		}
+		break;
+	}
 	default:
 		break;
 	}
@@ -124,25 +141,52 @@ IPC::sigintHandler(int sig)
 {
 	if (sig == SIGINT || sig == SIGTERM)
 	{
-		APLOG_DEBUG << "Caught sigint. Deleting subscriptions and publications.";
+		APLOG_DEBUG << "Caught signal " << sig << ". Deleting subscriptions and publications.";
+
+		for (const auto& sub : subscriptions_)
+		{
+			sub.second->cancel();
+		}
+
 		subscriptions_.clear();
 		publications_.clear();
 	}
-	exit(sig);
 }
 
 Subscription
 IPC::subscribeOnPackets(const std::string& id, const std::function<void
 (const Packet&)>& slot, const IPCOptions& options)
 {
+	Subscription result;
 	if (options.multiTarget)
 	{
-		return subscribeOnSharedMemory(id, slot);
+		result = subscribeOnSharedMemory(id, slot);
 	}
 	else
 	{
-		return subscribeOnMessageQueue(id, slot);
+		result = subscribeOnMessageQueue(id, slot);
 	}
+
+	if (!result.connected() && options.retry)
+	{
+		LockGuard l(retryVectorMutex_);
+		APLOG_DEBUG << "Queuing " << id << " for retry";
+		//Schedule retry
+		if (options.multiTarget)
+		{
+			retryVector_.push_back(
+					std::make_pair(options.retrySuccessCallback,
+							std::bind(&IPC::subscribeOnSharedMemory, this, id, slot)));
+		}
+		else
+		{
+			retryVector_.push_back(
+					std::make_pair(options.retrySuccessCallback,
+							std::bind(&IPC::subscribeOnMessageQueue, this, id, slot)));
+		}
+	}
+
+	return result;
 }
 
 Subscription
@@ -167,7 +211,8 @@ IPC::subscribeOnSharedMemory(const std::string& id, const std::function<void
 			auto sub = std::make_shared<SharedMemorySubscriptionImpl>(id);
 			if (auto sched = get<IScheduler>())
 			{
-				sched->schedule(std::bind(&SharedMemorySubscriptionImpl::start, sub), Milliseconds(0));
+				sched->schedule(std::bind(&SharedMemorySubscriptionImpl::start, sub),
+						Milliseconds(0));
 			}
 			else
 			{
@@ -175,7 +220,7 @@ IPC::subscribeOnSharedMemory(const std::string& id, const std::function<void
 			}
 			impl = sub;
 			subscriptions_.insert(std::make_pair(id, impl));
-		} catch (boost::interprocess::interprocess_exception&)
+		} catch (boost::interprocess::interprocess_exception& err)
 		{
 			return Subscription();
 		}
@@ -208,7 +253,8 @@ IPC::subscribeOnMessageQueue(const std::string& id, const std::function<void
 			auto sub = std::make_shared<MessageQueueSubscriptionImpl>(id, params.maxPacketSize());
 			if (auto sched = get<IScheduler>())
 			{
-				sched->schedule(std::bind(&MessageQueueSubscriptionImpl::start, sub), Milliseconds(0));
+				sched->schedule(std::bind(&MessageQueueSubscriptionImpl::start, sub),
+						Milliseconds(0));
 			}
 			else
 			{
@@ -225,4 +271,25 @@ IPC::subscribeOnMessageQueue(const std::string& id, const std::function<void
 	auto con = impl->subscribe(slot);
 
 	return Subscription(impl, con);
+}
+
+void
+IPC::retrySubscriptions()
+{
+	LockGuard l(retryVectorMutex_);
+
+	auto it = retryVector_.begin();
+	while (it != retryVector_.end())
+	{
+		auto sub = it->second();
+
+		if (sub.connected())
+		{
+			it->first(sub);
+			it = retryVector_.erase(it);
+		}
+		else
+			it++;
+	}
+
 }

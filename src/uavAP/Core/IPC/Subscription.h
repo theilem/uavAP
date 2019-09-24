@@ -41,7 +41,10 @@ public:
 	cancel();
 
 	bool
-	connected();
+	connected() const;
+
+	void
+	connect(std::shared_ptr<ISubscriptionImpl> impl, const boost::signals2::connection& con);
 
 private:
 

@@ -29,6 +29,7 @@
 #include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
 #include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 #include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 #include <uavAP/Core/IPC/IPC.h>
 
 SplineGlobalPlanner::SplineGlobalPlanner()
@@ -52,17 +53,13 @@ SplineGlobalPlanner::run(RunStage stage)
 	{
 		if (!isSet<ILocalPlanner>())
 		{
-			if (!isSet<IPC>())
+			if (!checkIsSet<IPC, DataPresentation>())
 			{
 				APLOG_ERROR << "SplineGlobalPlanner: Local planner and IPC missing. Needs one.";
 
-				return false;
+				return true;
 			}
 		}
-		break;
-	}
-	case RunStage::NORMAL:
-	{
 		if (!isSet<ILocalPlanner>())
 		{
 			APLOG_DEBUG << "Using IPC to publish trajectory";
@@ -70,6 +67,10 @@ SplineGlobalPlanner::run(RunStage stage)
 			auto ipc = get<IPC>();
 			trajectoryPublisher_ = ipc->publishPackets("trajectory");
 		}
+		break;
+	}
+	case RunStage::NORMAL:
+	{
 		break;
 	}
 	case RunStage::FINAL:
@@ -110,7 +111,9 @@ SplineGlobalPlanner::setMission(const Mission& mission)
 	}
 	else if (auto ipc = get<IPC>())
 	{
-		trajectoryPublisher_.publish(dp::serialize(traj));
+		APLOG_DEBUG << "Publish Trajectory on ipc" << std::endl;
+		auto dp = get<DataPresentation>();
+		trajectoryPublisher_.publish(dp->serialize(traj));
 	}
 }
 
@@ -190,7 +193,7 @@ SplineGlobalPlanner::createNaturalSplines(const Mission& mission)
 Trajectory
 SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 {
-
+	APLOG_DEBUG << "Create Catmull Rom Splines";
 	const auto& wp = mission.waypoints;
 	bool infinite = mission.infinite;
 

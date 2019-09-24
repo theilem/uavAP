@@ -36,9 +36,10 @@ struct MessageObjectHeader
 	std::atomic_bool active;
 
 	std::size_t maxPacketSize;
+	std::size_t packetSize;
 
 	MessageObjectHeader() :
-			active(true), maxPacketSize(0)
+			active(true), maxPacketSize(0), packetSize(0)
 	{
 	}
 };

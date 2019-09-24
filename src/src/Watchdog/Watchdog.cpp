@@ -88,6 +88,7 @@ main(int argc, char** argv)
 		return 1;
 	}
 	APLOG_DEBUG << monitor->getNumOfProcesses() << " processes ran all stages.";
+	runner.cleanUp();
 	std::string input;
 	while (1)
 	{

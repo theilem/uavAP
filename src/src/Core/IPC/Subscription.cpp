@@ -42,7 +42,15 @@ Subscription::cancel()
 }
 
 bool
-Subscription::connected()
+Subscription::connected() const
 {
 	return subscriptionImpl_.lock() != nullptr;
+}
+
+void
+Subscription::connect(std::shared_ptr<ISubscriptionImpl> impl,
+		const boost::signals2::connection& con)
+{
+	subscriptionImpl_ = impl;
+	connection_ = con;
 }

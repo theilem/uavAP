@@ -96,6 +96,8 @@ private:
 
 	EventMap events_;
 
+	std::vector<std::shared_ptr<EventBody>> nonPeriodicEvents_;
+
 	std::thread invokerThread_;
 
 	std::condition_variable wakeupCondition_;

@@ -38,7 +38,7 @@ class CommFactory: public Factory<IComm>
 public:
 	CommFactory()
 	{
-		addCreator<IDCComm>();
+		addConfigurable<IDCComm>();
 		addCreator<MessageQueueComm>();
 	}
 };

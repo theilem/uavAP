@@ -96,7 +96,7 @@ MissionControlDataHandling::run(RunStage stage)
 		}
 
 		auto ipc = ipc_.get();
-		publisher_ = ipc->publishPackets("data_mc_com");
+		publisher_ = ipc->publishPackets(EnumMap<Target>::convert(Target::MISSION_CONTROL) + "_to_comm");
 		overridePublisher_ = ipc->publishPackets("active_override");
 		break;
 	}
@@ -104,7 +104,7 @@ MissionControlDataHandling::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		missionControlSubscription_ = ipc->subscribeOnPackets("data_com_mc",
+		missionControlSubscription_ = ipc->subscribeOnPackets("comm_to_" + EnumMap<Target>::convert(Target::MISSION_CONTROL),
 				boost::bind(&MissionControlDataHandling::receiveAndDistribute, this, _1));
 
 		if (!missionControlSubscription_.connected())

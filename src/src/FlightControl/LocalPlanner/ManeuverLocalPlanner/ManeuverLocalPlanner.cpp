@@ -31,6 +31,7 @@
 #include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
 #include <uavAP/Core/DataHandling/DataHandling.h>
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 #include <uavAP/Core/IPC/IPC.h>
 
 ManeuverLocalPlanner::ManeuverLocalPlanner()
@@ -73,7 +74,7 @@ ManeuverLocalPlanner::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!checkIsSet<IController, ISensingActuationIO, IScheduler, IPC>())
+		if (!checkIsSet<IController, ISensingActuationIO, IScheduler, IPC, DataPresentation>())
 		{
 			APLOG_ERROR << "LinearLocalPlanner: Dependency missing";
 			return true;
@@ -344,9 +345,12 @@ ManeuverLocalPlanner::calculateControllerTarget(const Vector3& position, double 
 void
 ManeuverLocalPlanner::onTrajectoryPacket(const Packet& packet)
 {
+	APLOG_DEBUG << "On Trajectory packet";
+	auto dp = get<DataPresentation>();
+
 	try
 	{
-		setTrajectory(dp::deserialize<Trajectory>(packet));
+		setTrajectory(dp->deserialize<Trajectory>(packet));
 	} catch (ArchiveError& err)
 	{
 		APLOG_ERROR << "Invalid Trajectory packet: " << err.what();

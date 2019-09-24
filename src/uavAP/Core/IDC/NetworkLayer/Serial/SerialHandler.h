@@ -48,6 +48,9 @@ public:
 	void
 	startHandler();
 
+	void
+	cancelHandler();
+
 private:
 
 	void
@@ -71,6 +74,7 @@ private:
 	boost::asio::streambuf outBuffer_;
 
 	OnPacket onPacket_;
+	std::atomic_bool handlerCanceled_;
 
 };
 

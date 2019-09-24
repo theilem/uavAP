@@ -97,7 +97,14 @@ ProcessMonitor::killAll()
 		if (it.second.process.running())
 		{
 			kill(it.second.id, SIGINT);
+		}
+		try
+		{
 			it.second.process.join();
+			APLOG_DEBUG << "Process " << it.second.name << " joined successfully";
+		} catch (boost::process::process_error& err)
+		{
+			APLOG_ERROR << "Cannot join process " << it.second.name << ": " << err.what();
 		}
 	}
 }

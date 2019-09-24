@@ -85,7 +85,7 @@ FlightAnalysisDataHandling::run(RunStage stage)
 
 		auto ipc = ipcHandle_.get();
 
-		publisher_ = ipc->publishPackets("data_fa_com");
+		publisher_ = ipc->publishPackets(EnumMap<Target>::convert(Target::FLIGHT_ANALYSIS) + "_to_comm");
 
 		break;
 	}
@@ -93,8 +93,8 @@ FlightAnalysisDataHandling::run(RunStage stage)
 	{
 		auto ipc = ipcHandle_.get();
 
-		subscription_ = ipc->subscribeOnPackets("data_com_fa",
-				boost::bind(&FlightAnalysisDataHandling::receiveAndDistribute, this, _1));
+		subscription_ = ipc->subscribeOnPackets("comm_to_" + EnumMap<Target>::convert(Target::FLIGHT_ANALYSIS),
+				std::bind(&FlightAnalysisDataHandling::receiveAndDistribute, this, std::placeholders::_1));
 
 		if (!subscription_.connected())
 		{

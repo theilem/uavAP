@@ -28,7 +28,6 @@
 #include <boost/property_tree/json_parser.hpp>
 
 #include "uavAP/Communication/CommunicationHelper.h"
-#include "uavAP/Core/Runner/SimpleRunner.h"
 #include "uavAP/Core/Runner/SynchronizedRunner.h"
 #include "uavAP/Core/Logging/APLogger.h"
 

@@ -52,9 +52,10 @@ class IController;
 class IScheduler;
 class IPC;
 class DataHandling;
+class DataPresentation;
 
 class ManeuverLocalPlanner: public ILocalPlanner, public IRunnableObject, public AggregatableObject<
-		ISensingActuationIO, IController, IScheduler, IPC, DataHandling>, public ConfigurableObject<
+		ISensingActuationIO, IController, IScheduler, IPC, DataHandling, DataPresentation>, public ConfigurableObject<
 		ManeuverLocalPlannerParams>
 {
 public:

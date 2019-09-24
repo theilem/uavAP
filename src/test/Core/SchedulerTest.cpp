@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(MultiThreadedTest001)
 	BOOST_CHECK_EQUAL(count1, 1);
 
 	sched->stop();
-	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
+	APLogger::instance()->setLogLevel(LogLevel::WARN);
 }
 
 BOOST_AUTO_TEST_CASE(MultiThreadedTest002)
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(MultiThreadedTest002)
 	BOOST_CHECK_EQUAL(count1, 3);
 
 	sched->stop();
-	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
+	APLogger::instance()->setLogLevel(LogLevel::WARN);
 }
 
 BOOST_AUTO_TEST_CASE(MultiThreadedTest003)

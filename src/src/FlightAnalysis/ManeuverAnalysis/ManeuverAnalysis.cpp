@@ -409,6 +409,12 @@ ManeuverAnalysis::collectAdvancedControl(const SensorData& data, const CollectSt
 	}
 }
 
+ManeuverAnalysis::~ManeuverAnalysis()
+{
+	if (logFile_.is_open())
+		logFile_.close();
+}
+
 void
 ManeuverAnalysis::collectFlightTesting(const SensorData& data, const CollectStates& states)
 {

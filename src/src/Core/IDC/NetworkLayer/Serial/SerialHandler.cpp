@@ -29,7 +29,8 @@
 SerialHandler::SerialHandler(const SerialNetworkParams& params) :
 		io_(), serial_(io_, params.serialPort), delim_(
 				params.delimiterString[params.delimiterString.size() - 1]), delimString_(
-				params.delimiterString), useCRC_(params.useCRC), direction_(params.direction)
+				params.delimiterString), useCRC_(params.useCRC), direction_(params.direction), handlerCanceled_(
+				false)
 {
 	serial_.set_option(boost::asio::serial_port_base::baud_rate(params.baudRate));
 	if (params.flowControl)
@@ -92,16 +93,19 @@ SerialHandler::sendPacket(const Packet& packet)
 void
 SerialHandler::startHandler()
 {
-	while (1)
+	while (!handlerCanceled_.load())
 	{
 		io_.run();
 		io_.reset();
 	}
+	APLOG_DEBUG << "Serial handler canceled" << std::endl;
 }
 
 void
 SerialHandler::receive(const boost::system::error_code& err, std::size_t bytes_transferred)
 {
+	if (handlerCanceled_.load())
+		return;
 	if (err)
 	{
 		APLOG_ERROR << "Reception error: " << err.message();
@@ -167,4 +171,11 @@ SerialHandler::sendStatus(const boost::system::error_code& ec, std::size_t bytes
 	{
 		APLOG_ERROR << "Error while sending: " << ec.message();
 	}
+}
+
+void
+SerialHandler::cancelHandler()
+{
+	handlerCanceled_.store(true);
+	io_.stop();
 }

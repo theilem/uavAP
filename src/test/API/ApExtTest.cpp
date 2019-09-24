@@ -35,9 +35,12 @@ BOOST_AUTO_TEST_SUITE(ApExtTest)
 
 BOOST_AUTO_TEST_CASE(test001)
 {
-	IPC ipc;
-	auto pub = ipc.publish<ControllerOutput>("actuation");
-	auto pubAdv = ipc.publish<AdvancedControl>("advanced_control");
+	auto ipc = std::make_shared<IPC>();
+	auto dp = std::make_shared<DataPresentation>();
+	auto agg = Aggregator::aggregate({ipc, dp});
+
+	auto pub = ipc->publish<ControllerOutput>("actuation");
+	auto pubAdv = ipc->publish<AdvancedControl>("advanced_control");
 
 	setConfigPath("/usr/local/config/sailplane/alvolo.json");
 	BOOST_REQUIRE_EQUAL(ap_ext_setup(), 0);

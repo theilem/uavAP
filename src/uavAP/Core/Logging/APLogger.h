@@ -48,13 +48,16 @@ public:
 	setSink(std::ostream& sink);
 
 	void
-	setModuleName(std::string name);
+	setModuleName(const std::string& name);
 
 	std::ostream&
 	log(LogLevel level);
 
 	std::ostream&
 	log(LogLevel level, const std::string& module);
+
+	void
+	flush();
 
 private:
 
@@ -65,6 +68,8 @@ private:
 	std::ostream emptySink_;
 
 	std::string moduleName_;
+
+	bool isFlushed_ = true;
 
 	APLogger();
 

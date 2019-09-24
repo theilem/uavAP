@@ -24,6 +24,8 @@
  */
 
 #include <boost/test/unit_test.hpp>
+#include <uavAP/Core/IPC/Subscription.h>
+#include <uavAP/Core/Scheduler/MicroSimulator.h>
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include "uavAP/Core/LinearAlgebra.h"
@@ -55,7 +57,6 @@ serialize(Archive& ar, Test& t)
 #include <functional>
 
 BOOST_AUTO_TEST_SUITE(IPCTest)
-
 
 std::vector<Test> testVec;
 
@@ -106,8 +107,7 @@ BOOST_AUTO_TEST_CASE(test001)
 	auto ipc = std::make_shared<IPC>();
 	auto tp = std::make_shared<SystemTimeProvider>();
 	auto sched = std::make_shared<MultiThreadingScheduler>();
-	auto agg = Aggregator::aggregate(
-	{ ipc, tp, sched });
+	auto agg = Aggregator::aggregate( { ipc, tp, sched });
 
 	auto publisher = ipc->publish<Test>("test");
 
@@ -155,8 +155,7 @@ BOOST_AUTO_TEST_CASE(test002)
 	auto tp = std::make_shared<SystemTimeProvider>();
 	auto sched = std::make_shared<MultiThreadingScheduler>();
 	auto dp = std::make_shared<DataPresentation>();
-	auto agg = Aggregator::aggregate(
-	{ ipc, tp, sched, dp });
+	auto agg = Aggregator::aggregate( { ipc, tp, sched, dp });
 
 	IPCOptions opt;
 	opt.multiTarget = true; // setting to shared memory
@@ -168,7 +167,7 @@ BOOST_AUTO_TEST_CASE(test002)
 	SimpleRunner run(agg);
 	BOOST_REQUIRE(!run.runAllStages());
 	SensorData data;
-	data.position = Vector3(1,2,3);
+	data.position = Vector3(1, 2, 3);
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	publisher.publish(data);
@@ -187,8 +186,7 @@ BOOST_AUTO_TEST_CASE(test003)
 	auto tp = std::make_shared<SystemTimeProvider>();
 	auto sched = std::make_shared<MultiThreadingScheduler>();
 	auto dp = std::make_shared<DataPresentation>();
-	auto agg = Aggregator::aggregate(
-	{ ipc, tp, sched, dp });
+	auto agg = Aggregator::aggregate( { ipc, tp, sched, dp });
 
 	IPCOptions opt;
 	opt.multiTarget = true; // setting to shared memory
@@ -220,8 +218,7 @@ BOOST_AUTO_TEST_CASE(test004)
 	auto ipc = std::make_shared<IPC>();
 	auto tp = std::make_shared<SystemTimeProvider>();
 	auto sched = std::make_shared<MultiThreadingScheduler>();
-	auto agg = Aggregator::aggregate(
-	{ ipc, tp, sched });
+	auto agg = Aggregator::aggregate( { ipc, tp, sched });
 
 	IPCOptions opt;
 	opt.multiTarget = false; // setting to message queue
@@ -256,4 +253,106 @@ BOOST_AUTO_TEST_CASE(test004)
 	BOOST_CHECK_EQUAL(counter1, 7);
 }
 
+namespace
+{
+void
+retrySuccessCallback(const Subscription& sub, bool& called)
+{
+	BOOST_CHECK(sub.connected());
+	static int retryCounter = 0;
+	called = true;
+	retryCounter++;
+	BOOST_CHECK_EQUAL(retryCounter, 1);
+}
+
+void
+onPacket(const Packet& p, int& packetCounter)
+{
+	std::string test = "abc";
+	BOOST_CHECK_EQUAL(p.getBuffer().compare(test), 0);
+	packetCounter++;
+}
+}
+
+BOOST_AUTO_TEST_CASE(test005_retry_functionality)
+{
+	auto ipc = std::make_shared<IPC>();
+	auto sim = std::make_shared<MicroSimulator>();
+	auto sched = std::make_shared<MultiThreadingScheduler>();
+	auto dp = std::make_shared<DataPresentation>();
+	auto agg = Aggregator::aggregate( { sched, sim }); // set sim as tp of sched
+	auto agg2 = Aggregator::aggregate( { ipc, sched, dp}); // set sched as scheduler of ipc
+
+	sim->stopOnWait();
+
+	IPCParams params;
+	params.retryPeriod = 100;
+
+	bool retryCalled = false;
+	bool retryCalled2 = false;
+	int packetCounter = 0;
+	int packetCounter2 = 0;
+
+	IPCOptions opts;
+	opts.multiTarget = true; //SHM
+	opts.retry = true;
+	opts.retrySuccessCallback = std::bind(retrySuccessCallback, std::placeholders::_1,
+			std::ref(retryCalled));
+
+	IPCOptions opts2;
+	opts2.multiTarget = true; //SHM
+	opts2.retry = false;
+	opts2.retrySuccessCallback = std::bind(retrySuccessCallback, std::placeholders::_1,
+			std::ref(retryCalled2));
+
+	auto sub1 = ipc->subscribeOnPackets("test_packets",
+			std::bind(onPacket, std::placeholders::_1, std::ref(packetCounter)), opts);
+	auto sub2 = ipc->subscribeOnPackets("test_packets",
+			std::bind(onPacket, std::placeholders::_1, std::ref(packetCounter2)), opts2);
+
+	BOOST_CHECK(!sub1.connected());
+	BOOST_CHECK(!sub2.connected());
+	SimpleRunner run(agg2);
+	BOOST_REQUIRE(!run.runAllStages());
+
+	std::this_thread::sleep_for(Milliseconds(10)); //Let scheduler start
+
+	sim->releaseWait(); //One retry
+	std::this_thread::sleep_for(Milliseconds(10)); //Let scheduler start
+
+	BOOST_CHECK(!retryCalled);
+	BOOST_CHECK(!retryCalled2);
+
+	auto pub = ipc->publishPackets("test_packets");
+
+	sim->releaseWait(); //next retry, should be successful
+
+	std::this_thread::sleep_for(Milliseconds(10)); //Let scheduler start
+
+	BOOST_CHECK(retryCalled);
+	BOOST_CHECK(!retryCalled2);
+
+	pub.publish(Packet("abc"));
+
+	std::this_thread::sleep_for(Milliseconds(10)); //Let scheduler start
+
+	sim->releaseWait(); //next retry, does not do anything
+
+	std::this_thread::sleep_for(Milliseconds(10)); //Let scheduler start
+
+	BOOST_CHECK(retryCalled);
+	BOOST_CHECK(!retryCalled2);
+
+	BOOST_CHECK_EQUAL(packetCounter, 1);
+	BOOST_CHECK_EQUAL(packetCounter2, 0);
+
+	pub.publish(Packet("abc"));
+
+	std::this_thread::sleep_for(Milliseconds(10)); //Let scheduler start
+
+
+	BOOST_CHECK_EQUAL(packetCounter, 2);
+	BOOST_CHECK_EQUAL(packetCounter2, 0);
+
+}
 BOOST_AUTO_TEST_SUITE_END()

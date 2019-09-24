@@ -29,42 +29,38 @@
 #define UAVAP_COMMUNICATION_COMM_IDCCOMM_IDCCOMM_H_
 
 #include <boost/property_tree/ptree.hpp>
+#include <uavAP/Communication/Comm/IDCComm/IDCCommParams.h>
+#include <uavAP/Core/DataPresentation/Content.h>
 #include <uavAP/Core/IPC/Publisher.h>
 #include <uavAP/Core/IPC/Subscription.h>
+#include <uavAP/Core/LockTypes.h>
+#include <uavAP/Core/Scheduler/Event.h>
 
-
-#include "uavAP/Core/Object/IAggregatableObject.h"
+#include <uavAP/Core/Object/AggregatableObject.hpp>
+#include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
 #include "uavAP/Communication/Comm/IComm.h"
 #include "uavAP/Core/DataPresentation/Packet.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/IDC/IDCSender.h"
-#include <mutex>
 
-class IScheduler;
 class DataPresentation;
 class IDC;
 class IPC;
 
-class IDCComm: public IComm, public IAggregatableObject, public IRunnableObject
+class IDCComm: public IComm,
+		public AggregatableObject<IPC, IDC, DataPresentation>,
+		public ConfigurableObject<IDCCommParams>,
+		public IRunnableObject
 {
 public:
 
 	static constexpr TypeId typeId = "idc";
 
-	IDCComm();
-
-	static std::shared_ptr<IDCComm>
-	create(const Configuration& configuration);
-
-	bool
-	configure(const Configuration& configuration);
+	IDCComm() = default;
 
 	bool
 	run(RunStage stage) override;
-
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 private:
 
@@ -75,23 +71,12 @@ private:
 	receivePacket(const Packet& packet);
 
 	void
-	tryConnectChannelMixing();
+	subscribeCallback(const Subscription& sub, Target target);
 
-	ObjectHandle<IPC> ipc_;
-	ObjectHandle<IDC> idc_;
-	ObjectHandle<IScheduler> scheduler_;
-	ObjectHandle<DataPresentation> dataPresentation_;
+	std::vector<Subscription> subscriptions_;
+	std::vector<Publisher<Packet>> publishers_;
 
-	Subscription flightAnalysisSubscription_;
-	Subscription flightControlSubscription_;
-	Subscription missionControlSubscription_;
-	Subscription channelMixingSubscription_;
-	Publisher<Packet> flightAnalysisPublisher_;
-	Publisher<Packet> flightControlPublisher_;
-	Publisher<Packet> missionControlPublisher_;
-	Publisher<Packet> apiPublisher_;
-
-	std::mutex senderMutex_;
+	Mutex senderMutex_;
 	IDCSender sender_;
 	boost::signals2::connection idcConnection_;
 };

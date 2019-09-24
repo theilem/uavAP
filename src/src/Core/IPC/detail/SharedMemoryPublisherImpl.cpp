@@ -23,6 +23,7 @@ SharedMemoryPublisherImpl::SharedMemoryPublisherImpl(const std::string& id, std:
 	mapped_region region(sharedMem_, read_write);
 	MessageObjectHeader header;
 	header.maxPacketSize = maxPacketSize_;
+	header.packetSize = 0;
 
 	memcpy(region.get_address(), &header, sizeof(header));
 
@@ -33,18 +34,21 @@ SharedMemoryPublisherImpl::publish(const Packet& packet)
 {
 	using namespace boost::interprocess;
 
-	mapped_region region(sharedMem_, read_write);
-	MessageObjectHeader* message = static_cast<MessageObjectHeader*>(region.get_address());
+	auto size = packet.getSize();
 
-	if (packet.getSize() > maxPacketSize_)
+	if (size > maxPacketSize_)
 	{
 		APLOG_ERROR << "Packet to big, cannot copy to shm.";
 		return;
 	}
 
+	mapped_region region(sharedMem_, read_write);
+	MessageObjectHeader* message = static_cast<MessageObjectHeader*>(region.get_address());
+
 	boost::unique_lock<boost::interprocess::interprocess_sharable_mutex> lock(message->mtx);
 
-	memcpy(region.get_address() + sizeof(MessageObjectHeader), packet.getStart(), packet.getSize());
+	message->packetSize = size;
+	memcpy((uint8_t*) region.get_address() + sizeof(MessageObjectHeader), packet.getStart(), size);
 
 	message->cnd.notify_all();
 }

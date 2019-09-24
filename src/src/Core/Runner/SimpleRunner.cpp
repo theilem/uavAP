@@ -41,6 +41,7 @@ SimpleRunner::runStage(RunStage stage)
 		if (it->run(stage))
 			error = true;
 	}
+	APLogger::instance()->flush(); //Synchronize stdio
 	return error;
 }
 
