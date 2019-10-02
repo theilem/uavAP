@@ -11,7 +11,7 @@
 
 struct WindInfo
 {
-	double speed;
+	FloatingType speed;
 	Vector3 direction;
 };
 

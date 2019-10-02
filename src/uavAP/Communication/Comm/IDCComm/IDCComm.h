@@ -57,7 +57,7 @@ public:
 
 	static constexpr TypeId typeId = "idc";
 
-	IDCComm() = default;
+	IDCComm();
 
 	bool
 	run(RunStage stage) override;
@@ -78,6 +78,7 @@ private:
 
 	Mutex senderMutex_;
 	IDCSender sender_;
+	bool senderAvailable_;
 	boost::signals2::connection idcConnection_;
 };
 

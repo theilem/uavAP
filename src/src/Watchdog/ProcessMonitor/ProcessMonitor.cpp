@@ -47,7 +47,7 @@ ProcessMonitor::configure(const Configuration& config)
 		ProcessInfo processInfo(it.first);
 		if (!processInfo.configure(it.second))
 			return false;
-		processes_.insert(std::make_pair(it.first, std::move(processInfo)));
+		processes_.push_back(std::move(processInfo));
 	}
 	return pm.map();
 }
@@ -94,18 +94,28 @@ ProcessMonitor::killAll()
 {
 	for (auto& it : processes_)
 	{
-		if (it.second.process.running())
+		if (it.process.running() && !it.joined)
 		{
-			kill(it.second.id, SIGINT);
+			kill(it.id, SIGINT);
 		}
-		try
+	}
+
+	if (!tryJoinAll(Seconds(2)))
+	{
+		APLOG_ERROR << "Processes did not join after 2sec and SIGINT. Sending SIGTERM.";
+		APLogger::instance()->flush();
+		for (auto& it : processes_)
 		{
-			it.second.process.join();
-			APLOG_DEBUG << "Process " << it.second.name << " joined successfully";
-		} catch (boost::process::process_error& err)
-		{
-			APLOG_ERROR << "Cannot join process " << it.second.name << ": " << err.what();
+			if (it.process.running())
+			{
+				APLOG_DEBUG << "Killing " << it.name << " with SIGTERM";
+				kill(it.id, SIGTERM);
+			}
 		}
+	}
+	else
+	{
+		APLOG_DEBUG << "All processes joined successfully";
 	}
 }
 
@@ -115,9 +125,9 @@ ProcessMonitor::checkAlive()
 	bool result = true;
 	for (auto& it : processes_)
 	{
-		if (!it.second.process.running())
+		if (!it.process.running())
 		{
-			APLOG_ERROR << it.second.name << " died";
+			APLOG_ERROR << it.name << " died";
 			result = false;
 		}
 	}
@@ -131,15 +141,15 @@ ProcessMonitor::startAll()
 	{
 		try
 		{
-			APLOG_DEBUG << "Start Process " << it.second.name;
+			APLOG_DEBUG << "Start Process " << it.name;
 			APLOG_DEBUG << "with absolut path: " << binaryPath_;
-			APLOG_DEBUG << "with binary path: " << it.second.binaryPath;
-			APLOG_DEBUG << "with config path: " << it.second.configPath;
-			it.second.startChild(binaryPath_, configPath_);
-			APLOG_DEBUG << "Success. ID: " << it.second.id;
+			APLOG_DEBUG << "with binary path: " << it.binaryPath;
+			APLOG_DEBUG << "with config path: " << it.configPath;
+			it.startChild(binaryPath_, configPath_);
+			APLOG_DEBUG << "Success. ID: " << it.id;
 		} catch (boost::process::process_error& er)
 		{
-			APLOG_ERROR << "Failed to launch process " << it.second.name << ": " << er.what();
+			APLOG_ERROR << "Failed to launch process " << it.name << ": " << er.what();
 			return false;
 		}
 	}
@@ -157,14 +167,22 @@ ProcessMonitor::tryJoinAll(Duration timeout)
 		allJoined = true;
 		for (auto& it : processes_)
 		{
-			if (it.second.process.running())
+			if (!it.joined)
 			{
-				if (!it.second.process.joinable())
+//				if (!it.process.joinable())
+//				{
+//					allJoined = false;
+//					continue;
+//				}
+				if (it.process.wait_for(Milliseconds(10)))
 				{
-					allJoined = false;
-					continue;
+					APLOG_DEBUG << "Joined " << it.name;
+					APLogger::instance()->flush();
+
+					it.joined = true;
 				}
-				it.second.process.join();
+				else
+					allJoined = false;
 			}
 		}
 		if (allJoined)

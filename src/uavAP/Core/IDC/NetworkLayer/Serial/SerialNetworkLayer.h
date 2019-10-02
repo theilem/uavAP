@@ -39,11 +39,12 @@
 class IScheduler;
 class SignalHandler;
 
-
 /**
  * @brief IDC using serial to communicate among devices
  */
-class SerialNetworkLayer: public INetworkLayer, public AggregatableObject<IScheduler, SignalHandler>, public IRunnableObject
+class SerialNetworkLayer: public INetworkLayer,
+		public AggregatableObject<IScheduler, SignalHandler>,
+		public IRunnableObject
 {
 
 public:

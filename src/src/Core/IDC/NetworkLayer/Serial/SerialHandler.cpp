@@ -96,7 +96,8 @@ SerialHandler::startHandler()
 	while (!handlerCanceled_.load())
 	{
 		io_.run();
-		io_.reset();
+		if (!handlerCanceled_.load())
+			io_.reset();
 	}
 	APLOG_DEBUG << "Serial handler canceled" << std::endl;
 }

@@ -93,7 +93,6 @@ LocalFrameManager::publishFrame()
 {
 	std::unique_lock<std::mutex> lock(frameMutex_);
 	framePublisher_.publish(frame_);
-	lock.unlock();
 }
 
 const VehicleOneFrame&

@@ -37,6 +37,11 @@
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/LockTypes.h"
 
+IDCComm::IDCComm() :
+		senderAvailable_(true)
+{
+}
+
 bool
 IDCComm::run(RunStage stage)
 {
@@ -52,8 +57,8 @@ IDCComm::run(RunStage stage)
 
 		auto ipc = get<IPC>();
 
-		for (int k = static_cast<int>(Target::INVALID) + 1; k < static_cast<int>(Target::COMMUNICATION);
-				k++)
+		for (int k = static_cast<int>(Target::INVALID) + 1;
+				k < static_cast<int>(Target::COMMUNICATION); k++)
 		{
 			publishers_.push_back(
 					ipc->publishPackets(
@@ -77,17 +82,20 @@ IDCComm::run(RunStage stage)
 		options.retry = true;
 
 		subscriptions_ = std::vector<Subscription>(static_cast<int>(Target::COMMUNICATION) - 1);
-		for (int k = static_cast<int>(Target::INVALID) + 1; k < static_cast<int>(Target::COMMUNICATION);
-				k++)
+		for (int k = static_cast<int>(Target::INVALID) + 1;
+				k < static_cast<int>(Target::COMMUNICATION); k++)
 		{
-			options.retrySuccessCallback = std::bind(&IDCComm::subscribeCallback, this, std::placeholders::_1, static_cast<Target>(k));
+			options.retrySuccessCallback = std::bind(&IDCComm::subscribeCallback, this,
+					std::placeholders::_1, static_cast<Target>(k));
 
-			subscriptions_[k-1] = ipc->subscribeOnPackets(EnumMap<Target>::convert(static_cast<Target>(k)) + "_to_comm",
+			subscriptions_[k - 1] = ipc->subscribeOnPackets(
+					EnumMap<Target>::convert(static_cast<Target>(k)) + "_to_comm",
 					std::bind(&IDCComm::sendPacket, this, std::placeholders::_1), options);
 
-			if (!subscriptions_[k-1].connected())
+			if (!subscriptions_[k - 1].connected())
 			{
-				APLOG_DEBUG << EnumMap<Target>::convert(static_cast<Target>(k)) << " not found. Retry later.";
+				APLOG_DEBUG << EnumMap<Target>::convert(static_cast<Target>(k))
+						<< " not found. Retry later.";
 			}
 		}
 		break;

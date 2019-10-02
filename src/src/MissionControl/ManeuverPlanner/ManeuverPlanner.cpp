@@ -140,7 +140,6 @@ ManeuverPlanner::run(RunStage stage)
 		if (!controllerOutputSubscription_.connected())
 		{
 			APLOG_DEBUG << "ManeuverPlanner: Controller Output Subscription Missing.";
-			return true;
 		}
 
 		controllerOutputTrimSubscription_ = ipc->subscribe<ControllerOutput>(
@@ -150,7 +149,6 @@ ManeuverPlanner::run(RunStage stage)
 		if (!controllerOutputTrimSubscription_.connected())
 		{
 			APLOG_DEBUG << "ManeuverPlanner: Controller Output Trim Subscription Missing.";
-			return true;
 		}
 
 		advancedControlSubscription_ = ipc->subscribe<AdvancedControl>("advanced_control",
@@ -159,7 +157,6 @@ ManeuverPlanner::run(RunStage stage)
 		if (!advancedControlSubscription_.connected())
 		{
 			APLOG_DEBUG << "ManeuverPlanner: Advanced Control Subscription Missing.";
-			return true;
 		}
 
 		if (params.useSafetyBounds())

@@ -33,12 +33,14 @@ ProcessMonitor* monitor;
 void
 sigHandler(int sig)
 {
+	APLOG_DEBUG << "Calling watchdog signal handler with signal: " << sig;
+	APLogger::instance()->flush();
 	if (monitor)
 	{
 		monitor->killAll();
 		delete monitor;
 	}
-	exit(sig);
+	::exit(sig);
 }
 
 int

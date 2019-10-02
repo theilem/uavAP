@@ -45,9 +45,9 @@ public:
 		addDefault<TimeProviderFactory>();
 		addDefaultCreator<DataPresentation>();
 		addDefaultCreator<IPC>();
-		addDefaultCreator<SteadyStateAnalysis>();
-		addDefaultCreator<ManeuverAnalysis>();
-		addDefaultCreator<TrimAnalysis>();
+		addCreator<SteadyStateAnalysis>();
+		addCreator<ManeuverAnalysis>();
+		addCreator<TrimAnalysis>();
 		addDefaultCreator<FlightAnalysisDataHandling>();
 	}
 };

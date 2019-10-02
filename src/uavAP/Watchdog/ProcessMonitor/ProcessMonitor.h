@@ -66,7 +66,7 @@ private:
 	bool
 	tryJoinAll(Duration timeout);
 
-	std::map<std::string, ProcessInfo> processes_;
+	std::vector<ProcessInfo> processes_;
 
 	std::string binaryPath_;
 	std::string configPath_;
