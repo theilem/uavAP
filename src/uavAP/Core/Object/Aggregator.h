@@ -26,7 +26,7 @@
 #ifndef UAVAP_CORE_OBJECT_AGGREGATOR_H_
 #define UAVAP_CORE_OBJECT_AGGREGATOR_H_
 
-#include <uavAP/Core/Object/DynamicContainer/DynamicObjectContainer.h>
+#include "uavAP/Core/Object/DynamicContainer/DynamicObjectContainer.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 

@@ -69,9 +69,9 @@ private:
 
 	SignalHandlerSingleton()
 	{
-		APLOG_DEBUG << "SignalHandlerSingleton: Subscribe on SIGINT and SIGTERM";
+		APLOG_DEBUG << "SignalHandlerSingleton: Subscribe on SIGINT";
 		std::signal(SIGINT, sigIntHandler);
-		std::signal(SIGTERM, sigIntHandler);
+//		std::signal(SIGTERM, sigIntHandler);
 	}
 
 	Mutex signalMutex_;
