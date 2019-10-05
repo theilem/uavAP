@@ -60,6 +60,10 @@ main(int argc, char** argv)
 	signal(SIGINT, sigHandler);
 	signal(SIGTERM, sigHandler);
 
+	sigset_t set;
+	sigaddset(&set, SIGINT);
+	pthread_sigmask(SIG_UNBLOCK, &set, NULL);
+
 	monitor = new ProcessMonitor;
 	monitor->configure(conf);
 

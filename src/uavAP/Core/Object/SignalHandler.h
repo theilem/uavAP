@@ -12,7 +12,9 @@
 #include <uavAP/Core/LockTypes.h>
 #include <uavAP/Core/Logging/APLogger.h>
 #include <uavAP/Core/Object/AggregatableObject.hpp>
+#include <uavAP/Core/Time.h>
 #include <csignal>
+#include <thread>
 
 class IScheduler;
 
@@ -58,6 +60,16 @@ public:
 		APLOG_DEBUG << "SignalHandlerSingleton: Calling on exit";
 		onExit_();
 		onExit_.disconnect_all_slots(); //Avoid double call
+
+		signalHandled_ = true;
+	}
+
+	void
+	thisThreadBlockSigInt()
+	{
+		sigset_t set;
+		sigaddset(&set, SIGINT);
+		pthread_sigmask(SIG_SETMASK, &set, NULL);
 	}
 
 	SignalHandlerSingleton(SignalHandlerSingleton const&) = delete;
@@ -67,16 +79,37 @@ public:
 
 private:
 
-	SignalHandlerSingleton()
+	SignalHandlerSingleton() : signalHandled_(false)
 	{
+		thisThreadBlockSigInt();
 		APLOG_DEBUG << "SignalHandlerSingleton: Subscribe on SIGINT";
-		std::signal(SIGINT, sigIntHandler);
+
+		signalHandlerThread_ = std::thread(std::bind(&SignalHandlerSingleton::signalHandleThreadTask, this));
+		signalHandlerThread_.detach();
 //		std::signal(SIGTERM, sigIntHandler);
+	}
+
+	void
+	signalHandleThreadTask()
+	{
+		sigset_t set;
+		sigaddset(&set, SIGINT);
+		pthread_sigmask(SIG_UNBLOCK, &set, NULL);
+		std::signal(SIGINT, sigIntHandler);
+
+		while (!signalHandled_)
+			std::this_thread::sleep_for(Milliseconds(100));
+
+		APLOG_DEBUG << "Signal handled. Exit.";
+
+//		::exit(SIGINT);
 	}
 
 	Mutex signalMutex_;
 	OnSIGINT onSigint_;
 	OnExit onExit_;
+	std::thread signalHandlerThread_;
+	bool signalHandled_;
 
 };
 

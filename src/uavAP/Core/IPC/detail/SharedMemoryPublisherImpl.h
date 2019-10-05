@@ -45,6 +45,9 @@ public:
 
 private:
 
+	void
+	teardown();
+
 	boost::interprocess::shared_memory_object sharedMem_;
 	std::size_t maxPacketSize_;
 

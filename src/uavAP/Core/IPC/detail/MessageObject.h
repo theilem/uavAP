@@ -33,7 +33,7 @@ struct MessageObjectHeader
 	boost::interprocess::interprocess_condition_any cnd;
 	boost::interprocess::interprocess_sharable_mutex mtx;
 
-	std::atomic_bool active;
+	bool active;
 
 	std::size_t maxPacketSize;
 	std::size_t packetSize;

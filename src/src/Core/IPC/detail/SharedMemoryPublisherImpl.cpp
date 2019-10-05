@@ -5,6 +5,8 @@
  *      Author: mirco
  */
 #include <uavAP/Core/IPC/detail/SharedMemoryPublisherImpl.h>
+#include <uavAP/Core/Time.h>
+#include <thread>
 
 SharedMemoryPublisherImpl::SharedMemoryPublisherImpl(const std::string& id, std::size_t init) :
 		maxPacketSize_(init)
@@ -24,6 +26,7 @@ SharedMemoryPublisherImpl::SharedMemoryPublisherImpl(const std::string& id, std:
 	MessageObjectHeader header;
 	header.maxPacketSize = maxPacketSize_;
 	header.packetSize = 0;
+	header.active = true;
 
 	memcpy(region.get_address(), &header, sizeof(header));
 
@@ -55,8 +58,24 @@ SharedMemoryPublisherImpl::publish(const Packet& packet)
 
 SharedMemoryPublisherImpl::~SharedMemoryPublisherImpl()
 {
+	teardown();
+	std::this_thread::sleep_for(Milliseconds(10)); //allow subscribers to disconnect
+
 	std::string name = sharedMem_.get_name();
 	if (sharedMem_.remove(name.c_str()))
 		APLOG_DEBUG << name << " shared memory removed.";
 }
 
+void
+SharedMemoryPublisherImpl::teardown()
+{
+	boost::interprocess::mapped_region region(sharedMem_, boost::interprocess::read_write);
+	MessageObjectHeader* message = static_cast<MessageObjectHeader*>(region.get_address());
+
+	boost::unique_lock<boost::interprocess::interprocess_sharable_mutex> lock(message->mtx);
+
+	message->active = false;
+	message->cnd.notify_all();
+
+	lock.unlock();
+}

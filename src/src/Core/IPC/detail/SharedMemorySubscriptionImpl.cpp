@@ -77,6 +77,11 @@ SharedMemorySubscriptionImpl::onSharedMemory()
 		{
 			continue;
 		}
+		if (!message->active)
+		{
+			APLOG_DEBUG << "Shm object inactive. End subscription.";
+			return;
+		}
 		packet.getBuffer().resize(message->packetSize);
 		memcpy(packet.getStartAddress(), packetStart, message->packetSize);
 		onSharedMem_(packet);

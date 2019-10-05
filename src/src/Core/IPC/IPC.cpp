@@ -142,7 +142,7 @@ IPC::sigintHandler(int sig)
 	if (sig == SIGINT || sig == SIGTERM)
 	{
 		APLOG_DEBUG << "Caught signal " << sig << ". Deleting subscriptions and publications.";
-
+		APLogger::instance()->flush();
 		for (const auto& sub : subscriptions_)
 		{
 			sub.second->cancel();

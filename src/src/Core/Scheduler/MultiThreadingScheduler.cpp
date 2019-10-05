@@ -81,6 +81,9 @@ MultiThreadingScheduler::stop()
 		event.second->isCanceled.store(true);
 		event.second->intervalCondition.notify_all();
 		l.unlock();
+	}
+	for (auto& event : events_)
+	{
 		if (event.second->periodicThread.joinable())
 		{
 			APLOG_DEBUG << "Joining " << event.second->body.target_type().name();
