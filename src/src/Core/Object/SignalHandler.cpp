@@ -15,7 +15,7 @@ sigIntHandler(int sig)
 {
 	SignalHandlerSingleton::getInstance().callSigHandlers(sig);
 	APLogger::instance()->flush(); //Synchronize stdio
-	::exit(sig);
+//	::exit(sig);
 }
 
 SignalHandler::SignalHandler(Aggregator& agg) :
@@ -37,8 +37,9 @@ SignalHandler::onExit()
 {
 	if (auto sched = get<IScheduler>())
 		sched->stop();
-
-	APLOG_DEBUG << "Clear aggregator.";
-	auto sh = get<SignalHandler>(); // Get this object to avoid segfault when clearing the aggregator
-	agg_.clear();
+//
+//	APLOG_DEBUG << "Clear aggregator.";
+//	auto sh = get<SignalHandler>(); // Get this object to avoid segfault when clearing the aggregator
+//	agg_.clear();
+//	APLOG_DEBUG << "Cleared aggregator.";
 }

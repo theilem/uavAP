@@ -85,7 +85,7 @@ IDC::sendPacket(const std::string& id, const Packet& packet, bool ack)
 
 		if (ack)
 		{
-			APLOG_WARN << "Acknowledgement cannot be requested because TransportLayer is missing";
+			APLOG_WARN << "Acknowledgment cannot be requested because TransportLayer is missing";
 		}
 
 		return network->sendPacket(id, packet);

@@ -26,6 +26,10 @@ class SignalHandlerSingleton
 
 public:
 
+	~SignalHandlerSingleton()
+	{
+	}
+
 	static SignalHandlerSingleton&
 	getInstance()
 	{
@@ -72,6 +76,14 @@ public:
 		pthread_sigmask(SIG_SETMASK, &set, NULL);
 	}
 
+	void
+	joinHandler()
+	{
+		signalHandled_ = true;
+		if (signalHandlerThread_.joinable())
+			signalHandlerThread_.join();
+	}
+
 	SignalHandlerSingleton(SignalHandlerSingleton const&) = delete;
 
 	void
@@ -85,7 +97,7 @@ private:
 		APLOG_DEBUG << "SignalHandlerSingleton: Subscribe on SIGINT";
 
 		signalHandlerThread_ = std::thread(std::bind(&SignalHandlerSingleton::signalHandleThreadTask, this));
-		signalHandlerThread_.detach();
+//		signalHandlerThread_.detach();
 //		std::signal(SIGTERM, sigIntHandler);
 	}
 

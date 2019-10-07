@@ -47,6 +47,14 @@ SerialHandler::SerialHandler(const SerialNetworkParams& params) :
 						std::placeholders::_2));
 }
 
+SerialHandler::~SerialHandler()
+{
+	cancelHandler();
+	serial_.close();
+	APLOG_DEBUG << "Serial handler destroyed";
+	APLogger::instance()->flush();
+}
+
 boost::signals2::connection
 SerialHandler::subscribeOnPackets(const OnPacket::slot_type& slot)
 {

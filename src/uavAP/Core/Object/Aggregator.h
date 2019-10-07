@@ -74,6 +74,9 @@ public:
 	void
 	clear();
 
+	void
+	cleanUp();
+
 private:
 
 	ObjectContainer container_;

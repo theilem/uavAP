@@ -75,3 +75,11 @@ Aggregator::clear()
 {
 	container_.clear();
 }
+
+void
+Aggregator::cleanUp()
+{
+	clear();
+
+	SignalHandlerSingleton::getInstance().joinHandler();
+}

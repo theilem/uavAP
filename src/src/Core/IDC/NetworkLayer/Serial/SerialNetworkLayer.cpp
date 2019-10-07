@@ -125,11 +125,11 @@ SerialNetworkLayer::onSigInt(int sig)
 		{
 			it.second->cancelHandler();
 		}
+		handler_.clear();
 	}
 }
 
 SerialNetworkLayer::~SerialNetworkLayer()
 {
-	handler_.clear();
 }
 

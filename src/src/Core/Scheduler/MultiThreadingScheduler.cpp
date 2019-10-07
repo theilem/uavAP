@@ -97,9 +97,6 @@ MultiThreadingScheduler::stop()
 			APLOG_WARN << event.second->body.target_type().name() << " not joinable";
 		}
 	}
-	events_.clear();
-	wakeupCondition_.notify_all();
-	lock.unlock();
 
 	for (auto event : nonPeriodicEvents_)
 	{
@@ -112,6 +109,13 @@ MultiThreadingScheduler::stop()
 			APLogger::instance()->flush();
 		}
 	}
+
+
+	events_.clear();
+	wakeupCondition_.notify_all();
+	lock.unlock();
+
+
 
 	if (!mainThread_)
 		invokerThread_.join();

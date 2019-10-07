@@ -37,6 +37,8 @@ public:
 
 	SerialHandler(const SerialNetworkParams& params);
 
+	~SerialHandler();
+
 	using OnPacket = boost::signals2::signal<void(const Packet&)>;
 
 	boost::signals2::connection

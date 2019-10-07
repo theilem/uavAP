@@ -174,7 +174,7 @@ ProcessMonitor::tryJoinAll(Duration timeout)
 //					allJoined = false;
 //					continue;
 //				}
-				if (it.process.wait_for(Milliseconds(10)))
+				if (it.process.wait_for(Milliseconds(1)))
 				{
 					APLOG_DEBUG << "Joined " << it.name;
 					APLogger::instance()->flush();

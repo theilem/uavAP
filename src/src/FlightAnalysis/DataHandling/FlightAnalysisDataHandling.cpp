@@ -187,8 +187,6 @@ FlightAnalysisDataHandling::receiveAndDistribute(const Packet& packet)
 void
 FlightAnalysisDataHandling::collectAndSendInspectingMetrics(std::shared_ptr<DataPresentation> dp)
 {
-	APLOG_DEBUG << "Collect and Send Inspecting Metrics.";
-
 	auto steadyStateAnalysis = steadyStateAnalysisHandle_.get();
 
 	if (!steadyStateAnalysis)

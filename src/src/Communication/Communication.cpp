@@ -51,5 +51,8 @@ main(int argc, char** argv)
 
 	sched->startSchedule();
 
+	//Terminated -> Cleanup
+	aggregator.cleanUp();
+
 	return 0;
 }

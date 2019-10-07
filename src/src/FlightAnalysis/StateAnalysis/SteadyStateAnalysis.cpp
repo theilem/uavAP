@@ -423,7 +423,6 @@ SteadyStateAnalysis::checkSteadyState(const SensorData& data, const Override& ov
 void
 SteadyStateAnalysis::resetMetrics(TimePoint time)
 {
-	APLOG_DEBUG << "Reset Metrics.";
 
 	Lock lock(metricsMutex_);
 	metrics_.reset();
