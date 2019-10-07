@@ -21,14 +21,14 @@ sigIntHandler(int sig)
 SignalHandler::SignalHandler(Aggregator& agg) :
 		agg_(agg)
 {
-	APLOG_DEBUG << "Signal handler created";
+	APLOG_TRACE << "Signal handler created";
 	SignalHandlerSingleton::getInstance().subscribeOnExit(std::bind(&SignalHandler::onExit, this));
 }
 
 void
 SignalHandler::subscribeOnSigint(const OnSIGINT::slot_type& slot)
 {
-	APLOG_DEBUG << "SignalHandler: Subscribing on sigint";
+	APLOG_TRACE << "SignalHandler: Subscribing on sigint";
 	SignalHandlerSingleton::getInstance().subscribeOnSigint(slot);
 }
 

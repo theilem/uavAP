@@ -19,7 +19,7 @@
 class IScheduler;
 
 void
-sigIntHandler(int sig) __attribute__((noreturn));
+sigIntHandler(int sig);
 
 class SignalHandlerSingleton
 {
@@ -94,7 +94,7 @@ private:
 	SignalHandlerSingleton() : signalHandled_(false)
 	{
 		thisThreadBlockSigInt();
-		APLOG_DEBUG << "SignalHandlerSingleton: Subscribe on SIGINT";
+		APLOG_TRACE << "SignalHandlerSingleton: Subscribe on SIGINT";
 
 		signalHandlerThread_ = std::thread(std::bind(&SignalHandlerSingleton::signalHandleThreadTask, this));
 //		signalHandlerThread_.detach();

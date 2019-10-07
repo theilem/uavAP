@@ -86,10 +86,10 @@ MultiThreadingScheduler::stop()
 	{
 		if (event.second->periodicThread.joinable())
 		{
-			APLOG_DEBUG << "Joining " << event.second->body.target_type().name();
+			APLOG_TRACE << "Joining " << event.second->body.target_type().name();
 			APLogger::instance()->flush();
 			event.second->periodicThread.join();
-			APLOG_DEBUG << "Joined " << event.second->body.target_type().name();
+			APLOG_TRACE << "Joined " << event.second->body.target_type().name();
 			APLogger::instance()->flush();
 		}
 		else
@@ -102,10 +102,10 @@ MultiThreadingScheduler::stop()
 	{
 		if (event->periodicThread.joinable())
 		{
-			APLOG_DEBUG << "Joining non-periodic " << event->body.target_type().name();
+			APLOG_TRACE << "Joining non-periodic " << event->body.target_type().name();
 			APLogger::instance()->flush();
 			event->periodicThread.join();
-			APLOG_DEBUG << "Joined non-periodic " << event->body.target_type().name();
+			APLOG_TRACE << "Joined non-periodic " << event->body.target_type().name();
 			APLogger::instance()->flush();
 		}
 	}
