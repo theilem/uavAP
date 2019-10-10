@@ -51,16 +51,8 @@ public:
 
 	Constraint(Element in, FloatingType min, FloatingType max);
 
-	Constraint(Element in, FloatingType min, FloatingType max, FloatingType hardMin, FloatingType hardMax);
-
 	FloatingType
 	getValue() override;
-
-	void
-	setHardContraintValue(FloatingType hardMinmax);
-
-	void
-	setHardContraintValue(FloatingType hardMin, FloatingType hardMax);
 
 	void
 	setContraintValue(FloatingType minmax);
@@ -82,8 +74,6 @@ private:
 	Element in_;
 	FloatingType min_;
 	FloatingType max_;
-	FloatingType hardMin_;
-	FloatingType hardMax_;
 	bool override_;
 	FloatingType overrideMin_;
 	FloatingType overrideMax_;
@@ -126,14 +116,14 @@ class Input: public IControlElement
 {
 public:
 
-	Input(FloatingType* in);
+	Input(const FloatingType* in);
 
 	FloatingType
 	getValue() override;
 
 private:
 
-	FloatingType* in_;
+	const FloatingType* in_;
 };
 
 class Sum: public IControlElement
@@ -169,6 +159,37 @@ private:
 	Element inFalse_;
 
 	bool state_;
+};
+
+class CustomFunction: public IControlElement
+{
+public:
+
+	CustomFunction(Element input, std::function<FloatingType(FloatingType)> function);
+
+	FloatingType
+	getValue() override;
+
+private:
+
+	Element input_;
+	std::function<FloatingType(FloatingType)> function_;
+};
+
+class CustomFunction2: public IControlElement
+{
+public:
+
+	CustomFunction2(Element input, Element input2, std::function<FloatingType(FloatingType, FloatingType)> function);
+
+	FloatingType
+	getValue() override;
+
+private:
+
+	Element input_;
+	Element input2_;
+	std::function<FloatingType(FloatingType, FloatingType)> function_;
 };
 
 }

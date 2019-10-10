@@ -185,6 +185,8 @@ private:
 
 	FloatingType lastError_;
 
+	FloatingType lastTarget_;
+
 	//Latest calculated output value
 	FloatingType output_;
 

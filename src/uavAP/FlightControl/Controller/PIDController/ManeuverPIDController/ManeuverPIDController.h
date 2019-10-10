@@ -48,7 +48,8 @@ class IPC;
 class DataHandling;
 class Packet;
 
-class ManeuverPIDController: public IPIDController, public AggregatableObject<IPC, IScheduler, ISensingActuationIO, DataHandling>, public IRunnableObject
+class ManeuverPIDController: public IPIDController, public AggregatableObject<IPC, IScheduler,
+		ISensingActuationIO, DataHandling>, public IRunnableObject
 {
 public:
 

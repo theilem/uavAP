@@ -43,15 +43,6 @@ Constant::getValue()
 Constraint::Constraint(Element in, FloatingType min, FloatingType max) :
 		in_(in), override_(false), overrideMin_(0), overrideMax_(0)
 {
-	setHardContraintValue(min, max);
-	setContraintValue(min, max);
-}
-
-Constraint::Constraint(Element in, FloatingType min, FloatingType max, FloatingType hardMin,
-		FloatingType hardMax) :
-		in_(in), override_(false), overrideMin_(0), overrideMax_(0)
-{
-	setHardContraintValue(hardMin, hardMax);
 	setContraintValue(min, max);
 }
 
@@ -146,7 +137,7 @@ Gain::getValue()
 	return gain_ * in_->getValue();
 }
 
-Input::Input(FloatingType* in) :
+Input::Input(const FloatingType* in) :
 		in_(in)
 {
 
@@ -187,6 +178,28 @@ void
 ManualSwitch::switchTo(bool state)
 {
 	state_ = state;
+}
+
+CustomFunction::CustomFunction(Element input, std::function<FloatingType
+(FloatingType)> function):input_(input), function_(function)
+{
+}
+
+FloatingType
+CustomFunction::getValue()
+{
+	return function_(input_->getValue());
+}
+
+CustomFunction2::CustomFunction2(Element input, Element input2, std::function<FloatingType
+(FloatingType, FloatingType)> function):input_(input), input2_(input2), function_(function)
+{
+}
+
+FloatingType
+CustomFunction2::getValue()
+{
+	return function_(input_->getValue(), input2_->getValue());
 }
 
 }

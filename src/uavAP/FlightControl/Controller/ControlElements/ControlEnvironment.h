@@ -37,7 +37,7 @@ class ControlEnvironment
 {
 public:
 
-	ControlEnvironment(TimePoint* timeStamp);
+	ControlEnvironment(const TimePoint* timeStamp);
 
 	virtual
 	~ControlEnvironment();
@@ -49,7 +49,7 @@ public:
 	using EvaluableElement = std::shared_ptr<IEvaluableControlElement>;
 
 	std::shared_ptr<Input>
-	addInput(FloatingType* in);
+	addInput(const FloatingType* in);
 
 	std::shared_ptr<Filter>
 	addFilter(Element in, FloatingType alpha);
@@ -90,7 +90,7 @@ private:
 
 	TimePoint lastTimeStamp_;
 
-	TimePoint* timeStamp_;
+	const TimePoint* timeStamp_;
 
 	std::vector<EvaluableElement> evaluableControlElements_;
 

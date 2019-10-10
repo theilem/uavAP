@@ -33,24 +33,27 @@ ConfigurableObject<ParameterSet>::setParams(const ParameterSet& set)
 	params = set;
 }
 
-//template<class ParameterSet>
-//inline std::string
-//ConfigurableObject<ParameterSet>::getJson()
-//{
-//
-//	JsonPopulator pop;
-//
-//	params.configure(pop);
-//
-//	return pop.getString();
-//
-//}
-
 template<class ParameterSet>
 inline const ParameterSet&
 ConfigurableObject<ParameterSet>::getParams() const
 {
 	return params;
 }
+
+template<class ParameterSet>
+inline ParameterSet&
+ConfigurableObject<ParameterSet>::getParams()
+{
+	return params;
+}
+
+template <typename ParameterSet>
+template<typename Config>
+inline void
+ConfigurableObject<ParameterSet>::configureParams(Config& config)
+{
+	params.template configure(config);
+}
+
 
 #endif /* UAVAP_CORE_PROPERTYMAPPER_CONFIGURABLEOBJECTIMPL_HPP_ */

@@ -29,7 +29,14 @@ public:
 	const ParameterSet&
 	getParams() const;
 
+	ParameterSet&
+	getParams();
+
 protected:
+
+	template <typename Config>
+	void
+	configureParams(Config& config);
 
 	ParameterSet params;
 };

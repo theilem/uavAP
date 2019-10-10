@@ -29,7 +29,7 @@
 namespace Control
 {
 
-ControlEnvironment::ControlEnvironment(TimePoint* timeStamp) :
+ControlEnvironment::ControlEnvironment(const TimePoint* timeStamp) :
 		timeStamp_(timeStamp)
 {
 }
@@ -68,7 +68,7 @@ ControlEnvironment::evaluate()
 }
 
 std::shared_ptr<Input>
-ControlEnvironment::addInput(FloatingType* in)
+ControlEnvironment::addInput(const FloatingType* in)
 {
 	return std::make_shared<Input>(in);
 }
