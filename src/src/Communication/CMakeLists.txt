@@ -20,8 +20,7 @@ add_executable(Communication   	Communication.cpp
 								Comm/IDCComm/IDCComm.cpp
 								Comm/MessageQueueComm/MessageQueueComm.cpp)
 
-target_link_libraries(Communication    uavap_flight_analysis
-									   uavap_core
+target_link_libraries(Communication    uavap_core
                                        )
                                         
 install(TARGETS Communication OPTIONAL

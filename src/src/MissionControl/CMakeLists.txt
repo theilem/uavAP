@@ -43,8 +43,7 @@ target_link_libraries(uavap_mission_control_geo 	uavap_core
 add_executable(MissionControl   MissionControl.cpp
 								DataHandling/MissionControlDataHandling.cpp)
 
-target_link_libraries(MissionControl    uavap_flight_analysis
-										uavap_mission_control
+target_link_libraries(MissionControl    uavap_mission_control
 										uavap_mission_control_geo
                                         )
                                         
