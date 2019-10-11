@@ -26,6 +26,7 @@
 
 add_library(ap_ext SHARED	ap_ext/ap_ext.cpp
 							ap_ext/ApExtManager.cpp
+							ap_ext/UTM.cpp
 							ChannelMixing.cpp)
 							
 target_link_libraries(ap_ext	uavap_core
