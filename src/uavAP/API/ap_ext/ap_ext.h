@@ -34,6 +34,7 @@
 #define PWM_CHS 22
 #define ADC_CHS 32
 #define LOADC_CHS 2
+#define NUM_SLINK_CHS (1)
 #define PIC_BUFFER_SIZE (sizeof(struct pic_sample_t))
 #define LINE_SEP_MAXLEN 10
 #define MOTOR_CHS 1
@@ -48,81 +49,71 @@ struct pic_sample_t;
 struct slink_sample_t;
 struct output_settings_t;
 
-// NOTE these may need extra double inclusion guard in order for AlVolo to compile
-
 /* Definition of a sample as acquired from sensors */
 struct data_sample_t
 {
 	struct imu_sample_t * imu_sample;
-	struct int_imu_sample_t * int_imu_sample;
+	struct imu_sample_t * int_imu_sample;
 	struct pic_sample_t * pic_sample;
 	struct airs_sample_t * airs_sample;
 	struct slink_sample_t * slink_sample;
 	struct phidget_sample_t * phidget_sample;
 };
 
-struct int_imu_sample_t
-{
-	unsigned long valid_flags;
-	unsigned long imu_pkt;
+#if 0
+struct int_imu_sample_t {
+    unsigned long valid_flags;
+    unsigned long imu_pkt;
 
-	union
-	{
-		struct
-		{
-			double imu_euler_roll;
-			double imu_euler_pitch;
-			double imu_euler_yaw;
-		};
-		double imu_euler[3];
+    union {
+	struct {
+	    double imu_euler_roll;
+	    double imu_euler_pitch;
+	    double imu_euler_yaw;
 	};
+	    double imu_euler[3];
+    };
 
-	union
-	{
-		struct
-		{
-			double imu_quat_w;
-			double imu_quat_x;
-			double imu_quat_y;
-			double imu_quat_z;
-		};
-		double imu_quat[4];
+    union {
+	struct {
+	    double imu_quat_w;
+	    double imu_quat_x;
+	    double imu_quat_y;
+	    double imu_quat_z;
 	};
+	    double imu_quat[4];
+    };
 
-	union
-	{
-		struct
-		{
-			double imu_accel_x;
-			double imu_accel_y;
-			double imu_accel_z;
-		};
-		double imu_accel[3];
+    union {
+	struct {
+	    double imu_accel_x;
+	    double imu_accel_y;
+	    double imu_accel_z;
 	};
+	double imu_accel[3];
+    };
 
-	union
-	{
-		struct
-		{
-			double imu_rot_x;
-			double imu_rot_y;
-			double imu_rot_z;
-		};
-		double imu_rot[3];
+    union {
+	struct {
+	    double imu_rot_x;
+	    double imu_rot_y;
+	    double imu_rot_z;
 	};
+	double imu_rot[3];
+    };
 
-	union
-	{
-		struct
-		{
-			double imu_mag_x;
-			double imu_mag_y;
-			double imu_mag_z;
-		};
-		double imu_mag[3];
+    union {
+	struct {
+	    double imu_mag_x;
+	    double imu_mag_y;
+	    double imu_mag_z;
 	};
+	double imu_mag[3];
+    };
 
 };
+
+#endif
 
 struct imu_sample_t
 {
@@ -318,7 +309,7 @@ struct slink_sample_t
 			double raw_lin_temp;
 		};
 		double val[SLINK_NUM_CMDS];
-	};
+	} channels[NUM_SLINK_CHS];
 };
 
 struct phidget_sample_t
@@ -326,15 +317,16 @@ struct phidget_sample_t
 	double loadc_ch[LOADC_CHS];
 };
 
-struct airs_sample_t {
-    unsigned short airs;
+struct airs_sample_t
+{
+	unsigned short airs;
 #ifdef USE_AUTOPILOT
-    double cal_airs;
+	double cal_airs;
 #endif
-    /* These fields should replace internal PIC measurements if an
-     * external probe is available */
-    float press;
-    float temp;
+	/* These fields should replace internal PIC measurements if an
+	 * external probe is available */
+	float press;
+	float temp;
 };
 
 struct adc_ch_setting_t
@@ -412,15 +404,6 @@ struct imu_setting_t
 	imu_field_setting_t time_nano;
 	imu_field_setting_t time_second;
 	imu_field_setting_t time_year;
-};
-
-struct int_imu_setting_t
-{
-	imu_field_setting_t pkt;
-	imu_field_setting_t euler;
-	imu_field_setting_t accel;
-	imu_field_setting_t rot;
-	imu_field_setting_t mag;
 };
 
 struct gps_setting_t
@@ -507,7 +490,7 @@ struct output_settings_t
 	struct adc_ch_setting_t adc_ch[ADC_CHS];
 	struct pwm_ch_setting_t pwm_ch[PWM_CHS];
 	struct imu_setting_t imu_setup;
-	struct int_imu_setting_t int_imu_setup;
+	struct imu_setting_t int_imu_setup;
 	struct gps_setting_t gps_setup;
 	struct esc_setting_t esc_setup;
 	struct airs_setting_t airs_setup;
