@@ -1,6 +1,6 @@
 {
 	"binary_path": "/usr/local/bin/uavAP/",
-	"config_path": "/usr/local/config/sailplane/",
+	"config_path": "/usr/local/config/pulsar/",
 	"processes": {
 		"flight_control": {
 			"binary": "FlightControl",

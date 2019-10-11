@@ -5,8 +5,8 @@
 		"hard_roll_rate_constraint": 20.0,
 		"hard_pitch_constraint": 30.0,
 		"hard_pitch_rate_constraint": 30.0,
-		"use_rpm_controller": true,
-		"pids": {
+		"use_rpm_controller": false,
+		"pid_controllers": {
 			"climb_angle": {
 				"ff": 0,
 				"imax": 1,
@@ -73,9 +73,9 @@
 		"k_convergence": 0.01,
 		"k_yaw_rate": 0.65
 	},
-	"data_handling": {
-		"period": 100,
-		"target":"flight_control"
+	"fc_data_handling": {
+		"compress_sensor_data": true,
+		"period": 200
 	},
 	"data_presentation": {
 		"compress_double": true

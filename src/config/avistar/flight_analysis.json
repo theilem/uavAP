@@ -25,7 +25,7 @@
 		"in_tolerance_duration": 2000
 	},
 	"maneuver_analysis": {
-		"log_path": "/usr/local/",
+		"log_path": "/home/root/",
 		"maneuver": "flight_testing"
 	},
 	"data_presentation": {

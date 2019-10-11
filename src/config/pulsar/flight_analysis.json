@@ -8,7 +8,7 @@
 		"in_tolerance_duration": 3000
 	},
 	"maneuver_analysis": {
-		"log_path": "/usr/local/logs/",
+		"log_path": "/home/root/",
 		"maneuver": "advanced_control"
 	},
 	"data_presentation": {

@@ -1,145 +1,52 @@
 {
-	"interface": {
-		"api": {
-			"data_presentation": {
-				"compress_double": true
-			}
-		},
-		"num_output_channel": 7,
-		"trace_seq_nr": false,
+	"interface":
+	{
+		"num_output_channel":7,
+		"trace_seq_nr":false,
 		"internal_imu": false,
-		"use_airspeed": false,
-		"use_euler": true,
-		"external_gps": false,
-		"course_as_heading": false,
-		"channel_naming": {
-			"throttle": 0,
-			"elevator_l": 1,
-			"aileron_r": 2,
-			"flap_l": 3,
-			"aileron_l": 4,
-			"rudder": 5,
-			"flap_r": 6
+		"use_airspeed":false,
+		"use_euler":true,
+		"external_gps":false,
+		"course_as_heading":false,
+		"channel_naming":
+		{
+			"throttle":		0,
+			"elevator_l":	1,
+			"aileron_r":	2,
+			"flap_l":		3,
+			"aileron_l":	4,
+			"rudder":		5,
+			"flap_r":		6
 		},
-		"channel_mixing": {
-			"roll_out": [
-				0,
-				0,
-				1,
-				0,
-				1,
-				0,
-				0
-			],
-			"pitch_out": [
-				0,
-				-1,
-				0,
-				0,
-				0,
-				0,
-				0
-			],
-			"yaw_out": [
-				0,
-				0,
-				0,
-				0,
-				0,
-				1,
-				0
-			],
-			"throttle_out": [
-				1,
-				0,
-				0,
-				0,
-				0,
-				0,
-				0
-			]
+		"channel_mixing":
+		{
+			"roll_out":		[0, 0, 1, 0, 1, 0, 0],
+			"pitch_out":	[0,-1, 0, 0, 0, 0, 0],
+			"yaw_out":		[0, 0, 0, 0, 0, 1, 0],
+			"throttle_out":	[1, 0, 0, 0, 0, 0, 0]
 		},
-		"channel_mapping": {
-			"normal": {
-				"min": [
-					4404,
-					4684,
-					4780,
-					4656,
-					4728,
-					4364,
-					7300
-				],
-				"center": [
-					6082,
-					6208,
-					6252,
-					4656,
-					6156,
-					6440,
-					7300
-				],
-				"max": [
-					7760,
-					7568,
-					7516,
-					4656,
-					7328,
-					7800,
-					7300
-				]
+		"channel_mapping":
+		{
+			"normal":
+			{
+				"min":		[4404, 4684, 4780, 4656, 4728, 4364, 7300],
+				"center":	[6082, 6208, 6252, 4656, 6156, 6440, 7300],
+				"max":		[7760, 7568, 7516, 4656, 7328, 7800, 7300]
 			}
 		},
-		"camber_offset": {
-			"normal": [
-				0,
-				0,
-				0,
-				0,
-				0,
-				0,
-				0
-			]
+		"camber_offset":
+		{
+			"normal":		[0, 0, 0, 0, 0, 0, 0]
 		},
-		"special_control": {
-			"none": [
-				0,
-				0,
-				0,
-				0,
-				0,
-				0,
-				0
-			],
-			"flap": [
-				0,
-				0,
-				0,
-				2648,
-				0,
-				0,
-				-2752
-			]
+		"special_control":
+		{
+			"none":			[0, 0, 0,    0, 0, 0,     0],
+			"flap": 		[0, 0, 0, 2648, 0, 0, -2752]
 		},
-		"channel_constraints": {
-			"min": [
-				4404,
-				4684,
-				4780,
-				4656,
-				4728,
-				4364,
-				4548
-			],
-			"max": [
-				7760,
-				7568,
-				7516,
-				7304,
-				7328,
-				7800,
-				7300
-			]
+		"channel_constraints":
+		{
+			"min":		[4404, 4684, 4780, 4656, 4728, 4364, 4548],
+			"max":		[7760, 7568, 7516, 7304, 7328, 7800, 7300]
 		}
 	}
 }
