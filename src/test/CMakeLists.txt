@@ -29,8 +29,10 @@ set (TEST_SOURCES 	TestRunner.cpp
 					Core/FrameworkAPITest.cpp
 					Core/DataHandlingTest.cpp
 					Core/JsonPopulatorTest.cpp
+					Core/AngleTest.cpp
 					Math/BetaIncompleteTest.cpp
 					API/ApExtTest.cpp
+					
 					)
 
 set (TEST_DEPENDENCIES 	boost_system

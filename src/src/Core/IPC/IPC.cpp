@@ -285,7 +285,8 @@ IPC::retrySubscriptions()
 
 		if (sub.connected())
 		{
-			it->first(sub);
+			if (it->first)
+				it->first(sub);
 			it = retryVector_.erase(it);
 		}
 		else

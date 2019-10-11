@@ -177,11 +177,6 @@ RateCascade::configure(const Configuration& config)
 	Configuration pidConfig;
 	pm.add("pids", pidConfig, false);
 
-	rollTargetConstraint_->setHardContraintValue(degToRad(hardRollConstraint_));
-	pitchTargetConstraint_->setHardContraintValue(degToRad(hardPitchConstraint_));
-	rollRateTargetConstraint_->setHardContraintValue(degToRad(hardRollRateConstraint_));
-	pitchRateTargetConstraint_->setHardContraintValue(degToRad(hardPitchRateConstraint_));
-
 	rollTargetConstraint_->setContraintValue(degToRad(rollConstraint_));
 	pitchTargetConstraint_->setContraintValue(degToRad(pitchConstraint_));
 	rollRateTargetConstraint_->setContraintValue(degToRad(rollRateConstraint_));

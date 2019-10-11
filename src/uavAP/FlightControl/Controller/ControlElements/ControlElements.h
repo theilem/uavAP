@@ -69,8 +69,6 @@ public:
 	void
 	disableOverride();
 
-private:
-
 	Element in_;
 	FloatingType min_;
 	FloatingType max_;

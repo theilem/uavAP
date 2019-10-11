@@ -28,6 +28,8 @@ public:
 
 	~SignalHandlerSingleton()
 	{
+		if (!signalHandled_)
+			joinHandler();
 	}
 
 	static SignalHandlerSingleton&

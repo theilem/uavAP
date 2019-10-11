@@ -61,9 +61,15 @@ AutopilotAPI::initialize()
 {
 	auto ipc = aggregator_.getOne<IPC>();
 	sensorDataPublisher_ = ipc->publish<SensorData>("sensor_data");
-	tryConnectControllerOut();
-	tryConnectAdvancedControl();
-	tryConnectLocalFrame();
+
+	IPCOptions opts;
+	opts.retry = true;
+	ipc->subscribe<ControllerOutput>("actuation",
+			std::bind(&AutopilotAPI::onControllerOut, this, std::placeholders::_1), opts);
+	ipc->subscribe<AdvancedControl>("advanced_control_maneuver",
+			std::bind(&AutopilotAPI::onAdvancedControl, this, std::placeholders::_1), opts);
+	ipc->subscribe<VehicleOneFrame>("local_frame",
+			std::bind(&AutopilotAPI::onLocalFrame, this, std::placeholders::_1), opts);
 	SimpleRunner runner(aggregator_);
 	runner.runAllStages();
 }

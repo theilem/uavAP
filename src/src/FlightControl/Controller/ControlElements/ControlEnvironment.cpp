@@ -128,7 +128,7 @@ ControlEnvironment::addConstraint(Element in, FloatingType min, FloatingType max
 std::shared_ptr<Constraint>
 ControlEnvironment::addConstraint(Element in, double min, double max, double hardMin, double hardMax)
 {
-	return std::make_shared<Constraint>(in, min, max, hardMin, hardMax);
+	return std::make_shared<Constraint>(in, min, max);
 }
 
 std::shared_ptr<PID>

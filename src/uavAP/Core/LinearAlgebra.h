@@ -60,7 +60,6 @@ using EigenHyperplane = Eigen::Hyperplane<double, 3, Eigen::DontAlign>;
 
 #endif
 
-
 /**
  * @brief Rotate 2D vector counter clockwise
  * @param vec Vector to be rotated

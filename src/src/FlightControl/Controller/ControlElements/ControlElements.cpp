@@ -65,46 +65,32 @@ Constraint::getValue()
 }
 
 void
-Constraint::setHardContraintValue(FloatingType hardMinmax)
-{
-	hardMax_ = hardMinmax;
-	hardMin_ = -hardMinmax;
-}
-
-void
-Constraint::setHardContraintValue(FloatingType hardMin, FloatingType hardMax)
-{
-	hardMax_ = hardMax;
-	hardMin_ = hardMin;
-}
-
-void
 Constraint::setContraintValue(FloatingType minmax)
 {
-	max_ = minmax > hardMax_ ? hardMax_ : minmax;
-	min_ = -minmax < hardMin_ ? hardMin_ : -minmax;
+	max_ = minmax;
+	min_ = -minmax;
 }
 
 void
 Constraint::setContraintValue(FloatingType min, FloatingType max)
 {
-	max_ = max > hardMax_ ? hardMax_ : max;
-	min_ = min < hardMin_ ? hardMin_ : min;
+	max_ = max;
+	min_ = min;
 }
 
 void
 Constraint::overrideContraintValue(FloatingType overrideMinmax)
 {
-	overrideMax_ = overrideMinmax > hardMax_ ? hardMax_ : overrideMinmax;
-	overrideMin_ = -overrideMinmax < hardMin_ ? hardMin_ : -overrideMinmax;
+	overrideMax_ = overrideMinmax;
+	overrideMin_ = -overrideMinmax;
 	override_ = true;
 }
 
 void
 Constraint::overrideContraintValue(FloatingType overrideMin, FloatingType overrideMax)
 {
-	overrideMax_ = overrideMax > hardMax_ ? hardMax_ : overrideMax;
-	overrideMin_ = overrideMin < hardMin_ ? hardMin_ : overrideMin;
+	overrideMax_ = overrideMax;
+	overrideMin_ = overrideMin;
 	override_ = true;
 }
 
