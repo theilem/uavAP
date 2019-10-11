@@ -56,6 +56,7 @@ enum class Sensor
 	AIR_SPEED,
 	GROUND_SPEED,
 	ANGLE_OF_ATTACK,
+	ANGLE_OF_SIDESLIP,
 	PROPULSION_POWER,
 	CONSUMED_ENERGY,
 	BATTERY_VOLTAGE,
@@ -92,6 +93,7 @@ ENUMMAP_INIT(Sensor,
 		{Sensor::AIR_SPEED, "air_speed"},
 		{Sensor::GROUND_SPEED, "ground_speed"},
 		{Sensor::ANGLE_OF_ATTACK, "angle_of_attack"},
+		{Sensor::ANGLE_OF_SIDESLIP, "angle_of_sideslip"},
 		{Sensor::PROPULSION_POWER, "propulsion_power"},
 		{Sensor::CONSUMED_ENERGY, "consumed_energy"},
 		{Sensor::BATTERY_VOLTAGE, "battery_voltage"},
@@ -117,10 +119,11 @@ struct SensorData
 	TimePoint timestamp; 	//!< Timestamp of sensor data
 	uint32_t sequenceNr; 	//!< Sequence number of the struct
 	bool hasGPSFix; 		//!< Shows whether the GPS has a fix
-	bool autopilotActive; 	//!< Shows if the autopilot is active, always true in simulation
+	bool autopilotActive; 	//!< Shows if the autopilot is active
 	FloatingType airSpeed; 		//!< total velocity w.r.t. wind
 	FloatingType groundSpeed; 	//!< total velocity w.r.t. ground
 	FloatingType angleOfAttack; 	//!< current angle of attack
+	FloatingType angleOfSideslip; //!< current angle of sideslip
 	FloatingType propulsionPower; //!< measured or estimated current propulsion power
 	FloatingType consumedEnergy; 	//!< measured or estimated total used energy for propulsion
 	FloatingType batteryVoltage;	//!< current battery voltage
@@ -154,6 +157,7 @@ serialize(Archive& ar, SensorData& t)
 	ar & t.hasGPSFix;
 	ar & t.autopilotActive;
 	ar & t.angleOfAttack;
+	ar & t.angleOfSideslip;
 	ar & t.sequenceNr;
 	ar & t.batteryVoltage;
 	ar & t.batteryCurrent;
