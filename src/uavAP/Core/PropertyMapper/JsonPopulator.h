@@ -27,11 +27,17 @@ public:
 	~JsonPopulator();
 
 	template<typename Type>
-	typename std::enable_if<!(is_parameter_set<typename Type::ValueType>::value), JsonPopulator>::type&
+	typename std::enable_if<
+			!is_parameter_set<typename Type::ValueType>::value
+					&& !is_configurable_object<typename Type::ValueType>::value, JsonPopulator>::type&
 	operator&(Type& param);
 
 	template<typename Type>
 	typename std::enable_if<(is_parameter_set<typename Type::ValueType>::value), JsonPopulator>::type&
+	operator&(Type& param);
+
+	template<typename Type>
+	typename std::enable_if<(is_configurable_object<typename Type::ValueType>::value), JsonPopulator>::type&
 	operator&(Type& param);
 
 	std::string
@@ -84,7 +90,9 @@ private:
 };
 
 template<typename Type>
-inline typename std::enable_if<!(is_parameter_set<typename Type::ValueType>::value), JsonPopulator>::type&
+inline typename std::enable_if<
+!is_parameter_set<typename Type::ValueType>::value
+		&& !is_configurable_object<typename Type::ValueType>::value, JsonPopulator>::type&
 JsonPopulator::operator &(Type& param)
 {
 	if (!firstElement_)
@@ -115,6 +123,30 @@ JsonPopulator::operator &(Type& param)
 	firstElement_ = true;
 	tabCounter_++;
 	param.value.configure(*this);
+	firstElement_ = false;
+	tabCounter_--;
+
+	jsonString_ << std::endl;
+	addTabs();
+	jsonString_ << "}";
+	return *this;
+}
+
+template<typename Type>
+inline typename std::enable_if<(is_configurable_object<typename Type::ValueType>::value), JsonPopulator>::type&
+JsonPopulator::operator &(Type& param)
+{
+	if (!firstElement_)
+	{
+		jsonString_ << "," << std::endl;
+	}
+	addTabs();
+
+	jsonString_ << "\"" << param.id << "\":{" << std::endl;
+
+	firstElement_ = true;
+	tabCounter_++;
+	param.value.configureParams(*this);
 	firstElement_ = false;
 	tabCounter_--;
 
@@ -169,9 +201,9 @@ JsonPopulator::populate()
 	jsonString_ << "\"" << Obj::typeId << "\"" << ":{" << std::endl;
 //	addTabs();
 	indent();
-	typename Obj::ParamType p;
+	Obj p;
 	firstElement_ = true;
-	p.configure(*this);
+	p.configureParams(*this);
 	outdent();
 	firstElement_ = false;
 

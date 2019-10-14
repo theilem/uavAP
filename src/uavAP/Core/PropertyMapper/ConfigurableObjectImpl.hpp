@@ -55,5 +55,4 @@ ConfigurableObject<ParameterSet>::configureParams(Config& config)
 	params.template configure(config);
 }
 
-
 #endif /* UAVAP_CORE_PROPERTYMAPPER_CONFIGURABLEOBJECTIMPL_HPP_ */

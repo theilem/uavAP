@@ -97,7 +97,7 @@ ConditionManager::run(RunStage stage)
 		{
 			APLOG_ERROR << "ConditionManager: Steady State Missing.";
 
-			return true;
+//			return true;
 		}
 
 		break;

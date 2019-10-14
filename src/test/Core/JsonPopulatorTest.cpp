@@ -61,6 +61,39 @@ public:
 
 };
 
+class Test2: public ConfigurableObject<Params>
+{
+public:
+	static constexpr const char* const typeId = "test2";
+
+	bool
+	configure(const Configuration& config)
+	{
+		PropertyMapper<Configuration> pm(config);
+
+		configureParams(pm);
+
+		return pm.map();
+	}
+
+	template<typename Config>
+	void
+	configureParams(Config& c)
+	{
+		params.configure(c);
+
+		ParameterRef<Test> ref(test,
+		{ }, "sub_test", true);
+		c & ref;
+
+	}
+
+private:
+
+	Test test;
+
+};
+
 }
 
 BOOST_AUTO_TEST_SUITE(JsonPopulatorTest)
@@ -92,6 +125,36 @@ BOOST_AUTO_TEST_CASE(populator_test_1)
 			"}";
 
 	BOOST_CHECK_EQUAL(correct.compare(pop.getString()), 0);
+}
+
+BOOST_AUTO_TEST_CASE(populator_test_2)
+{
+	JsonPopulator pop;
+	pop.populate<Test2>();
+
+	std::string correct = "{\n"
+			"\t\"test2\":{\n"
+			"\t\t\"p1\":1,\n"
+			"\t\t\"p2\":7,\n"
+			"\t\t\"p3\":{\n"
+			"\t\t\t\"p1\":2.5,\n"
+			"\t\t\t\"p2\":\"test\",\n"
+			"\t\t\t\"p3\":100\n"
+			"\t\t},\n"
+			"\t\t\"sub_test\":{\n"
+			"\t\t\t\"p1\":1,\n"
+			"\t\t\t\"p2\":7,\n"
+			"\t\t\t\"p3\":{\n"
+			"\t\t\t\t\"p1\":2.5,\n"
+			"\t\t\t\t\"p2\":\"test\",\n"
+			"\t\t\t\t\"p3\":100\n"
+			"\t\t\t}\n"
+			"\t\t}\n"
+			"\t}\n"
+			"}";
+
+	BOOST_CHECK_EQUAL(correct.compare(pop.getString()), 0);
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()

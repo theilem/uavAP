@@ -23,6 +23,12 @@ struct ParameterRef
 		value = def;
 	}
 
+	inline
+	ParameterRef(ValueType& ref, const std::string& name, bool man) :
+			value(ref), id(name), mandatory(man)
+	{
+	}
+
 	inline const Type&
 	operator()() const
 	{

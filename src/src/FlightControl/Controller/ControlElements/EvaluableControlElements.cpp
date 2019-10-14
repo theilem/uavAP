@@ -51,7 +51,7 @@ Filter::evaluate()
 }
 
 FloatingType
-Filter::getValue()
+Filter::getValue() const
 {
 	return smoothData_;
 }
@@ -111,7 +111,7 @@ Output::evaluate()
 }
 
 FloatingType
-Output::getValue()
+Output::getValue() const
 {
 	return in_->getValue();
 }
@@ -254,7 +254,7 @@ PID::evaluate()
 }
 
 FloatingType
-PID::getValue()
+PID::getValue() const
 {
 	return std::isnan(output_) ? 0 : output_;
 }

@@ -46,7 +46,7 @@ public:
 			ControllerTarget* target, ControllerOutput* output);
 
 	bool
-	configure(const Configuration& config) override;
+	configure(const Configuration& config);
 
 	bool
 	tunePID(PIDs pid, const Control::PIDParameters& params) override;
@@ -75,8 +75,8 @@ private:
 	std::map<PIDs, std::shared_ptr<Control::PID>> pids_;
 	std::map<ControllerOutputs, std::shared_ptr<Control::Output>> outputs_;
 
-	std::shared_ptr<Control::Constraint> rollConstraint_;
-	std::shared_ptr<Control::Constraint> pitchConstraint_;
+	std::shared_ptr<Control::Constraint<>> rollConstraint_;
+	std::shared_ptr<Control::Constraint<>> pitchConstraint_;
 
 	double hardRollConstraint_;
 	double hardPitchConstraint_;

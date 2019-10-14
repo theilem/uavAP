@@ -26,6 +26,7 @@
 #ifndef UAVAP_CORE_PROPERTYMAPPER_PROPERTYMAPPER_H_
 #define UAVAP_CORE_PROPERTYMAPPER_PROPERTYMAPPER_H_
 
+#include <uavAP/Core/Angle.h>
 #include <uavAP/Core/EnumMap.hpp>
 #include <uavAP/Core/LinearAlgebra.h>
 #include <uavAP/Core/PropertyMapper/Parameter.h>
@@ -55,11 +56,14 @@ public:
 
 	template<typename T>
 	bool
-	addVector(const std::string& key, std::vector<enable_if_is_parameter_set<typename T::value_type>>& val, bool mandatory);
+	addVector(const std::string& key,
+			std::vector<enable_if_is_parameter_set<typename T::value_type>>& val, bool mandatory);
 
 	template<typename T>
 	bool
-	addVector(const std::string& key, std::vector<enable_if_not_is_parameter_set<typename T::value_type>>& val, bool mandatory);
+	addVector(const std::string& key,
+			std::vector<enable_if_not_is_parameter_set<typename T::value_type>>& val,
+			bool mandatory);
 
 //	template<typename T>
 //	bool
@@ -90,6 +94,10 @@ public:
 	template<typename Type>
 	bool
 	add(const std::string& key, Eigen::Array<Type, Eigen::Dynamic, 1>& val, bool mandatory);
+
+	template<typename Type>
+	bool
+	addAngle(const std::string& key, Angle<Type>& val, bool mandatory);
 
 	template<typename Enum>
 	bool
@@ -153,6 +161,11 @@ private:
 
 	template<typename Type>
 	bool
+	addSpecific(const std::string& key,
+			typename std::enable_if<is_angle<Type>::value, Type>::type& val, bool mandatory);
+
+	template<typename Type>
+	bool
 	addSpecific(const std::string& key, enable_if_is_vector<Type>& val, bool mandatory);
 
 	template<typename Type>
@@ -160,7 +173,8 @@ private:
 	addSpecific(const std::string& key,
 			typename std::enable_if<
 					!is_special_param<Type>::value && !std::is_enum<Type>::value
-							&& !is_vector<Type>::value, Type>::type& val, bool mandatory);
+							&& !is_vector<Type>::value && !is_angle<Type>::value, Type>::type& val,
+			bool mandatory);
 
 };
 
@@ -220,7 +234,8 @@ PropertyMapper<Config>::add(const std::string& key,
 template<typename Config>
 template<typename T>
 inline bool
-PropertyMapper<Config>::addVector(const std::string& key, std::vector<enable_if_is_parameter_set<typename T::value_type>>& val, bool mandatory)
+PropertyMapper<Config>::addVector(const std::string& key,
+		std::vector<enable_if_is_parameter_set<typename T::value_type>>& val, bool mandatory)
 {
 	val.clear();
 	Optional<const Config&> value;
@@ -250,7 +265,8 @@ PropertyMapper<Config>::addVector(const std::string& key, std::vector<enable_if_
 template<typename Config>
 template<typename T>
 inline bool
-PropertyMapper<Config>::addVector(const std::string& key, std::vector<enable_if_not_is_parameter_set<typename T::value_type>>& val, bool mandatory)
+PropertyMapper<Config>::addVector(const std::string& key,
+		std::vector<enable_if_not_is_parameter_set<typename T::value_type>>& val, bool mandatory)
 {
 	val.clear();
 	Optional<const Config&> value;
@@ -627,11 +643,36 @@ template<typename Config>
 template<typename Type>
 bool
 PropertyMapper<Config>::addSpecific(const std::string& key,
+		typename std::enable_if<is_angle<Type>::value, Type>::type& val, bool mandatory)
+{
+	return addAngle<typename Type::ValueType>(key, val, mandatory);
+}
+
+template<typename Config>
+template<typename Type>
+bool
+PropertyMapper<Config>::addSpecific(const std::string& key,
 		typename std::enable_if<
 				!is_special_param<Type>::value && !std::is_enum<Type>::value
-						&& !is_vector<Type>::value, Type>::type& val, bool mandatory)
+						&& !is_vector<Type>::value && !is_angle<Type>::value, Type>::type& val,
+		bool mandatory)
 {
 	return add<Type>(key, val, mandatory);
+}
+
+template<typename Config>
+template<typename Type>
+inline bool
+PropertyMapper<Config>::addAngle(const std::string& key, Angle<Type>& val, bool mandatory)
+{
+	Type v;
+	auto b = this->template add<Type>(key, v, mandatory);
+	if (!b)
+		return false;
+	val = v;
+
+	return true;
+
 }
 
 #endif /* UAVAP_CORE_PROPERTYMAPPER_PROPERTYMAPPER_H_ */

@@ -72,10 +72,10 @@ public:
 	std::shared_ptr<ManualSwitch>
 	addManualSwitch(Element inTrue, Element inFalse);
 
-	std::shared_ptr<Constraint>
+	std::shared_ptr<Constraint<>>
 	addConstraint(Element in, FloatingType min, FloatingType max);
 
-	std::shared_ptr<Constraint>
+	std::shared_ptr<Constraint<>>
 	addConstraint(Element in, double min, double max, double hardMin, double hardMax);
 
 	std::shared_ptr<PID>
@@ -83,6 +83,12 @@ public:
 
 	std::shared_ptr<PID>
 	addPID(Element target, Element current, Element derivative, const PIDParameters& params);
+
+	const Duration*
+	getTimeDiff() const;
+
+	void
+	addEvaluable(EvaluableElement element);
 
 private:
 

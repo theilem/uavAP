@@ -50,7 +50,7 @@ public:
 	evaluate() override;
 
 	FloatingType
-	getValue() override;
+	getValue() const override;
 
 	void
 	setAlpha(FloatingType alpha);
@@ -92,7 +92,7 @@ public:
 	evaluate() override;
 
 	FloatingType
-	getValue() override;
+	getValue() const override;
 
 private:
 
@@ -148,7 +148,7 @@ public:
 	evaluate() override;
 
 	FloatingType
-	getValue() override;
+	getValue() const override;
 
 	PIDStatus
 	getStatus();

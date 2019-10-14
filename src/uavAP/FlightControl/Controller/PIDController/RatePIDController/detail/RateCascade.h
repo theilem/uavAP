@@ -47,7 +47,7 @@ public:
 			ControllerTarget* target, ControllerOutput* output);
 
 	bool
-	configure(const Configuration& config) override;
+	configure(const Configuration& config);
 
 	bool
 	tunePID(PIDs pid, const Control::PIDParameters& params) override;
@@ -82,18 +82,18 @@ private:
 	std::map<PIDs, std::shared_ptr<Control::PID>> pids_;
 	std::map<ControllerOutputs, std::shared_ptr<Control::Output>> outputs_;
 	std::map<ControllerOutputsWaveforms, std::shared_ptr<Control::Output>> outputWaveforms_;
-	std::map<ControllerConstraints, std::shared_ptr<Control::Constraint>> constraints_;
+	std::map<ControllerConstraints, std::shared_ptr<Control::Constraint<>>> constraints_;
 
 	std::shared_ptr<Control::ManualSwitch> throttleManualSwitch_;
 
-	std::shared_ptr<Control::Constraint> rollTargetConstraint_;
-	std::shared_ptr<Control::Constraint> rollRateTargetConstraint_;
-	std::shared_ptr<Control::Constraint> rollOutputConstraint_;
-	std::shared_ptr<Control::Constraint> pitchTargetConstraint_;
-	std::shared_ptr<Control::Constraint> pitchRateTargetConstraint_;
-	std::shared_ptr<Control::Constraint> pitchOutputConstraint_;
-	std::shared_ptr<Control::Constraint> yawOutputConstraint_;
-	std::shared_ptr<Control::Constraint> throttleOutputConstraint_;
+	std::shared_ptr<Control::Constraint<>> rollTargetConstraint_;
+	std::shared_ptr<Control::Constraint<>> rollRateTargetConstraint_;
+	std::shared_ptr<Control::Constraint<>> rollOutputConstraint_;
+	std::shared_ptr<Control::Constraint<>> pitchTargetConstraint_;
+	std::shared_ptr<Control::Constraint<>> pitchRateTargetConstraint_;
+	std::shared_ptr<Control::Constraint<>> pitchOutputConstraint_;
+	std::shared_ptr<Control::Constraint<>> yawOutputConstraint_;
+	std::shared_ptr<Control::Constraint<>> throttleOutputConstraint_;
 
 	FloatingType hardRollConstraint_;
 	FloatingType hardRollRateConstraint_;

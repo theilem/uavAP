@@ -119,16 +119,16 @@ ControlEnvironment::addManualSwitch(Element inTrue, Element inFalse)
 	return std::make_shared<ManualSwitch>(inTrue, inFalse);
 }
 
-std::shared_ptr<Constraint>
+std::shared_ptr<Constraint<>>
 ControlEnvironment::addConstraint(Element in, FloatingType min, FloatingType max)
 {
-	return std::make_shared<Constraint>(in, min, max);
+	return std::make_shared<Constraint<>>(in, min, max);
 }
 
-std::shared_ptr<Constraint>
+std::shared_ptr<Constraint<>>
 ControlEnvironment::addConstraint(Element in, double min, double max, double hardMin, double hardMax)
 {
-	return std::make_shared<Constraint>(in, min, max);
+	return std::make_shared<Constraint<>>(in, min, max);
 }
 
 std::shared_ptr<PID>
@@ -147,4 +147,17 @@ ControlEnvironment::addPID(Element target, Element current, Element derivative,
 	evaluableControlElements_.push_back(pid);
 	return pid;
 }
+
+const Duration*
+ControlEnvironment::getTimeDiff() const
+{
+	return &timeDiff_;
+}
+
+void
+ControlEnvironment::addEvaluable(EvaluableElement element)
+{
+	evaluableControlElements_.push_back(element);
+}
 } /* namespace Control */
+

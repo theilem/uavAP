@@ -26,6 +26,7 @@
 #ifndef UAVAP_MISSIONCONTROL_MANEUVERPLANNER_MANEUVERPLANNER_H_
 #define UAVAP_MISSIONCONTROL_MANEUVERPLANNER_MANEUVERPLANNER_H_
 
+#include <uavAP/Core/Object/AggregatableObject.hpp>
 #include "uavAP/Core/LockTypes.h"
 #include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
 #include <uavAP/MissionControl/Geofencing/Rectanguloid.h>
@@ -46,8 +47,11 @@
 class IPC;
 class ConditionManager;
 class RectanguloidCondition;
+class DataPresentation;
 
-class ManeuverPlanner: public IAggregatableObject, public IRunnableObject, public ConfigurableObject<ManeuverPlannerParams>
+class ManeuverPlanner: public AggregatableObject<IPC, ConditionManager, DataPresentation>,
+		public IRunnableObject,
+		public ConfigurableObject<ManeuverPlannerParams>
 {
 public:
 
@@ -60,9 +64,6 @@ public:
 
 	bool
 	configure(const Configuration& config);
-
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	bool
 	run(RunStage stage) override;
@@ -126,7 +127,8 @@ private:
 
 	void
 	overrideControllerOutput(Override& override,
-			const std::map<ControllerOutputs, bool>& overrideMap, const ControllerOutput& outputOverride);
+			const std::map<ControllerOutputs, bool>& overrideMap,
+			const ControllerOutput& outputOverride);
 
 	void
 	onControllerOutput(const ControllerOutput& packet);
@@ -195,8 +197,6 @@ private:
 	Subscription controllerOutputTrimSubscription_;
 	Subscription advancedControlSubscription_;
 
-	ObjectHandle<IPC> ipc_;
-	ObjectHandle<ConditionManager> conditionManager_;
 };
 
 #endif /* UAVAP_MISSIONCONTROL_MANEUVERPLANNER_MANEUVERPLANNER_H_ */

@@ -18,7 +18,8 @@
 #-------------------------------------------------------------------------------
 add_library(control SHARED 	ControlEnvironment.cpp
 							ControlElements.cpp
-							EvaluableControlElements.cpp)
+							EvaluableControlElements.cpp
+							Filter/LowPassFilter.cpp)
 					
 target_link_libraries(control)
 

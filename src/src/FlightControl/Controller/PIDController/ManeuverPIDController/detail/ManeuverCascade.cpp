@@ -134,8 +134,8 @@ ManeuverCascade::configure(const Configuration& config)
 	Configuration pidConfig;
 	pm.add("pids", pidConfig, false);
 
-	rollConstraint_->setContraintValue(hardRollConstraint_ * M_PI / 180.0);
-	pitchConstraint_->setContraintValue(hardPitchConstraint_ * M_PI / 180.0);
+	rollConstraint_->setConstraintValue(hardRollConstraint_ * M_PI / 180.0);
+	pitchConstraint_->setConstraintValue(hardPitchConstraint_ * M_PI / 180.0);
 
 	for (const auto& it : pidConfig)
 	{
@@ -180,7 +180,7 @@ ManeuverCascade::tuneRollBounds(double min, double max)
 		APLOG_WARN << "Roll constraint max violates hard constraint.";
 		return false;
 	}
-	rollConstraint_->setContraintValue(min / 180. * M_PI, max / 180. * M_PI);
+	rollConstraint_->setConstraintValue(min / 180. * M_PI, max / 180. * M_PI);
 	return true;
 }
 
@@ -197,7 +197,7 @@ ManeuverCascade::tunePitchBounds(double min, double max)
 		APLOG_WARN << "Pitch constraint max violates hard constraint.";
 		return false;
 	}
-	pitchConstraint_->setContraintValue(min / 180. * M_PI, max / 180. * M_PI);
+	pitchConstraint_->setConstraintValue(min / 180. * M_PI, max / 180. * M_PI);
 	return true;
 }
 

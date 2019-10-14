@@ -33,6 +33,7 @@
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/ManeuverPIDController.h"
 #include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/SimplePIDController.h"
 #include "uavAP/FlightControl/Controller/PIDController/RatePIDController/RatePIDController.h"
+#include "uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRatePIDController.h"
 
 class ControllerFactory: public Factory<IController>
 {
@@ -42,6 +43,7 @@ public:
 		addCreator<SimplePIDController>();
 		addCreator<ManeuverPIDController>();
 		addCreator<RatePIDController>();
+		addConfigurable<ManeuverRatePIDController>();
 	}
 };
 

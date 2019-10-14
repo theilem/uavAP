@@ -177,10 +177,10 @@ RateCascade::configure(const Configuration& config)
 	Configuration pidConfig;
 	pm.add("pids", pidConfig, false);
 
-	rollTargetConstraint_->setContraintValue(degToRad(rollConstraint_));
-	pitchTargetConstraint_->setContraintValue(degToRad(pitchConstraint_));
-	rollRateTargetConstraint_->setContraintValue(degToRad(rollRateConstraint_));
-	pitchRateTargetConstraint_->setContraintValue(degToRad(pitchRateConstraint_));
+	rollTargetConstraint_->setConstraintValue(degToRad(rollConstraint_));
+	pitchTargetConstraint_->setConstraintValue(degToRad(pitchConstraint_));
+	rollRateTargetConstraint_->setConstraintValue(degToRad(rollRateConstraint_));
+	pitchRateTargetConstraint_->setConstraintValue(degToRad(pitchRateConstraint_));
 
 	for (const auto& it : pidConfig)
 	{
@@ -225,7 +225,7 @@ RateCascade::tuneRollBounds(double min, double max)
 		APLOG_WARN << "Roll constraint max violates hard constraint.";
 		return false;
 	}
-	rollTargetConstraint_->setContraintValue(min / 180. * M_PI, max / 180. * M_PI);
+	rollTargetConstraint_->setConstraintValue(min / 180. * M_PI, max / 180. * M_PI);
 	return true;
 }
 
@@ -242,7 +242,7 @@ RateCascade::tunePitchBounds(double min, double max)
 		APLOG_WARN << "Pitch constraint max violates hard constraint.";
 		return false;
 	}
-	pitchTargetConstraint_->setContraintValue(min / 180. * M_PI, max / 180. * M_PI);
+	pitchTargetConstraint_->setConstraintValue(min / 180. * M_PI, max / 180. * M_PI);
 	return true;
 }
 
@@ -259,7 +259,7 @@ RateCascade::tuneRollRateBounds(double min, double max)
 		APLOG_WARN << "Roll rate constraint max violates hard constraint.";
 		return false;
 	}
-	rollRateTargetConstraint_->setContraintValue(min / 180. * M_PI, max / 180. * M_PI);
+	rollRateTargetConstraint_->setConstraintValue(min / 180. * M_PI, max / 180. * M_PI);
 	return true;
 }
 
@@ -276,7 +276,7 @@ RateCascade::tunePitchRateBounds(double min, double max)
 		APLOG_WARN << "Pitch rate constraint max violates hard constraint.";
 		return false;
 	}
-	pitchRateTargetConstraint_->setContraintValue(min / 180. * M_PI, max / 180. * M_PI);
+	pitchRateTargetConstraint_->setConstraintValue(min / 180. * M_PI, max / 180. * M_PI);
 	return true;
 }
 
@@ -368,7 +368,7 @@ RateCascade::setManeuverOverride(const Override& override)
 	{
 		if (auto constraint = findInMap(constraints_, it.first))
 		{
-			constraint->second->overrideContraintValue(it.second);
+			constraint->second->overrideConstraintValue(it.second);
 		}
 	}
 }

@@ -26,6 +26,7 @@
 #ifndef CONTROL_CONTROLELEMENTS_H_
 #define CONTROL_CONTROLELEMENTS_H_
 
+#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include "uavAP/FlightControl/Controller/ControlElements/IControlElement.h"
 
 namespace Control
@@ -37,44 +38,102 @@ public:
 	Constant(FloatingType val);
 
 	FloatingType
-	getValue() override;
+	getValue() const override;
 
 private:
 
 	FloatingType val_;
 };
 
-class Constraint: public IControlElement
+template<typename Type>
+struct ConstraintParams
+{
+	Parameter<Type> min =
+	{
+	{ }, "min", true };
+	Parameter<Type> max =
+	{
+	{ }, "max", true };
+
+	template<typename Config>
+	inline void
+	configure(Config& c)
+	{
+		c & min;
+		c & max;
+	}
+};
+
+template<typename Type = FloatingType>
+class Constraint: public ConfigurableObject<ConstraintParams<Type>>, public IControlElement
 {
 
 public:
 
-	Constraint(Element in, FloatingType min, FloatingType max);
+	Constraint(Element in) :
+			in_(in), override_(false)
+	{
+	}
+
+	Constraint(Element in, Type min, Type max) :
+			in_(in), override_(false)
+	{
+		this->params.min = min;
+		this->params.max = max;
+	}
 
 	FloatingType
-	getValue() override;
+	getValue() const override
+	{
+		if (override_)
+			return in_->getValue() > overrideMax_ ?
+					overrideMax_ : (in_->getValue() < overrideMin_ ? overrideMin_ : in_->getValue());
+
+		return in_->getValue() > this->params.max() ?
+				this->params.max() :
+				(in_->getValue() < this->params.min() ? this->params.min() : in_->getValue());
+	}
 
 	void
-	setContraintValue(FloatingType minmax);
+	setConstraintValue(Type min, Type max)
+	{
+		this->params.min = min;
+		this->params.max = max;
+	}
 
 	void
-	setContraintValue(FloatingType min, FloatingType max);
+	setConstraintValue(Type minmax)
+	{
+		this->params.min = -minmax;
+		this->params.max = minmax;
+	}
 
 	void
-	overrideContraintValue(FloatingType overrideMinmax);
+	overrideConstraintValue(Type overrideMinmax)
+	{
+		overrideMin_ = -overrideMinmax;
+		overrideMax_ = overrideMinmax;
+		override_ = true;
+	}
 
 	void
-	overrideContraintValue(FloatingType overrideMin, FloatingType overrideMax);
+	overrideConstraintValue(Type overrideMin, Type overrideMax)
+	{
+		overrideMin_ = overrideMin;
+		overrideMax_ = overrideMax;
+		override_ = true;
+	}
 
 	void
-	disableOverride();
+	disableOverride()
+	{
+		override_ = false;
+	}
 
 	Element in_;
-	FloatingType min_;
-	FloatingType max_;
 	bool override_;
-	FloatingType overrideMin_;
-	FloatingType overrideMax_;
+	Type overrideMin_;
+	Type overrideMax_;
 };
 
 class Difference: public IControlElement
@@ -84,7 +143,7 @@ public:
 	Difference(Element in1, Element in2);
 
 	FloatingType
-	getValue() override;
+	getValue() const override;
 
 private:
 
@@ -100,7 +159,7 @@ public:
 	Gain(Element in, FloatingType gain);
 
 	FloatingType
-	getValue() override;
+	getValue() const override;
 
 private:
 
@@ -117,7 +176,7 @@ public:
 	Input(const FloatingType* in);
 
 	FloatingType
-	getValue() override;
+	getValue() const override;
 
 private:
 
@@ -131,7 +190,7 @@ public:
 	Sum(Element in1, Element in2);
 
 	FloatingType
-	getValue() override;
+	getValue() const override;
 
 private:
 
@@ -146,7 +205,7 @@ public:
 	ManualSwitch(Element inTrue, Element inFalse);
 
 	FloatingType
-	getValue() override;
+	getValue() const override;
 
 	void
 	switchTo(bool state);
@@ -163,31 +222,35 @@ class CustomFunction: public IControlElement
 {
 public:
 
-	CustomFunction(Element input, std::function<FloatingType(FloatingType)> function);
+	CustomFunction(Element input, std::function<FloatingType
+	(FloatingType)> function);
 
 	FloatingType
-	getValue() override;
+	getValue() const override;
 
 private:
 
 	Element input_;
-	std::function<FloatingType(FloatingType)> function_;
+	std::function<FloatingType
+	(FloatingType)> function_;
 };
 
 class CustomFunction2: public IControlElement
 {
 public:
 
-	CustomFunction2(Element input, Element input2, std::function<FloatingType(FloatingType, FloatingType)> function);
+	CustomFunction2(Element input, Element input2, std::function<FloatingType
+	(FloatingType, FloatingType)> function);
 
 	FloatingType
-	getValue() override;
+	getValue() const override;
 
 private:
 
 	Element input_;
 	Element input2_;
-	std::function<FloatingType(FloatingType, FloatingType)> function_;
+	std::function<FloatingType
+	(FloatingType, FloatingType)> function_;
 };
 
 }

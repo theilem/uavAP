@@ -33,6 +33,7 @@ target_link_libraries(ap_ext	uavap_core
 								uavap_api)
 
 add_library(uavap_api SHARED	AutopilotAPI.cpp
+							ap_ext/UTM.cpp
 								)
 							
 target_link_libraries(uavap_api	uavap_core)

@@ -37,9 +37,6 @@ public:
 	~IPIDCascade() = default;
 
 	virtual bool
-	configure(const Configuration& config) = 0;
-
-	virtual bool
 	tunePID(PIDs pid, const Control::PIDParameters& params) = 0;
 
 	virtual bool

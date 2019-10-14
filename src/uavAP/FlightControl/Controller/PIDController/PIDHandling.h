@@ -50,6 +50,8 @@ struct PIDStatus
 
 using PIDStati = std::map<PIDs, PIDStatus>;
 
+using PIDParams = std::map<PIDs, Control::PIDParameters>;
+
 namespace dp
 {
 template<class Archive, typename Type>

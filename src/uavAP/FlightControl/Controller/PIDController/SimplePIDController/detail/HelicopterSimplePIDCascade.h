@@ -42,7 +42,7 @@ public:
 			ControllerOutput* output);
 
 	bool
-	configure(const Configuration& config) override;
+	configure(const Configuration& config);
 
 	bool
 	tunePID(int pid, const Control::PID::Parameters& params) override;

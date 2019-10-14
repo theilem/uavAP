@@ -35,69 +35,9 @@ Constant::Constant(FloatingType val) :
 }
 
 FloatingType
-Constant::getValue()
+Constant::getValue() const
 {
 	return std::isnan(val_) ? 0 : val_;
-}
-
-Constraint::Constraint(Element in, FloatingType min, FloatingType max) :
-		in_(in), override_(false), overrideMin_(0), overrideMax_(0)
-{
-	setContraintValue(min, max);
-}
-
-FloatingType
-Constraint::getValue()
-{
-	FloatingType val = in_->getValue();
-	FloatingType ret = 0;
-
-	if (override_)
-	{
-		ret = val > overrideMax_ ? overrideMax_ : val < overrideMin_ ? overrideMin_ : val;
-	}
-	else
-	{
-		ret = val > max_ ? max_ : val < min_ ? min_ : val;
-	}
-
-	return std::isnan(ret) ? 0 : ret;
-}
-
-void
-Constraint::setContraintValue(FloatingType minmax)
-{
-	max_ = minmax;
-	min_ = -minmax;
-}
-
-void
-Constraint::setContraintValue(FloatingType min, FloatingType max)
-{
-	max_ = max;
-	min_ = min;
-}
-
-void
-Constraint::overrideContraintValue(FloatingType overrideMinmax)
-{
-	overrideMax_ = overrideMinmax;
-	overrideMin_ = -overrideMinmax;
-	override_ = true;
-}
-
-void
-Constraint::overrideContraintValue(FloatingType overrideMin, FloatingType overrideMax)
-{
-	overrideMax_ = overrideMax;
-	overrideMin_ = overrideMin;
-	override_ = true;
-}
-
-void
-Constraint::disableOverride()
-{
-	override_ = false;
 }
 
 Difference::Difference(Element in1, Element in2) :
@@ -106,7 +46,7 @@ Difference::Difference(Element in1, Element in2) :
 }
 
 FloatingType
-Difference::getValue()
+Difference::getValue() const
 {
 	FloatingType ret = in1_->getValue() - in2_->getValue();
 	return std::isnan(ret) ? 0 : ret;
@@ -118,7 +58,7 @@ Gain::Gain(Element in, FloatingType gain) :
 }
 
 FloatingType
-Gain::getValue()
+Gain::getValue() const
 {
 	return gain_ * in_->getValue();
 }
@@ -130,7 +70,7 @@ Input::Input(const FloatingType* in) :
 }
 
 FloatingType
-Input::getValue()
+Input::getValue() const
 {
 	FloatingType ret = *in_;
 	return std::isnan(ret) ? 0 : ret;
@@ -142,7 +82,7 @@ Sum::Sum(Element in1, Element in2) :
 }
 
 FloatingType
-Sum::getValue()
+Sum::getValue() const
 {
 	FloatingType ret = in1_->getValue() + in2_->getValue();
 	return std::isnan(ret) ? 0 : ret;
@@ -154,7 +94,7 @@ ManualSwitch::ManualSwitch(Element inTrue, Element inFalse) :
 }
 
 FloatingType
-ManualSwitch::getValue()
+ManualSwitch::getValue() const
 {
 	FloatingType ret = state_ ? inTrue_->getValue() : inFalse_->getValue();
 	return std::isnan(ret) ? 0 : ret;
@@ -172,7 +112,7 @@ CustomFunction::CustomFunction(Element input, std::function<FloatingType
 }
 
 FloatingType
-CustomFunction::getValue()
+CustomFunction::getValue() const
 {
 	return function_(input_->getValue());
 }
@@ -183,7 +123,7 @@ CustomFunction2::CustomFunction2(Element input, Element input2, std::function<Fl
 }
 
 FloatingType
-CustomFunction2::getValue()
+CustomFunction2::getValue() const
 {
 	return function_(input_->getValue(), input2_->getValue());
 }

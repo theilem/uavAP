@@ -45,7 +45,7 @@ public:
 	~IControlElement() = default;
 
 	virtual FloatingType
-	getValue() = 0;
+	getValue() const = 0;
 
 };
 

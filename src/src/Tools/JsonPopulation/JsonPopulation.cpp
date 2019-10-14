@@ -6,6 +6,7 @@
  */
 #include <uavAP/Core/PropertyMapper/JsonPopulator.h>
 #include <uavAP/Core/Scheduler/MultiThreadingScheduler.h>
+#include <uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRatePIDController.h>
 #include <uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h>
 #include <fstream>
 #include <string>
@@ -28,7 +29,7 @@ main(int argc, char** argv)
 
 	JsonPopulator pop(file);
 
-//	pop.populate<ManeuverPlanner>();
+	pop.populate<ManeuverRatePIDController>();
 
 	return 0;
 

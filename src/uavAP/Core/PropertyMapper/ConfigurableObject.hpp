@@ -32,11 +32,11 @@ public:
 	ParameterSet&
 	getParams();
 
-protected:
-
 	template <typename Config>
 	void
 	configureParams(Config& config);
+
+protected:
 
 	ParameterSet params;
 };

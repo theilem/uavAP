@@ -23,6 +23,7 @@
  *      Author: simonyu
  */
 
+#include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include <vector>
 
@@ -33,6 +34,7 @@
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 #include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include "uavAP/Core/IPC/IPC.h"
+#include <uavAP/Core/DataPresentation/DataPresentation.h>
 
 ManeuverPlanner::ManeuverPlanner() :
 		maneuverAnalysis_(false), maneuverAnalysisStatus_(), trimAnalysis_(false), overrideInterrupted_(
@@ -61,9 +63,8 @@ ManeuverPlanner::configure(const Configuration& config)
 	PropertyMapper<Configuration> pm(config);
 	Configuration maneuverSetTree;
 
-	bool paramsSet = static_cast<ConfigurableObject<ManeuverPlannerParams>*>(this)->configure(
-			config);
-	if (paramsSet)
+	configureParams(pm);
+	if (pm.map())
 	{
 		manualRestart_ = params.manualRestart();
 		maneuverRestart_ = params.maneuverRestart();
@@ -91,14 +92,7 @@ ManeuverPlanner::configure(const Configuration& config)
 		currentManeuver_ = boost::none;
 	}
 
-	return pm.map() && paramsSet;
-}
-
-void
-ManeuverPlanner::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	ipc_.setFromAggregationIfNotSet(agg);
-	conditionManager_.setFromAggregationIfNotSet(agg);
+	return pm.map();
 }
 
 bool
@@ -108,19 +102,13 @@ ManeuverPlanner::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!ipc_.isSet())
+		if (!checkIsSet<IPC, ConditionManager, DataPresentation>())
 		{
-			APLOG_ERROR << "ManeuverPlanner: IPC Missing.";
+			APLOG_ERROR << "ManeuverPlanner: Missing dependencies.";
 			return true;
 		}
 
-		if (!conditionManager_.isSet())
-		{
-			APLOG_ERROR << "ManeuverPlanner: Condition Manager Missing.";
-			return true;
-		}
-
-		auto ipc = ipc_.get();
+		auto ipc = get<IPC>();
 
 		overridePublisher_ = ipc->publishPackets("override");
 		advancedControlPublisher_ = ipc->publish<AdvancedControl>("advanced_control_maneuver");
@@ -132,7 +120,8 @@ ManeuverPlanner::run(RunStage stage)
 	}
 	case RunStage::NORMAL:
 	{
-		auto ipc = ipc_.get();
+
+		auto ipc = get<IPC>();
 
 		controllerOutputSubscription_ = ipc->subscribe<ControllerOutput>("controller_output",
 				std::bind(&ManeuverPlanner::onControllerOutput, this, std::placeholders::_1));
@@ -161,13 +150,8 @@ ManeuverPlanner::run(RunStage stage)
 
 		if (params.useSafetyBounds())
 		{
-			auto conditionManager = conditionManager_.get();
+			auto conditionManager = get<ConditionManager>();
 
-			if (!conditionManager)
-			{
-				APLOG_ERROR << "ManeuverPlanner: Condition Manager Missing.";
-				return true;
-			}
 			conditionManager->activateCondition(safetyCondition_,
 					std::bind(&ManeuverPlanner::safetyTrigger, this, std::placeholders::_1));
 		}
@@ -188,8 +172,10 @@ ManeuverPlanner::run(RunStage stage)
 		bool trimAnalysis = trimAnalysis_;
 		trimAnalysisLock.unlock();
 
+		auto dp = get<DataPresentation>();
+
 		maneuverAnalysisPublisher_.publish(maneuverAnalysis);
-		maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
+		maneuverAnalysisStatusPublisher_.publish(dp->serialize(maneuverAnalysisStatus));
 		trimAnalysisPublisher_.publish(trimAnalysis);
 
 		break;
@@ -407,8 +393,15 @@ ManeuverPlanner::startOverride()
 		bool trimAnalysis = trimAnalysis_;
 		trimAnalysisLock.unlock();
 
-		overridePublisher_.publish(dp::serialize(override));
-		maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
+		auto dp = get<DataPresentation>();
+		if (!dp)
+		{
+			APLOG_ERROR << "DataPresentation missing, cannot send maneuver analysis";
+			return;
+		}
+
+		overridePublisher_.publish(dp->serialize(override));
+		maneuverAnalysisStatusPublisher_.publish(dp->serialize(maneuverAnalysisStatus));
 		trimAnalysisPublisher_.publish(trimAnalysis);
 
 		std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
@@ -462,9 +455,16 @@ ManeuverPlanner::stopOverride()
 	bool trimAnalysis = trimAnalysis_;
 	trimAnalysisLock.unlock();
 
-	overridePublisher_.publish(dp::serialize(override));
+	auto dp = get<DataPresentation>();
+	if (!dp)
+	{
+		APLOG_ERROR << "DataPresentation missing, cannot send maneuver analysis";
+		return;
+	}
+
+	overridePublisher_.publish(dp->serialize(override));
 	advancedControlPublisher_.publish(advancedControl);
-	maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
+	maneuverAnalysisStatusPublisher_.publish(dp->serialize(maneuverAnalysisStatus));
 	trimAnalysisPublisher_.publish(trimAnalysis);
 
 	std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
@@ -524,7 +524,7 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 
 	if (currentManeuver->condition)
 	{
-		auto conditionManager = conditionManager_.get();
+		auto conditionManager = get<ConditionManager>();
 
 		if (!conditionManager)
 		{
@@ -659,9 +659,16 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 	bool trimAnalysis = trimAnalysis_;
 	trimAnalysisLock.unlock();
 
-	overridePublisher_.publish(dp::serialize(override));
+	auto dp = get<DataPresentation>();
+	if (!dp)
+	{
+		APLOG_ERROR << "DataPresentation missing, cannot send maneuver analysis";
+		return;
+	}
+
+	overridePublisher_.publish(dp->serialize(override));
 	advancedControlPublisher_.publish(advancedControl);
-	maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
+	maneuverAnalysisStatusPublisher_.publish(dp->serialize(maneuverAnalysisStatus));
 	trimAnalysisPublisher_.publish(trimAnalysis);
 
 	std::unique_lock<std::mutex> overrideSeqNrLock(overrideSeqNrMutex_);
@@ -695,7 +702,7 @@ ManeuverPlanner::deactivateManeuverOverride()
 
 	if (currentManeuver->condition)
 	{
-		auto conditionManager = conditionManager_.get();
+		auto conditionManager = get<ConditionManager>();
 
 		if (!conditionManager)
 		{
@@ -711,7 +718,14 @@ ManeuverPlanner::deactivateManeuverOverride()
 	ManeuverAnalysisStatus maneuverAnalysisStatus = maneuverAnalysisStatus_;
 	maneuverAnalysisStatusLock.unlock();
 
-	maneuverAnalysisStatusPublisher_.publish(dp::serialize(maneuverAnalysisStatus));
+	auto dp = get<DataPresentation>();
+	if (!dp)
+	{
+		APLOG_ERROR << "DataPresentation missing, cannot send maneuver analysis";
+		return;
+	}
+
+	maneuverAnalysisStatusPublisher_.publish(dp->serialize(maneuverAnalysisStatus));
 
 	std::unique_lock<std::mutex> trimAnalysisLock(trimAnalysisMutex_);
 	trimAnalysis_ = false;

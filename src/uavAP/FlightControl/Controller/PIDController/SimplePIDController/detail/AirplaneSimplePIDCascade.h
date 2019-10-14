@@ -42,7 +42,7 @@ public:
 			ControllerTarget* target, ControllerOutput* output);
 
 	bool
-	configure(const Configuration& config) override;
+	configure(const Configuration& config);
 
 	bool
 	tunePID(PIDs pid, const Control::PIDParameters& params) override;
@@ -69,8 +69,8 @@ private:
 	std::shared_ptr<Control::PID> rollPID_;
 	std::shared_ptr<Control::PID> yawRatePID_;
 
-	std::shared_ptr<Control::Constraint> rollConstraint_;
-	std::shared_ptr<Control::Constraint> pitchConstraint_;
+	std::shared_ptr<Control::Constraint<>> rollConstraint_;
+	std::shared_ptr<Control::Constraint<>> pitchConstraint_;
 
 	FloatingType hardRollConstraint_;
 	FloatingType hardPitchConstraint_;
