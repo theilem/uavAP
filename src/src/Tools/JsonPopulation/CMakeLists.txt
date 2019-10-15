@@ -21,6 +21,7 @@ add_executable(JsonPopulation JsonPopulation.cpp)
 target_link_libraries(JsonPopulation  	uavap_core
 										uavap_flight_control
 										uavap_mission_control
+										uavap_mission_control_geo
 										)
 
 install(TARGETS JsonPopulation OPTIONAL

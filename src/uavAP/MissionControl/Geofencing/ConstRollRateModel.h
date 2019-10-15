@@ -27,15 +27,18 @@
 #define UAVAP_MISSIONCONTROL_GEOFENCING_CONSTROLLRATEMODEL_H_
 
 #include <acb.h>
-#include <boost/property_tree/ptree.hpp>
 
 #include "uavAP/Core/LinearAlgebra.h"
 #include "uavAP/Core/Frames/VehicleOneFrame.h"
-#include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/Core/Object/AggregatableObject.hpp"
 #include "uavAP/MissionControl/Geofencing/IGeofencingModel.h"
+#include "uavAP/Core/PropertyMapper/ConfigurableObject.hpp"
+#include "uavAP/MissionControl/Geofencing/ConstRollRateModelParams.h"
 #include <mutex>
 
-class ConstRollRateModel: public IGeofencingModel, public IAggregatableObject
+class ConstRollRateModel: public IGeofencingModel,
+		public AggregatableObject<>,
+		public ConfigurableObject<ConstRollRateModelParams>
 {
 public:
 
@@ -44,15 +47,6 @@ public:
 	ConstRollRateModel();
 
 	~ConstRollRateModel();
-
-	static std::shared_ptr<ConstRollRateModel>
-	create(const Configuration& config);
-
-	bool
-	configure(const Configuration& config);
-
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	bool
 	updateModel(const SensorData& data) override;
@@ -67,7 +61,7 @@ public:
 	 * @return
 	 */
 	Vector3
-	calculatePoint(double roll, RollDirection dir);
+	calculatePoint(FloatingType roll, RollDirection dir);
 
 	/**
 	 * @brief If frameleft/right is set it is calculating the yaw given a specified roll angle
@@ -75,23 +69,18 @@ public:
 	 * @param dir
 	 * @return
 	 */
-	double
-	calculateYaw(double roll, RollDirection dir);
+	FloatingType
+	calculateYaw(FloatingType roll, RollDirection dir);
 
-	std::vector<double>
-	calculateRoll(double yaw, RollDirection dir);
+	std::vector<FloatingType>
+	calculateRoll(FloatingType yaw, RollDirection dir);
 
 	Vector3
 	toVector(const acb_t& complex);
 
 private:
 
-	double rollRate_;
-	double rollMax_;
-	long int precision_;
-	double g_;
-
-	double currentRoll_;
+	FloatingType currentRoll_;
 
 	Vector3 betaCompleteLeft_;
 	Vector3 betaCompleteRight_;
@@ -105,12 +94,12 @@ private:
 
 	std::mutex queryMutex_;
 
-	double factor_; //!< v/(2r)
-	double velocity_;
+	FloatingType factor_; //!< v/(2r)
+	FloatingType velocity_;
 
 	Vector3 centerOrbitLeft_;
 	Vector3 centerOrbitRight_;
-	double radiusOrbit_;
+	FloatingType radiusOrbit_;
 
 	VehicleOneFrame frameLeft_;
 	VehicleOneFrame frameRight_;

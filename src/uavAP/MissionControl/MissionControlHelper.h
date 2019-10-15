@@ -35,8 +35,8 @@
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/GlobalPlanner/GlobalPlannerFactory.h"
 #include "uavAP/MissionControl/MissionPlanner/MissionPlannerFactory.h"
-//#include "uavAP/MissionControl/Geofencing/Geofencing.h"
-//#include "uavAP/MissionControl/Geofencing/GeofencingModelFactory.h"
+#include "uavAP/MissionControl/Geofencing/Geofencing.h"
+#include "uavAP/MissionControl/Geofencing/GeofencingModelFactory.h"
 #include "uavAP/MissionControl/LocalFrameManager/LocalFrameManager.h"
 #include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
 
@@ -57,8 +57,8 @@ public:
 		addCreator<LocalFrameManager>();
 		addFactory<MissionPlannerFactory>();
 		addFactory<GlobalPlannerFactory>();
-//		addFactory<GeofencingModelFactory>();
-//		addCreator<Geofencing>();
+		addFactory<GeofencingModelFactory>();
+		addConfigurable<Geofencing>();
 	}
 };
 

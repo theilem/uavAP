@@ -28,36 +28,12 @@
 #include <uavAP/MissionControl/Geofencing/Geofencing.h>
 #include <uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h>
 #include <uavAP/Core/IPC/IPC.h>
-#include <limits>
+#include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
+#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 
 Geofencing::Geofencing() :
-		leftSafe_(true), rightSafe_(true), safetyActiveLeft_(false), safetyActiveRight_(false), rollMax_(
-				0), evaluationThreshold_(
-		std::numeric_limits<double>::max()), distanceThreshold_(0)
+		leftSafe_(true), rightSafe_(true), safetyActiveLeft_(false), safetyActiveRight_(false)
 {
-}
-
-bool
-Geofencing::configure(const Configuration& config)
-{
-	PropertyMapper<Configuration> pm(config);
-	pm.add<double>("roll_max", rollMax_, true);
-	pm.add<double>("evaluation_threshold", evaluationThreshold_, true);
-	pm.add<double>("distance_threshold", distanceThreshold_, true);
-	pm.add("period", period_, true);
-
-	degToRadRef(rollMax_);
-
-	return pm.map();
-}
-
-void
-Geofencing::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	ipc_.setFromAggregationIfNotSet(agg);
-	scheduler_.setFromAggregationIfNotSet(agg);
-	maneuverPlanner_.setFromAggregationIfNotSet(agg);
-	geofencingModel_.setFromAggregationIfNotSet(agg);
 }
 
 bool
@@ -67,42 +43,28 @@ Geofencing::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!ipc_.isSet())
+		if (!checkIsSet<IPC, IScheduler, ManeuverPlanner, IGeofencingModel>())
 		{
-			APLOG_ERROR << "Geofencing: ipc not set";
-			return true;
-		}
-		if (!scheduler_.isSet())
-		{
-			APLOG_ERROR << "Geofencing: Scheduler not set";
-			return true;
-		}
-		if (!maneuverPlanner_.isSet())
-		{
-			APLOG_ERROR << "Geofencing: ManeuverPlanner not set";
-			return true;
-		}
-		if (!geofencingModel_.isSet())
-		{
-			APLOG_ERROR << "Geofencing: Geofencing Model Missing.";
+			APLOG_ERROR << "Geofencing: Missing dependencies.";
 			return true;
 		}
 		break;
 	}
 	case RunStage::NORMAL:
 	{
-		auto ipc = ipc_.get();
+		auto ipc = get<IPC>();
 
 		ipc->subscribe<SensorData>("sensor_data",
 				std::bind(&Geofencing::onSensorData, this, std::placeholders::_1));
 
-		auto mp = maneuverPlanner_.get();
+		auto mp = get<ManeuverPlanner>();
 
 		geoFence_.fromRectangle(mp->getSafetyBounds());
 
-		auto scheduler = scheduler_.get();
+		auto scheduler = get<IScheduler>();
 
-		scheduler->schedule(std::bind(&Geofencing::evaluateSafety, this), period_, period_);
+		scheduler->schedule(std::bind(&Geofencing::evaluateSafety, this),
+				Milliseconds(params.period()), Milliseconds(params.period()));
 
 		break;
 	}
@@ -121,7 +83,7 @@ Geofencing::criticalPoints()
 {
 	Mission mission;
 
-	auto geofencingModel = geofencingModel_.get();
+	auto geofencingModel = get<IGeofencingModel>();
 
 	if (!geofencingModel)
 	{
@@ -131,7 +93,7 @@ Geofencing::criticalPoints()
 
 	for (const auto& it : geoFence_.getEdges())
 	{
-		if (it.getDistanceAbs(sensorData_.position.head(2)) > evaluationThreshold_)
+		if (it.getDistanceAbs(sensorData_.position.head(2)) > params.evaluationThreshold())
 			continue;
 		for (const auto& points : geofencingModel->getCriticalPoints(it,
 				IGeofencingModel::RollDirection::LEFT))
@@ -151,7 +113,7 @@ Geofencing::criticalPoints()
 void
 Geofencing::onSensorData(const SensorData& data)
 {
-	std::unique_lock<std::mutex> lock(sensorDataMutex_, std::try_to_lock);
+	Lock lock(sensorDataMutex_, std::try_to_lock);
 	if (!lock.owns_lock())
 		return;
 	sensorData_ = data;
@@ -160,7 +122,7 @@ Geofencing::onSensorData(const SensorData& data)
 void
 Geofencing::evaluateSafety()
 {
-  	auto geofencingModel = geofencingModel_.get();
+	auto geofencingModel = get<IGeofencingModel>();
 
 	if (!geofencingModel)
 	{
@@ -168,12 +130,12 @@ Geofencing::evaluateSafety()
 		return;
 	}
 
-	std::unique_lock<std::mutex> lock(sensorDataMutex_);
+	Lock lock(sensorDataMutex_);
 	geofencingModel->updateModel(sensorData_);
 	Vector3 position = sensorData_.position;
 	lock.unlock();
 
-	auto mp = maneuverPlanner_.get();
+	auto mp = get<ManeuverPlanner>();
 
 	if (!mp)
 	{
@@ -184,12 +146,12 @@ Geofencing::evaluateSafety()
 	bool leftSafe = true, rightSafe = true;
 	for (const auto& it : geoFence_.getEdges())
 	{
-		if (it.getDistanceAbs(position.head(2)) > evaluationThreshold_)
+		if (it.getDistanceAbs(position.head(2)) > params.evaluationThreshold())
 			continue;
 		for (const auto& points : geofencingModel->getCriticalPoints(it,
 				IGeofencingModel::RollDirection::LEFT))
 		{
-			if (it.getDistance(points.head(2)) < distanceThreshold_)
+			if (it.getDistance(points.head(2)) < params.distanceThreshold())
 			{
 				APLOG_WARN << "Left not safe";
 				leftSafe = false;
@@ -199,7 +161,7 @@ Geofencing::evaluateSafety()
 		for (const auto& points : geofencingModel->getCriticalPoints(it,
 				IGeofencingModel::RollDirection::RIGHT))
 		{
-			if (it.getDistance(points.head(2)) < distanceThreshold_)
+			if (it.getDistance(points.head(2)) < params.distanceThreshold())
 			{
 				APLOG_WARN << "Right not safe";
 				rightSafe = false;
@@ -216,13 +178,13 @@ Geofencing::evaluateSafety()
 		if (leftSafe_)
 		{
 			APLOG_WARN << "Override left initiated";
-			override.pid.insert(std::make_pair(PIDs::ROLL, -rollMax_));
+			override.pid.insert(std::make_pair(PIDs::ROLL, -params.rollMax()));
 			safetyActiveLeft_ = true;
 		}
 		else if (rightSafe_)
 		{
 			APLOG_WARN << "Override right initiated";
-			override.pid.insert(std::make_pair(PIDs::ROLL, rollMax_));
+			override.pid.insert(std::make_pair(PIDs::ROLL, params.rollMax()));
 			safetyActiveRight_ = true;
 		}
 		else

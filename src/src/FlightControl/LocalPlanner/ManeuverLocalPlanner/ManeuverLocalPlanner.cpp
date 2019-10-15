@@ -373,7 +373,14 @@ ManeuverLocalPlanner::onSensorData(const SensorData& sd)
 void
 ManeuverLocalPlanner::onOverridePacket(const Packet& packet)
 {
-	auto override = dp::deserialize<Override>(packet);
+	auto dp = get<DataPresentation>();
+	if (!dp)
+	{
+		APLOG_ERROR << "DataPresentation missing";
+		return;
+	}
+
+	auto override = dp->deserialize<Override>(packet);
 
 	std::unique_lock<std::mutex> plannerLock(overrideMutex_);
 	plannerOverrides_ = override.localPlanner;
