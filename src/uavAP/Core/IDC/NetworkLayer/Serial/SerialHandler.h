@@ -68,6 +68,7 @@ private:
 	std::string delimString_;
 	bool useCRC_;
 	SerialDirection direction_;
+	bool sendBlocking_;
 
 	std::stringstream packetBuffer_;
 

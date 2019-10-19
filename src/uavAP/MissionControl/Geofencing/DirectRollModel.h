@@ -55,7 +55,7 @@ public:
 	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	bool
-	updateModel(const SensorData& data) override;
+	updateModel(const SensorData& data, const WindInfo& wind) override;
 
 	std::vector<Vector3>
 	getCriticalPoints(const Edge& edge, RollDirection dir) override;

@@ -54,8 +54,8 @@ public:
 	bool
 	run(RunStage stage) override;
 
-	Mission
-	criticalPoints();
+	std::vector<Waypoint>
+	getCriticalPoints() const;
 
 private:
 
@@ -67,6 +67,10 @@ private:
 
 	SensorData sensorData_;
 	Mutex sensorDataMutex_;
+
+	mutable Mutex criticalPointsMutex_;
+	std::vector<Waypoint> criticalPointsLeft_;
+	std::vector<Waypoint> criticalPointsRight_;
 
 	bool leftSafe_;
 	bool rightSafe_;

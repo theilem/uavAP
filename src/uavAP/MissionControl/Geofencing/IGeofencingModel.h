@@ -28,6 +28,7 @@
 #include <vector>
 
 struct SensorData;
+struct WindInfo;
 struct Edge;
 
 class IGeofencingModel
@@ -46,8 +47,7 @@ public:
 	};
 
 	virtual bool
-	updateModel(const SensorData& data) = 0;
-
+	updateModel(const SensorData& data, const WindInfo& wind) = 0;
 
 	virtual std::vector<Vector3>
 	getCriticalPoints(const Edge& edge, RollDirection dir) = 0;

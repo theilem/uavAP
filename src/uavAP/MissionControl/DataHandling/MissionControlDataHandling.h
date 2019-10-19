@@ -45,7 +45,7 @@ class IMissionPlanner;
 class LocalFrameManager;
 class ConditionManager;
 class WindAnalysis;
-//class Geofencing;
+class Geofencing;
 
 class MissionControlDataHandling: public IAggregatableObject, public IRunnableObject
 {
@@ -92,7 +92,7 @@ private:
 	ObjectHandle<LocalFrameManager> localFrameManager_;
 	ObjectHandle<ConditionManager> conditionManager_;
 	ObjectHandle<WindAnalysis> windAnalysis_;
-//	ObjectHandle<Geofencing> geofencing_;
+	ObjectHandle<Geofencing> geofencing_;
 
 	Subscription missionControlSubscription_;
 	Publisher<Packet> publisher_;

@@ -34,9 +34,6 @@ public:
 
 	DataHandling();
 
-	static std::shared_ptr<DataHandling>
-	create(const Configuration& config);
-
 	template<typename Type>
 	void
 	subscribeOnCommand(Content content, std::function<void

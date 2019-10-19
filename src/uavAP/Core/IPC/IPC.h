@@ -71,9 +71,6 @@ public:
 
 	~IPC();
 
-	static std::shared_ptr<IPC>
-	create(const Configuration& config);
-
 	template<typename Type>
 	Subscription
 	subscribe(const std::string& id, const std::function<void

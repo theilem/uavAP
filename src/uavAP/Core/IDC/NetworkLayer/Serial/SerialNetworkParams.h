@@ -58,6 +58,8 @@ struct SerialNetworkParams: public INetworkParams
 	static constexpr SerialDirection DEFAULT_DIRECTION = SerialDirection::BOTH;
 	SerialDirection direction = DEFAULT_DIRECTION;
 
+	bool sendBlocking = false;
+
 	SerialNetworkParams() = default;
 
 	SerialNetworkParams(const std::string& port, unsigned int baud_rate, std::string delim);

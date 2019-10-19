@@ -42,18 +42,6 @@ IPC::~IPC()
 	}
 }
 
-std::shared_ptr<IPC>
-IPC::create(const Configuration& config)
-{
-	auto ipc = std::make_shared<IPC>();
-	if (!ipc->configure(config))
-	{
-		APLOG_ERROR << "IPC configuration failed.";
-	}
-
-	return ipc;
-}
-
 bool
 IPC::run(RunStage stage)
 {

@@ -17,6 +17,7 @@ struct ConstRollRateModelParams
 	Parameter<Angle<FloatingType>> rollRate = {Angle<FloatingType>(30.0), "roll_rate", true};
 	Parameter<unsigned> precision = {32, "precision", false};
 	Parameter<FloatingType> g = {9.81, "g", false};
+	Parameter<bool> useWind = {false, "use_wind", false};
 
 	template <typename Config>
 	void
@@ -26,6 +27,7 @@ struct ConstRollRateModelParams
 		c & rollRate;
 		c & precision;
 		c & g;
+		c & useWind;
 	}
 
 };

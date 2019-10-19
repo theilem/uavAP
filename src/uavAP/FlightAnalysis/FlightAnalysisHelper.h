@@ -44,7 +44,7 @@ public:
 		addDefault<SchedulerFactory>();
 		addDefault<TimeProviderFactory>();
 		addDefaultCreator<DataPresentation>();
-		addDefaultCreator<IPC>();
+		addDefaultConfigurable<IPC>();
 		addCreator<SteadyStateAnalysis>();
 		addCreator<ManeuverAnalysis>();
 		addCreator<TrimAnalysis>();

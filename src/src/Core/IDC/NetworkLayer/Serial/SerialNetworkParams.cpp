@@ -40,6 +40,7 @@ SerialNetworkParams::configure(const Configuration& config)
 	pm.add<unsigned int>("baud_rate", baudRate, false);
 	pm.add("delimiter_string", delimiterString, false);
 	pm.add<bool>("use_crc", useCRC, false);
+	pm.add<bool>("send_blocking", sendBlocking, false);
 
 	std::string flowCTRL;
 	if (pm.add("flow_controle", flowCTRL, false))
