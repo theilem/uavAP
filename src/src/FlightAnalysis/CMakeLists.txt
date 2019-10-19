@@ -22,7 +22,6 @@ add_subdirectory (StateAnalysis)
 add_subdirectory (ManeuverAnalysis)
 add_subdirectory (DataHandling)
 add_subdirectory (TrimAnalysis)
-add_subdirectory (WindAnalysis)
 
 add_library(uavap_flight_analysis SHARED ${FLIGHT_ANALYSIS_SRC})
 

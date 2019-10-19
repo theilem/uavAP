@@ -30,6 +30,7 @@
 #include "uavAP/MissionControl/DataHandling/MissionControlDataHandling.h"
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
+#include "uavAP/MissionControl/WindAnalysis/WindAnalysis.h"
 //#include "uavAP/MissionControl/Geofencing/Geofencing.h"
 #include "uavAP/Core/DataPresentation/DataPresentation.h"
 #include "uavAP/Core/IPC/IPC.h"
@@ -175,6 +176,12 @@ MissionControlDataHandling::collectAndSend()
 		overridePublisher_.publish(dp->serialize(override));
 	}
 
+	auto wa = windAnalysis_.get();
+	auto windAnalysisStatus = wa->getWindAnalysisStatus();
+	Packet windAnalysisStatusPacket = dp->serialize(windAnalysisStatus);
+	dp->addHeader(windAnalysisStatusPacket, Content::WIND_ANALYSIS_STATUS);
+	publisher_.publish(windAnalysisStatusPacket);
+
 	//Trajectory hack: Orbit of geofencing
 	/*	auto geo = geofencing_.get();
 	 if (!geo)
@@ -283,6 +290,18 @@ MissionControlDataHandling::receiveAndDistribute(const Packet& packet)
 			break;
 		}
 		mp->setControllerOutputOffset(offset);
+		break;
+	}
+	case Content::WIND_ANALYSIS_STATUS:
+	{
+		auto windAnalysisStatus = dp->deserialize<WindAnalysisStatus>(p);
+		auto wa = windAnalysis_.get();
+		if (!wa)
+		{
+			APLOG_ERROR << "Wind Analysis not found. Cannot Set Wind Analysis Status.";
+			break;
+		}
+		wa->setWindAnalysisStatus(windAnalysisStatus);
 		break;
 	}
 	default:

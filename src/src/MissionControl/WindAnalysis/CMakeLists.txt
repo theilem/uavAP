@@ -16,6 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-set(FLIGHT_ANALYSIS_SRC		${FLIGHT_ANALYSIS_SRC}
-							${CMAKE_CURRENT_SOURCE_DIR}/ManualWindAnalysis.cpp
+set(MISSION_CONTROL_SRC		${MISSION_CONTROL_SRC}
+							${CMAKE_CURRENT_SOURCE_DIR}/WindAnalysis.cpp
 							PARENT_SCOPE)

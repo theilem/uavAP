@@ -39,6 +39,7 @@
 #include "uavAP/MissionControl/Geofencing/GeofencingModelFactory.h"
 #include "uavAP/MissionControl/LocalFrameManager/LocalFrameManager.h"
 #include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
+#include "uavAP/MissionControl/WindAnalysis/WindAnalysis.h"
 
 class MissionControlHelper: public Helper
 {
@@ -59,6 +60,7 @@ public:
 		addFactory<GlobalPlannerFactory>();
 		addFactory<GeofencingModelFactory>();
 		addConfigurable<Geofencing>();
+		addCreator<WindAnalysis>();
 	}
 };
 

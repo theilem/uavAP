@@ -17,45 +17,61 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
 /*
- * ManualWindAnalysis.h
+ * WindAnalysis.h
  *
- *  Created on: Feb 8, 2019
- *      Author: mirco
+ *  Created on: Oct 19, 2019
+ *      Author: simonyu
  */
 
-#ifndef UAVAP_FLIGHTANALYSIS_WINDANALYSIS_MANUALWINDANALYSIS_H_
-#define UAVAP_FLIGHTANALYSIS_WINDANALYSIS_MANUALWINDANALYSIS_H_
+#ifndef UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSIS_H_
+#define UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSIS_H_
 
 #include "uavAP/Core/IPC/Publisher.h"
+#include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
+#include "uavAP/Core/PropertyMapper/Configuration.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
-#include "uavAP/FlightAnalysis/WindAnalysis/IWindAnalysis.h"
-#include "uavAP/FlightAnalysis/WindAnalysis/WindInfo.h"
+#include "uavAP/MissionControl/WindAnalysis/WindAnalysisStatus.h"
 
 class IPC;
 class Packet;
 
-class ManualWindAnalysis : public IAggregatableObject, public IRunnableObject, public IWindAnalysis
+class WindAnalysis: public IAggregatableObject, public IRunnableObject
 {
 public:
+
+	static constexpr TypeId typeId = "wind_analysis";
+
+	static std::shared_ptr<WindAnalysis>
+	create(const Configuration& config);
+
+	bool
+	configure(const Configuration& config);
 
 	bool
 	run(RunStage stage) override;
 
 	WindInfo
-	getWindInfo() const override;
+	getWindInfo() const;
+
+	WindAnalysisStatus
+	getWindAnalysisStatus() const;
+
+	void
+	setWindAnalysisStatus(const WindAnalysisStatus& windAnalysisStatus);
 
 private:
 
-	void
-	onPacket(const Packet& packet);
-
 	ObjectHandle<IPC> ipc_;
 
-	Publisher<WindInfo> publisher_;
+	Publisher<WindInfo> windInfoPublisher_;
 
 	WindInfo windInfo_;
+	mutable Mutex windInfoMutex_;
+
+	WindAnalysisStatus windAnalysisStatus_;
+	mutable Mutex windAnalysisStatusMutex_;
 };
 
-#endif /* UAVAP_FLIGHTANALYSIS_WINDANALYSIS_MANUALWINDANALYSIS_H_ */
+#endif /* UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSIS_H_ */

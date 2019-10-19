@@ -17,20 +17,28 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
 /*
- * WindInfo.h
+ * WindAnalysisStatus.h
  *
  *  Created on: Feb 8, 2019
  *      Author: mirco
  */
 
-#ifndef UAVAP_FLIGHTANALYSIS_WINDANALYSIS_WINDINFO_H_
-#define UAVAP_FLIGHTANALYSIS_WINDANALYSIS_WINDINFO_H_
+#ifndef UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSISSTATUS_H_
+#define UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSISSTATUS_H_
 
 #include "uavAP/Core/LinearAlgebra.h"
 
 struct WindInfo
 {
 	Vector3 velocity;
+};
+
+struct WindAnalysisStatus
+{
+	Vector3 velocity;
+	double speed;
+	double direction;
+	bool manual;
 };
 
 namespace dp
@@ -41,6 +49,16 @@ serialize(Archive& ar, WindInfo& t)
 {
 	ar & t.velocity;
 }
+
+template<class Archive, typename T>
+inline void
+serialize(Archive& ar, WindAnalysisStatus& t)
+{
+	ar & t.velocity;
+	ar & t.speed;
+	ar & t.direction;
+	ar & t.manual;
+}
 }
 
-#endif /* UAVAP_FLIGHTANALYSIS_WINDANALYSIS_WINDINFO_H_ */
+#endif /* UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSISSTATUS_H_ */

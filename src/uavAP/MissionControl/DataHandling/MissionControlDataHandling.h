@@ -36,7 +36,6 @@
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Time.h"
 
-
 class DataPresentation;
 class IPC;
 class IScheduler;
@@ -45,6 +44,7 @@ class ManeuverPlanner;
 class IMissionPlanner;
 class LocalFrameManager;
 class ConditionManager;
+class WindAnalysis;
 //class Geofencing;
 
 class MissionControlDataHandling: public IAggregatableObject, public IRunnableObject
@@ -91,6 +91,7 @@ private:
 	ObjectHandle<DataPresentation> dataPresentation_;
 	ObjectHandle<LocalFrameManager> localFrameManager_;
 	ObjectHandle<ConditionManager> conditionManager_;
+	ObjectHandle<WindAnalysis> windAnalysis_;
 //	ObjectHandle<Geofencing> geofencing_;
 
 	Subscription missionControlSubscription_;

@@ -17,16 +17,28 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////
 /*
- * ManualWindAnalysis.cpp
+ * WindAnalysis.cpp
  *
- *  Created on: Feb 8, 2019
- *      Author: mirco
+ *  Created on: Oct 19, 2019
+ *      Author: simonyu
  */
 
-#include "uavAP/FlightAnalysis/WindAnalysis/ManualWindAnalysis.h"
+#include "uavAP/MissionControl/WindAnalysis/WindAnalysis.h"
+
+std::shared_ptr<WindAnalysis>
+WindAnalysis::create(const Configuration& config)
+{
+	return nullptr;
+}
 
 bool
-ManualWindAnalysis::run(RunStage stage)
+WindAnalysis::configure(const Configuration& config)
+{
+	return false;
+}
+
+bool
+WindAnalysis::run(RunStage stage)
 {
 	switch (stage)
 	{
@@ -55,12 +67,30 @@ ManualWindAnalysis::run(RunStage stage)
 }
 
 WindInfo
-ManualWindAnalysis::getWindInfo() const
+WindAnalysis::getWindInfo() const
 {
-	return WindInfo();
+	LockGuard lg(windInfoMutex_);
+	return windInfo_;
+}
+
+WindAnalysisStatus
+WindAnalysis::getWindAnalysisStatus() const
+{
+	LockGuard lg(windAnalysisStatusMutex_);
+	return windAnalysisStatus_;
 }
 
 void
-ManualWindAnalysis::onPacket(const Packet& packet)
+WindAnalysis::setWindAnalysisStatus(const WindAnalysisStatus& windAnalysisStatus)
 {
+	Lock windAnalysisStatusLock(windAnalysisStatusMutex_);
+	windAnalysisStatus_ = windAnalysisStatus;
+	windAnalysisStatusLock.unlock();
+
+	if (windAnalysisStatus.manual)
+	{
+		Lock windInfoLock(windInfoMutex_);
+		windInfo_.velocity = windAnalysisStatus.velocity;
+		windInfoLock.unlock();
+	}
 }

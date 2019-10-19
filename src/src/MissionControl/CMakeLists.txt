@@ -26,6 +26,7 @@ add_subdirectory(ManeuverPlanner)
 add_subdirectory(ConditionManager)
 add_subdirectory(LocalFrameManager)
 add_subdirectory(Geofencing)
+add_subdirectory(WindAnalysis)
 
 set(MISSION_CONTROL_SRC ${MISSION_CONTROL_SRC}
 						MissionControlPrint.cpp
