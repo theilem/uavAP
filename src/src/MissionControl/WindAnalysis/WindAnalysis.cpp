@@ -23,18 +23,20 @@
  *      Author: simonyu
  */
 
+#include <uavAP/Core/IPC/IPC.h>
+#include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
 #include "uavAP/MissionControl/WindAnalysis/WindAnalysis.h"
 
 std::shared_ptr<WindAnalysis>
 WindAnalysis::create(const Configuration& config)
 {
-	return nullptr;
+	return std::make_shared<WindAnalysis>();
 }
 
 bool
 WindAnalysis::configure(const Configuration& config)
 {
-	return false;
+	return true;
 }
 
 bool
@@ -44,7 +46,7 @@ WindAnalysis::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!ipc_.isSet())
+		if (!isSet<IPC>())
 		{
 			APLOG_ERROR << "ManualWindAnalysis: IPC missing.";
 			return true;

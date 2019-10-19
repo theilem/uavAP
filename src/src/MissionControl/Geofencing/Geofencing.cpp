@@ -30,6 +30,7 @@
 #include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
 #include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
+#include <uavAP/MissionControl/WindAnalysis/WindAnalysis.h>
 
 Geofencing::Geofencing() :
 		leftSafe_(true), rightSafe_(true), safetyActiveLeft_(false), safetyActiveRight_(false)
@@ -48,6 +49,11 @@ Geofencing::run(RunStage stage)
 			APLOG_ERROR << "Geofencing: Missing dependencies.";
 			return true;
 		}
+		if (!isSet<WindAnalysis>())
+		{
+			APLOG_WARN << "No wind analysis. Geofencing not good.";
+		}
+		windEstimate_.velocity = params.windEstimate();
 		break;
 	}
 	case RunStage::NORMAL:
@@ -135,10 +141,13 @@ Geofencing::evaluateSafety()
 		return;
 	}
 
-	WindInfo wind;
-	wind.velocity = Vector3(0,0,0);
+	if (auto wa = get<WindAnalysis>())
+	{
+		windEstimate_ = wa->getWindInfo();
+	}
+
 	Lock lock(sensorDataMutex_);
-	geofencingModel->updateModel(sensorData_, wind);
+	geofencingModel->updateModel(sensorData_, windEstimate_);
 	Vector3 position = sensorData_.position;
 	lock.unlock();
 

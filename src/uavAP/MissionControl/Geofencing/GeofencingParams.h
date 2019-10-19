@@ -19,6 +19,7 @@ struct GeofencingParams
 	Parameter<FloatingType> evaluationThreshold = {150.0, "evaluation_threshold", true};
 	Parameter<FloatingType> distanceThreshold = {150.0, "distance_threshold", true};
 	Parameter<unsigned> period = {50, "period", true};
+	Parameter<Vector3> windEstimate = {Vector3(0,0,0), "wind_estimate", false};
 
 	template <typename Config>
 	void
@@ -28,6 +29,7 @@ struct GeofencingParams
 		c & evaluationThreshold;
 		c & distanceThreshold;
 		c & period;
+		c & windEstimate;
 	}
 
 };

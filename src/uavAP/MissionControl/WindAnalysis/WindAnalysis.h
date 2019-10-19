@@ -26,9 +26,9 @@
 #ifndef UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSIS_H_
 #define UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSIS_H_
 
+#include <uavAP/Core/Object/AggregatableObject.hpp>
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/LockTypes.h"
-#include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/PropertyMapper/Configuration.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
@@ -37,11 +37,13 @@
 class IPC;
 class Packet;
 
-class WindAnalysis: public IAggregatableObject, public IRunnableObject
+class WindAnalysis: public AggregatableObject<IPC>, public IRunnableObject
 {
 public:
 
 	static constexpr TypeId typeId = "wind_analysis";
+
+	WindAnalysis() = default;
 
 	static std::shared_ptr<WindAnalysis>
 	create(const Configuration& config);
@@ -62,8 +64,6 @@ public:
 	setWindAnalysisStatus(const WindAnalysisStatus& windAnalysisStatus);
 
 private:
-
-	ObjectHandle<IPC> ipc_;
 
 	Publisher<WindInfo> windInfoPublisher_;
 

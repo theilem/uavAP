@@ -40,8 +40,9 @@ class IPC;
 class IScheduler;
 class ManeuverPlanner;
 class IGeofencingModel;
+class WindAnalysis;
 
-class Geofencing: public AggregatableObject<IPC, IScheduler, ManeuverPlanner, IGeofencingModel>,
+class Geofencing: public AggregatableObject<IPC, IScheduler, ManeuverPlanner, IGeofencingModel, WindAnalysis>,
 		public ConfigurableObject<GeofencingParams>,
 		public IRunnableObject
 {
@@ -66,6 +67,7 @@ private:
 	evaluateSafety();
 
 	SensorData sensorData_;
+	WindInfo windEstimate_;
 	Mutex sensorDataMutex_;
 
 	mutable Mutex criticalPointsMutex_;
