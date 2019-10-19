@@ -27,14 +27,15 @@
 #define UAVAP_MISSIONCONTROL_GEOFENCING_CONSTROLLRATEMODEL_H_
 
 #include <acb.h>
+#include <uavAP/FlightAnalysis/WindAnalysis/WindInfo.h>
 
+#include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/LinearAlgebra.h"
 #include "uavAP/Core/Frames/VehicleOneFrame.h"
 #include "uavAP/Core/Object/AggregatableObject.hpp"
 #include "uavAP/MissionControl/Geofencing/IGeofencingModel.h"
 #include "uavAP/Core/PropertyMapper/ConfigurableObject.hpp"
 #include "uavAP/MissionControl/Geofencing/ConstRollRateModelParams.h"
-#include <mutex>
 
 class ConstRollRateModel: public IGeofencingModel,
 		public AggregatableObject<>,
@@ -49,19 +50,10 @@ public:
 	~ConstRollRateModel();
 
 	bool
-	updateModel(const SensorData& data) override;
+	updateModel(const SensorData& data, const WindInfo& wind) override;
 
 	std::vector<Vector3>
 	getCriticalPoints(const Edge& edge, RollDirection dir) override;
-
-	/**
-	 * @brief If frameleft/right is set it is calculating the position given a specified roll angle
-	 * @param roll
-	 * @param dir
-	 * @return
-	 */
-	Vector3
-	calculatePoint(FloatingType roll, RollDirection dir);
 
 	/**
 	 * @brief If frameleft/right is set it is calculating the yaw given a specified roll angle
@@ -80,6 +72,41 @@ public:
 
 private:
 
+	std::vector<Vector3>
+	getCriticalPointsOrbit(FloatingType course, FloatingType end, RollDirection dir);
+
+	FloatingType
+	getTimeFromYawOrbit(FloatingType yaw, RollDirection dir);
+
+	Vector3
+	getPositionOrbit(FloatingType time, RollDirection dir);
+
+	Vector3
+	getPositionCurve(FloatingType time, RollDirection dir);
+
+	/**
+	 * @brief If frameleft/right is set it is calculating the position given a specified roll angle
+	 * @param roll
+	 * @param dir
+	 * @return
+	 */
+	Vector3
+	calculatePoint(FloatingType roll, RollDirection dir);
+
+	Vector3
+	calculatePointOrbit(FloatingType time, RollDirection dir);
+
+	Vector3
+	getWindDisplacement(FloatingType time);
+
+	FloatingType
+	calculateYaw(FloatingType course);
+
+	FloatingType
+	calculateCourse(FloatingType yaw);
+
+	Vector3 wind_;
+
 	FloatingType currentRoll_;
 
 	Vector3 betaCompleteLeft_;
@@ -92,14 +119,16 @@ private:
 	acb_t query_; //!< z used in beta functions
 	acb_t queryRes_; //!< result of beta functions
 
-	std::mutex queryMutex_;
+	Mutex queryMutex_;
 
 	FloatingType factor_; //!< v/(2r)
 	FloatingType velocity_;
 
-	Vector3 centerOrbitLeft_;
-	Vector3 centerOrbitRight_;
-	FloatingType radiusOrbit_;
+	Vector3 endpointLeft_;
+	FloatingType yawEndLeft_;
+	Vector3 endpointRight_;
+	FloatingType yawEndRight_;
+	FloatingType yawrateOrbit_;
 
 	VehicleOneFrame frameLeft_;
 	VehicleOneFrame frameRight_;

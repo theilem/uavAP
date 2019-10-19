@@ -29,8 +29,8 @@
 SerialHandler::SerialHandler(const SerialNetworkParams& params) :
 		io_(), serial_(io_, params.serialPort), delim_(
 				params.delimiterString[params.delimiterString.size() - 1]), delimString_(
-				params.delimiterString), useCRC_(params.useCRC), direction_(params.direction), handlerCanceled_(
-				false)
+				params.delimiterString), useCRC_(params.useCRC), direction_(params.direction), sendBlocking_(
+				params.sendBlocking), handlerCanceled_(false)
 {
 	serial_.set_option(boost::asio::serial_port_base::baud_rate(params.baudRate));
 	if (params.flowControl)
@@ -91,9 +91,12 @@ SerialHandler::sendPacket(const Packet& packet)
 	std::ostream os(&outBuffer_);
 	os << message;
 
-	boost::asio::async_write(serial_, outBuffer_,
-			boost::bind(&SerialHandler::sendStatus, this, boost::asio::placeholders::error,
-					boost::asio::placeholders::bytes_transferred));
+	if (sendBlocking_)
+		boost::asio::write(serial_, outBuffer_);
+	else
+		boost::asio::async_write(serial_, outBuffer_,
+				boost::bind(&SerialHandler::sendStatus, this, boost::asio::placeholders::error,
+						boost::asio::placeholders::bytes_transferred));
 
 	return true;
 }

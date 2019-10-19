@@ -46,9 +46,9 @@ public:
 
 		addDefault<SchedulerFactory>();
 		addDefault<TimeProviderFactory>();
-		addDefaultCreator<IPC>();
+		addDefaultConfigurable<IPC>();
 		addDefault<SensingActuationIOFactory>();
-		addCreator<DataHandling>();
+		addConfigurable<DataHandling>();
 		addDefaultCreator<DataPresentation>();
 	}
 };

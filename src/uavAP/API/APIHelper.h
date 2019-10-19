@@ -39,7 +39,7 @@ public:
 	{
 		addDefault<TimeProviderFactory>();
 		addDefault<SchedulerFactory>();
-		addDefaultCreator<IPC>();
+		addDefaultConfigurable<IPC>();
 		addConfigurable<DataPresentation>();
 	}
 };

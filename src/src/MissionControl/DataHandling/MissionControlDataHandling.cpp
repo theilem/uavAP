@@ -30,7 +30,7 @@
 #include "uavAP/MissionControl/DataHandling/MissionControlDataHandling.h"
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
-//#include "uavAP/MissionControl/Geofencing/Geofencing.h"
+#include "uavAP/MissionControl/Geofencing/Geofencing.h"
 #include "uavAP/Core/DataPresentation/DataPresentation.h"
 #include "uavAP/Core/IPC/IPC.h"
 
@@ -96,7 +96,8 @@ MissionControlDataHandling::run(RunStage stage)
 		}
 
 		auto ipc = ipc_.get();
-		publisher_ = ipc->publishPackets(EnumMap<Target>::convert(Target::MISSION_CONTROL) + "_to_comm");
+		publisher_ = ipc->publishPackets(
+				EnumMap<Target>::convert(Target::MISSION_CONTROL) + "_to_comm");
 		overridePublisher_ = ipc->publishPackets("active_override");
 		break;
 	}
@@ -104,7 +105,8 @@ MissionControlDataHandling::run(RunStage stage)
 	{
 		auto ipc = ipc_.get();
 
-		missionControlSubscription_ = ipc->subscribeOnPackets("comm_to_" + EnumMap<Target>::convert(Target::MISSION_CONTROL),
+		missionControlSubscription_ = ipc->subscribeOnPackets(
+				"comm_to_" + EnumMap<Target>::convert(Target::MISSION_CONTROL),
 				boost::bind(&MissionControlDataHandling::receiveAndDistribute, this, _1));
 
 		if (!missionControlSubscription_.connected())
@@ -144,7 +146,7 @@ MissionControlDataHandling::notifyAggregationOnUpdate(const Aggregator& agg)
 	missionPlanner_.setFromAggregationIfNotSet(agg);
 	localFrameManager_.setFromAggregationIfNotSet(agg);
 	conditionManager_.setFromAggregationIfNotSet(agg);
-//	geofencing_.setFromAggregationIfNotSet(agg);
+	geofencing_.setFromAggregationIfNotSet(agg);
 }
 
 void
@@ -176,16 +178,15 @@ MissionControlDataHandling::collectAndSend()
 	}
 
 	//Trajectory hack: Orbit of geofencing
-	/*	auto geo = geofencing_.get();
-	 if (!geo)
-	 {
-	 return;
-	 }
+	auto geo = geofencing_.get();
+	if (!geo)
+	{
+		return;
+	}
 
-	 Packet misPack = dp->serialize(geo->criticalPoints());
-	 dp->addHeader(misPack, Content::MISSION);
-	 publisher_.publish(misPack);
-	 */
+	Packet misPack = dp->serialize(geo->getCriticalPoints());
+	dp->addHeader(misPack, Content::CRITICAL_POINTS);
+	publisher_.publish(misPack);
 }
 
 void

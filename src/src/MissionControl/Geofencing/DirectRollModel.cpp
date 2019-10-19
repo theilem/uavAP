@@ -46,7 +46,7 @@ DirectRollModel::notifyAggregationOnUpdate(const Aggregator& agg)
 }
 
 bool
-DirectRollModel::updateModel(const SensorData& data)
+DirectRollModel::updateModel(const SensorData& data, const WindInfo& wind)
 {
 	std::unique_lock<std::mutex> lock(queryMutex_, std::try_to_lock);
 

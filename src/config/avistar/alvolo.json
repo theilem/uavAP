@@ -1,6 +1,12 @@
 {
 	"interface":
 	{
+		"api":{
+			"data_presentation":
+			{
+				"compress_double": true
+			}
+		},
 		"num_output_channel":7,
 		"trace_seq_nr":false,
 		"internal_imu": false,

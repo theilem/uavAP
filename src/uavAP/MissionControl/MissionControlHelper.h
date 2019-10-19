@@ -45,7 +45,7 @@ class MissionControlHelper: public Helper
 public:
 	MissionControlHelper()
 	{
-		addDefaultCreator<IPC>();
+		addDefaultConfigurable<IPC>();
 		addDefaultCreator<MissionControlDataHandling>();
 		addDefaultCreator<ConditionManager>();
 

@@ -123,6 +123,12 @@ protected:
 	void
 	addConfigurable();
 
+
+
+	template<class Configurable>
+	void
+	addDefaultConfigurable();
+
 private:
 
 	/**
@@ -277,6 +283,25 @@ Helper::createConfigurable(const Configuration& config)
 		APLOG_ERROR << Configurable::typeId << ": configuration failed.";
 	}
 	return obj;
+}
+
+template<class Configurable>
+inline void
+Helper::addDefaultConfigurable()
+{
+	std::string type = Configurable::typeId;
+	if (defaultCreators_.find(type) != defaultCreators_.end())
+	{
+		APLOG_ERROR << "Same id for different default factory added. Ignore.";
+		return;
+	}
+
+	Configuration emptyConf;
+	DefaultCreatorAgg defaultCreator = std::bind(&Helper::createConfigurable<Configurable>, emptyConf);
+	defaultCreators_.insert(std::make_pair(type, defaultCreator));
+
+	CreatorAgg creator = &Helper::createConfigurable<Configurable>;
+	creators_.insert(std::make_pair(type, creator));
 }
 
 #endif /* UAVAP_CORE_FRAMEWORK_HELPER_H_ */

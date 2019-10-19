@@ -78,36 +78,41 @@ Geofencing::run(RunStage stage)
 	return false;
 }
 
-Mission
-Geofencing::criticalPoints()
+std::vector<Waypoint>
+Geofencing::getCriticalPoints() const
 {
-	Mission mission;
+	std::vector<Waypoint> criticalPoints;
+//
+//	auto geofencingModel = get<IGeofencingModel>();
+//
+//	if (!geofencingModel)
+//	{
+//		APLOG_ERROR << "Geofencing: Geofencing Model Missing.";
+//		return std::vector<Waypoint>();
+//	}
+//
+//	for (const auto& it : geoFence_.getEdges())
+//	{
+//		if (it.getDistanceAbs(sensorData_.position.head(2)) > params.evaluationThreshold())
+//			continue;
+//		for (const auto& points : geofencingModel->getCriticalPoints(it,
+//				IGeofencingModel::RollDirection::LEFT))
+//		{
+//			criticalPoints.push_back(Waypoint(points));
+//		}
+//		for (const auto& points : geofencingModel->getCriticalPoints(it,
+//				IGeofencingModel::RollDirection::RIGHT))
+//		{
+//			criticalPoints.push_back(Waypoint(points));
+//		}
+//	}
+	LockGuard l(criticalPointsMutex_);
+	criticalPoints.insert(criticalPoints.end(), criticalPointsLeft_.begin(),
+			criticalPointsLeft_.end());
+	criticalPoints.insert(criticalPoints.end(), criticalPointsRight_.begin(),
+			criticalPointsRight_.end());
 
-	auto geofencingModel = get<IGeofencingModel>();
-
-	if (!geofencingModel)
-	{
-		APLOG_ERROR << "Geofencing: Geofencing Model Missing.";
-		return Mission();
-	}
-
-	for (const auto& it : geoFence_.getEdges())
-	{
-		if (it.getDistanceAbs(sensorData_.position.head(2)) > params.evaluationThreshold())
-			continue;
-		for (const auto& points : geofencingModel->getCriticalPoints(it,
-				IGeofencingModel::RollDirection::LEFT))
-		{
-			mission.waypoints.push_back(Waypoint(points));
-		}
-		for (const auto& points : geofencingModel->getCriticalPoints(it,
-				IGeofencingModel::RollDirection::RIGHT))
-		{
-			mission.waypoints.push_back(Waypoint(points));
-		}
-	}
-
-	return mission;
+	return criticalPoints;
 }
 
 void
@@ -130,8 +135,10 @@ Geofencing::evaluateSafety()
 		return;
 	}
 
+	WindInfo wind;
+	wind.velocity = Vector3(0,0,0);
 	Lock lock(sensorDataMutex_);
-	geofencingModel->updateModel(sensorData_);
+	geofencingModel->updateModel(sensorData_, wind);
 	Vector3 position = sensorData_.position;
 	lock.unlock();
 
@@ -144,6 +151,9 @@ Geofencing::evaluateSafety()
 	}
 
 	bool leftSafe = true, rightSafe = true;
+	Lock l(criticalPointsMutex_);
+	criticalPointsLeft_.clear();
+	criticalPointsRight_.clear();
 	for (const auto& it : geoFence_.getEdges())
 	{
 		if (it.getDistanceAbs(position.head(2)) > params.evaluationThreshold())
@@ -151,6 +161,7 @@ Geofencing::evaluateSafety()
 		for (const auto& points : geofencingModel->getCriticalPoints(it,
 				IGeofencingModel::RollDirection::LEFT))
 		{
+			criticalPointsLeft_.push_back(Waypoint(points));
 			if (it.getDistance(points.head(2)) < params.distanceThreshold())
 			{
 				APLOG_WARN << "Left not safe";
@@ -161,6 +172,7 @@ Geofencing::evaluateSafety()
 		for (const auto& points : geofencingModel->getCriticalPoints(it,
 				IGeofencingModel::RollDirection::RIGHT))
 		{
+			criticalPointsRight_.push_back(Waypoint(points));
 			if (it.getDistance(points.head(2)) < params.distanceThreshold())
 			{
 				APLOG_WARN << "Right not safe";
@@ -169,6 +181,7 @@ Geofencing::evaluateSafety()
 			}
 		}
 	}
+	l.unlock();
 
 	if (!leftSafe && !rightSafe)
 	{

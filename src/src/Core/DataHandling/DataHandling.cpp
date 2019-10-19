@@ -14,17 +14,6 @@ DataHandling::DataHandling()
 {
 }
 
-std::shared_ptr<DataHandling>
-DataHandling::create(const Configuration& config)
-{
-	auto dh = std::make_shared<DataHandling>();
-	if (!dh->configure(config))
-	{
-		APLOG_ERROR << "DataHandling configuration failed";
-	}
-	return dh;
-}
-
 bool
 DataHandling::run(RunStage stage)
 {

@@ -28,10 +28,11 @@
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/MissionControl/Geofencing/ConstRollRateModel.h>
 #include <uavAP/MissionControl/Polygon.h>
+#include <cmath>
+#include <complex>
 
 ConstRollRateModel::ConstRollRateModel() :
-		currentRoll_(0), factor_(0), velocity_(
-				0), radiusOrbit_(0)
+		currentRoll_(0), factor_(0), velocity_(0), yawEndLeft_(0), yawEndRight_(0), yawrateOrbit_(0)
 {
 	acb_init(aLeft_);
 	acb_init(aRight_);
@@ -52,7 +53,7 @@ ConstRollRateModel::~ConstRollRateModel()
 }
 
 bool
-ConstRollRateModel::updateModel(const SensorData& data)
+ConstRollRateModel::updateModel(const SensorData& data, const WindInfo& wind)
 {
 	std::unique_lock<std::mutex> lock(queryMutex_, std::try_to_lock);
 	if (!lock.owns_lock())
@@ -100,21 +101,16 @@ ConstRollRateModel::updateModel(const SensorData& data)
 	frameLeft_.setOrigin(pos - frameLeft_.toInertialFramePosition(c0Left));
 	frameRight_.setOrigin(pos - frameRight_.toInertialFramePosition(c0Right));
 
-	//Calculate Orbit centers
-	radiusOrbit_ = pow(velocity_, 2) / (tan(params.rollMax()) * params.g());
-	Vector3 endpoint = calculatePoint(params.rollMax(), RollDirection::RIGHT);
-	FloatingType psimax = calculateYaw(params.rollMax(), RollDirection::RIGHT);
+	wind_ = wind.velocity;
+	//Calculate Endpoints
+	yawrateOrbit_ = params.g() / velocity_ * std::tan(params.rollMax());
+	endpointRight_ = calculatePoint(params.rollMax(), RollDirection::RIGHT);
+	endpointRight_[2] = data.position.z();
+	yawEndRight_ = calculateYaw(params.rollMax(), RollDirection::RIGHT);
 
-	centerOrbitRight_ = endpoint
-			- Vector3(cos(psimax + M_PI / 2.0), sin(psimax + M_PI / 2.0), 0) * radiusOrbit_;
-	centerOrbitRight_[2] = data.position.z();
-
-	endpoint = calculatePoint(-params.rollMax(), RollDirection::LEFT); //TODO maybe shortcut due to symmetry
-	psimax = calculateYaw(-params.rollMax(), RollDirection::LEFT);
-
-	centerOrbitLeft_ = endpoint
-			- Vector3(cos(psimax - M_PI / 2.0), sin(psimax - M_PI / 2.0), 0) * radiusOrbit_;
-	centerOrbitLeft_[2] = data.position.z();
+	endpointLeft_ = calculatePoint(-params.rollMax(), RollDirection::LEFT);
+	endpointLeft_[2] = data.position.z();
+	yawEndLeft_ = calculateYaw(-params.rollMax(), RollDirection::LEFT);
 
 	return true;
 }
@@ -122,17 +118,26 @@ ConstRollRateModel::updateModel(const SensorData& data)
 std::vector<Vector3>
 ConstRollRateModel::getCriticalPoints(const Edge& edge, RollDirection dir)
 {
-	std::unique_lock<std::mutex> lock(queryMutex_);
+	Lock lock(queryMutex_);
 	std::vector<Vector3> result;
-	for (const auto& it : calculateRoll(edge.yaw, dir))
+
+	auto yaw = calculateYaw(edge.yaw);
+	for (const auto& it : calculateRoll(yaw, dir)) //TODO: calculate Roll is not really correct anymore
 	{
 		result.push_back(calculatePoint(it, dir));
 	}
-	Vector3 normal(-edge.normal.x(), -edge.normal.y(), 0);
-	if (dir == RollDirection::LEFT)
-		result.push_back(centerOrbitLeft_ + normal * radiusOrbit_);
-	else
-		result.push_back(centerOrbitRight_ + normal * radiusOrbit_);
+
+	auto end = std::atan2(edge.normal.y(), edge.normal.x());
+
+	for (const auto& it : getCriticalPointsOrbit(edge.yaw, end, dir))
+	{
+		result.push_back(it);
+	}
+//	Vector3 normal(-edge.normal.x(), -edge.normal.y(), 0);
+//	if (dir == RollDirection::LEFT)
+//		result.push_back(centerOrbitLeft_ + normal * radiusOrbit_);
+//	else
+//		result.push_back(centerOrbitRight_ + normal * radiusOrbit_);
 
 	return result;
 
@@ -148,13 +153,15 @@ ConstRollRateModel::calculatePoint(FloatingType roll, RollDirection dir)
 		acb_hypgeom_beta_lower(queryRes_, aLeft_, b_, query_, 0, params.precision());
 		auto B = toVector(queryRes_);
 
-		return frameLeft_.toInertialFramePosition(-(betaCompleteLeft_ - B) * factor_ * sign);
+		return frameLeft_.toInertialFramePosition(-(betaCompleteLeft_ - B) * factor_ * sign)
+				+ getWindDisplacement((-roll + currentRoll_) / params.rollRate());
 	}
 
 	acb_hypgeom_beta_lower(queryRes_, aRight_, b_, query_, 0, params.precision());
 	auto B = toVector(queryRes_);
 
-	return frameRight_.toInertialFramePosition((betaCompleteRight_ - B) * factor_ * sign);
+	return frameRight_.toInertialFramePosition((betaCompleteRight_ - B) * factor_ * sign)
+			+ getWindDisplacement((roll - currentRoll_) / params.rollRate());
 }
 
 FloatingType
@@ -217,4 +224,155 @@ ConstRollRateModel::toVector(const acb_t& complex)
 	FloatingType y = arf_get_d(arb_midref(acb_imagref(complex)), ARF_RND_NEAR);
 
 	return Vector3(x, y, 0);
+}
+
+FloatingType
+ConstRollRateModel::getTimeFromYawOrbit(FloatingType yaw, RollDirection dir)
+{
+	if (dir == RollDirection::RIGHT)
+	{
+		auto yawDiff = yaw - yawEndRight_;
+		if (yawDiff > 0)
+			yawDiff -= 2 * M_PI;
+		return -yawDiff / yawrateOrbit_;
+	}
+	else
+	{
+		auto yawDiff = yaw - yawEndLeft_;
+		if (yawDiff < 0)
+			yawDiff += 2 * M_PI;
+		return yawDiff / yawrateOrbit_;
+	}
+}
+
+Vector3
+ConstRollRateModel::getPositionOrbit(FloatingType time, RollDirection dir)
+{
+}
+
+Vector3
+ConstRollRateModel::getPositionCurve(FloatingType time, RollDirection dir)
+{
+}
+
+Vector3
+ConstRollRateModel::getWindDisplacement(FloatingType time)
+{
+	return time * wind_;
+}
+
+std::vector<Vector3>
+ConstRollRateModel::getCriticalPointsOrbit(FloatingType course, FloatingType end, RollDirection dir)
+{
+	auto course2 = boundAngleRad(course + M_PI);
+	std::vector<Vector3> result;
+
+	if (dir == RollDirection::LEFT)
+	{
+
+		auto startingCourse = calculateCourse(yawEndLeft_);
+		auto diff = end - startingCourse;
+		if (diff < 0)
+			diff += 2 * M_PI;
+
+		auto diffCourse = course - startingCourse;
+		if (diffCourse < 0)
+			diffCourse += 2 * M_PI;
+
+		if (diffCourse < diff)
+		{
+			auto t = getTimeFromYawOrbit(calculateYaw(course), dir);
+			result.push_back(calculatePointOrbit(t, dir));
+		}
+
+		auto diffCourse2 = course2 - startingCourse;
+		if (diffCourse2 < 0)
+			diffCourse2 += 2 * M_PI;
+
+		if (diffCourse2 < diff)
+		{
+			auto t = getTimeFromYawOrbit(calculateYaw(course2), dir);
+			result.push_back(calculatePointOrbit(t, dir));
+		}
+
+	}
+	else
+	{
+		auto startingCourse = calculateCourse(yawEndRight_);
+		auto diff = end - startingCourse;
+		if (diff > 0)
+			diff -= 2 * M_PI;
+
+		auto diffCourse = course - startingCourse;
+		if (diffCourse > 0)
+			diffCourse -= 2 * M_PI;
+
+		if (diffCourse > diff)
+		{
+			auto t = getTimeFromYawOrbit(calculateYaw(course), dir);
+			result.push_back(calculatePointOrbit(t, dir));
+		}
+
+		auto diffCourse2 = course2 - startingCourse;
+		if (diffCourse2 > 0)
+			diffCourse2 -= 2 * M_PI;
+
+		if (diffCourse2 > diff)
+		{
+			auto t = getTimeFromYawOrbit(calculateYaw(course2), dir);
+			result.push_back(calculatePointOrbit(t, dir));
+		}
+
+	}
+
+	return result;
+
+}
+
+FloatingType
+ConstRollRateModel::calculateYaw(FloatingType course)
+{
+	return std::acos(
+			(wind_.y() - wind_.x() * std::tan(course))
+					/ (velocity_ * std::sqrt(std::pow(std::tan(course), 2) + 1)))
+			- std::atan2(std::cos(course), std::sin(course));
+}
+
+FloatingType
+ConstRollRateModel::calculateCourse(FloatingType yaw)
+{
+	return std::atan2(std::sin(yaw) * velocity_ + wind_.y(), std::cos(yaw) * velocity_ + wind_.x());
+}
+
+Vector3
+ConstRollRateModel::calculatePointOrbit(FloatingType time, RollDirection dir)
+{
+
+	using namespace std::complex_literals;
+	using Complex = std::complex<FloatingType>;
+
+	FloatingType psi0;
+	FloatingType psiDot;
+	Vector3 startingPoint;
+
+	if (dir == RollDirection::LEFT)
+	{
+		psi0 = yawEndLeft_;
+		psiDot = yawrateOrbit_;
+		startingPoint = endpointLeft_;
+	}
+	else
+	{
+		psi0 = yawEndRight_;
+		psiDot = -yawrateOrbit_;
+		startingPoint = endpointRight_;
+	}
+
+	Complex point = velocity_ / psiDot * std::exp(1i * (psi0 - M_PI / 2))
+			* (std::exp(1i * psiDot * time) - 1.);
+
+	Vector3 position(std::real(point), std::imag(point), 0);
+
+	return startingPoint + position + getWindDisplacement(time);
+
 }

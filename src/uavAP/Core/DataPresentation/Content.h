@@ -66,6 +66,7 @@ enum class Content
 	CONTROLLER_OUTPUT_TRIM,     //!< CONTROLLER_OUTPUT_TRIM
 	CONTROLLER_OUTPUT_OFFSET,   //!< CONTROLLER_OUTPUT_OFFSET
 	LOCAL_FRAME,
+	CRITICAL_POINTS,			//!< Critical points from geofencing
 
 	//GS to FlightControl in UAVAP
 	TUNE_PID,               	//!< TUNE_PID

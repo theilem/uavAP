@@ -44,7 +44,7 @@ public:
 
 	CommunicationHelper()
 	{
-		addDefaultCreator<IPC>();
+		addDefaultConfigurable<IPC>();
 		addDefaultCreator<IDC>();
 		addDefault<SchedulerFactory>();
 		addDefault<TimeProviderFactory>();
