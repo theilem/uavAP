@@ -26,9 +26,9 @@
 #ifndef UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSIS_H_
 #define UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSIS_H_
 
-#include <uavAP/Core/Object/AggregatableObject.hpp>
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/LockTypes.h"
+#include "uavAP/Core/Object/AggregatableObject.hpp"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/PropertyMapper/Configuration.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
@@ -43,7 +43,7 @@ public:
 
 	static constexpr TypeId typeId = "wind_analysis";
 
-	WindAnalysis() = default;
+	WindAnalysis();
 
 	static std::shared_ptr<WindAnalysis>
 	create(const Configuration& config);
@@ -72,6 +72,9 @@ private:
 
 	WindAnalysisStatus windAnalysisStatus_;
 	mutable Mutex windAnalysisStatusMutex_;
+
+	FloatingType windDirection_;
+	Mutex windDirectionMutex_;
 };
 
 #endif /* UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSIS_H_ */

@@ -23,9 +23,14 @@
  *      Author: simonyu
  */
 
-#include <uavAP/Core/IPC/IPC.h>
-#include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
+#include "uavAP/Core/IPC/IPC.h"
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 #include "uavAP/MissionControl/WindAnalysis/WindAnalysis.h"
+
+WindAnalysis::WindAnalysis() :
+		windDirection_(0)
+{
+}
 
 std::shared_ptr<WindAnalysis>
 WindAnalysis::create(const Configuration& config)
@@ -85,14 +90,49 @@ WindAnalysis::getWindAnalysisStatus() const
 void
 WindAnalysis::setWindAnalysisStatus(const WindAnalysisStatus& windAnalysisStatus)
 {
-	Lock windAnalysisStatusLock(windAnalysisStatusMutex_);
-	windAnalysisStatus_ = windAnalysisStatus;
-	windAnalysisStatusLock.unlock();
-
 	if (windAnalysisStatus.manual)
 	{
-		Lock windInfoLock(windInfoMutex_);
-		windInfo_.velocity = windAnalysisStatus.velocity;
-		windInfoLock.unlock();
+		if (std::isnan(windAnalysisStatus.velocity.x())
+				|| std::isnan(windAnalysisStatus.velocity.y())
+				|| std::isnan(windAnalysisStatus.velocity.z()))
+		{
+			if (!std::isnan(windAnalysisStatus.speed) && !std::isnan(windAnalysisStatus.direction))
+			{
+				Lock windInfoLock(windInfoMutex_);
+				windInfo_.velocity.x() = windAnalysisStatus.speed
+						* cos(windAnalysisStatus.direction);
+				windInfo_.velocity.y() = windAnalysisStatus.speed
+						* sin(windAnalysisStatus.direction);
+				windInfo_.velocity.z() = 0;
+
+				Lock windAnalysisStatusLock(windAnalysisStatusMutex_);
+				windAnalysisStatus_ = windAnalysisStatus;
+				windAnalysisStatus_.velocity = windInfo_.velocity;
+				windAnalysisStatusLock.unlock();
+				windInfoLock.unlock();
+			}
+		}
+		else
+		{
+			Lock windInfoLock(windInfoMutex_);
+			windInfo_.velocity = windAnalysisStatus.velocity;
+
+			Lock windAnalysisStatusLock(windAnalysisStatusMutex_);
+			windAnalysisStatus_ = windAnalysisStatus;
+			windAnalysisStatus_.speed = windAnalysisStatus.velocity.norm();
+			windAnalysisStatus_.direction = atan2(windAnalysisStatus.velocity.y(),
+					windAnalysisStatus.velocity.x());
+			windAnalysisStatusLock.unlock();
+			windInfoLock.unlock();
+		}
+	}
+	else
+	{
+		if (!std::isnan(windAnalysisStatus.direction))
+		{
+			Lock windDirectionLock(windDirectionMutex_);
+			windDirection_ = windAnalysisStatus.direction;
+			windDirectionLock.unlock();
+		}
 	}
 }
