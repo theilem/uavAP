@@ -36,9 +36,18 @@ struct WindInfo
 struct WindAnalysisStatus
 {
 	Vector3 velocity;
-	double speed;
-	double direction;
+	FloatingType speed;
+	FloatingType direction;
 	bool manual;
+
+	inline void
+	reset()
+	{
+		velocity = {0, 0, 0};
+		speed = 0;
+		direction = 0;
+		manual = false;
+	}
 };
 
 namespace dp

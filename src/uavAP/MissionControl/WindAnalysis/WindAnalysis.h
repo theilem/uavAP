@@ -27,6 +27,7 @@
 #define UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSIS_H_
 
 #include "uavAP/Core/IPC/Publisher.h"
+#include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/Object/AggregatableObject.hpp"
 #include "uavAP/Core/Object/ObjectHandle.h"
@@ -36,6 +37,7 @@
 
 class IPC;
 class Packet;
+class SensorData;
 
 class WindAnalysis: public AggregatableObject<IPC>, public IRunnableObject
 {
@@ -65,6 +67,10 @@ public:
 
 private:
 
+	void
+	onSensorData(const SensorData& sensorData);
+
+	Subscription sensorDataSubscription_;
 	Publisher<WindInfo> windInfoPublisher_;
 
 	WindInfo windInfo_;
@@ -72,9 +78,6 @@ private:
 
 	WindAnalysisStatus windAnalysisStatus_;
 	mutable Mutex windAnalysisStatusMutex_;
-
-	FloatingType windDirection_;
-	Mutex windDirectionMutex_;
 };
 
 #endif /* UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSIS_H_ */

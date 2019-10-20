@@ -23,12 +23,13 @@
  *      Author: simonyu
  */
 
-#include "uavAP/Core/IPC/IPC.h"
+#include "uavAP/Core/Frames/BodyFrame.h"
 #include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
+#include "uavAP/Core/SensorData.h"
 #include "uavAP/MissionControl/WindAnalysis/WindAnalysis.h"
+#include "uavAP/Core/IPC/IPC.h"
 
-WindAnalysis::WindAnalysis() :
-		windDirection_(0)
+WindAnalysis::WindAnalysis()
 {
 }
 
@@ -53,14 +54,29 @@ WindAnalysis::run(RunStage stage)
 	{
 		if (!isSet<IPC>())
 		{
-			APLOG_ERROR << "ManualWindAnalysis: IPC missing.";
+			APLOG_ERROR << "WindAnalysis: IPC missing.";
 			return true;
 		}
+
+		auto ipc = get<IPC>();
+
+		windInfoPublisher_ = ipc->publish<WindInfo>("wind_info");
 
 		break;
 	}
 	case RunStage::NORMAL:
 	{
+		auto ipc = get<IPC>();
+
+		sensorDataSubscription_ = ipc->subscribe<SensorData>("sensor_data",
+				std::bind(&WindAnalysis::onSensorData, this, std::placeholders::_1));
+
+		if (!sensorDataSubscription_.connected())
+		{
+			APLOG_ERROR << "WindAnalysis: Sensor Data Subscription Missing.";
+			return true;
+		}
+
 		break;
 	}
 	case RunStage::FINAL:
@@ -68,8 +84,11 @@ WindAnalysis::run(RunStage stage)
 		break;
 	}
 	default:
+	{
 		break;
 	}
+	}
+
 	return false;
 }
 
@@ -130,9 +149,47 @@ WindAnalysis::setWindAnalysisStatus(const WindAnalysisStatus& windAnalysisStatus
 	{
 		if (!std::isnan(windAnalysisStatus.direction))
 		{
-			Lock windDirectionLock(windDirectionMutex_);
-			windDirection_ = windAnalysisStatus.direction;
-			windDirectionLock.unlock();
+			Lock windAnalysisStatusLock(windAnalysisStatusMutex_);
+			if (windAnalysisStatus_.manual)
+			{
+				windAnalysisStatus_.reset();
+			}
+			windAnalysisStatusLock.unlock();
 		}
 	}
+}
+
+void
+WindAnalysis::onSensorData(const SensorData& sensorData)
+{
+	Lock windAnalysisStatusLock(windAnalysisStatusMutex_);
+	WindAnalysisStatus windAnalysisStatus = windAnalysisStatus_;
+	windAnalysisStatusLock.unlock();
+
+	Lock windInfoLock(windInfoMutex_);
+	WindInfo windInfo = windInfo_;
+	windInfoLock.unlock();
+
+	if (!windAnalysisStatus.manual)
+	{
+		Vector3 airSpeedInertial;
+		airSpeedInertial.x() = sensorData.airSpeed * cos(sensorData.attitude.y())
+				* cos(sensorData.attitude.z());
+		airSpeedInertial.y() = sensorData.airSpeed * cos(sensorData.attitude.y())
+				* sin(sensorData.attitude.z());
+		airSpeedInertial.z() = sensorData.airSpeed * sin(sensorData.attitude.y());
+		windInfo.velocity = sensorData.velocity - airSpeedInertial;
+
+		Lock windAnalysisStatusLock(windAnalysisStatusMutex_);
+		windAnalysisStatus_.velocity = windInfo.velocity;
+		windAnalysisStatus_.speed = windInfo.velocity.norm();
+		windAnalysisStatus_.direction = atan2(windInfo.velocity.y(), windInfo.velocity.x());
+		windAnalysisStatusLock.unlock();
+
+		Lock windInfoLock(windInfoMutex_);
+		windInfo_ = windInfo;
+		windInfoLock.unlock();
+	}
+
+	windInfoPublisher_.publish(windInfo);
 }
