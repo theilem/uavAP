@@ -28,7 +28,6 @@
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/ManeuverPIDController.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
-#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include "uavAP/Core/DataHandling/DataHandling.h"
 #include "uavAP/Core/IPC/IPC.h"
 

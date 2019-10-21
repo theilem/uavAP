@@ -27,7 +27,6 @@
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
-#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include <cmath>
 #include <iostream>
 #include <boost/thread/thread_time.hpp>

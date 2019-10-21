@@ -5,7 +5,6 @@
  *      Author: mirco
  */
 #include <uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRatePIDController.h>
-#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
 #include <uavAP/Core/Scheduler/IScheduler.h>
 #include <uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRateCascade.h>

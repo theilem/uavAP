@@ -33,7 +33,6 @@
 #include "uavAP/Core/Scheduler/IScheduler.h"
 #include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
-#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <memory>
 
 LinearLocalPlanner::LinearLocalPlanner() :

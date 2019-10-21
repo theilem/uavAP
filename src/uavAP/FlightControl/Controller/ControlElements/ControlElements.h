@@ -26,7 +26,7 @@
 #ifndef CONTROL_CONTROLELEMENTS_H_
 #define CONTROL_CONTROLELEMENTS_H_
 
-#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
+#include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
 #include "uavAP/FlightControl/Controller/ControlElements/IControlElement.h"
 
 namespace Control

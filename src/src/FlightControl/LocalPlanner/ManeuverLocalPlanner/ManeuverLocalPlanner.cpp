@@ -28,7 +28,6 @@
 #include <uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h>
 #include "uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlanner.h"
 #include <uavAP/MissionControl/ManeuverPlanner/Override.h>
-#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
 #include <uavAP/Core/DataHandling/DataHandling.h>
 #include <uavAP/Core/DataPresentation/DataPresentation.h>

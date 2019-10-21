@@ -28,7 +28,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include "uavAP/Core/Framework/Factory.h"
 #include "uavAP/Core/Object/IAggregatableObject.h"
-#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include <functional>
 #include <map>
 #include <string>

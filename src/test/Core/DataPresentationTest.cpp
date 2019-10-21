@@ -38,7 +38,6 @@
 
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 #include <uavAP/Core/DataPresentation/DataPresentation.h>
-#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 
 BOOST_AUTO_TEST_SUITE(DataPresentationTest)
 

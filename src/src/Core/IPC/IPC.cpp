@@ -26,7 +26,6 @@
 #include <uavAP/Core/Object/SignalHandler.h>
 #include <uavAP/Core/Scheduler/IScheduler.h>
 #include "uavAP/Core/IPC/IPC.h"
-#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <csignal>
 
 IPC::IPC()

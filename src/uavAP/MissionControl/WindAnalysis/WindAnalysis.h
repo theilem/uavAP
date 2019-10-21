@@ -26,6 +26,7 @@
 #ifndef UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSIS_H_
 #define UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSIS_H_
 
+#include <uavAP/FlightControl/Controller/ControlElements/Filter/LowPassFilter.h>
 #include "uavAP/Core/IPC/Publisher.h"
 #include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/LockTypes.h"
@@ -52,6 +53,9 @@ public:
 	WindAnalysis() = default;
 
 	bool
+	configure(const Configuration& config);
+
+	bool
 	run(RunStage stage) override;
 
 	WindInfo
@@ -63,6 +67,16 @@ public:
 	void
 	setWindAnalysisStatus(const WindAnalysisStatus& windAnalysisStatus);
 
+	template <typename Config>
+	inline void
+	configureParams(Config& c)
+	{
+		ParameterRef<Control::LowPassFilterGeneric<Vector3>> windFilter(windFilter_, "wind_filter", false);
+
+		params.configure(c);
+		c & windFilter;
+	}
+
 private:
 
 	void
@@ -71,11 +85,15 @@ private:
 	Subscription sensorDataSubscription_;
 	Publisher<WindInfo> windInfoPublisher_;
 
+	TimePoint timeStamp_;
+
 	WindInfo windInfo_;
 	mutable Mutex windInfoMutex_;
 
 	WindAnalysisStatus windAnalysisStatus_;
 	mutable Mutex windAnalysisStatusMutex_;
+
+	Control::LowPassFilterGeneric<Vector3> windFilter_;
 };
 
 #endif /* UAVAP_MISSIONCONTROL_WINDANALYSIS_WINDANALYSIS_H_ */

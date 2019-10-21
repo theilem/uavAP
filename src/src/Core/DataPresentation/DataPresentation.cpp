@@ -6,7 +6,6 @@
  */
 #include <uavAP/Core/DataPresentation/DataPresentation.h>
 #include <uavAP/Core/Logging/APLogger.h>
-#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
 
 std::shared_ptr<DataPresentation>

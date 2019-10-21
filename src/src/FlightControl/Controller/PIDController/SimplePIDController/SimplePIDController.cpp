@@ -36,7 +36,6 @@
 #include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/SimplePIDController.h"
 #include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 #include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
-#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 
 SimplePIDController::SimplePIDController() :
 		pidCascade_(&sensorData_, velocityInertial_, accelerationInertial_, &controllerTarget_,
