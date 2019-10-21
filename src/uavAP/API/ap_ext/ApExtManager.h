@@ -25,6 +25,7 @@
 
 #ifndef UAVAP_API_APEXTMANAGER_H_
 #define UAVAP_API_APEXTMANAGER_H_
+#include <uavAP/FlightControl/Controller/ControlElements/Filter/LowPassFilter.h>
 #include "uavAP/API/AutopilotAPI.hpp"
 #include "uavAP/API/ap_ext/ap_ext.h"
 #include "uavAP/API/ChannelMixing.h"
@@ -86,6 +87,8 @@ private:
 	Duration gpsTimeout_;
 	Duration airspeedTimeout_;
 	unsigned int downsample_;
+
+	Control::LowPassFilter airspeedFilter_;
 
 	TimePoint gpsSampleTimestamp_;
 	PUBX_POS_fields lastGPSSample_;

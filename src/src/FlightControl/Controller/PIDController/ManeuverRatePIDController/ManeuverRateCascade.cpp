@@ -22,10 +22,7 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	auto yawrateTarget = controlEnv_.addInput(&target.yawRate);
 	auto airspeed = controlEnv_.addInput(&sd.airSpeed);
 
-	airspeedFilter_ = std::make_shared<Control::LowPassFilter>(airspeed, controlEnv_.getTimeDiff());
-	controlEnv_.addEvaluable(airspeedFilter_);
-
-	auto rollCalc = std::make_shared<Control::CustomFunction2>(yawrateTarget, airspeedFilter_,
+	auto rollCalc = std::make_shared<Control::CustomFunction2>(yawrateTarget, airspeed,
 			std::bind(&ManeuverRateCascade::yawrateToRoll, this, std::placeholders::_1,
 					std::placeholders::_2));
 
@@ -72,7 +69,7 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	auto accelerationInput = controlEnv_.addInput(&sd.acceleration[0]);
 	auto velocityTarget = controlEnv_.addInput(&target.velocity);
 
-	auto velocityPID = controlEnv_.addPID(velocityTarget, airspeedFilter_, accelerationInput,
+	auto velocityPID = controlEnv_.addPID(velocityTarget, airspeed, accelerationInput,
 			defaultParams);
 
 	/* Throttle Output */

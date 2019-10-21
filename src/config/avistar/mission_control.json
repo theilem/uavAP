@@ -1,8 +1,8 @@
 {
 	"geofencing":{
 		"roll_max":45,
-		"evaluation_threshold":1000,
-		"distance_threshold":50,
+		"evaluation_threshold":300,
+		"distance_threshold":10,
 		"period":50
 	},
 	"geofencing_model":{
@@ -12,10 +12,12 @@
 		"precision":32,
 		"g":9.81
 	},
+	"wind_analysis":{
+	},
 	"local_frame": {
 		"origin": [
-			367836.57,
-			4435383.06,
+			367826.57,
+			4435393.06,
 			168
 		],
 		"yaw": 47
@@ -31,8 +33,8 @@
 				"east": 0,
 				"up": 150
 			},
-			"major_side_length": 800,
-			"minor_side_length": 400,
+			"major_side_length": 600,
+			"minor_side_length": 300,
 			"major_side_orientation": 0,
 			"height": 180
 		},
@@ -62,7 +64,7 @@
 		"type": "custom",
 		"use_approach": false,
 		"default_velocity": 20,
-		"default_altitude": 100,
+		"default_altitude": 150,
 		"missions": {
 			"simple": {
 				"velocity": 20,
@@ -74,23 +76,23 @@
 				},
 				"waypoints": [
 					{
-						"e": 200,
-						"n": 100,
+						"e": 150,
+						"n": 80,
 						"u": 0
 					},
 					{
-						"e": 200,
-						"n": -100,
+						"e": 150,
+						"n": -80,
 						"u": 0
 					},
 					{
-						"e": -200,
-						"n": -100,
+						"e": -150,
+						"n": -80,
 						"u": 0
 					},
 					{
-						"e": -200,
-						"n": 100,
+						"e": -150,
+						"n": 80,
 						"u": 0
 					}
 				]
@@ -105,43 +107,43 @@
 				},
 				"waypoints": [
 					{
-						"e": 300,
-						"n": 150,
+						"e": 250,
+						"n": 120,
 						"u": 0
 					},
 					{
-						"e": 300,
-						"n": -150,
+						"e": 250,
+						"n": -120,
 						"u": 0
 					},
 					{
 						"e": 150,
-						"n": -150,
+						"n": -120,
 						"u": 0
 					},
 					{
 						"e": -150,
-						"n": -150,
+						"n": -120,
 						"u": 50
 					},
 					{
-						"e": -300,
-						"n": -150,
+						"e": -250,
+						"n": -120,
 						"u": 50
 					},
 					{
-						"e": -300,
-						"n": 150,
+						"e": -250,
+						"n": 120,
 						"u": 50
 					},
 					{
 						"e": -150,
-						"n": 150,
+						"n": 120,
 						"u": 50
 					},
 					{
 						"e": 150,
-						"n": 150,
+						"n": 120,
 						"u": 0
 					}
 				]

@@ -27,6 +27,7 @@
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
+#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include <cmath>
 #include <iostream>
 #include <boost/thread/thread_time.hpp>
@@ -34,7 +35,7 @@
 ApExtManager::ApExtManager() :
 		internalImu_(false), externalGps_(false), useAirspeed_(false), useEuler_(false), traceSeqNr_(
 				false), courseAsHeading_(false), gpsTimeout_(Seconds(1)), airspeedTimeout_(
-				Milliseconds(100)), downsample_(0), gpsSampleTimestamp_(), sampleNr_(0)
+				Milliseconds(500)), downsample_(0), gpsSampleTimestamp_(), sampleNr_(0)
 {
 }
 
@@ -87,6 +88,9 @@ ApExtManager::configure(const Configuration& config)
 	pm.add<bool>("course_as_heading", courseAsHeading_, false);
 	pm.add("gps_timeout_ms", gpsTimeout_, false);
 	pm.add<unsigned int>("downsample", downsample_, false);
+
+	ParameterRef<Control::LowPassFilter> airspeedFilter(airspeedFilter_, "airspeed_filter", true);
+	pm & airspeedFilter;
 
 	return success;
 }
@@ -349,8 +353,11 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 		else
 		{
 			bool setGroundSpeed = false;
+			bool oldAirspeed = false;
+			Duration timeDiff;
 			if (std::isnan(airspeed->cal_airs) || airspeed->cal_airs == -1)
 			{
+				oldAirspeed = true;
 				airspeed = &lastAirspeedSample_;
 				if (Clock::now() - airspeedTimestamp_ > airspeedTimeout_)
 				{
@@ -361,10 +368,19 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			else
 			{
 				lastAirspeedSample_ = *airspeed;
-				airspeedTimestamp_ = Clock::now();
+				auto now = Clock::now();
+				timeDiff = now - airspeedTimestamp_;
+				airspeedTimestamp_ = now;
 			}
 			if (!setGroundSpeed)
-				sens.airSpeed = airspeed->cal_airs;
+			{
+				if (!oldAirspeed)
+				{
+					airspeedFilter_.update(airspeed->cal_airs,
+							std::chrono::duration_cast<Microseconds>(timeDiff).count() / 1e6);
+				}
+				sens.airSpeed = airspeedFilter_.getValue();
+			}
 		}
 	}
 	else

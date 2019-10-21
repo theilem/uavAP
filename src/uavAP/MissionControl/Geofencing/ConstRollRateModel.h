@@ -27,6 +27,7 @@
 #define UAVAP_MISSIONCONTROL_GEOFENCING_CONSTROLLRATEMODEL_H_
 
 #include <acb.h>
+#include <uavAP/FlightControl/Controller/ControlElements/Filter/LowPassFilter.h>
 #include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/LinearAlgebra.h"
 #include "uavAP/Core/Frames/VehicleOneFrame.h"
@@ -103,6 +104,8 @@ private:
 
 	FloatingType
 	calculateCourse(FloatingType yaw);
+
+	Control::LowPassFilter airspeedFilter_;
 
 	Vector3 wind_;
 

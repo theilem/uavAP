@@ -73,7 +73,6 @@ private:
 	std::shared_ptr<AngleConstraint> rollConstraint_;
 	std::shared_ptr<AngleConstraint> rollRateTargetConstraint_;
 	std::shared_ptr<AngleConstraint> pitchConstraint_;
-	std::shared_ptr<Control::LowPassFilter> airspeedFilter_;
 
 };
 
@@ -95,12 +94,10 @@ ManeuverRateCascade::configureParams(Config& c)
 	ParameterRef<AngleConstraint> rollRateConstraint(*rollRateTargetConstraint_,
 			"roll_rate_constraint", true);
 	ParameterRef<AngleConstraint> pitchConstraint(*pitchConstraint_, "pitch_constraint", true);
-	ParameterRef<Control::LowPassFilter> airspeedFilter(*airspeedFilter_, "airspeed_filter", true);
 
 	c & rollConstraint;
 	c & rollRateConstraint;
 	c & pitchConstraint;
-	c & airspeedFilter;
 
 
 }

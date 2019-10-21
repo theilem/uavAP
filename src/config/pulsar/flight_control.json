@@ -1,81 +1,68 @@
 {
 	"controller": {
-		"type": "rate",
-		"hard_roll_constraint": 40.0,
-		"hard_roll_rate_constraint": 20.0,
-		"hard_pitch_constraint": 30.0,
-		"hard_pitch_rate_constraint": 30.0,
-		"use_rpm_controller": false,
-		"pid_controllers": {
-			"climb_angle": {
-				"ff": 0,
-				"imax": 1,
-				"kd": 0,
-				"ki": 0.1,
-				"kp": 0.5
+		"type":"maneuver_rate",
+		"period":0,
+		"cascade":{
+			"velocity":{
+				"kp":0.5,
+				"ki":0.2,
+				"kd":0,
+				"imax":3,
+				"ff":0
 			},
-			"pitch": {
-				"ff": 0,
-				"imax": 2,
-				"kd": 0,
-				"ki": 0.1,
-				"kp": 1
+			"climb_angle":{
+				"kp":0.4,
+				"ki":0,
+				"kd":0,
+				"imax":2,
+				"ff":0
 			},
-			"pitch_rate": {
-				"ff": 1,
-				"imax": 0,
-				"kd": 0,
-				"ki": 0,
-				"kp": 0
+			"pitch":{
+				"kp":1,
+				"ki":0.2,
+				"kd":0,
+				"imax":0.2,
+				"ff":0
 			},
-			"roll": {
-				"ff": 0,
-				"imax": 5,
-				"kd": 0,
-				"ki": 0.1,
-				"kp": 3
+			"roll":{
+				"kp":1.2,
+				"ki":0.4,
+				"kd":0,
+				"imax":0.2,
+				"ff":0
 			},
-			"roll_rate": {
-				"ff": 3,
-				"imax": 0,
-				"kd": 0,
-				"ki": 0,
-				"kp": 0
+			"roll_rate":{
+				"kp":0,
+				"ki":0,
+				"kd":0,
+				"imax":1.79769e+308,
+				"ff":3
 			},
-			"rudder": {
-				"ff": 0,
-				"imax": 0,
-				"kd": 0,
-				"ki": 0,
-				"kp": 0
+			"roll_constraint":{
+				"min":-30,
+				"max":30
 			},
-			"velocity": {
-				"ff": 0,
-				"imax": 1,
-				"kd": 0,
-				"ki": 0.1,
-				"kp": 1
+			"roll_rate_constraint":{
+				"min":-20,
+				"max":20
 			},
-			"rpm": {
-				"ff": 0,
-				"imax": 12,
-				"kd": 0,
-				"ki": 0.01,
-				"kp": 0.000005
+			"pitch_constraint":{
+				"min":-15,
+				"max":15
 			}
 		}
 	},
 	"local_planner": {
 		"type": "maneuver",
 		"period": 0,
-		"safety_velocity": 15,
+		"safety_velocity": 10,
 		"k_altitude": 0.8,
 		"k_convergence": 0.01,
 		"k_yaw_rate": 0.65
 	},
-	"fc_data_handling": {
-		"compress_sensor_data": true,
-		"period": 200
+	"data_handling": {
+		"period": 200,
+		"target": "flight_control"
 	},
 	"data_presentation": {
 		"compress_double": true

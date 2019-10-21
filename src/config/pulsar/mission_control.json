@@ -1,33 +1,48 @@
 {
-    "local_frame": {
-        "origin": [
-            367836.57,
-            4435383.06,
-            200
-        ],
-        "yaw": 47
-    },
+	"geofencing":{
+		"roll_max":30,
+		"evaluation_threshold":300,
+		"distance_threshold":20,
+		"period":50
+	},
+	"geofencing_model":{
+		"type":"roll_rate",
+		"roll_max":30,
+		"roll_rate":20,
+		"precision":32,
+		"g":9.81
+	},
+	"wind_analysis":{
+	},
+	"local_frame": {
+		"origin": [
+			367826.57,
+			4435393.06,
+			168
+		],
+		"yaw": 47
+	},
     "global_planner": {
         "type": "spline",
         "tau": 0.6
     },
     "maneuver_planner": {
-        "safety_bounds": {
-            "center": {
-                "north": 0,
-                "east": 0,
-                "up": 120
-            },
-            "major_side_length": 1000,
-            "minor_side_length": 400,
-            "major_side_orientation": 0,
-            "height": 120
-        },
-        "return_velocity": 12,
-        "manual_restart": false,
-        "maneuver_restart": false,
-        "use_safety_bounds": false,
-        "perform_in_safety_bounds": true,
+       "safety_bounds": {
+			"center": {
+				"north": 0,
+				"east": 0,
+				"up": 150
+			},
+			"major_side_length": 800,
+			"minor_side_length": 400,
+			"major_side_orientation": 0,
+			"height": 180
+		},
+		"return_velocity": 10,
+		"manual_restart": false,
+		"maneuver_restart": false,
+		"use_safety_bounds": true,
+		"perform_in_safety_bounds": true,
         "freeze_controller_outputs": {
             "enable": false,
             "roll": true,
@@ -85,40 +100,41 @@
     },
     "mission_planner": {
         "type": "custom",
-        "use_approach": false,
-        "default_velocity": 12,
+		"use_approach": false,
+		"default_velocity": 10,
+		"default_altitude": 150,
         "missions": {
-            "simple": {
-                "velocity": 12,
-                "infinite": true,
-                "offset": {
-                    "e": 0,
-                    "n": 0,
-                    "u": 100
-                },
-                "waypoints": [
-                    {
-                        "e": 200,
-                        "n": 100,
-                        "u": 0
-                    },
-                    {
-                        "e": 200,
-                        "n": -100,
-                        "u": 0
-                    },
-                    {
-                        "e": -200,
-                        "n": -100,
-                        "u": 0
-                    },
-                    {
-                        "e": -200,
-                        "n": 100,
-                        "u": 0
-                    }
-                ]
-            },
+           	"simple": {
+				"velocity": 10,
+				"infinite": true,
+				"offset": {
+					"e": 0,
+					"n": 0,
+					"u": 150
+				},
+				"waypoints": [
+					{
+						"e": 150,
+						"n": 80,
+						"u": 0
+					},
+					{
+						"e": 150,
+						"n": -80,
+						"u": 0
+					},
+					{
+						"e": -150,
+						"n": -80,
+						"u": 0
+					},
+					{
+						"e": -150,
+						"n": 80,
+						"u": 0
+					}
+				]
+			},
             "energy": {
                 "velocity": 12,
                 "infinite": true,

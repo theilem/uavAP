@@ -42,6 +42,7 @@ add_library(uavap_mission_control_geo SHARED ${MISSION_CONTROL_GEO_SRC})
 
 target_link_libraries(uavap_mission_control_geo 	uavap_core
 													uavap_mission_control
+													control
 												${ARB})
 
 add_executable(MissionControl   MissionControl.cpp

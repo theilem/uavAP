@@ -21,6 +21,8 @@ class LowPassFilter : public ConfigurableObject<LowPassFilterParams>, public IEv
 {
 public:
 	//constructors
+	LowPassFilter();
+
 	LowPassFilter(Element in, const Duration* timeDiff);
 
 	void
@@ -40,6 +42,33 @@ private:
 	const Duration* timeDiff_;
 
 	FloatingType output_;
+};
+
+template <typename Type>
+class LowPassFilterGeneric : public ConfigurableObject<LowPassFilterParams>
+{
+public:
+	//constructors
+	LowPassFilterGeneric() = default;
+
+	inline Type
+	update(const Type& input, FloatingType deltaTime)
+	{
+		FloatingType ePow = 1 - std::exp(-deltaTime * params.cutOffFrequency());
+		output_ += (input - output_) * ePow;
+		return output_;
+	}
+
+	//get and set funtions
+	inline Type
+	getValue() const
+	{
+		return output_;
+	}
+
+private:
+
+	Type output_;
 };
 
 }

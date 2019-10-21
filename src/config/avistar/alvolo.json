@@ -10,10 +10,13 @@
 		"num_output_channel":7,
 		"trace_seq_nr":false,
 		"internal_imu": false,
-		"use_airspeed":false,
+		"use_airspeed":true,
 		"use_euler":true,
 		"external_gps":false,
 		"course_as_heading":false,
+		"airspeed_filter":{
+			"cut_off_frequency":5
+		},
 		"channel_naming":
 		{
 			"throttle":		0,

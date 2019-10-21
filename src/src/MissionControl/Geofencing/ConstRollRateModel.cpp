@@ -24,6 +24,7 @@
  */
 #include <acb_hypgeom.h>
 #include <uavAP/Core/Frames/InertialFrame.h>
+#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/MissionControl/Geofencing/ConstRollRateModel.h>
@@ -41,6 +42,11 @@ ConstRollRateModel::ConstRollRateModel() :
 	acb_init(queryRes_);
 
 	acb_set_d(b_, 0.5);
+
+
+	Control::LowPassFilterParams p;
+	p.cutOffFrequency = 20;
+	airspeedFilter_.setParams(p);
 }
 
 ConstRollRateModel::~ConstRollRateModel()
@@ -61,7 +67,8 @@ ConstRollRateModel::updateModel(const SensorData& data, const WindInfo& wind)
 		APLOG_DEBUG << "Data in use. Will update next time.";
 		return false;
 	}
-	velocity_ = data.airSpeed;
+	airspeedFilter_.update(data.airSpeed, 0.05); //Todo hardcoded frequency
+	velocity_ = airspeedFilter_.getValue();
 	currentRoll_ = data.attitude.x();
 	acb_set_d_d(aLeft_, 0.5, -params.g() / (2 * velocity_ * params.rollRate()));
 	acb_set_d_d(aRight_, 0.5, params.g() / (2 * velocity_ * params.rollRate()));

@@ -30,7 +30,8 @@ add_library(ap_ext SHARED	ap_ext/ap_ext.cpp
 							ChannelMixing.cpp)
 							
 target_link_libraries(ap_ext	uavap_core
-								uavap_api)
+								uavap_api
+								control)
 
 add_library(uavap_api SHARED	AutopilotAPI.cpp
 							ap_ext/UTM.cpp

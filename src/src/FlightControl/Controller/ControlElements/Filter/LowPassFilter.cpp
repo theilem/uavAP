@@ -30,7 +30,7 @@ LowPassFilter::evaluate()
 		return;
 
 	update(input_->getValue(),
-			std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC);
+			std::chrono::duration_cast<Microseconds>(*timeDiff_).count() / MUSEC_TO_SEC);
 }
 
 FloatingType
@@ -39,4 +39,9 @@ LowPassFilter::getValue() const
 	return output_;
 }
 
+
+LowPassFilter::LowPassFilter():
+		input_(nullptr), timeDiff_(nullptr), output_(0)
+{
+}
 }
