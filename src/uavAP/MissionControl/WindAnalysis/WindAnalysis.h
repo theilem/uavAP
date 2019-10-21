@@ -32,26 +32,24 @@
 #include "uavAP/Core/Object/AggregatableObject.hpp"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/PropertyMapper/Configuration.h"
+#include "uavAP/Core/PropertyMapper/ConfigurableObject.hpp"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/MissionControl/WindAnalysis/WindAnalysisStatus.h"
+#include "uavAP/MissionControl/WindAnalysis/WindAnalysisParams.h"
 
 class IPC;
 class Packet;
 class SensorData;
 
-class WindAnalysis: public AggregatableObject<IPC>, public IRunnableObject
+class WindAnalysis: public AggregatableObject<IPC>,
+		public IRunnableObject,
+		public ConfigurableObject<WindAnalysisParams>
 {
 public:
 
 	static constexpr TypeId typeId = "wind_analysis";
 
-	WindAnalysis();
-
-	static std::shared_ptr<WindAnalysis>
-	create(const Configuration& config);
-
-	bool
-	configure(const Configuration& config);
+	WindAnalysis() = default;
 
 	bool
 	run(RunStage stage) override;

@@ -23,27 +23,11 @@
  *      Author: simonyu
  */
 
-#include "uavAP/Core/Frames/BodyFrame.h"
 #include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
+#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/MissionControl/WindAnalysis/WindAnalysis.h"
 #include "uavAP/Core/IPC/IPC.h"
-
-WindAnalysis::WindAnalysis()
-{
-}
-
-std::shared_ptr<WindAnalysis>
-WindAnalysis::create(const Configuration& config)
-{
-	return std::make_shared<WindAnalysis>();
-}
-
-bool
-WindAnalysis::configure(const Configuration& config)
-{
-	return true;
-}
 
 bool
 WindAnalysis::run(RunStage stage)
@@ -172,12 +156,26 @@ WindAnalysis::onSensorData(const SensorData& sensorData)
 
 	if (!windAnalysisStatus.manual)
 	{
+		Vector3 airSpeedAttitude;
 		Vector3 airSpeedInertial;
-		airSpeedInertial.x() = sensorData.airSpeed * cos(sensorData.attitude.y())
-				* cos(sensorData.attitude.z());
-		airSpeedInertial.y() = sensorData.airSpeed * cos(sensorData.attitude.y())
-				* sin(sensorData.attitude.z());
-		airSpeedInertial.z() = sensorData.airSpeed * sin(sensorData.attitude.y());
+
+		airSpeedAttitude = sensorData.attitude;
+
+		if (params.useAlpha())
+		{
+			airSpeedAttitude.y() -= sensorData.angleOfAttack;
+		}
+
+		if (params.useBeta())
+		{
+			airSpeedAttitude.z() -= sensorData.angleOfSideslip;
+		}
+
+		airSpeedInertial.x() = sensorData.airSpeed * cos(airSpeedAttitude.y())
+				* cos(airSpeedAttitude.z());
+		airSpeedInertial.y() = sensorData.airSpeed * cos(airSpeedAttitude.y())
+				* sin(airSpeedAttitude.z());
+		airSpeedInertial.z() = sensorData.airSpeed * sin(airSpeedAttitude.y());
 		windInfo.velocity = sensorData.velocity - airSpeedInertial;
 
 		Lock windAnalysisStatusLock(windAnalysisStatusMutex_);

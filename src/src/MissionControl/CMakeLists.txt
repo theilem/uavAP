@@ -36,7 +36,8 @@ add_library(uavap_mission_control SHARED ${MISSION_CONTROL_SRC}
 										Polygon.cpp)
 
 
-target_link_libraries(uavap_mission_control 	uavap_core)
+target_link_libraries(uavap_mission_control 	uavap_core
+												control)
 
 add_library(uavap_mission_control_geo SHARED ${MISSION_CONTROL_GEO_SRC})
 
