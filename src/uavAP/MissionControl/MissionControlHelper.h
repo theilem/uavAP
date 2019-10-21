@@ -60,7 +60,7 @@ public:
 		addFactory<GlobalPlannerFactory>();
 		addFactory<GeofencingModelFactory>();
 		addConfigurable<Geofencing>();
-		addCreator<WindAnalysis>();
+		addConfigurable<WindAnalysis>();
 	}
 };
 
