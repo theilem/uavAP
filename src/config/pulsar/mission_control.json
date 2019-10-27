@@ -482,7 +482,7 @@
                 ]
             },
 			"solar": {
-				"velocity": 20,
+				"velocity": 10,
 				"infinite": true,
 				"offset": {
 					"e": 0,
