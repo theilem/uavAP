@@ -27,7 +27,6 @@
 
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
-#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"

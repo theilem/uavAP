@@ -28,7 +28,6 @@
 #include "uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlanner.h"
 #include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
 #include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
-#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include <uavAP/Core/DataPresentation/DataPresentation.h>
 #include <uavAP/Core/IPC/IPC.h>
 

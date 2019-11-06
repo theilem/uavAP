@@ -52,9 +52,10 @@ public:
 	LowPassFilterGeneric() = default;
 
 	inline Type
-	update(const Type& input, FloatingType deltaTime)
+	update(const Type& input, Duration deltaTime)
 	{
-		FloatingType ePow = 1 - std::exp(-deltaTime * params.cutOffFrequency());
+
+		FloatingType ePow = 1 - std::exp(-std::chrono::duration_cast<Microseconds>(deltaTime).count() / 1e6 * params.cutOffFrequency());
 		output_ += (input - output_) * ePow;
 		return output_;
 	}

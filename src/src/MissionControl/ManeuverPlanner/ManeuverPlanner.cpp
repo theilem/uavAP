@@ -32,7 +32,6 @@
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
-#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include "uavAP/Core/IPC/IPC.h"
 #include <uavAP/Core/DataPresentation/DataPresentation.h>
 

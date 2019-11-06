@@ -25,7 +25,6 @@
 
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
-#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include "uavAP/FlightControl/Controller/PIDController/PIDMapping.h"
 #include "uavAP/FlightControl/Controller/PIDController/SimplePIDController/detail/AirplaneSimplePIDCascade.h"
 

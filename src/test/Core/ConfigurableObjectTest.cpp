@@ -6,7 +6,6 @@
  */
 #include <boost/test/unit_test.hpp>
 #include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
-#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlannerParams.h"
 #include <iostream>
 

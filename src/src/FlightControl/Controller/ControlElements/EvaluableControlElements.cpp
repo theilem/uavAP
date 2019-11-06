@@ -25,7 +25,6 @@
 
 #include "uavAP/Core/EnumMap.hpp"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
-#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include "uavAP/FlightControl/Controller/ControlElements/EvaluableControlElements.h"
 #include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
 

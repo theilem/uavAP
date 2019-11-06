@@ -7,7 +7,6 @@
 
 #include <boost/test/unit_test.hpp>
 #include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
-#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <uavAP/Core/PropertyMapper/JsonPopulator.h>
 #include <uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlanner.h>
 #include <fstream>

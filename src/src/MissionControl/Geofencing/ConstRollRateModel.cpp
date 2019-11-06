@@ -24,7 +24,6 @@
  */
 #include <acb_hypgeom.h>
 #include <uavAP/Core/Frames/InertialFrame.h>
-#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/MissionControl/Geofencing/ConstRollRateModel.h>

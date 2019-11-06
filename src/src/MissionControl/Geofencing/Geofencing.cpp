@@ -29,7 +29,6 @@
 #include <uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h>
 #include <uavAP/Core/IPC/IPC.h>
 #include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
-#include <uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp>
 #include <uavAP/MissionControl/WindAnalysis/WindAnalysis.h>
 
 Geofencing::Geofencing() :

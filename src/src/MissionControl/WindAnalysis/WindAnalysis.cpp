@@ -176,7 +176,10 @@ WindAnalysis::onSensorData(const SensorData& sensorData)
 		airSpeedInertial.y() = sensorData.airSpeed * cos(airSpeedAttitude.y())
 				* sin(airSpeedAttitude.z());
 		airSpeedInertial.z() = sensorData.airSpeed * sin(airSpeedAttitude.y());
-		windInfo.velocity = sensorData.velocity - airSpeedInertial;
+
+		auto diff = sensorData.timestamp - timeStamp_;
+		timeStamp_ = sensorData.timestamp;
+		windInfo.velocity = windFilter_.update(sensorData.velocity - airSpeedInertial, diff);
 
 		Lock windAnalysisStatusLock(windAnalysisStatusMutex_);
 		windAnalysisStatus_.velocity = windInfo.velocity;
@@ -190,4 +193,12 @@ WindAnalysis::onSensorData(const SensorData& sensorData)
 	}
 
 	windInfoPublisher_.publish(windInfo);
+}
+
+bool
+WindAnalysis::configure(const Configuration& config)
+{
+	PropertyMapper<Configuration> pm(config);
+	configureParams(pm);
+	return pm.map();
 }

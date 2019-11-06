@@ -7,7 +7,8 @@
 
 #ifndef UAVAP_CORE_PROPERTYMAPPER_CONFIGURABLEOBJECT_HPP_
 #define UAVAP_CORE_PROPERTYMAPPER_CONFIGURABLEOBJECT_HPP_
-#include <uavAP/Core/PropertyMapper/Configuration.h>
+#include "uavAP/Core/PropertyMapper/Configuration.h"
+#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 
 template<class ParameterSet>
 class ConfigurableObject
@@ -18,23 +19,43 @@ public:
 
 	ConfigurableObject() = default;
 
-	ConfigurableObject(const ParameterSet& params);
+	inline ConfigurableObject(const ParameterSet& p) :
+			params(p)
+	{
+	}
 
-	void
-	setParams(const ParameterSet& set);
+	inline void
+	setParams(const ParameterSet& set)
+	{
+		params = set;
+	}
 
-	bool
-	configure(const Configuration& config);
+	inline bool
+	configure(const Configuration& config)
+	{
+		PropertyMapper<Configuration> pm(config);
+		params.template configure(pm);
+		return pm.map();
+	}
 
-	const ParameterSet&
-	getParams() const;
+	inline const ParameterSet&
+	getParams() const
+	{
+		return params;
+	}
 
-	ParameterSet&
-	getParams();
+	inline ParameterSet&
+	getParams()
+	{
+		return params;
+	}
 
-	template <typename Config>
-	void
-	configureParams(Config& config);
+	template<typename Config>
+	inline void
+	configureParams(Config& config)
+	{
+		params.template configure(config);
+	}
 
 protected:
 

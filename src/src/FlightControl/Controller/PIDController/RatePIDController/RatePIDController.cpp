@@ -28,7 +28,6 @@
 #include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
-#include "uavAP/Core/PropertyMapper/ConfigurableObjectImpl.hpp"
 #include "uavAP/Core/DataHandling/DataHandling.h"
 #include <uavAP/Core/IPC/IPC.h>
 
