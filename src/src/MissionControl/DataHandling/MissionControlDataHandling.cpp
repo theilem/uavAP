@@ -179,11 +179,13 @@ MissionControlDataHandling::collectAndSend()
 		overridePublisher_.publish(dp->serialize(override));
 	}
 
-	auto wa = windAnalysis_.get();
-	auto windAnalysisStatus = wa->getWindAnalysisStatus();
-	Packet windAnalysisStatusPacket = dp->serialize(windAnalysisStatus);
-	dp->addHeader(windAnalysisStatusPacket, Content::WIND_ANALYSIS_STATUS);
-	publisher_.publish(windAnalysisStatusPacket);
+	if (auto wa = windAnalysis_.get())
+	{
+		auto windAnalysisStatus = wa->getWindAnalysisStatus();
+		Packet windAnalysisStatusPacket = dp->serialize(windAnalysisStatus);
+		dp->addHeader(windAnalysisStatusPacket, Content::WIND_ANALYSIS_STATUS);
+		publisher_.publish(windAnalysisStatusPacket);
+	}
 
 	//Trajectory hack: Orbit of geofencing
 	auto geo = geofencing_.get();
