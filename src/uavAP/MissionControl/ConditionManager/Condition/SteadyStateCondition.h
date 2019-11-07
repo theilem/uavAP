@@ -35,6 +35,7 @@
 #include "uavAP/MissionControl/ConditionManager/ICondition.h"
 
 class ConditionManager;
+class DataPresentation;
 
 class SteadyStateCondition: public ICondition
 {
@@ -72,6 +73,7 @@ private:
 
 	bool afterMinimumDuration_;
 
+	std::shared_ptr<DataPresentation> dp_;
 };
 
 #endif /* UAVAP_MISSIONCONTROL_CONDITIONMANAGER_CONDITION_STEADYSTATECONDITION_H_ */

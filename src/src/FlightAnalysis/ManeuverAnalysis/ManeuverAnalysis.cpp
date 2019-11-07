@@ -27,8 +27,9 @@
 
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightAnalysis/ManeuverAnalysis/ManeuverAnalysis.h"
-#include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 #include "uavAP/Core/IPC/IPC.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 
 ManeuverAnalysis::ManeuverAnalysis() :
 		analysis_(false), collectInit_(false), counter_(0), maneuver_(Maneuvers::GEOFENCING)
@@ -74,14 +75,9 @@ ManeuverAnalysis::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!ipcHandle_.isSet())
+		if (!checkIsSet<IPC, IScheduler, DataPresentation>())
 		{
-			APLOG_ERROR << "IPC Missing.";
-			return true;
-		}
-		if (!scheduler_.isSet())
-		{
-			APLOG_ERROR << "Scheduler Missing.";
+			APLOG_ERROR << "ManeuverAnalysis: Missing dependencies.";
 			return true;
 		}
 
@@ -89,7 +85,7 @@ ManeuverAnalysis::run(RunStage stage)
 	}
 	case RunStage::NORMAL:
 	{
-		auto ipc = ipcHandle_.get();
+		auto ipc = get<IPC>();
 
 		sensorDataSubscription_ = ipc->subscribe<SensorData>("sensor_data",
 				std::bind(&ManeuverAnalysis::onSensorData, this, std::placeholders::_1));
@@ -140,13 +136,6 @@ ManeuverAnalysis::run(RunStage stage)
 }
 
 void
-ManeuverAnalysis::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	ipcHandle_.setFromAggregationIfNotSet(agg);
-	scheduler_.setFromAggregationIfNotSet(agg);
-}
-
-void
 ManeuverAnalysis::onSensorData(const SensorData& data)
 {
 	Lock maneuverAnalysisLock(maneuverAnalysisMutex_);
@@ -182,9 +171,12 @@ ManeuverAnalysis::onManeuverAnalysis(const bool& analysis)
 void
 ManeuverAnalysis::onManeuverAnalysisStatus(const Packet& status)
 {
-	Lock lock(maneuverAnalysisStatusMutex_);
-	analysisStatus_ = dp::deserialize<ManeuverAnalysisStatus>(status);
-	lock.unlock();
+	if (auto dp = get<DataPresentation>())
+	{
+		Lock lock(maneuverAnalysisStatusMutex_);
+		analysisStatus_ = dp->deserialize<ManeuverAnalysisStatus>(status);
+		lock.unlock();
+	}
 }
 
 void

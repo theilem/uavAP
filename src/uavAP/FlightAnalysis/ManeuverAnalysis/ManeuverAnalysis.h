@@ -31,41 +31,34 @@
 #include <fstream>
 
 #include "uavAP/Core/LockTypes.h"
+#include "uavAP/Core/Object/AggregatableObject.hpp"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/EnumMap.hpp"
 #include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/SensorData.h"
-#include "uavAP/Core/Object/IAggregatableObject.h"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightAnalysis/ManeuverAnalysis/ManeuverAnalysisStatus.h"
 
 enum class Maneuvers
 {
-	INVALID,
-	GEOFENCING,
-	ADVANCED_CONTROL,
-	FLIGHT_TESTING,
-	NUM_MANEUVERS
+	INVALID, GEOFENCING, ADVANCED_CONTROL, FLIGHT_TESTING, NUM_MANEUVERS
 };
 
 enum class CollectStates
 {
-	INVALID,
-	INIT,
-	NORMAL,
-	FINAL,
-	NUM_STATES
+	INVALID, INIT, NORMAL, FINAL, NUM_STATES
 };
 
-ENUMMAP_INIT(Maneuvers, { {Maneuvers::GEOFENCING, "geofencing"},
-		{Maneuvers::ADVANCED_CONTROL, "advanced_control"},
-		{Maneuvers::FLIGHT_TESTING, "flight_testing"}});
+ENUMMAP_INIT(Maneuvers, { {Maneuvers::GEOFENCING, "geofencing"}, {Maneuvers::ADVANCED_CONTROL,
+		"advanced_control"}, {Maneuvers::FLIGHT_TESTING, "flight_testing"}});
 
 class IPC;
 class IScheduler;
+class DataPresentation;
 
-class ManeuverAnalysis: public IAggregatableObject, public IRunnableObject
+class ManeuverAnalysis: public AggregatableObject<IPC, IScheduler, DataPresentation>,
+		public IRunnableObject
 {
 public:
 
@@ -83,9 +76,6 @@ public:
 
 	bool
 	run(RunStage stage) override;
-
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 private:
 
@@ -124,9 +114,6 @@ private:
 	Subscription maneuverAnalysisSubscription_;
 	Subscription maneuverAnalysisStatusSubscription_;
 
-	ObjectHandle<IPC> ipcHandle_;
-	ObjectHandle<IScheduler> scheduler_;
-
 	ControllerOutput controllerOutput_;
 	Mutex controllerOutputMutex_;
 
@@ -145,7 +132,6 @@ private:
 
 	SensorData sensorData_;
 	Mutex sensorDataMutex_;
-
 };
 
 #endif /* UAVAP_FLIGHTANALYSIS_MANEUVERANALYSIS_MANEUVERANALYSIS_H_ */

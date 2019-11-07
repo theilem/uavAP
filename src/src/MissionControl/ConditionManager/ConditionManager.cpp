@@ -27,7 +27,9 @@
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 #include "uavAP/Core/IPC/IPC.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 
 std::shared_ptr<ConditionManager>
 ConditionManager::create(const Configuration& config)
@@ -48,13 +50,6 @@ ConditionManager::configure(const Configuration& config)
 	return true;
 }
 
-void
-ConditionManager::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	ipcHandle_.setFromAggregationIfNotSet(agg);
-	schedulerHandle_.setFromAggregationIfNotSet(agg);
-}
-
 bool
 ConditionManager::run(RunStage stage)
 {
@@ -62,15 +57,9 @@ ConditionManager::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!ipcHandle_.isSet())
+		if (!checkIsSet<IPC, IScheduler, DataPresentation>())
 		{
-			APLOG_ERROR << "ConditionManager: IPC Missing.";
-			return true;
-		}
-
-		if (!schedulerHandle_.isSet())
-		{
-			APLOG_ERROR << "ConditionManager: Scheduler Missing.";
+			APLOG_ERROR << "ManeuverAnalysis: Missing dependencies.";
 			return true;
 		}
 
@@ -78,7 +67,7 @@ ConditionManager::run(RunStage stage)
 	}
 	case RunStage::NORMAL:
 	{
-		auto ipc = ipcHandle_.get();
+		auto ipc = get<IPC>();
 
 		sensorDataSubscription_ = ipc->subscribe<SensorData>("sensor_data",
 				std::bind(&ConditionManager::onSensorData, this, std::placeholders::_1));
@@ -142,7 +131,13 @@ ConditionManager::deactivateCondition(std::shared_ptr<ICondition> condition)
 std::weak_ptr<IScheduler>
 ConditionManager::getScheduler() const
 {
-	return schedulerHandle_.get();
+	return get<IScheduler>();
+}
+
+std::weak_ptr<DataPresentation>
+ConditionManager::getDataPresentation() const
+{
+	return get<DataPresentation>();
 }
 
 void

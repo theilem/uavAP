@@ -27,10 +27,11 @@
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/Line.h"
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/Curve.h"
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/Orbit.h"
-#include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
-
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
+#include "uavAP/Core/IPC/IPC.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 
 FilletGlobalPlanner::FilletGlobalPlanner() :
 		filletRadius_(0)
@@ -65,12 +66,12 @@ FilletGlobalPlanner::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!ipc_.isSet())
+		if (!checkIsSet<IPC, DataPresentation>())
 		{
-			APLOG_ERROR << "GlobalPlanner: IPC missing.";
+			APLOG_ERROR << "FilletGlobalPlanner: Missing dependencies.";
 			return true;
 		}
-		auto ipc = ipc_.get();
+		auto ipc = get<IPC>();
 		trajectoryPublisher_ = ipc->publishPackets("trajectory");
 		break;
 	}
@@ -175,15 +176,12 @@ FilletGlobalPlanner::setMission(const Mission& mission)
 		traj.push_back(orbit);
 	}
 
-	APLOG_DEBUG << "Send trajectory";
-	auto packet = dp::serialize(Trajectory(traj, mission.infinite));
-	trajectoryPublisher_.publish(packet);
-}
-
-void
-FilletGlobalPlanner::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	ipc_.setFromAggregationIfNotSet(agg);
+	if (auto dp = get<DataPresentation>())
+	{
+		APLOG_DEBUG << "Send trajectory";
+		auto packet = dp->serialize(Trajectory(traj, mission.infinite));
+		trajectoryPublisher_.publish(packet);
+	}
 }
 
 Mission

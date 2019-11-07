@@ -27,8 +27,9 @@
 #include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/SteadyStateCondition.h"
-#include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 #include "uavAP/Core/PropertyMapper/PropertyMapper.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 
 SteadyStateCondition::SteadyStateCondition() :
 		connection_(), steadyState_(true), trigger_(), event_(), minimumDuration_(
@@ -57,6 +58,8 @@ SteadyStateCondition::configure(const Configuration& config)
 	pm.add<bool>("steady_state", steadyState_, true);
 	pm.add("minimum_duration", minimumDuration_, false);
 
+	dp_ = nullptr;
+
 	return pm.map();
 }
 
@@ -66,10 +69,17 @@ SteadyStateCondition::activate(ConditionManager* conditionManager,
 {
 	deactivate();
 	auto scheduler = conditionManager->getScheduler().lock();
+	dp_ = conditionManager->getDataPresentation().lock();
 
 	if (!scheduler)
 	{
 		APLOG_ERROR << "SteadyStateCondition: Scheduler Missing.";
+		return;
+	}
+
+	if (!dp_)
+	{
+		APLOG_ERROR << "SteadyStateCondition: Data Presentation Missing.";
 		return;
 	}
 
@@ -92,10 +102,12 @@ SteadyStateCondition::deactivate()
 void
 SteadyStateCondition::onSteadyState(const Packet& packet)
 {
-	if (!afterMinimumDuration_)
+	if (!afterMinimumDuration_ || !dp_)
+	{
 		return;
+	}
 
-	bool inSteadyState = dp::deserialize<bool>(packet);
+	bool inSteadyState = dp_->deserialize<bool>(packet);
 
 	if (inSteadyState == steadyState_)
 	{

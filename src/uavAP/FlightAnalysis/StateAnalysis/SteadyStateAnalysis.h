@@ -32,14 +32,15 @@
 #include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/DataPresentation/Packet.h"
 #include "uavAP/Core/SensorData.h"
-#include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/Core/Object/AggregatableObject.hpp"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightAnalysis/StateAnalysis/Metrics.h"
 #include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
 
 class IPC;
+class DataPresentation;
 
-class SteadyStateAnalysis: public IAggregatableObject, public IRunnableObject
+class SteadyStateAnalysis: public AggregatableObject<IPC, DataPresentation>, public IRunnableObject
 {
 public:
 
@@ -50,9 +51,6 @@ public:
 
 	bool
 	configure(const Configuration& config);
-
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	bool
 	run(RunStage stage) override;
@@ -118,8 +116,6 @@ private:
 	bool newOverride_;
 	bool emptyOverride_;
 	bool lastEmptyOverride_;
-
-	ObjectHandle<IPC> ipc_;
 };
 
 template<typename Enum>

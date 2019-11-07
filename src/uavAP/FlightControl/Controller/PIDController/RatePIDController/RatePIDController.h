@@ -45,6 +45,7 @@ class IPC;
 class ISensingActuationIO;
 class DataHandling;
 class Packet;
+class DataPresentation;
 
 class RatePIDController: public IPIDController, public IAggregatableObject, public IRunnableObject
 {
@@ -90,6 +91,7 @@ private:
 	ObjectHandle<IScheduler> scheduler_;
 	ObjectHandle<DataHandling> dataHandling_;
 	ObjectHandle<IPC> ipc_;
+	ObjectHandle<DataPresentation> dataPresentation_;
 
 	Mutex controllerTargetMutex_;
 	ControllerTarget controllerTarget_;

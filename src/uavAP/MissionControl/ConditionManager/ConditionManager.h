@@ -32,15 +32,17 @@
 #include "uavAP/Core/IPC/Subscription.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/Core/SensorData.h"
-#include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/Core/Object/AggregatableObject.hpp"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightAnalysis/StateAnalysis/Metrics.h"
 #include "uavAP/MissionControl/ConditionManager/ICondition.h"
 
 class IPC;
 class IScheduler;
+class DataPresentation;
 
-class ConditionManager: public IAggregatableObject, public IRunnableObject
+class ConditionManager: public AggregatableObject<IPC, IScheduler, DataPresentation>,
+		public IRunnableObject
 {
 public:
 
@@ -55,9 +57,6 @@ public:
 	bool
 	configure(const Configuration& config);
 
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
-
 	bool
 	run(RunStage stage) override;
 
@@ -68,13 +67,17 @@ public:
 	subscribeOnSteadyState(const OnSteadyState::slot_type& slot);
 
 	void
-	activateCondition(std::shared_ptr<ICondition> condition, const ICondition::ConditionTrigger& conditionTrigger);
+	activateCondition(std::shared_ptr<ICondition> condition,
+			const ICondition::ConditionTrigger& conditionTrigger);
 
 	void
 	deactivateCondition(std::shared_ptr<ICondition> condition);
 
 	std::weak_ptr<IScheduler>
 	getScheduler() const;
+
+	std::weak_ptr<DataPresentation>
+	getDataPresentation() const;
 
 private:
 
@@ -89,9 +92,6 @@ private:
 
 	Subscription sensorDataSubscription_;
 	Subscription steadyStateSubscription_;
-
-	ObjectHandle<IPC> ipcHandle_;
-	ObjectHandle<IScheduler> schedulerHandle_;
 };
 
 #endif /* UAVAP_MISSIONCONTROL_CONDITIONMANAGER_CONDITIONMANAGER_H_ */

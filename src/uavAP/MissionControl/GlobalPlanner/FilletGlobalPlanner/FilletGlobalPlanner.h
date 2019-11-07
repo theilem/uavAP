@@ -26,16 +26,19 @@
 #ifndef FLIGHTPLANNER_SIMPLEFLIGHTPLANNER_SIMPLEFLIGHTPLANNER_H_
 #define FLIGHTPLANNER_SIMPLEFLIGHTPLANNER_SIMPLEFLIGHTPLANNER_H_
 
-#include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
-#include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/Core/IPC/Publisher.h"
+#include "uavAP/Core/Object/AggregatableObject.hpp"
 #include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
+#include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
 
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
-#include "uavAP/Core/IPC/IPC.h"
 
+class IPC;
+class DataPresentation;
+class Packet;
 
-class FilletGlobalPlanner: public IGlobalPlanner, public IAggregatableObject, public IRunnableObject
+class FilletGlobalPlanner: public IGlobalPlanner, public AggregatableObject<IPC, DataPresentation>, public IRunnableObject
 {
 public:
 
@@ -58,19 +61,13 @@ public:
 	bool
 	run(RunStage stage) override;
 
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
-
 private:
 
 	double filletRadius_;
 
 	Mission mission_;
 
-	ObjectHandle<IPC> ipc_;
-
 	Publisher<Packet> trajectoryPublisher_;
-
 };
 
 #endif /* FLIGHTPLANNER_SIMPLEFLIGHTPLANNER_SIMPLEFLIGHTPLANNER_H_ */

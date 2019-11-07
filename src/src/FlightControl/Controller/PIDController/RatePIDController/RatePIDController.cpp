@@ -30,6 +30,7 @@
 #include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 #include "uavAP/Core/DataHandling/DataHandling.h"
 #include <uavAP/Core/IPC/IPC.h>
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 
 RatePIDController::RatePIDController()
 {
@@ -143,6 +144,7 @@ RatePIDController::notifyAggregationOnUpdate(const Aggregator& agg)
 	scheduler_.setFromAggregationIfNotSet(agg);
 	ipc_.setFromAggregationIfNotSet(agg);
 	dataHandling_.setFromAggregationIfNotSet(agg);
+	dataPresentation_.setFromAggregationIfNotSet(agg);
 }
 
 std::shared_ptr<IPIDCascade>
@@ -186,15 +188,29 @@ RatePIDController::calculateControl()
 	sensAct->setControllerOutput(controllerOutput_);
 	controllerOutputPublisher_.publish(controllerOutput_);
 
-	pidStatiPublisher_.publish(dp::serialize(pidCascade_->getPIDStatus()));
+	if (auto dp = dataPresentation_.get())
+	{
+		pidStatiPublisher_.publish(dp->serialize(pidCascade_->getPIDStatus()));
+	}
+	else
+	{
+		APLOG_ERROR << "RatePIDController: Data Presentation Missing.";
+	}
 }
 
 void
 RatePIDController::onOverridePacket(const Packet& packet)
 {
-	auto override = dp::deserialize<Override>(packet);
-	LockGuard lock(controllerTargetMutex_);
-	pidCascade_->setManeuverOverride(override);
+	if (auto dp = dataPresentation_.get())
+	{
+		auto override = dp->deserialize<Override>(packet);
+		LockGuard lock(controllerTargetMutex_);
+		pidCascade_->setManeuverOverride(override);
+	}
+	else
+	{
+		APLOG_ERROR << "RatePIDController: Data Presentation Missing.";
+	}
 }
 
 void

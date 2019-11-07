@@ -23,8 +23,9 @@
  *      Author: simonyu
  */
 #include "uavAP/FlightAnalysis/StateAnalysis/SteadyStateAnalysis.h"
-#include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 #include "uavAP/Core/IPC/IPC.h"
+#include "uavAP/Core/DataPresentation/DataPresentation.h"
 
 std::shared_ptr<SteadyStateAnalysis>
 SteadyStateAnalysis::create(const Configuration& config)
@@ -57,12 +58,6 @@ SteadyStateAnalysis::configure(const Configuration& config)
 	return pm.map();
 }
 
-void
-SteadyStateAnalysis::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	ipc_.setFromAggregationIfNotSet(agg);
-}
-
 bool
 SteadyStateAnalysis::run(RunStage stage)
 {
@@ -70,20 +65,33 @@ SteadyStateAnalysis::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!ipc_.isSet())
+		if (!checkIsSet<IPC, DataPresentation>())
+		{
+			APLOG_ERROR << "SteadyStateAnalysis: Missing dependencies.";
+			return true;
+		}
+
+		if (auto ipc = get<IPC>())
+		{
+			steadyStatePublisher_ = ipc->publishPackets("steady_state");
+		}
+		else
 		{
 			APLOG_ERROR << "SteadyStateAnalysis: IPC Missing.";
 			return true;
 		}
 
-		auto ipc = ipc_.get();
-		steadyStatePublisher_ = ipc->publishPackets("steady_state");
-
 		break;
 	}
 	case RunStage::NORMAL:
 	{
-		auto ipc = ipc_.get();
+		auto ipc = get<IPC>();
+
+		if (!ipc)
+		{
+			APLOG_ERROR << "SteadyStateAnalysis: IPC Missing.";
+			return true;
+		}
 
 		sensorDataSubscription_ = ipc->subscribe<SensorData>("sensor_data",
 				std::bind(&SteadyStateAnalysis::onSensorData, this, std::placeholders::_1));
@@ -210,18 +218,24 @@ SteadyStateAnalysis::setInspectingMetrics(InspectingMetricsPair pair)
 void
 SteadyStateAnalysis::onOverride(const Packet& packet)
 {
-	Lock lock(overrideMutex_);
-	override_ = dp::deserialize<Override>(packet);
-	newOverride_ = true;
-	lock.unlock();
+	if (auto dp = get<DataPresentation>())
+	{
+		Lock lock(overrideMutex_);
+		override_ = dp->deserialize<Override>(packet);
+		newOverride_ = true;
+		lock.unlock();
+	}
 }
 
 void
 SteadyStateAnalysis::onPIDStati(const Packet& packet)
 {
-	Lock lock(pidStatiMutex_);
-	pidStati_ = dp::deserialize<PIDStati>(packet);
-	lock.unlock();
+	if (auto dp = get<DataPresentation>())
+	{
+		Lock lock(pidStatiMutex_);
+		pidStati_ = dp->deserialize<PIDStati>(packet);
+		lock.unlock();
+	}
 }
 
 void
@@ -417,7 +431,10 @@ SteadyStateAnalysis::checkSteadyState(const SensorData& data, const Override& ov
 	steadyState &= inSteadyState<PIDs>(data.timestamp, override.pid, metrics.pid, PIDs::ROLL);
 	steadyState &= inSteadyState<PIDs>(data.timestamp, override.pid, metrics.pid, PIDs::ROLL_RATE);
 
-	steadyStatePublisher_.publish(dp::serialize(steadyState));
+	if (auto dp = get<DataPresentation>())
+	{
+		steadyStatePublisher_.publish(dp->serialize(steadyState));
+	}
 }
 
 void

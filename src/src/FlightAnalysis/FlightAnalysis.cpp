@@ -34,7 +34,7 @@ main(int argc, char** argv)
 	FlightAnalysisHelper helper;
 	SynchronizedRunner runner;
 
-	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
+	APLogger::instance()->setLogLevel(LogLevel::WARN);
 	APLogger::instance()->setModuleName("FlightAnalysis");
 
 	if (argc == 2)
