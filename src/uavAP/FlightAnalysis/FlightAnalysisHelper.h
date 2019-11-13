@@ -47,7 +47,7 @@ public:
 		addDefaultConfigurable<IPC>();
 		addCreator<SteadyStateAnalysis>();
 		addCreator<ManeuverAnalysis>();
-		addCreator<TrimAnalysis>();
+		addDefaultCreator<TrimAnalysis>();
 		addDefaultCreator<FlightAnalysisDataHandling>();
 	}
 };

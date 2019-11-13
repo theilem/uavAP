@@ -24,8 +24,8 @@
  */
 
 #include "uavAP/FlightAnalysis/TrimAnalysis/TrimAnalysis.h"
+#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
 #include "uavAP/Core/IPC/IPC.h"
-#include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
 
 TrimAnalysis::TrimAnalysis() :
 		trimAnalysis_(false), trimAnalysisLast_(false)
@@ -58,21 +58,22 @@ TrimAnalysis::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!ipc_.isSet())
+		if (!checkIsSet<IPC>())
 		{
-			APLOG_ERROR << "TrimAnalysis: IPC Missing.";
+			APLOG_ERROR << "TrimAnalysis: Missing dependencies.";
 			return true;
 		}
 
-		auto ipc = ipc_.get();
-
-		controllerOutputTrimPublisher_ = ipc->publish<ControllerOutput>("controller_output_trim");
+		if (auto ipc = get<IPC>())
+		{
+			controllerOutputTrimPublisher_ = ipc->publish<ControllerOutput>("controller_output_trim");
+		}
 
 		break;
 	}
 	case RunStage::NORMAL:
 	{
-		auto ipc = ipc_.get();
+		auto ipc = get<IPC>();
 
 		controllerOutputSubscription_ = ipc->subscribe<ControllerOutput>("controller_output",
 				std::bind(&TrimAnalysis::onControllerOutput, this, std::placeholders::_1));
@@ -106,12 +107,6 @@ TrimAnalysis::run(RunStage stage)
 	}
 
 	return false;
-}
-
-void
-TrimAnalysis::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	ipc_.setFromAggregationIfNotSet(agg);
 }
 
 void

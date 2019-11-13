@@ -26,6 +26,7 @@
 #ifndef UAVAP_FLIGHTANALYSIS_TRIMANALYSIS_TRIMANALYSIS_H_
 #define UAVAP_FLIGHTANALYSIS_TRIMANALYSIS_TRIMANALYSIS_H_
 
+#include "uavAP/Core/Object/AggregatableObject.hpp"
 #include "uavAP/Core/LockTypes.h"
 #include "uavAP/Core/Object/ObjectHandle.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
@@ -35,7 +36,7 @@
 
 class IPC;
 
-class TrimAnalysis : public IAggregatableObject, public IRunnableObject
+class TrimAnalysis : public AggregatableObject<IPC>, public IRunnableObject
 {
 
 public:
@@ -52,9 +53,6 @@ public:
 
 	bool
 	run(RunStage stage) override;
-
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 private:
 
@@ -73,8 +71,6 @@ private:
 	void
 	analysisFinal();
 
-	ObjectHandle<IPC> ipc_;
-
 	ControllerOutput controllerOutputTrim_;
 	ControllerOutput controllerOutputCount_;
 	Mutex controllerOutputMutex_;
@@ -86,7 +82,6 @@ private:
 	Publisher<ControllerOutput> controllerOutputTrimPublisher_;
 	Subscription controllerOutputSubscription_;
 	Subscription trimAnalysisSubscription_;
-
 };
 
 #endif /* UAVAP_FLIGHTANALYSIS_TRIMANALYSIS_TRIMANALYSIS_H_ */
