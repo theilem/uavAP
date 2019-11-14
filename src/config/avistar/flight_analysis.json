@@ -28,10 +28,14 @@
 		"log_path": "/home/root/",
 		"maneuver": "flight_testing"
 	},
+	"scheduler": {
+		"type": "thread",
+		"priority": "99"
+	},
 	"data_presentation": {
 		"compress_double": true
 	},
 	"fa_data_handling": {
-		"period": 20000
+		"period": 200
 	}
 }

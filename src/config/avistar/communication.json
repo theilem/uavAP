@@ -11,5 +11,12 @@
 				"use_crc": true
 			}
 		}
+	},
+	"scheduler": {
+		"type": "thread",
+		"priority": "99"
+	},
+	"data_presentation": {
+		"compress_double": true
 	}
 }
