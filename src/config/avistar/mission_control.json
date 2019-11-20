@@ -48,7 +48,7 @@
 					"override": {
 						"local_planner/position_z": 150.0,
 						"local_planner/velocity": 20.0,
-						"local_planner/heading": 0.0
+						"pids/roll": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
@@ -76,7 +76,7 @@
 					"override": {
 						"local_planner/position_z": 150.0,
 						"local_planner/velocity": 20.0,
-						"local_planner/heading": 0.0
+						"pids/roll": 0.0
 					},
 					"condition": {
 						"type": "steady_state",
