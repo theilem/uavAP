@@ -30,13 +30,13 @@
 
 MicroSimulator::MicroSimulator() :
 		now_(), runs_(0), stopOnWait_(false), waitCondition_(
-				nullptr), waitReleased_(false)
+		nullptr), waitReleased_(false), stopped_(false)
 {
 }
 
 Event
 MicroSimulator::schedule(const std::function<void
-()>& task, Duration initialFromNow)
+		()>& task, Duration initialFromNow)
 {
 	auto body = std::make_shared<EventBody>(task);
 	events_.insert(std::make_pair(now_ + initialFromNow, body));
@@ -45,7 +45,7 @@ MicroSimulator::schedule(const std::function<void
 
 Event
 MicroSimulator::schedule(const std::function<void
-()>& task, Duration initialFromNow, Duration period)
+		()>& task, Duration initialFromNow, Duration period)
 {
 	auto body = std::make_shared<EventBody>(task, period);
 	events_.insert(std::make_pair(now_ + initialFromNow, body));
@@ -55,12 +55,8 @@ MicroSimulator::schedule(const std::function<void
 void
 MicroSimulator::stop()
 {
-	//Do nothing;
-}
-
-void
-MicroSimulator::notifyAggregationOnUpdate(const Aggregator&)
-{
+	APLOG_DEBUG << "Stop MicroSim called";
+	stopped_ = true;
 }
 
 int
@@ -80,12 +76,23 @@ MicroSimulator::simulate(Duration duration)
 			break;
 		}
 
+		if (params.realTimeFactor() > 0)
+		{
+			std::this_thread::sleep_for((events_.begin()->first - now_) * params.realTimeFactor());
+		}
+
+		if (stopped_)
+		{
+			APLOG_DEBUG << "MicroSim Scheduler was stopped.";
+			return runs_;
+		}
+
 		now_ = events_.begin()->first;
 		events_.begin()->second->body();
 		if (events_.begin()->second->period)
 		{
 			schedule(events_.begin()->second->body, *events_.begin()->second->period,
-					*events_.begin()->second->period);
+					 *events_.begin()->second->period);
 		}
 		++runs_;
 		events_.erase(events_.begin());
@@ -132,7 +139,7 @@ MicroSimulator::now()
 
 bool
 MicroSimulator::waitFor(Duration duration, std::condition_variable& interrupt,
-		std::unique_lock<std::mutex>& lock)
+						std::unique_lock<std::mutex>& lock)
 {
 	if (stopOnWait_)
 	{
@@ -148,7 +155,7 @@ MicroSimulator::waitFor(Duration duration, std::condition_variable& interrupt,
 
 bool
 MicroSimulator::waitUntil(TimePoint timePoint, std::condition_variable& interrupt,
-		std::unique_lock<std::mutex>& lock)
+						  std::unique_lock<std::mutex>& lock)
 {
 	if (stopOnWait_)
 	{
@@ -161,4 +168,16 @@ MicroSimulator::waitUntil(TimePoint timePoint, std::condition_variable& interrup
 	if (waitReleased)
 		now_ = timePoint;
 	return waitReleased;
+}
+
+void
+MicroSimulator::clearSchedule()
+{
+	events_.clear();
+}
+
+bool
+MicroSimulator::isStopped()
+{
+	return stopped_;
 }

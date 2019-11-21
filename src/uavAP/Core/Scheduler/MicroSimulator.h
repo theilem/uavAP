@@ -26,19 +26,23 @@
 #ifndef UAVAP_CORE_SCHEDULER_MICROSIMULATOR_H_
 #define UAVAP_CORE_SCHEDULER_MICROSIMULATOR_H_
 
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
-#include <boost/optional/optional.hpp>
 #include <boost/thread.hpp>
-#include "uavAP/Core/Object/IAggregatableObject.h"
+#include "uavAP/Core/Object/AggregatableObject.hpp"
 #include "uavAP/Core/Scheduler/IScheduler.h"
+#include "uavAP/Core/Scheduler/MicroSimulatorParams.h"
 #include "uavAP/Core/Time.h"
 #include "uavAP/Core/TimeProvider/ITimeProvider.h"
-#include "uavAP/Core/PropertyMapper/Configuration.h"
+#include "uavAP/Core/PropertyMapper/ConfigurableObject.hpp"
 #include <condition_variable>
 #include <functional>
 #include <map>
+#include "uavAP/Core/LockTypes.h"
 
-class MicroSimulator: public IScheduler, public IAggregatableObject, public ITimeProvider
+class MicroSimulator
+		: public IScheduler,
+		  public ITimeProvider,
+		  public AggregatableObject<>,
+		  public ConfigurableObject<MicroSimulatorParams>
 {
 public:
 
@@ -46,15 +50,13 @@ public:
 
 	MicroSimulator();
 
-	ADD_CREATE_WITHOUT_CONFIG(MicroSimulator)
+	Event
+	schedule(const std::function<void
+			()>& task, Duration initialFromNow) override;
 
 	Event
 	schedule(const std::function<void
-	()>& task, Duration initialFromNow) override;
-
-	Event
-	schedule(const std::function<void
-	()>& task, Duration initialFromNow, Duration period) override;
+			()>& task, Duration initialFromNow, Duration period) override;
 
 	void
 	stop() override;
@@ -65,9 +67,6 @@ public:
 	void
 	startSchedule() override;
 
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
-
 	TimePoint
 	now() override;
 
@@ -77,7 +76,7 @@ public:
 
 	bool
 	waitUntil(TimePoint timePoint, std::condition_variable& interrupt,
-			std::unique_lock<std::mutex>& lock) override;
+			  std::unique_lock<std::mutex>& lock) override;
 
 	int
 	simulate(Duration duration);
@@ -88,6 +87,13 @@ public:
 	void
 	releaseWait();
 
+	void
+	clearSchedule();
+
+	bool
+	isStopped();
+
+
 private:
 
 	std::multimap<TimePoint, std::shared_ptr<EventBody> > events_;
@@ -96,9 +102,10 @@ private:
 	int runs_;
 	bool stopOnWait_;
 
-	std::mutex waitCondMutex_;
+	Mutex waitCondMutex_;
 	std::condition_variable* waitCondition_;
 	bool waitReleased_;
+	bool stopped_;
 };
 
 #endif /* UAVAP_CORE_SCHEDULER_MICROSIMULATOR_H_ */

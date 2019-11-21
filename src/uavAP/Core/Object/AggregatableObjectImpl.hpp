@@ -7,6 +7,7 @@
 
 #ifndef UAVAP_CORE_OBJECT_AGGREGATABLEOBJECTIMPL_HPP_
 #define UAVAP_CORE_OBJECT_AGGREGATABLEOBJECTIMPL_HPP_
+
 #include <uavAP/Core/Object/AggregatableObject.hpp>
 #include <uavAP/Core/Logging/APLogger.h>
 
@@ -27,7 +28,7 @@ AggregatableObject<Objects...>::notifyAggregationOnUpdate(const Agg& agg)
 
 template<class ... Objects>
 template<class Ret>
-inline AggregatableObject<Objects...>::PtrType<Ret>
+inline typename AggregatableObject<Objects...>::template PtrType<Ret>
 AggregatableObject<Objects...>::get() const
 {
 	return container_.template get<Ret>();

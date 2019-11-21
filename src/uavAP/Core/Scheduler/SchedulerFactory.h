@@ -36,7 +36,7 @@ public:
 	SchedulerFactory()
 	{
 		addConfigurable<MultiThreadingScheduler>();
-		addCreator<MicroSimulator>();
+		addConfigurable<MicroSimulator>();
 
 		setDefault<MultiThreadingScheduler>();
 	}

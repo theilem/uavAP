@@ -98,7 +98,7 @@ public:
 
 template<class Object, class ... Others>
 template<class Ret>
-inline ObjectHandleContainer<Object, Others...>::PtrType<
+inline typename ObjectHandleContainer<Object, Others...>::template PtrType<
 		typename std::enable_if<(std::is_base_of<Ret, Object> { } || std::is_same<Ret, Object> { }),
 				Ret>::type>
 ObjectHandleContainer<Object, Others...>::get() const
@@ -108,7 +108,7 @@ ObjectHandleContainer<Object, Others...>::get() const
 
 template<class Object, class ... Others>
 template<class Ret>
-inline ObjectHandleContainer<Object, Others...>::PtrType<
+inline typename ObjectHandleContainer<Object, Others...>::template PtrType<
 		typename std::enable_if<
 				!(std::is_base_of<Ret, Object> { } || std::is_same<Ret, Object> { }), Ret>::type>
 ObjectHandleContainer<Object, Others...>::get() const
