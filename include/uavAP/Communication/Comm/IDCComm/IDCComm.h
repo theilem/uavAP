@@ -28,30 +28,26 @@
 #ifndef UAVAP_COMMUNICATION_COMM_IDCCOMM_IDCCOMM_H_
 #define UAVAP_COMMUNICATION_COMM_IDCCOMM_IDCCOMM_H_
 
-#include <boost/property_tree/ptree.hpp>
-#include <uavAP/Communication/Comm/IDCComm/IDCCommParams.h>
-#include <uavAP/Core/DataPresentation/Content.h>
-#include <uavAP/Core/IPC/Publisher.h>
-#include <uavAP/Core/IPC/Subscription.h>
-#include <uavAP/Core/LockTypes.h>
-#include <uavAP/Core/Scheduler/Event.h>
+#include <cpsCore/cps_object>
 
-#include <uavAP/Core/Object/AggregatableObject.hpp>
-#include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
+#include <uavAP/Communication/Comm/IDCComm/IDCCommParams.h>
+#include <uavAP/Core/DataHandling/Content.hpp>
+#include <cpsCore/Utilities/Packet.h>
+#include <cpsCore/Utilities/IPC/Subscription.h>
+#include <cpsCore/Utilities/IPC/Publisher.h>
+#include <cpsCore/Utilities/IDC/IDCSender.h>
+#include <cpsCore/Utilities/LockTypes.hpp>
 #include "uavAP/Communication/Comm/IComm.h"
-#include "uavAP/Core/DataPresentation/Packet.h"
-#include "uavAP/Core/Runner/IRunnableObject.h"
-#include "uavAP/Core/Object/ObjectHandle.h"
-#include "uavAP/Core/IDC/IDCSender.h"
 
 class DataPresentation;
 class IDC;
 class IPC;
 
+
 class IDCComm: public IComm,
-		public AggregatableObject<IPC, IDC, DataPresentation>,
-		public ConfigurableObject<IDCCommParams>,
-		public IRunnableObject
+			   public AggregatableObject<IPC, IDC, DataPresentation>,
+			   public ConfigurableObject<IDCCommParams>,
+			   public IRunnableObject
 {
 public:
 

@@ -26,16 +26,11 @@
  */
 
 #include <uavAP/Communication/Comm/IDCComm/IDCComm.h>
-#include <uavAP/Core/DataPresentation/Content.h>
-#include <uavAP/Core/IDC/IDC.h>
-#include <uavAP/Core/IPC/IPC.h>
-#include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
-#include "uavAP/Core/DataPresentation/DataPresentation.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
-#include "uavAP/FlightControl/Controller/IController.h"
-#include "uavAP/Core/Scheduler/IScheduler.h"
-#include "uavAP/Core/Logging/APLogger.h"
-#include "uavAP/Core/LockTypes.h"
+#include <uavAP/Core/DataHandling/Content.hpp>
+#include <cpsCore/Utilities/IDC/IDC.h>
+#include <cpsCore/Utilities/IPC/IPC.h>
+#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
+#include <cpsCore/Utilities/Scheduler/IScheduler.h>
 
 IDCComm::IDCComm() :
 		senderAvailable_(true)
@@ -51,7 +46,7 @@ IDCComm::run(RunStage stage)
 	{
 		if (!checkIsSet<IPC, IDC, DataPresentation>())
 		{
-			APLOG_ERROR << "SerialComm: missing dependency";
+			CPSLOG_ERROR << "SerialComm: missing dependency";
 			return true;
 		}
 
@@ -94,7 +89,7 @@ IDCComm::run(RunStage stage)
 
 			if (!subscriptions_[k - 1].connected())
 			{
-				APLOG_DEBUG << EnumMap<Target>::convert(static_cast<Target>(k))
+				CPSLOG_DEBUG << EnumMap<Target>::convert(static_cast<Target>(k))
 						<< " not found. Retry later.";
 			}
 		}
@@ -102,7 +97,7 @@ IDCComm::run(RunStage stage)
 	}
 	case RunStage::FINAL:
 	{
-		APLOG_DEBUG << "Run stage final";
+		CPSLOG_DEBUG << "Run stage final";
 		break;
 	}
 	default:
@@ -127,7 +122,7 @@ IDCComm::receivePacket(const Packet& packet)
 	auto dp = get<DataPresentation>();
 	if (!dp)
 	{
-		APLOG_ERROR << "Data Presentation missing. Cannot handle receive.";
+		CPSLOG_ERROR << "Data Presentation missing. Cannot handle receive.";
 		return;
 	}
 
@@ -143,7 +138,7 @@ IDCComm::receivePacket(const Packet& packet)
 	}
 	else if (target == Target::INVALID || target == Target::COMMUNICATION)
 	{
-		APLOG_ERROR << "Invalid Target";
+		CPSLOG_ERROR << "Invalid Target";
 	}
 	else
 	{
@@ -155,6 +150,6 @@ IDCComm::receivePacket(const Packet& packet)
 void
 IDCComm::subscribeCallback(const Subscription& sub, Target target)
 {
-	APLOG_DEBUG << "Subscribed to " << EnumMap<Target>::convert(target);
+	CPSLOG_DEBUG << "Subscribed to " << EnumMap<Target>::convert(target);
 	subscriptions_[static_cast<int>(target) - 1] = sub;
 }

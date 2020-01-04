@@ -26,19 +26,13 @@
 #ifndef UAVAP_MISSIONCONTROL_MANEUVERPLANNER_MANEUVERPLANNER_H_
 #define UAVAP_MISSIONCONTROL_MANEUVERPLANNER_MANEUVERPLANNER_H_
 
-#include <uavAP/Core/Object/AggregatableObject.hpp>
-#include "uavAP/Core/LockTypes.h"
-#include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
-#include <uavAP/MissionControl/Geofencing/Rectanguloid.h>
-#include <uavAP/MissionControl/ManeuverPlanner/ManeuverPlannerParams.h>
 #include <string>
 #include <unordered_map>
 
-#include "uavAP/Core/IPC/Publisher.h"
-#include "uavAP/Core/IPC/Subscription.h"
-#include "uavAP/Core/Object/ObjectHandle.h"
-#include "uavAP/Core/Object/IAggregatableObject.h"
-#include "uavAP/Core/Runner/IRunnableObject.h"
+#include <cpsCore/cps_object>
+
+#include <uavAP/MissionControl/Geofencing/Rectanguloid.h>
+#include <uavAP/MissionControl/ManeuverPlanner/ManeuverPlannerParams.h>
 #include "uavAP/FlightAnalysis/ManeuverAnalysis/ManeuverAnalysisStatus.h"
 #include "uavAP/FlightControl/Controller/AdvancedControl.h"
 #include "uavAP/MissionControl/ManeuverPlanner/ManeuverSet.h"

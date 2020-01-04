@@ -23,7 +23,7 @@
  *      Author: mircot
  */
 #include <boost/property_tree/ptree.hpp>
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
+#include <cpsCore/Configuration/PropertyMapper.hpp>
 #include "uavAP/MissionControl/MissionPlanner/Mission.h"
 
 bool

@@ -18,9 +18,7 @@
 #-------------------------------------------------------------------------------
 add_subdirectory(Listener)
 add_subdirectory(SharedMemoryInit)
-add_subdirectory(ControllerSim)
 add_subdirectory(ServoTool)
-add_subdirectory(MemoryCleanup)
 add_subdirectory(EmulationInterface)
 add_subdirectory(JsonPopulation)
 

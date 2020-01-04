@@ -26,20 +26,20 @@
 #ifndef UAVAP_CORE_DATAPRESENTATION_CONTENT_H_
 #define UAVAP_CORE_DATAPRESENTATION_CONTENT_H_
 
-#include <uavAP/Core/EnumMap.hpp>
+#include <cpsCore/Utilities/EnumMap.hpp>
 
 /**
  * @brief Defines the Target for forwarding of packets. Only used in uavAP.
  */
 enum class Target
 {
-	INVALID = 0,        //!< INVALID
-	FLIGHT_ANALYSIS, //!< Forward to FlightAnalysis
-	FLIGHT_CONTROL, //!< Forward to FlightControl
-	MISSION_CONTROL, //!< Forward to MissionControl
-	API,             //!< Forward to API
-	COMMUNICATION,  //!< Forward to Communication
-	BROADCAST		//!< Broadcast to everyone
+	INVALID = 0,    	//!< INVALID
+	FLIGHT_ANALYSIS,	//!< Forward to FlightAnalysis
+	FLIGHT_CONTROL, 	//!< Forward to FlightControl
+	MISSION_CONTROL,	//!< Forward to MissionControl
+	API,            	//!< Forward to API
+	COMMUNICATION,  	//!< Forward to Communication
+	BROADCAST			//!< Broadcast to everyone
 };
 
 ENUMMAP_INIT(Target, {{Target::BROADCAST, "broadcast"}, {Target::FLIGHT_ANALYSIS, "flight_analysis"}, {Target::FLIGHT_CONTROL,

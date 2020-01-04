@@ -24,17 +24,15 @@
  */
 
 #include <boost/property_tree/json_parser.hpp>
-#include "uavAP/Core/Runner/SimpleRunner.h"
-#include "uavAP/Core/Runner/SynchronizedRunner.h"
+#include <cpsCore/Synchronization/SynchronizedRunner.h>
 #include "uavAP/FlightControl/FlightControlHelper.h"
 
-#include "uavAP/Core/Logging/APLogger.h"
 
 int
 main(int argc, char** argv)
 {
-	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
-	APLogger::instance()->setModuleName("FlightControl");
+	CPSLogger::instance()->setLogLevel(LogLevel::DEBUG);
+	CPSLogger::instance()->setModuleName("FlightControl");
 	std::string configPath;
 	if (argc == 2)
 	{
@@ -46,11 +44,11 @@ main(int argc, char** argv)
 	auto sched = aggregator.getOne<IScheduler>();
 	sched->setMainThread();
 
-	APLOG_DEBUG << "Run synchronized";
+	CPSLOG_DEBUG << "Run synchronized";
 	SynchronizedRunner runner;
 	if (runner.runSynchronized(aggregator))
 	{
-		APLOG_ERROR << "Something went wrong";
+		CPSLOG_ERROR << "Something went wrong";
 		return 1;
 	}
 

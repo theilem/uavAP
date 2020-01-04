@@ -26,13 +26,11 @@
 #ifndef UAVAP_WATCHDOG_PROCESSMONITOR_H_
 #define UAVAP_WATCHDOG_PROCESSMONITOR_H_
 
-#include "uavAP/Core/Runner/IRunnableObject.h"
-#include "uavAP/Core/PropertyMapper/Configuration.h"
-#include "uavAP/Core/Object/IAggregatableObject.h"
+#include <cpsCore/cps_object>
 #include "uavAP/Watchdog/ProcessMonitor/ProcessInfo.h"
 #include <cstdlib>
 
-class ProcessMonitor: public IRunnableObject, public IAggregatableObject
+class ProcessMonitor: public IRunnableObject, public AggregatableObject<>
 {
 public:
 
@@ -45,9 +43,6 @@ public:
 
 	bool
 	run(RunStage stage) override;
-
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg);
 
 	int
 	getNumOfProcesses();

@@ -26,8 +26,8 @@
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_PIDHANDLING_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_PIDHANDLING_H_
 
-#include <uavAP/FlightControl/Controller/PIDController/PIDMapping.h>
 #include <map>
+#include <uavAP/FlightControl/Controller/PIDController/PIDMapping.h>
 #include "uavAP/FlightControl/Controller/ControlElements/EvaluableControlElements.h"
 
 struct PIDTuning

@@ -16,13 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-add_executable(Communication   	Communication.cpp
-								Comm/IDCComm/IDCComm.cpp
-								Comm/MessageQueueComm/MessageQueueComm.cpp)
+add_executable(Communication Communication.cpp
+        Comm/IDCComm/IDCComm.cpp
+        )
 
-target_link_libraries(Communication    uavap_core
-                                       )
-                                        
+target_link_libraries(Communication uavap_core cps_core
+        )
+
 install(TARGETS Communication OPTIONAL
-		RUNTIME DESTINATION bin/uavAP
-		LIBRARY DESTINATION lib)
+        RUNTIME DESTINATION bin/uavAP
+        LIBRARY DESTINATION lib)

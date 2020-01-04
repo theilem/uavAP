@@ -23,17 +23,15 @@
  *      Author: mircot
  */
 
-#include "uavAP/Core/Runner/SimpleRunner.h"
 #include "uavAP/Core/SensorData.h"
-#include "uavAP/Core/IPC/IPC.h"
 
-#include "uavAP/Core/Logging/APLogger.h"
 #include <iostream>
+#include <cpsCore/Utilities/IPC/IPC.h>
 
 int
 main(int argc, char** argv)
 {
-	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
+	CPSLogger::instance()->setLogLevel(LogLevel::DEBUG);
 	auto ipc = std::make_shared<IPC>();
 
 	SensorData sd;

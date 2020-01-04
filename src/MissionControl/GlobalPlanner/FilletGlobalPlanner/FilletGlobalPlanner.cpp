@@ -27,11 +27,8 @@
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/Line.h"
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/Curve.h"
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/Orbit.h"
-#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
-#include "uavAP/Core/Logging/APLogger.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
-#include "uavAP/Core/IPC/IPC.h"
-#include "uavAP/Core/DataPresentation/DataPresentation.h"
+#include "cpsCore/Utilities/IPC/IPC.h"
+#include "cpsCore/Utilities/DataPresentation/DataPresentation.h"
 
 FilletGlobalPlanner::FilletGlobalPlanner() :
 		filletRadius_(0)
@@ -45,7 +42,7 @@ FilletGlobalPlanner::create(const Configuration& config)
 	auto planner = std::make_shared<FilletGlobalPlanner>();
 	if (!planner->configure(config))
 	{
-		APLOG_ERROR << "FilletGlobalPlanner Configuration failed.";
+		CPSLOG_ERROR << "FilletGlobalPlanner Configuration failed.";
 	}
 	return planner;
 }
@@ -68,7 +65,7 @@ FilletGlobalPlanner::run(RunStage stage)
 	{
 		if (!checkIsSet<IPC, DataPresentation>())
 		{
-			APLOG_ERROR << "FilletGlobalPlanner: Missing dependencies.";
+			CPSLOG_ERROR << "FilletGlobalPlanner: Missing dependencies.";
 			return true;
 		}
 		auto ipc = get<IPC>();
@@ -178,7 +175,7 @@ FilletGlobalPlanner::setMission(const Mission& mission)
 
 	if (auto dp = get<DataPresentation>())
 	{
-		APLOG_DEBUG << "Send trajectory";
+		CPSLOG_DEBUG << "Send trajectory";
 		auto packet = dp->serialize(Trajectory(traj, mission.infinite));
 		trajectoryPublisher_.publish(packet);
 	}

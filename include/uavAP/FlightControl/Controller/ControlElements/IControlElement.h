@@ -29,6 +29,8 @@
 #include <chrono>
 #include <memory>
 
+#include <cpsCore/Utilities/LinearAlgebra.h>
+
 namespace Control
 {
 

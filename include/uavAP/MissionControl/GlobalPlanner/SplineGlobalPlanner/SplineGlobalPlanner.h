@@ -25,24 +25,24 @@
 
 #ifndef UAVAP_MISSIONCONTROL_GLOBALPLANNER_SPLINEGLOBALPLANNER_SPLINEGLOBALPLANNER_H_
 #define UAVAP_MISSIONCONTROL_GLOBALPLANNER_SPLINEGLOBALPLANNER_SPLINEGLOBALPLANNER_H_
-#include <uavAP/Core/IPC/Publisher.h>
-#include <uavAP/Core/Object/AggregatableObject.hpp>
-#include <uavAP/Core/PropertyMapper/ConfigurableObject.hpp>
+
+#include <cpsCore/cps_object>
+
+#include <cpsCore/Utilities/IPC/Publisher.h>
 #include <uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlannerParams.h>
-#include "uavAP/Core/Object/ObjectHandle.h"
-#include "uavAP/Core/Object/IAggregatableObject.h"
-#include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 
 class ILocalPlanner;
+
 class IPC;
+
 class DataPresentation;
 
-class SplineGlobalPlanner: public IGlobalPlanner,
-		public AggregatableObject<ILocalPlanner, IPC, DataPresentation>,
-		public ConfigurableObject<SplineGlobalPlannerParams>,
-		public IRunnableObject
+class SplineGlobalPlanner : public IGlobalPlanner,
+							public AggregatableObject<ILocalPlanner, IPC, DataPresentation>,
+							public ConfigurableObject<SplineGlobalPlannerParams>,
+							public IRunnableObject
 {
 public:
 

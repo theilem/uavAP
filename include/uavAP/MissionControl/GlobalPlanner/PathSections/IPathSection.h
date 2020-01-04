@@ -26,11 +26,11 @@
 #ifndef UAVAP_CONTROL_GLOBALPLANNER_IPATHSECTION_H_
 #define UAVAP_CONTROL_GLOBALPLANNER_IPATHSECTION_H_
 
-#include "uavAP/Core/LinearAlgebra.h"
+#include "cpsCore/Utilities/LinearAlgebra.h"
 
 enum class PathSectionType
 {
-	UNNKNOWN = 0, CURVE, ORBIT, LINE, SPLINE
+	UNKNOWN = 0, CURVE, ORBIT, LINE, SPLINE
 };
 
 struct IPathSection

@@ -22,9 +22,11 @@
  *  Created on: Aug 9, 2017
  *      Author: mircot
  */
+
 #include <boost/property_tree/json_parser.hpp>
-#include "uavAP/Core/Logging/APLogger.h"
-#include "uavAP/Core/Runner/SynchronizedRunnerMaster.h"
+
+#include <cpsCore/Synchronization/SynchronizedRunnerMaster.h>
+
 #include "uavAP/Watchdog/ProcessMonitor/ProcessMonitor.h"
 
 
@@ -33,8 +35,7 @@ ProcessMonitor* monitor;
 void
 sigHandler(int sig)
 {
-	APLOG_DEBUG << "Calling watchdog signal handler with signal: " << sig;
-	APLogger::instance()->flush();
+	CPSLOG_DEBUG << "Calling watchdog signal handler with signal: " << sig;
 	if (monitor)
 	{
 		monitor->killAll();
@@ -46,11 +47,11 @@ sigHandler(int sig)
 int
 main(int argc, char** argv)
 {
-	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
-	APLogger::instance()->setModuleName("Watchdog");
+	CPSLogger::instance()->setLogLevel(LogLevel::DEBUG);
+	CPSLogger::instance()->setModuleName("Watchdog");
 	if (argc != 2)
 	{
-		APLOG_ERROR << "Path to config file needed.";
+		CPSLOG_ERROR << "Path to config file needed.";
 		return 1;
 	}
 
@@ -71,17 +72,17 @@ main(int argc, char** argv)
 
 	if (!monitor->startAll())
 	{
-		APLOG_ERROR << "Not all processes could be launched. Abort.";
+		CPSLOG_ERROR << "Not all processes could be launched. Abort.";
 		monitor->killAll();
 		return 1;
 	}
 
-	APLOG_DEBUG << monitor->getNumOfProcesses() << " processes launched.";
+	CPSLOG_DEBUG << monitor->getNumOfProcesses() << " processes launched.";
 	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 	if (!monitor->checkAlive())
 	{
-		APLOG_ERROR << "Processes did not succeed configuration. Abort.";
+		CPSLOG_ERROR << "Processes did not succeed configuration. Abort.";
 		monitor->killAll();
 		return 1;
 	}
@@ -89,11 +90,11 @@ main(int argc, char** argv)
 	if (runner.runAllStages())
 	{
 		monitor->checkAlive();
-		APLOG_ERROR << "Synchronized running of all stages failed. Abort.";
+		CPSLOG_ERROR << "Synchronized running of all stages failed. Abort.";
 		monitor->killAll();
 		return 1;
 	}
-	APLOG_DEBUG << monitor->getNumOfProcesses() << " processes ran all stages.";
+	CPSLOG_DEBUG << monitor->getNumOfProcesses() << " processes ran all stages.";
 	runner.cleanUp();
 	std::string input;
 	while (1)

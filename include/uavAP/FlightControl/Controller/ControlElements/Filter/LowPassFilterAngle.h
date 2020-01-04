@@ -23,12 +23,7 @@ public:
 	//constructors
 	LowPassFilterAngle();
 
-	void
-	init();
 	//functions
-
-	FloatingType
-	update(FloatingType input);
 
 	FloatingType
 	update(FloatingType input, FloatingType deltaTime);
@@ -40,7 +35,6 @@ public:
 private:
 
 	FloatingType output_;
-	FloatingType ePow_;
 };
 
 }

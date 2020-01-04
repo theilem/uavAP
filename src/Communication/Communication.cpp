@@ -27,15 +27,15 @@
 
 #include <boost/property_tree/json_parser.hpp>
 
+#include <cpsCore/Synchronization/SynchronizedRunner.h>
+
 #include "uavAP/Communication/CommunicationHelper.h"
-#include "uavAP/Core/Runner/SynchronizedRunner.h"
-#include "uavAP/Core/Logging/APLogger.h"
 
 int
 main(int argc, char** argv)
 {
-	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
-	APLogger::instance()->setModuleName("Communication");
+	CPSLogger::instance()->setLogLevel(LogLevel::DEBUG);
+	CPSLogger::instance()->setModuleName("Communication");
 
 	CommunicationHelper helper;
 	Aggregator aggregator = helper.createAggregation(argv[1]);
@@ -45,7 +45,7 @@ main(int argc, char** argv)
 	SynchronizedRunner runner;
 	if (runner.runSynchronized(aggregator))
 	{
-		APLOG_ERROR << "Failed to run Synchronized.";
+		CPSLOG_ERROR << "Failed to run Synchronized.";
 		return 1;
 	}
 

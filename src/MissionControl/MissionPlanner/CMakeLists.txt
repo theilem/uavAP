@@ -17,7 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
 set(MISSION_CONTROL_SRC ${MISSION_CONTROL_SRC}
-						${CMAKE_CURRENT_SOURCE_DIR}/SimpleMissionPlanner/SimpleMissionPlanner.cpp
 						${CMAKE_CURRENT_SOURCE_DIR}/CustomPlanner/CustomPlanner.cpp
 						${CMAKE_CURRENT_SOURCE_DIR}/Mission.cpp
 						PARENT_SCOPE)

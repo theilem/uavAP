@@ -7,16 +7,17 @@
 
 #ifndef UAVAP_API_AUTOPILOTAPI_HPP_
 #define UAVAP_API_AUTOPILOTAPI_HPP_
-#include <uavAP/Core/Object/Aggregator.h>
+
+#include <cpsCore/Aggregation/Aggregator.h>
+#include <cpsCore/Utilities/IPC/Subscription.h>
+#include <cpsCore/Utilities/IPC/Publisher.h>
+
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/FlightControl/Controller/AdvancedControl.h>
-#include <uavAP/FlightControl/Controller/ControllerOutput.h>
-#include <uavAP/Core/IPC/Publisher.h>
 
+#include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include <boost/signals2.hpp>
 #include <uavAP/Core/Frames/VehicleOneFrame.h>
-#include <uavAP/Core/IPC/Subscription.h>
-
 
 class AutopilotAPI
 {
@@ -27,12 +28,12 @@ public:
 	void
 	configure(const Configuration& config);
 
-	using OnControllerOut = boost::signals2::signal<void (const ControllerOutput&)>;
+	using OnControllerOut = boost::signals2::signal<void(const ControllerOutput&)>;
 
 	boost::signals2::connection
 	subscribeOnControllerOut(const OnControllerOut::slot_type& slot);
 
-	using OnAdvancedControl = boost::signals2::signal<void (const AdvancedControl&)>;
+	using OnAdvancedControl = boost::signals2::signal<void(const AdvancedControl&)>;
 
 	boost::signals2::connection
 	subscribeOnAdvancedControl(const OnAdvancedControl::slot_type& slot);

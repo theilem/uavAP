@@ -28,19 +28,12 @@
 #ifndef UAVAP_COMMUNICATION_COMM_COMMFACTORY_H_
 #define UAVAP_COMMUNICATION_COMM_COMMFACTORY_H_
 
-#include <uavAP/Communication/Comm/IDCComm/IDCComm.h>
-#include "uavAP/Communication/Comm/MessageQueueComm/MessageQueueComm.h"
-#include "uavAP/Communication/Comm/IComm.h"
-#include "uavAP/Core/Framework/Factory.h"
+#include <cpsCore/Framework/StaticFactory.h>
 
-class CommFactory: public Factory<IComm>
-{
-public:
-	CommFactory()
-	{
-		addConfigurable<IDCComm>();
-		addCreator<MessageQueueComm>();
-	}
-};
+#include <uavAP/Communication/Comm/IDCComm/IDCComm.h>
+#include "uavAP/Communication/Comm/IComm.h"
+
+
+using CommFactory = StaticFactory<IComm, false, IDCComm>;
 
 #endif /* UAVAP_COMMUNICATION_COMM_COMMFACTORY_H_ */

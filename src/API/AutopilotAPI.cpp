@@ -23,13 +23,13 @@
  *      Author: mircot
  */
 #include <uavAP/Core/Frames/InertialFrame.h>
-#include <uavAP/Core/Runner/SimpleRunner.h>
 #include <uavAP/FlightControl/Controller/AdvancedControl.h>
 #include "uavAP/API/AutopilotAPI.hpp"
 #include "uavAP/API/APIHelper.h"
-#include "uavAP/Core/IPC/IPC.h"
-#include "uavAP/Core/Scheduler/IScheduler.h"
 #include <functional>
+#include <cpsCore/Utilities/IPC/IPC.h>
+#include <cpsCore/Utilities/Scheduler/IScheduler.h>
+#include <cpsCore/Synchronization/SimpleRunner.h>
 
 AutopilotAPI::AutopilotAPI() :
 		localFrame_(0)
@@ -65,11 +65,11 @@ AutopilotAPI::initialize()
 	IPCOptions opts;
 	opts.retry = true;
 	ipc->subscribe<ControllerOutput>("actuation",
-			std::bind(&AutopilotAPI::onControllerOut, this, std::placeholders::_1), opts);
+									 std::bind(&AutopilotAPI::onControllerOut, this, std::placeholders::_1), opts);
 	ipc->subscribe<AdvancedControl>("advanced_control_maneuver",
-			std::bind(&AutopilotAPI::onAdvancedControl, this, std::placeholders::_1), opts);
+									std::bind(&AutopilotAPI::onAdvancedControl, this, std::placeholders::_1), opts);
 	ipc->subscribe<VehicleOneFrame>("local_frame",
-			std::bind(&AutopilotAPI::onLocalFrame, this, std::placeholders::_1), opts);
+									std::bind(&AutopilotAPI::onLocalFrame, this, std::placeholders::_1), opts);
 	SimpleRunner runner(aggregator_);
 	runner.runAllStages();
 }
@@ -77,13 +77,14 @@ AutopilotAPI::initialize()
 void
 AutopilotAPI::tryConnectControllerOut()
 {
-	APLOG_DEBUG << "Try connect to controller out.";
+	CPSLOG_DEBUG << "Try connect to controller out.";
 	auto ipc = aggregator_.getOne<IPC>();
 	controllerOutSubscription_ = ipc->subscribe<ControllerOutput>("actuation",
-			std::bind(&AutopilotAPI::onControllerOut, this, std::placeholders::_1));
+																  std::bind(&AutopilotAPI::onControllerOut, this,
+																			std::placeholders::_1));
 	if (!controllerOutSubscription_.connected())
 	{
-		APLOG_DEBUG << "Was not able to subscribe to actuation. Try again in 1sec.";
+		CPSLOG_DEBUG << "Was not able to subscribe to actuation. Try again in 1sec.";
 		auto scheduler = aggregator_.getOne<IScheduler>();
 		scheduler->schedule(std::bind(&AutopilotAPI::tryConnectControllerOut, this), Seconds(1));
 	}
@@ -94,7 +95,8 @@ AutopilotAPI::tryConnectAdvancedControl()
 {
 	auto ipc = aggregator_.getOne<IPC>();
 	advancedControlSubscription_ = ipc->subscribe<AdvancedControl>("advanced_control_maneuver",
-			std::bind(&AutopilotAPI::onAdvancedControl, this, std::placeholders::_1));
+																   std::bind(&AutopilotAPI::onAdvancedControl, this,
+																			 std::placeholders::_1));
 	if (!advancedControlSubscription_.connected())
 	{
 		auto scheduler = aggregator_.getOne<IScheduler>();
@@ -107,7 +109,8 @@ AutopilotAPI::tryConnectLocalFrame()
 {
 	auto ipc = aggregator_.getOne<IPC>();
 	localFrameSubscription_ = ipc->subscribe<VehicleOneFrame>("local_frame",
-			std::bind(&AutopilotAPI::onLocalFrame, this, std::placeholders::_1));
+															  std::bind(&AutopilotAPI::onLocalFrame, this,
+																		std::placeholders::_1));
 	if (!localFrameSubscription_.connected())
 	{
 		auto scheduler = aggregator_.getOne<IScheduler>();
@@ -136,7 +139,6 @@ AutopilotAPI::onLocalFrame(const VehicleOneFrame& frame)
 void
 AutopilotAPI::configure(const Configuration& config)
 {
-	APIHelper helper;
-	aggregator_ = helper.createAggregation(config);
+	aggregator_ = APIHelper::createAggregation(config);
 
 }

@@ -26,12 +26,9 @@
 #ifndef FLIGHTPLANNER_SIMPLEFLIGHTPLANNER_SIMPLEFLIGHTPLANNER_H_
 #define FLIGHTPLANNER_SIMPLEFLIGHTPLANNER_SIMPLEFLIGHTPLANNER_H_
 
-#include "uavAP/Core/IPC/Publisher.h"
-#include "uavAP/Core/Object/AggregatableObject.hpp"
-#include "uavAP/Core/Runner/IRunnableObject.h"
-#include "uavAP/Core/Object/ObjectHandle.h"
+#include <cpsCore/cps_object>
+#include <cpsCore/Utilities/IPC/Publisher.h>
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
-
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 
 class IPC;

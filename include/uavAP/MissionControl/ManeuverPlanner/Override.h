@@ -26,9 +26,9 @@
 #ifndef UAVAP_MISSIONCONTROL_MISSIONPLANNER_OVERRIDE_H_
 #define UAVAP_MISSIONCONTROL_MISSIONPLANNER_OVERRIDE_H_
 
-#include <uavAP/Core/PropertyMapper/Configuration.h>
 
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
+#include <cpsCore/Configuration/ConfigurableObject.hpp>
+
 #include "uavAP/FlightControl/Controller/ControllerConstraint.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/LocalPlanner/LocalPlannerTargets.h"
@@ -53,16 +53,22 @@ enum class OverrideGroup
 	NUM_GROUP
 };
 
-ENUMMAP_INIT(CustomOverrideIDs, { {CustomOverrideIDs::CUSTOM_1, "custom_1"},
-		{CustomOverrideIDs::CUSTOM_2, "custom_2"}, {CustomOverrideIDs::CUSTOM_3, "custom_3"},
-		{CustomOverrideIDs::CUSTOM_4, "custom_4"} });
+ENUMMAP_INIT(CustomOverrideIDs, {
+	{ CustomOverrideIDs::CUSTOM_1, "custom_1" },
+	{ CustomOverrideIDs::CUSTOM_2, "custom_2" }, { CustomOverrideIDs::CUSTOM_3, "custom_3" },
+	{ CustomOverrideIDs::CUSTOM_4, "custom_4" }
+});
 
-ENUMMAP_INIT(OverrideGroup, { {OverrideGroup::LOCAL_PLANNER, "local_planner"},
-		{OverrideGroup::CONTROLLER_TARGETS, "controller_targets"}, {OverrideGroup::PIDS, "pids"},
-		{OverrideGroup::CONTROLLER_OUTPUTS, "controller_outputs"},
-		{OverrideGroup::CONTROLLER_OUTPUTS_WAVEFORMS, "controller_outputs_waveforms"},
-		{OverrideGroup::CONTROLLER_CONSTRAINTS, "controller_constraints"}, {OverrideGroup::CUSTOM,
-		"custom"} });
+ENUMMAP_INIT(OverrideGroup, {
+	{ OverrideGroup::LOCAL_PLANNER, "local_planner" },
+	{ OverrideGroup::CONTROLLER_TARGETS, "controller_targets" }, { OverrideGroup::PIDS, "pids" },
+	{ OverrideGroup::CONTROLLER_OUTPUTS, "controller_outputs" },
+	{ OverrideGroup::CONTROLLER_OUTPUTS_WAVEFORMS, "controller_outputs_waveforms" },
+	{ OverrideGroup::CONTROLLER_CONSTRAINTS, "controller_constraints" }, {
+		OverrideGroup::CUSTOM,
+		"custom"
+	}
+});
 
 struct Override
 {
@@ -94,7 +100,7 @@ struct Override
 template<class Group, typename Type>
 void
 mapOverrideValue(PropertyMapper<Configuration>& pm, const std::string& override,
-		const std::string& overrideMember, Group& overrideGroup)
+				 const std::string& overrideMember, Group& overrideGroup)
 {
 	auto overrideValueEnum = EnumMap<Type>::convert(overrideMember);
 
@@ -105,7 +111,7 @@ mapOverrideValue(PropertyMapper<Configuration>& pm, const std::string& override,
 	}
 	else
 	{
-		APLOG_WARN << "Override: Invalid Override Member for " << override;
+		CPSLOG_WARN << "Override: Invalid Override Member for " << override;
 	}
 
 	return;
@@ -114,7 +120,7 @@ mapOverrideValue(PropertyMapper<Configuration>& pm, const std::string& override,
 template<class Group, typename Type, typename Enum>
 void
 mapOverrideEnum(PropertyMapper<Configuration>& pm, const std::string& override,
-		const std::string& overrideMember, Group& overrideGroup)
+				const std::string& overrideMember, Group& overrideGroup)
 {
 	auto overrideValueEnum = EnumMap<Type>::convert(overrideMember);
 
@@ -125,7 +131,7 @@ mapOverrideEnum(PropertyMapper<Configuration>& pm, const std::string& override,
 	}
 	else
 	{
-		APLOG_WARN << "Override: Invalid Override Member for " << override;
+		CPSLOG_WARN << "Override: Invalid Override Member for " << override;
 	}
 
 	return;

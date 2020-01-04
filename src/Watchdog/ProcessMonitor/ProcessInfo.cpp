@@ -23,9 +23,10 @@
  *      Author: mircot
  */
 
-#include "uavAP/Core/Logging/APLogger.h"
+#include <cpsCore/Configuration/Configuration.hpp>
+#include <cpsCore/Configuration/PropertyMapper.hpp>
+#include <cpsCore/Logging/CPSLogger.h>
 #include "uavAP/Watchdog/ProcessMonitor/ProcessInfo.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 
 ProcessInfo::ProcessInfo(const std::string& n) :
 		name(n), joined(false), id(0)
@@ -46,17 +47,17 @@ ProcessInfo::startChild(const std::string& binPath, const std::string& confPath)
 {
 	if (binaryPath.empty())
 	{
-		APLOG_ERROR << "Binary path missing";
+		CPSLOG_ERROR << "Binary path missing";
 		return false;
 	}
 	if (configPath.empty())
 	{
-		APLOG_DEBUG << "No config path. Starting " << binPath + binaryPath;
+		CPSLOG_DEBUG << "No config path. Starting " << binPath + binaryPath;
 		process = boost::process::child(binPath + binaryPath);
 	}
 	else
 	{
-		APLOG_DEBUG << "Starting " << binPath + binaryPath << " with " << confPath + configPath;
+		CPSLOG_DEBUG << "Starting " << binPath + binaryPath << " with " << confPath + configPath;
 		process = boost::process::child(binPath + binaryPath, confPath + configPath);
 	}
 	id = process.id();

@@ -30,7 +30,6 @@
 #include <uavAP/MissionControl/GlobalPlanner/PathSections/Line.h>
 #include <uavAP/MissionControl/GlobalPlanner/PathSections/Orbit.h>
 #include <uavAP/MissionControl/GlobalPlanner/PathSections/Curve.h>
-#include "uavAP/Core/LinearAlgebra.h"
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h"
 
 #include <vector>

@@ -27,7 +27,6 @@
 #ifndef UAVAP_FLIGHTCONTROL_CONTROLLER_ADVANCEDCONTROL_H_
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_ADVANCEDCONTROL_H_
 
-#include <uavAP/Core/PropertyMapper/Configuration.h>
 #include <map>
 
 #include <cpsCore/Configuration/PropertyMapper.hpp>

@@ -25,7 +25,6 @@
 
 #ifndef UAVAP_MISSIONCONTROL_GLOBALPLANNER_PATHSECTIONS_CUBICSPLINE_H_
 #define UAVAP_MISSIONCONTROL_GLOBALPLANNER_PATHSECTIONS_CUBICSPLINE_H_
-#include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h"
 
 struct CubicSpline: public IPathSection

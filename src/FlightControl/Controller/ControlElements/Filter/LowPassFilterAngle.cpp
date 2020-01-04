@@ -10,18 +10,8 @@
 namespace Control
 {
 LowPassFilterAngle::LowPassFilterAngle() :
-		output_(0), ePow_(0)
+		output_(0)
 {
-}
-
-FloatingType
-LowPassFilterAngle::update(FloatingType input)
-{
-	FloatingType cosa = cos(input) + ePow_ * (cos(input) - cos(output_));
-	FloatingType sina = sin(input) + ePow_ * (sin(input) - sin(output_));
-
-	output_ = atan2(sina, cosa);
-	return output_;
 }
 
 FloatingType
@@ -42,9 +32,4 @@ LowPassFilterAngle::getValue() const
 	return output_;
 }
 
-void
-LowPassFilterAngle::init()
-{
-	ePow_ = 1 - exp(-static_cast<FloatingType>(params.deltaTime()) / 1000.0 * params.cutOffFrequency());
-}
 }

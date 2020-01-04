@@ -27,7 +27,7 @@
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_PIDMAPPING_H_
 
 #include <string>
-#include "uavAP/Core/EnumMap.hpp"
+#include <cpsCore/Utilities/EnumMap.hpp>
 
 enum class PIDs
 {
@@ -48,18 +48,20 @@ enum class PIDs
 };
 
 ENUMMAP_INIT(PIDs,
-		{{PIDs::INVALID, "invalid"},
-		{PIDs::VELOCITY, "velocity"},
-		{PIDs::VELOCITY_X, "velocity_x"},
-		{PIDs::VELOCITY_Y, "velocity_y"},
-		{PIDs::RPM, "rpm"},
-		{PIDs::RUDDER, "rudder"},
-		{PIDs::CLIMB_ANGLE,	"climb_angle"},
-		{PIDs::CLIMB_RATE,	"climb_rate"},
-		{PIDs::PITCH, "pitch"},
-		{PIDs::PITCH_RATE, "pitch_rate"},
-		{PIDs::YAW_RATE, "yaw_rate"},
-		{PIDs::ROLL, "roll"},
-		{PIDs::ROLL_RATE, "roll_rate"}});
+			 {
+				 { PIDs::INVALID, "invalid" },
+				 { PIDs::VELOCITY, "velocity" },
+				 { PIDs::VELOCITY_X, "velocity_x" },
+				 { PIDs::VELOCITY_Y, "velocity_y" },
+				 { PIDs::RPM, "rpm" },
+				 { PIDs::RUDDER, "rudder" },
+				 { PIDs::CLIMB_ANGLE, "climb_angle" },
+				 { PIDs::CLIMB_RATE, "climb_rate" },
+				 { PIDs::PITCH, "pitch" },
+				 { PIDs::PITCH_RATE, "pitch_rate" },
+				 { PIDs::YAW_RATE, "yaw_rate" },
+				 { PIDs::ROLL, "roll" },
+				 { PIDs::ROLL_RATE, "roll_rate" }
+			 });
 
 #endif /* UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_PIDMAPPING_H_ */

@@ -23,17 +23,15 @@
  *      Author: simonyu
  */
 
-#include <uavAP/Core/Object/AggregatableObjectImpl.hpp>
-#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
+
 #include <vector>
 
+#include <cpsCore/Utilities/IPC/IPC.h>
+#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 #include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
-#include "uavAP/Core/DataPresentation/BinarySerialization.hpp"
-#include "uavAP/Core/IPC/IPC.h"
-#include <uavAP/Core/DataPresentation/DataPresentation.h>
 
 ManeuverPlanner::ManeuverPlanner() :
 		maneuverAnalysis_(false), maneuverAnalysisStatus_(), trimAnalysis_(false), overrideInterrupted_(
@@ -50,7 +48,7 @@ ManeuverPlanner::create(const Configuration& config)
 
 	if (!maneuverPlanner->configure(config))
 	{
-		APLOG_ERROR << "ManeuverPlanner: Failed to Load Config.";
+		CPSLOG_ERROR << "ManeuverPlanner: Failed to Load Config.";
 	}
 
 	return maneuverPlanner;
@@ -62,7 +60,7 @@ ManeuverPlanner::configure(const Configuration& config)
 	PropertyMapper<Configuration> pm(config);
 	Configuration maneuverSetTree;
 
-	configureParams(pm);
+	params.configure(pm);
 	if (pm.map())
 	{
 		manualRestart_ = params.manualRestart();
@@ -103,7 +101,7 @@ ManeuverPlanner::run(RunStage stage)
 	{
 		if (!checkIsSet<IPC, ConditionManager, DataPresentation>())
 		{
-			APLOG_ERROR << "ManeuverPlanner: Missing dependencies.";
+			CPSLOG_ERROR << "ManeuverPlanner: Missing dependencies.";
 			return true;
 		}
 
@@ -127,7 +125,7 @@ ManeuverPlanner::run(RunStage stage)
 
 		if (!controllerOutputSubscription_.connected())
 		{
-			APLOG_DEBUG << "ManeuverPlanner: Controller Output Subscription Missing.";
+			CPSLOG_DEBUG << "ManeuverPlanner: Controller Output Subscription Missing.";
 		}
 
 		controllerOutputTrimSubscription_ = ipc->subscribe<ControllerOutput>(
@@ -136,7 +134,7 @@ ManeuverPlanner::run(RunStage stage)
 
 		if (!controllerOutputTrimSubscription_.connected())
 		{
-			APLOG_DEBUG << "ManeuverPlanner: Controller Output Trim Subscription Missing.";
+			CPSLOG_DEBUG << "ManeuverPlanner: Controller Output Trim Subscription Missing.";
 		}
 
 		advancedControlSubscription_ = ipc->subscribe<AdvancedControl>("advanced_control",
@@ -144,7 +142,7 @@ ManeuverPlanner::run(RunStage stage)
 
 		if (!advancedControlSubscription_.connected())
 		{
-			APLOG_DEBUG << "ManeuverPlanner: Advanced Control Subscription Missing.";
+			CPSLOG_DEBUG << "ManeuverPlanner: Advanced Control Subscription Missing.";
 		}
 
 		if (params.useSafetyBounds())
@@ -190,7 +188,7 @@ ManeuverPlanner::setManualOverride(const Override& override)
 {
 	if (overrideInterrupted_)
 	{
-		APLOG_WARN << "Override Interrupted.";
+		CPSLOG_WARN << "Override Interrupted.";
 		return;
 	}
 
@@ -210,7 +208,7 @@ ManeuverPlanner::setManeuverOverride(const std::string& maneuverSet)
 {
 	if (overrideInterrupted_)
 	{
-		APLOG_WARN << "Override Interrupted.";
+		CPSLOG_WARN << "Override Interrupted.";
 		return;
 	}
 
@@ -218,7 +216,7 @@ ManeuverPlanner::setManeuverOverride(const std::string& maneuverSet)
 
 	if (currentManeuverSet_ == maneuverSetMap_.end())
 	{
-		APLOG_ERROR << "ManeuverPlanner: Maneuver Set " << maneuverSet << " Not Found.";
+		CPSLOG_ERROR << "ManeuverPlanner: Maneuver Set " << maneuverSet << " Not Found.";
 		return;
 	}
 
@@ -250,7 +248,7 @@ ManeuverPlanner::interruptOverride()
 
 	overrideInterrupted_ = true;
 
-	APLOG_DEBUG << "Interrupt Override.";
+	CPSLOG_DEBUG << "Interrupt Override.";
 
 	std::unique_lock<std::mutex> overrideLock(overrideMutex_);
 	lastManualOverride_ = override_;
@@ -272,7 +270,7 @@ ManeuverPlanner::resumeOverride()
 		return;
 	}
 
-	APLOG_DEBUG << "Resume Override.";
+	CPSLOG_DEBUG << "Resume Override.";
 
 	if (lastManualActive_ && manualRestart_)
 	{
@@ -280,7 +278,7 @@ ManeuverPlanner::resumeOverride()
 		override_ = lastManualOverride_;
 		overrideLock.unlock();
 
-		APLOG_DEBUG << "Resume Manual Override.";
+		CPSLOG_DEBUG << "Resume Manual Override.";
 
 		setOverride("", !lastManualOverride_.isEmpty(), false);
 		startOverride();
@@ -290,7 +288,7 @@ ManeuverPlanner::resumeOverride()
 		maneuverSet_ = lastManeuverSet_;
 		currentManeuver_ = lastManeuver_;
 
-		APLOG_DEBUG << "Resume Maneuver Override.";
+		CPSLOG_DEBUG << "Resume Maneuver Override.";
 
 		setOverride(maneuverSet_, false, true);
 		startOverride();
@@ -372,11 +370,11 @@ ManeuverPlanner::stopManeuverAnalysis()
 void
 ManeuverPlanner::startOverride()
 {
-	APLOG_DEBUG << "Start Override.";
+	CPSLOG_DEBUG << "Start Override.";
 
 	if (manualActive_)
 	{
-		APLOG_DEBUG << "Start Manual Override.";
+		CPSLOG_DEBUG << "Start Manual Override.";
 
 		std::unique_lock<std::mutex> overrideLock(overrideMutex_);
 		Override override = override_;
@@ -395,7 +393,7 @@ ManeuverPlanner::startOverride()
 		auto dp = get<DataPresentation>();
 		if (!dp)
 		{
-			APLOG_ERROR << "DataPresentation missing, cannot send maneuver analysis";
+			CPSLOG_ERROR << "DataPresentation missing, cannot send maneuver analysis";
 			return;
 		}
 
@@ -409,7 +407,7 @@ ManeuverPlanner::startOverride()
 	}
 	else if (maneuverActive_)
 	{
-		APLOG_DEBUG << "Start Maneuver Override.";
+		CPSLOG_DEBUG << "Start Maneuver Override.";
 
 		if (currentManeuver_ == currentManeuverSet_->second.end())
 		{
@@ -426,7 +424,7 @@ ManeuverPlanner::startOverride()
 void
 ManeuverPlanner::stopOverride()
 {
-	APLOG_DEBUG << "Stop Override.";
+	CPSLOG_DEBUG << "Stop Override.";
 
 	if (maneuverActive_)
 	{
@@ -457,7 +455,7 @@ ManeuverPlanner::stopOverride()
 	auto dp = get<DataPresentation>();
 	if (!dp)
 	{
-		APLOG_ERROR << "DataPresentation missing, cannot send maneuver analysis";
+		CPSLOG_ERROR << "DataPresentation missing, cannot send maneuver analysis";
 		return;
 	}
 
@@ -479,7 +477,7 @@ ManeuverPlanner::nextManeuverOverride()
 		return;
 	}
 
-	APLOG_DEBUG << "Next Maneuver Override.";
+	CPSLOG_DEBUG << "Next Maneuver Override.";
 
 	deactivateManeuverOverride();
 
@@ -505,11 +503,11 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 		return;
 	}
 
-	APLOG_DEBUG << "Activate Maneuver Override.";
+	CPSLOG_DEBUG << "Activate Maneuver Override.";
 
 	if (!currentManeuver_)
 	{
-		APLOG_WARN << "ManeuverPlanner: No Maneuver to Activate.";
+		CPSLOG_WARN << "ManeuverPlanner: No Maneuver to Activate.";
 		return;
 	}
 
@@ -517,7 +515,7 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 
 	if (currentManeuver == currentManeuverSet_->second.end())
 	{
-		APLOG_WARN << "ManeuverPlanner: Maneuver Ended.";
+		CPSLOG_WARN << "ManeuverPlanner: Maneuver Ended.";
 		return;
 	}
 
@@ -527,7 +525,7 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 
 		if (!conditionManager)
 		{
-			APLOG_ERROR << "ManeuverPlanner: Condition Manager Missing.";
+			CPSLOG_ERROR << "ManeuverPlanner: Condition Manager Missing.";
 			return;
 		}
 
@@ -637,14 +635,14 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 
 	AdvancedControl advancedControl = currentManeuver->advancedControl;
 
-	APLOG_TRACE << "Maneuver Camber Control: "
+	CPSLOG_TRACE << "Maneuver Camber Control: "
 			<< EnumMap<CamberControl>::convert(advancedControl.camberSelection);
-	APLOG_TRACE << "Maneuver Special Control: "
+	CPSLOG_TRACE << "Maneuver Special Control: "
 			<< EnumMap<SpecialControl>::convert(advancedControl.specialSelection);
-	APLOG_TRACE << "Maneuver Throw Control: "
+	CPSLOG_TRACE << "Maneuver Throw Control: "
 			<< EnumMap<ThrowsControl>::convert(advancedControl.throwsSelection);
-	APLOG_TRACE << "Maneuver Camber Value: " << advancedControl.camberValue;
-	APLOG_TRACE << "Maneuver Special Value: " << advancedControl.specialValue;
+	CPSLOG_TRACE << "Maneuver Camber Value: " << advancedControl.camberValue;
+	CPSLOG_TRACE << "Maneuver Special Value: " << advancedControl.specialValue;
 
 	std::unique_lock<std::mutex> maneuverAnalysisStatusLock(maneuverAnalysisStatusMutex_);
 	maneuverAnalysisStatus_.maneuver = maneuverSet_;
@@ -661,7 +659,7 @@ ManeuverPlanner::activateManeuverOverride(const ICondition::ConditionTrigger& co
 	auto dp = get<DataPresentation>();
 	if (!dp)
 	{
-		APLOG_ERROR << "DataPresentation missing, cannot send maneuver analysis";
+		CPSLOG_ERROR << "DataPresentation missing, cannot send maneuver analysis";
 		return;
 	}
 
@@ -683,11 +681,11 @@ ManeuverPlanner::deactivateManeuverOverride()
 		return;
 	}
 
-	APLOG_DEBUG << "Deactivate Maneuver Override.";
+	CPSLOG_DEBUG << "Deactivate Maneuver Override.";
 
 	if (!currentManeuver_)
 	{
-		APLOG_WARN << "ManeuverPlanner: No Maneuver to Deactivate.";
+		CPSLOG_WARN << "ManeuverPlanner: No Maneuver to Deactivate.";
 		return;
 	}
 
@@ -695,7 +693,7 @@ ManeuverPlanner::deactivateManeuverOverride()
 
 	if (currentManeuver == currentManeuverSet_->second.end())
 	{
-		APLOG_WARN << "ManeuverPlanner: Maneuver Ended.";
+		CPSLOG_WARN << "ManeuverPlanner: Maneuver Ended.";
 		return;
 	}
 
@@ -705,7 +703,7 @@ ManeuverPlanner::deactivateManeuverOverride()
 
 		if (!conditionManager)
 		{
-			APLOG_ERROR << "ManeuverPlanner: Condition Manager Missing.";
+			CPSLOG_ERROR << "ManeuverPlanner: Condition Manager Missing.";
 			return;
 		}
 
@@ -720,7 +718,7 @@ ManeuverPlanner::deactivateManeuverOverride()
 	auto dp = get<DataPresentation>();
 	if (!dp)
 	{
-		APLOG_ERROR << "DataPresentation missing, cannot send maneuver analysis";
+		CPSLOG_ERROR << "DataPresentation missing, cannot send maneuver analysis";
 		return;
 	}
 

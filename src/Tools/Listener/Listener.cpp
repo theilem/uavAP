@@ -24,9 +24,9 @@
  */
 
 #include <boost/property_tree/json_parser.hpp>
-#include "uavAP/Core/Runner/SimpleRunner.h"
 
-#include "uavAP/Core/Logging/APLogger.h"
+#include <cpsCore/Synchronization/SimpleRunner.h>
+
 #include "uavAP/API/ap_ext/ApExtManager.h"
 #include "uavAP/FlightControl/FlightControlHelper.h"
 
@@ -68,7 +68,7 @@ dispSens(const SensorData& sd)
 int
 main(int argc, char** argv)
 {
-	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
+	CPSLogger::instance()->setLogLevel(LogLevel::DEBUG);
 	auto ipc = std::make_shared<IPC>();
 	auto dp = std::make_shared<DataPresentation>();
 	auto tp = std::make_shared<SystemTimeProvider>();

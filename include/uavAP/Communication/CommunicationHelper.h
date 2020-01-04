@@ -28,32 +28,24 @@
 #ifndef UAVAP_COMMUNICATION_COMMUNICATIONHELPER_H_
 #define UAVAP_COMMUNICATION_COMMUNICATIONHELPER_H_
 
-#include "uavAP/Core/IDC/NetworkLayer/NetworkFactory.h"
-#include "uavAP/Core/IDC/IDC.h"
-#include "uavAP/Core/DataPresentation/DataPresentation.h"
-#include "uavAP/Core/IPC/IPC.h"
-#include "uavAP/Core/TimeProvider/TimeProviderFactory.h"
-#include "uavAP/Core/Scheduler/SchedulerFactory.h"
-#include "uavAP/Core/Framework/Helper.h"
-
+#include <cpsCore/Framework/StaticHelper.h>
+#include <cpsCore/Utilities/Scheduler/SchedulerFactory.h>
+#include <cpsCore/Utilities/TimeProvider/TimeProviderFactory.h>
+#include <cpsCore/Utilities/IDC/NetworkLayer/NetworkFactory.h>
+#include <cpsCore/Utilities/IDC/TransportLayer/ITransportLayer.h>
+#include <cpsCore/Utilities/IDC/IDC.h>
+#include <cpsCore/Utilities/IPC/IPC.h>
+#include <cpsCore/Utilities/SignalHandler/SignalHandler.h>
 #include "uavAP/Communication/Comm/CommFactory.h"
 
-class CommunicationHelper: public Helper
-{
-public:
 
-	CommunicationHelper()
-	{
-		addDefaultConfigurable<IPC>();
-		addDefaultCreator<IDC>();
-		addDefault<SchedulerFactory>();
-		addDefault<TimeProviderFactory>();
-		addDefaultCreator<DataPresentation>();
-
-		addFactory<CommFactory>();
-		addFactory<NetworkFactory>();
-	}
-
-};
-
+using CommunicationHelper = StaticHelper<
+        SignalHandler,
+		IPC,
+		IDC,
+		SchedulerFactory,
+		TimeProviderFactory,
+		DataPresentation,
+		CommFactory,
+		NetworkFactory>;
 #endif /* UAVAP_COMMUNICATION_COMMUNICATIONHELPER_H_ */

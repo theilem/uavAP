@@ -23,8 +23,6 @@
  *      Author: mircot
  */
 #include <boost/thread/thread_time.hpp>
-#include "uavAP/Core/Logging/APLogger.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/Watchdog/ProcessMonitor/ProcessMonitor.h"
 
 ProcessMonitor::ProcessMonitor() :
@@ -78,11 +76,6 @@ ProcessMonitor::run(RunStage stage)
 	return false;
 }
 
-void
-ProcessMonitor::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-}
-
 int
 ProcessMonitor::getNumOfProcesses()
 {
@@ -102,20 +95,19 @@ ProcessMonitor::killAll()
 
 	if (!tryJoinAll(Seconds(2)))
 	{
-		APLOG_ERROR << "Processes did not join after 2sec and SIGINT. Sending SIGTERM.";
-		APLogger::instance()->flush();
+		CPSLOG_ERROR << "Processes did not join after 2sec and SIGINT. Sending SIGTERM.";
 		for (auto& it : processes_)
 		{
 			if (it.process.running())
 			{
-				APLOG_DEBUG << "Killing " << it.name << " with SIGTERM";
+				CPSLOG_DEBUG << "Killing " << it.name << " with SIGTERM";
 				kill(it.id, SIGTERM);
 			}
 		}
 	}
 	else
 	{
-		APLOG_DEBUG << "All processes joined successfully";
+		CPSLOG_DEBUG << "All processes joined successfully";
 	}
 }
 
@@ -127,7 +119,7 @@ ProcessMonitor::checkAlive()
 	{
 		if (!it.process.running())
 		{
-			APLOG_ERROR << it.name << " died";
+			CPSLOG_ERROR << it.name << " died";
 			result = false;
 		}
 	}
@@ -141,15 +133,15 @@ ProcessMonitor::startAll()
 	{
 		try
 		{
-			APLOG_DEBUG << "Start Process " << it.name;
-			APLOG_DEBUG << "with absolut path: " << binaryPath_;
-			APLOG_DEBUG << "with binary path: " << it.binaryPath;
-			APLOG_DEBUG << "with config path: " << it.configPath;
+			CPSLOG_DEBUG << "Start Process " << it.name;
+			CPSLOG_DEBUG << "with absolut path: " << binaryPath_;
+			CPSLOG_DEBUG << "with binary path: " << it.binaryPath;
+			CPSLOG_DEBUG << "with config path: " << it.configPath;
 			it.startChild(binaryPath_, configPath_);
-			APLOG_DEBUG << "Success. ID: " << it.id;
+			CPSLOG_DEBUG << "Success. ID: " << it.id;
 		} catch (boost::process::process_error& er)
 		{
-			APLOG_ERROR << "Failed to launch process " << it.name << ": " << er.what();
+			CPSLOG_ERROR << "Failed to launch process " << it.name << ": " << er.what();
 			return false;
 		}
 	}
@@ -176,8 +168,7 @@ ProcessMonitor::tryJoinAll(Duration timeout)
 //				}
 				if (it.process.wait_for(Milliseconds(1)))
 				{
-					APLOG_DEBUG << "Joined " << it.name;
-					APLogger::instance()->flush();
+					CPSLOG_DEBUG << "Joined " << it.name;
 
 					it.joined = true;
 				}

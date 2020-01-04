@@ -7,9 +7,9 @@
 
 #ifndef UAVAP_MISSIONCONTROL_GLOBALPLANNER_SPLINEGLOBALPLANNER_SPLINEGLOBALPLANNERPARAMS_H_
 #define UAVAP_MISSIONCONTROL_GLOBALPLANNER_SPLINEGLOBALPLANNER_SPLINEGLOBALPLANNERPARAMS_H_
-#include "uavAP/Core/PropertyMapper/Parameter.h"
-#include "uavAP/Core/LinearAlgebra.h"
 
+#include <cpsCore/Configuration/Parameter.hpp>
+#include <cpsCore/Utilities/LinearAlgebra.h>
 
 struct SplineGlobalPlannerParams
 {

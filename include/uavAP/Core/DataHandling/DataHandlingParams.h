@@ -7,9 +7,9 @@
 
 #ifndef UAVAP_CORE_DATAHANDLING_DATAHANDLINGPARAMS_H_
 #define UAVAP_CORE_DATAHANDLING_DATAHANDLINGPARAMS_H_
-#include <uavAP/Core/DataPresentation/Content.h>
-#include <uavAP/Core/PropertyMapper/Parameter.h>
 
+#include <cpsCore/Configuration/Parameter.hpp>
+#include "uavAP/Core/DataHandling/Content.hpp"
 
 struct DataHandlingParams
 {
