@@ -16,12 +16,29 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-add_subdirectory(FlightControl)
-add_subdirectory(FlightAnalysis)
-add_subdirectory(Core)
-add_subdirectory(MissionControl) 
-add_subdirectory(Communication) 
-add_subdirectory(API) 
-add_subdirectory(Watchdog) 
-add_subdirectory(Tools)
+set(CORE_SRC "")
 
+add_subdirectory(DataHandling)
+add_subdirectory(Frames)
+
+set(CORE_SRC 	${CORE_SRC}
+				${CMAKE_CURRENT_SOURCE_DIR}/SensorData.cpp
+				)
+
+				
+add_library(uavap_core SHARED ${CORE_SRC})
+
+target_link_libraries(uavap_core 	${BOOST}
+									${REDIS}
+									pthread
+									rt
+									dl									
+									)
+
+add_custom_target(core DEPENDS uavap_core uavap_framework_api)
+									
+									
+install(TARGETS uavap_core 
+		RUNTIME DESTINATION bin
+		LIBRARY DESTINATION lib
+		ARCHIVE DESTINATION lib)

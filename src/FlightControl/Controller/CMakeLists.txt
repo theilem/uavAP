@@ -16,12 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-add_subdirectory(FlightControl)
-add_subdirectory(FlightAnalysis)
-add_subdirectory(Core)
-add_subdirectory(MissionControl) 
-add_subdirectory(Communication) 
-add_subdirectory(API) 
-add_subdirectory(Watchdog) 
-add_subdirectory(Tools)
+add_subdirectory(ControlElements)
 
+set(FLIGHT_CONTROL_SRC 	${FLIGHT_CONTROL_SRC}
+						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/ManeuverPIDController/ManeuverPIDController.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/ManeuverPIDController/detail/ManeuverCascade.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/ManeuverRatePIDController/ManeuverRatePIDController.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/ManeuverRatePIDController/ManeuverRateCascade.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/RatePIDController/RatePIDController.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/PIDController/RatePIDController/detail/RateCascade.cpp
+						PARENT_SCOPE)

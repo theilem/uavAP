@@ -1,8 +1,0 @@
---style=allman
---align-pointer=type 
---align-reference=type
---break-return-type-decl
---break-return-type
---pad-comma
---pad-oper
---indent=force-tab
