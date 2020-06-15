@@ -51,7 +51,7 @@ struct Maneuver
 		PropertyMapper<Configuration> pm(config);
 		Configuration conditionTree;
 		Configuration controllerOutputOverrideTree;
-		static ConditionFactory factory;
+		ConditionFactory factory;
 
 		pm.add<Override>("override", override, true);
 
@@ -95,7 +95,7 @@ struct Maneuver
 		pm.add<bool>("analyze_maneuver", analyzeManeuver, false);
 		pm.add<bool>("analyze_trim", analyzeTrim, false);
 
-		condition = factory.create(conditionTree);
+		condition = ConditionFactory::create(conditionTree);
 
 		return pm.map();
 	}

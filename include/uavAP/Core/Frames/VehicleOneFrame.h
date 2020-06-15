@@ -27,6 +27,7 @@
 #define UAVAP_CORE_FRAMES_VEHICLEONEFRAME_H_
 #include <uavAP/Core/Frames/IFrame.h>
 #include <cpsCore/Utilities/LinearAlgebra.h>
+#include <cpsCore/Utilities/DataPresentation/detail/Split.h>
 
 class VehicleOneFrame: public IFrame
 {

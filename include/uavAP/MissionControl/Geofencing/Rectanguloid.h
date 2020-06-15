@@ -7,8 +7,8 @@
 
 #ifndef UAVAP_MISSIONCONTROL_GEOFENCING_RECTANGULOID_H_
 #define UAVAP_MISSIONCONTROL_GEOFENCING_RECTANGULOID_H_
-#include <uavAP/Core/LinearAlgebra.h>
 
+#include <cpsCore/Utilities/LinearAlgebra.h>
 
 struct Rectanguloid
 {

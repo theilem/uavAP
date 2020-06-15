@@ -7,9 +7,9 @@
 
 #ifndef UAVAP_MISSIONCONTROL_MANEUVERPLANNER_MANEUVERPLANNERPARAMS_H_
 #define UAVAP_MISSIONCONTROL_MANEUVERPLANNER_MANEUVERPLANNERPARAMS_H_
-#include <uavAP/Core/LinearAlgebra.h>
-#include <uavAP/Core/PropertyMapper/Parameter.h>
-#include <uavAP/Core/PropertyMapper/ParameterRef.h>
+#include <cpsCore/Utilities/LinearAlgebra.h>
+#include <cpsCore/Configuration/Parameter.hpp>
+#include <cpsCore/Configuration/ParameterRef.hpp>
 #include <uavAP/MissionControl/Geofencing/Rectanguloid.h>
 
 template <typename Config>

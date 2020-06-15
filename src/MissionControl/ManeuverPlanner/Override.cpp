@@ -26,7 +26,6 @@
 #include <sstream>
 #include <string>
 #include <boost/property_tree/ptree.hpp>
-#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
 
 #include "uavAP/MissionControl/ManeuverPlanner/Override.h"
 
@@ -58,7 +57,7 @@ Override::configure(const Configuration& config)
 
 		if (!std::getline(ss, overrideGroup, '/') || !std::getline(ss, overrideMember, '/'))
 		{
-			APLOG_WARN << "Override: Invalid Override: " << override;
+			CPSLOG_WARN << "Override: Invalid Override: " << override;
 		}
 
 		auto overrideGroupEnum = EnumMap<OverrideGroup>::convert(overrideGroup);
@@ -115,12 +114,12 @@ Override::configure(const Configuration& config)
 		}
 		case OverrideGroup::INVALID:
 		{
-			APLOG_WARN << "Override: Invalid Override Group for " << override;
+			CPSLOG_WARN << "Override: Invalid Override Group for " << override;
 			break;
 		}
 		default:
 		{
-			APLOG_WARN << "Override: Unknown Override Group for " << override;
+			CPSLOG_WARN << "Override: Unknown Override Group for " << override;
 		}
 		}
 	}

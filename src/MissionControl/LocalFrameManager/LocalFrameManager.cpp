@@ -22,34 +22,13 @@
  *  Created on: Aug 9, 2018
  *      Author: mircot
  */
-#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
-#include <uavAP/Core/Scheduler/IScheduler.h>
+#include <cpsCore/Utilities/Scheduler/IScheduler.h>
 #include <uavAP/MissionControl/LocalFrameManager/LocalFrameManager.h>
-#include <uavAP/Core/IPC/IPC.h>
+#include <cpsCore/Utilities/IPC/IPC.h>
 
 LocalFrameManager::LocalFrameManager() :
 		frame_(0)
 {
-}
-
-bool
-LocalFrameManager::configure(const Configuration& config)
-{
-	PropertyMapper<Configuration> pm(config);
-	double yaw = 0;
-	Vector3 origin(0,0,0);
-	pm.add<double>("yaw", yaw, true);
-	pm.add("origin", origin, true);
-
-	frame_ = VehicleOneFrame(yaw * M_PI/180.0, origin);
-	return pm.map();
-}
-
-void
-LocalFrameManager::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	ipc_.setFromAggregationIfNotSet(agg);
-	scheduler_.setFromAggregationIfNotSet(agg);
 }
 
 bool
@@ -59,26 +38,22 @@ LocalFrameManager::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!ipc_.isSet())
+		if (!checkIsSet<IPC,IScheduler>())
 		{
-			APLOG_ERROR << "LocalFrameManger: IPC missing";
+			CPSLOG_ERROR << "LocalFrameManger: missing deps";
 			return true;
 		}
+		frame_ = VehicleOneFrame(params.yaw()(), params.origin());
 
-		if (!scheduler_.isSet())
-		{
-			APLOG_ERROR << "LocalFrameManger: Scheduler missing";
-			return true;
-		}
+		auto ipc = get<IPC>();
 
-		auto ipc = ipc_.get();
 
 		framePublisher_ = ipc->publish<VehicleOneFrame>("local_frame");
 		break;
 	}
 	case RunStage::NORMAL:
 	{
-		auto scheduler = scheduler_.get();
+		auto scheduler = get<IScheduler>();
 		scheduler->schedule(std::bind(&LocalFrameManager::publishFrame, this), Milliseconds(0), Milliseconds(500));
 		break;
 	}

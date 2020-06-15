@@ -30,6 +30,8 @@
 #include <cpsCore/Utilities/IPC/Publisher.h>
 
 #include <uavAP/FlightControl/Controller/ControlElements/Filter/LowPassFilter.h>
+#include <cpsCore/Utilities/IPC/Subscription.h>
+#include <cpsCore/Utilities/LockTypes.hpp>
 #include "uavAP/MissionControl/WindAnalysis/WindAnalysisStatus.h"
 #include "uavAP/MissionControl/WindAnalysis/WindAnalysisParams.h"
 

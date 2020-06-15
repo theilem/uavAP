@@ -27,11 +27,12 @@
 #include <mutex>
 #include <cpsCore/Utilities/LockTypes.hpp>
 #include <cpsCore/Utilities/Scheduler/IScheduler.h>
-#include <cpsCore/Utilities/IPC/IPC.h>
 
 #include "uavAP/MissionControl/MissionPlanner/CustomPlanner/CustomPlanner.h"
+#include <cpsCore/Utilities/DataPresentation/detail/BasicSerialization.h>
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
+#include <cpsCore/Utilities/IPC/IPC.h>
 
 CustomPlanner::CustomPlanner() :
 		defaultVelocity_(0), defaultAltitude_(100.0), useApproach_(false)

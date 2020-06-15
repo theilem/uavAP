@@ -26,21 +26,11 @@
 #ifndef UAVAP_MISSIONCONTROL_CONDITIONMANAGER_CONDITION_CONDITIONFACTORY_H_
 #define UAVAP_MISSIONCONTROL_CONDITIONMANAGER_CONDITION_CONDITIONFACTORY_H_
 
-#include "uavAP/Core/Framework/Factory.h"
+#include <cpsCore/Framework/StaticFactory.h>
 #include "uavAP/MissionControl/ConditionManager/Condition/DurationCondition.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/SteadyStateCondition.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/SensorDataCondition.h"
 
-class ConditionFactory: public Factory<ICondition>
-{
-public:
-
-	ConditionFactory()
-	{
-		addCreator<DurationCondition>();
-		addCreator<SteadyStateCondition>();
-		addCreator<SensorDataCondition>();
-	}
-};
+using ConditionFactory = StaticFactory<ICondition, false, DurationCondition, SteadyStateCondition, SensorDataCondition>;
 
 #endif /* UAVAP_MISSIONCONTROL_CONDITIONMANAGER_CONDITION_CONDITIONFACTORY_H_ */

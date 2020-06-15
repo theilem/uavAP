@@ -23,11 +23,9 @@
  *      Author: simonyu
  */
 
-#include "uavAP/Core/Scheduler/IScheduler.h"
-#include "uavAP/Core/Logging/APLogger.h"
+#include <cpsCore/Utilities/Scheduler/IScheduler.h>
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/DurationCondition.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 
 std::shared_ptr<DurationCondition>
 DurationCondition::create(const Configuration& config)
@@ -36,7 +34,7 @@ DurationCondition::create(const Configuration& config)
 
 	if (!durationCondition->configure(config))
 	{
-		APLOG_ERROR << "DurationCondition: Failed to Load Config.";
+		CPSLOG_ERROR << "DurationCondition: Failed to Load Config.";
 	}
 
 	return durationCondition;
@@ -60,7 +58,7 @@ DurationCondition::activate(ConditionManager* conditionManager,
 
 	if (!scheduler)
 	{
-		APLOG_ERROR << "DurationCondition: Scheduler Missing.";
+		CPSLOG_ERROR << "DurationCondition: Scheduler Missing.";
 		return;
 	}
 

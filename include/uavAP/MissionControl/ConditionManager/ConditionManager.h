@@ -28,12 +28,11 @@
 
 #include <boost/signals2.hpp>
 
-#include "uavAP/Core/DataPresentation/Packet.h"
-#include "uavAP/Core/IPC/Subscription.h"
-#include "uavAP/Core/Object/ObjectHandle.h"
+#include <cpsCore/cps_object>
+#include <cpsCore/Utilities/Packet.h>
+#include <cpsCore/Utilities/IPC/Subscription.h>
+
 #include "uavAP/Core/SensorData.h"
-#include "uavAP/Core/Object/AggregatableObject.hpp"
-#include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightAnalysis/StateAnalysis/Metrics.h"
 #include "uavAP/MissionControl/ConditionManager/ICondition.h"
 

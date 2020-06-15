@@ -8,7 +8,7 @@
 #ifndef UAVAP_MISSIONCONTROL_CONDITIONMANAGER_CONDITION_RELATIONAL_H_
 #define UAVAP_MISSIONCONTROL_CONDITIONMANAGER_CONDITION_RELATIONAL_H_
 
-#include "uavAP/Core/EnumMap.hpp"
+#include "cpsCore/Utilities/EnumMap.hpp"
 
 enum class Relational
 {

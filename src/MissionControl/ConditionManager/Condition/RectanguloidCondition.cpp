@@ -23,9 +23,6 @@
  *      Author: simonyu
  */
 
-#include <uavAP/Core/PropertyMapper/ParameterRef.h>
-#include <uavAP/Core/PropertyMapper/PropertyMapper.h>
-#include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
 #include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlannerParams.h"
@@ -49,7 +46,7 @@ RectanguloidCondition::create(const Configuration& config)
 
 	if (!rectanguloidCondition->configure(config))
 	{
-		APLOG_ERROR << "RectanguloidCondition: Failed to Load Config.";
+		CPSLOG_ERROR << "RectanguloidCondition: Failed to Load Config.";
 	}
 
 	return rectanguloidCondition;

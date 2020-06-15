@@ -26,12 +26,12 @@
 
 #include <vector>
 
-#include <cpsCore/Utilities/IPC/IPC.h>
-#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 #include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
+#include <cpsCore/Utilities/IPC/IPC.h>
+#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 
 ManeuverPlanner::ManeuverPlanner() :
 		maneuverAnalysis_(false), maneuverAnalysisStatus_(), trimAnalysis_(false), overrideInterrupted_(
@@ -86,7 +86,7 @@ ManeuverPlanner::configure(const Configuration& config)
 		}
 
 		currentManeuverSet_ = maneuverSetMap_.end();
-		currentManeuver_ = boost::none;
+		currentManeuver_ = std::nullopt;
 	}
 
 	return pm.map();

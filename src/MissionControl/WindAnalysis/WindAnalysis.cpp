@@ -23,10 +23,10 @@
  *      Author: simonyu
  */
 
-#include <cpsCore/Utilities/LockTypes.hpp>
-#include <cpsCore/Utilities/IPC/IPC.h>
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/MissionControl/WindAnalysis/WindAnalysis.h"
+#include <cpsCore/Utilities/LockTypes.hpp>
+#include <cpsCore/Utilities/IPC/IPC.h>
 
 bool
 WindAnalysis::run(RunStage stage)

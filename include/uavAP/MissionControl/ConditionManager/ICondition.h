@@ -37,6 +37,8 @@ class ICondition
 
 public:
 
+	static constexpr auto typeId = "condition";
+
 	virtual
 	~ICondition() = default;
 

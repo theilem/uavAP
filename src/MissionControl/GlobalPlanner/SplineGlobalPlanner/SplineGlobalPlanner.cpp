@@ -214,7 +214,7 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 		pointMat.row(2) = wp[1].location.transpose();
 	}
 
-	bool populateApproach = mission.initialPosition.is_initialized();
+	bool populateApproach = mission.initialPosition.has_value();
 
 	for (auto it = wp.begin(); it != wp.end(); ++it)
 	{

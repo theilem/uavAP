@@ -28,9 +28,8 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-#include "uavAP/Core/Time.h"
-#include "uavAP/Core/Scheduler/Event.h"
 #include "uavAP/MissionControl/ConditionManager/ICondition.h"
+#include <cpsCore/Utilities/Scheduler/Event.h>
 
 class ConditionManager;
 

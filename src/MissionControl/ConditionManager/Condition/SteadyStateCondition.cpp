@@ -23,13 +23,10 @@
  *      Author: simonyu
  */
 
-#include <uavAP/Core/Scheduler/IScheduler.h>
-#include "uavAP/Core/Logging/APLogger.h"
+#include <cpsCore/Utilities/Scheduler/IScheduler.h>
+#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/SteadyStateCondition.h"
-#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
-#include "uavAP/Core/DataPresentation/DataPresentation.h"
 
 SteadyStateCondition::SteadyStateCondition() :
 		connection_(), steadyState_(true), trigger_(), event_(), minimumDuration_(
@@ -44,7 +41,7 @@ SteadyStateCondition::create(const Configuration& config)
 
 	if (!steadyStateCondition->configure(config))
 	{
-		APLOG_ERROR << "SteadyStateCondition: Failed to Load Config.";
+		CPSLOG_ERROR << "SteadyStateCondition: Failed to Load Config.";
 	}
 
 	return steadyStateCondition;
@@ -73,13 +70,13 @@ SteadyStateCondition::activate(ConditionManager* conditionManager,
 
 	if (!scheduler)
 	{
-		APLOG_ERROR << "SteadyStateCondition: Scheduler Missing.";
+		CPSLOG_ERROR << "SteadyStateCondition: Scheduler Missing.";
 		return;
 	}
 
 	if (!dp_)
 	{
-		APLOG_ERROR << "SteadyStateCondition: Data Presentation Missing.";
+		CPSLOG_ERROR << "SteadyStateCondition: Data Presentation Missing.";
 		return;
 	}
 

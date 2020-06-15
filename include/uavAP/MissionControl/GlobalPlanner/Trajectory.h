@@ -32,6 +32,8 @@
 #include <uavAP/MissionControl/GlobalPlanner/PathSections/Curve.h>
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h"
 
+#include <cpsCore/Utilities/DataPresentation/detail/Split.h>
+
 #include <vector>
 #include <memory>
 #include <iostream>
@@ -96,7 +98,7 @@ store(Archive & ar, const std::shared_ptr<IPathSection> & t)
 		}
 		else
 		{
-			ar << PathSectionType::UNNKNOWN;
+			ar << PathSectionType::UNKNOWN;
 		}
 	}
 }

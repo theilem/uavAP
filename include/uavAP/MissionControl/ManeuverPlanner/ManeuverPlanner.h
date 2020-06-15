@@ -33,6 +33,9 @@
 
 #include <uavAP/MissionControl/Geofencing/Rectanguloid.h>
 #include <uavAP/MissionControl/ManeuverPlanner/ManeuverPlannerParams.h>
+#include <cpsCore/Utilities/LockTypes.hpp>
+#include <cpsCore/Utilities/IPC/Subscription.h>
+#include <cpsCore/Utilities/IPC/Publisher.h>
 #include "uavAP/FlightAnalysis/ManeuverAnalysis/ManeuverAnalysisStatus.h"
 #include "uavAP/FlightControl/Controller/AdvancedControl.h"
 #include "uavAP/MissionControl/ManeuverPlanner/ManeuverSet.h"
@@ -142,26 +145,26 @@ private:
 	mutable Mutex advancedControlMutex_;
 
 	bool maneuverAnalysis_;
-	mutable std::mutex maneuverAnalysisMutex_;
+	mutable Mutex maneuverAnalysisMutex_;
 
 	ManeuverAnalysisStatus maneuverAnalysisStatus_;
-	mutable std::mutex maneuverAnalysisStatusMutex_;
+	mutable Mutex maneuverAnalysisStatusMutex_;
 
 	bool trimAnalysis_;
-	mutable std::mutex trimAnalysisMutex_;
+	mutable Mutex trimAnalysisMutex_;
 
 	ControllerOutput controllerOutput_;
 	mutable Mutex controllerOutputMutex_;
 
 	ControllerOutput controllerOutputTrim_;
-	mutable std::mutex controllerOutputTrimMutex_;
+	mutable Mutex controllerOutputTrimMutex_;
 
 	ControllerOutput controllerOutputOffset_;
-	mutable std::mutex controllerOutputOffsetMutex_;
+	mutable Mutex controllerOutputOffsetMutex_;
 
 	ManeuverSetMap maneuverSetMap_;
 	ManeuverSetMap::const_iterator currentManeuverSet_;
-	boost::optional<ManeuverSet::const_iterator> currentManeuver_;
+	std::optional<ManeuverSet::const_iterator> currentManeuver_;
 
 	std::string maneuverSet_;
 	bool overrideInterrupted_;
@@ -170,7 +173,7 @@ private:
 
 	Override lastManualOverride_;
 	std::string lastManeuverSet_;
-	boost::optional<ManeuverSet::const_iterator> lastManeuver_;
+	std::optional<ManeuverSet::const_iterator> lastManeuver_;
 	bool lastManualActive_;
 	bool lastManeuverActive_;
 

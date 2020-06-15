@@ -24,12 +24,10 @@
  */
 
 #include "uavAP/Core/Frames/InertialFrame.h"
-#include "uavAP/Core/Logging/APLogger.h"
 #include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/ConditionManager/Condition/RectanguloidCondition.h"
-#include "uavAP/Core/Object/AggregatableObjectImpl.hpp"
-#include "uavAP/Core/IPC/IPC.h"
-#include "uavAP/Core/DataPresentation/DataPresentation.h"
+#include "cpsCore/Utilities/IPC/IPC.h"
+#include "cpsCore/Utilities/DataPresentation/DataPresentation.h"
 
 std::shared_ptr<ConditionManager>
 ConditionManager::create(const Configuration& config)
@@ -38,7 +36,7 @@ ConditionManager::create(const Configuration& config)
 
 	if (!conditionManager->configure(config))
 	{
-		APLOG_ERROR << "ConditionManager: Failed to Load Config.";
+		CPSLOG_ERROR << "ConditionManager: Failed to Load Config.";
 	}
 
 	return conditionManager;
@@ -59,7 +57,7 @@ ConditionManager::run(RunStage stage)
 	{
 		if (!checkIsSet<IPC, IScheduler, DataPresentation>())
 		{
-			APLOG_ERROR << "ManeuverAnalysis: Missing dependencies.";
+			CPSLOG_ERROR << "ManeuverAnalysis: Missing dependencies.";
 			return true;
 		}
 
@@ -74,7 +72,7 @@ ConditionManager::run(RunStage stage)
 
 		if (!sensorDataSubscription_.connected())
 		{
-			APLOG_ERROR << "ConditionManager: Sensor Data Missing.";
+			CPSLOG_ERROR << "ConditionManager: Sensor Data Missing.";
 
 			return true;
 		}
@@ -84,7 +82,7 @@ ConditionManager::run(RunStage stage)
 
 		if (!steadyStateSubscription_.connected())
 		{
-			APLOG_ERROR << "ConditionManager: Steady State Missing.";
+			CPSLOG_ERROR << "ConditionManager: Steady State Missing.";
 
 //			return true;
 		}

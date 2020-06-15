@@ -28,18 +28,20 @@
 
 #include <mutex>
 
+#include <cpsCore/cps_object>
+#include <cpsCore/Utilities/IPC/Publisher.h>
+
 #include "uavAP/Core/Frames/VehicleOneFrame.h"
-#include "uavAP/Core/IPC/Publisher.h"
-#include "uavAP/Core/Object/IAggregatableObject.h"
-#include "uavAP/Core/Runner/IRunnableObject.h"
-#include "uavAP/Core/Logging/APLogger.h"
-#include "uavAP/Core/Object/ObjectHandle.h"
-#include "uavAP/Core/PropertyMapper/Configuration.h"
+#include "uavAP/MissionControl/LocalFrameManager/LocalFrameManagerParams.h"
 
 class IPC;
+
 class IScheduler;
 
-class LocalFrameManager: public IAggregatableObject, public IRunnableObject
+class LocalFrameManager
+		: public AggregatableObject<IPC, IScheduler>,
+		  public ConfigurableObject<LocalFrameManagerParams>,
+		  public IRunnableObject
 {
 
 public:
@@ -47,14 +49,6 @@ public:
 	static constexpr TypeId typeId = "local_frame";
 
 	LocalFrameManager();
-
-	bool
-	configure(const Configuration& config);
-
-	ADD_CREATE_WITH_CONFIG(LocalFrameManager);
-
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
 
 	bool
 	run(RunStage stage) override;
@@ -70,8 +64,6 @@ private:
 	void
 	publishFrame();
 
-	ObjectHandle<IPC> ipc_;
-	ObjectHandle<IScheduler> scheduler_;
 	Publisher<VehicleOneFrame> framePublisher_;
 	VehicleOneFrame frame_;
 	mutable std::mutex frameMutex_;

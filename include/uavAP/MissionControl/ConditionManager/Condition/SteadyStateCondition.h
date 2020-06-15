@@ -28,9 +28,8 @@
 
 #include <boost/signals2.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <uavAP/Core/Scheduler/Event.h>
+#include <cpsCore/Utilities/Packet.h>
 
-#include "uavAP/Core/DataPresentation/Packet.h"
 #include "uavAP/FlightAnalysis/StateAnalysis/Metrics.h"
 #include "uavAP/MissionControl/ConditionManager/ICondition.h"
 

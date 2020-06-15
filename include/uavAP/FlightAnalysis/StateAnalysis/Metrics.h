@@ -26,11 +26,8 @@
 #ifndef UAVAP_FLIGHTANALYSIS_STATEANALYSIS_METRICS_H_
 #define UAVAP_FLIGHTANALYSIS_STATEANALYSIS_METRICS_H_
 
-#include <uavAP/Core/PropertyMapper/Configuration.h>
 #include <utility>
 
-#include "uavAP/Core/Time.h"
-#include "uavAP/Core/LinearAlgebra.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include "uavAP/FlightControl/Controller/PIDController/PIDMapping.h"
