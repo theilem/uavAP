@@ -26,15 +26,11 @@
 #ifndef UAVAP_SIMULATION_CHANNELMIXING_H_
 #define UAVAP_SIMULATION_CHANNELMIXING_H_
 
-#include <uavAP/Core/PropertyMapper/Configuration.h>
 #include <vector>
 #include <Eigen/Dense>
 
-#include "uavAP/Core/IPC/Publisher.h"
-#include "uavAP/Core/Object/IAggregatableObject.h"
-#include "uavAP/Core/Object/ObjectHandle.h"
-#include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightControl/Controller/AdvancedControl.h"
+#include <cpsCore/Configuration/Configuration.hpp>
 
 struct ControllerOutput;
 

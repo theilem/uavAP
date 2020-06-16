@@ -30,6 +30,7 @@
 
 #include <cpsCore/Utilities/IPC/Publisher.h>
 #include <uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlannerParams.h>
+#include <uavAP/Core/DataHandling/Content.hpp>
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 
@@ -38,9 +39,10 @@ class ILocalPlanner;
 class IPC;
 
 class DataPresentation;
+class DataHandling;
 
 class SplineGlobalPlanner : public IGlobalPlanner,
-							public AggregatableObject<ILocalPlanner, IPC, DataPresentation>,
+							public AggregatableObject<ILocalPlanner, IPC, DataPresentation, DataHandling>,
 							public ConfigurableObject<SplineGlobalPlannerParams>,
 							public IRunnableObject
 {
@@ -48,10 +50,7 @@ public:
 
 	static constexpr TypeId typeId = "spline";
 
-	SplineGlobalPlanner();
-
-	static std::shared_ptr<IGlobalPlanner>
-	create(const Configuration& config);
+	SplineGlobalPlanner() = default;
 
 	bool
 	run(RunStage stage) override;
@@ -69,6 +68,9 @@ private:
 
 	Trajectory
 	createCatmulRomSplines(const Mission& mission);
+
+	Mission
+	missionRequest(const DataRequest& request);
 
 	Mission mission_;
 

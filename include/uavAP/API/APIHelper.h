@@ -14,7 +14,8 @@
 #include <cpsCore/Utilities/Scheduler/SchedulerFactory.h>
 #include <cpsCore/Utilities/IPC/IPC.h>
 #include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
+#include <cpsCore/Utilities/SignalHandler/SignalHandler.h>
 
-using APIHelper = StaticHelper<TimeProviderFactory, SchedulerFactory, IPC, DataPresentation>;
+using APIHelper = StaticHelper<TimeProviderFactory, SchedulerFactory, IPC, DataPresentation, SignalHandler>;
 
 #endif /* UAVAP_API_APIHELPER_H_ */

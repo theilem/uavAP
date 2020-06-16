@@ -31,6 +31,7 @@
 #include "uavAP/MissionControl/MissionPlanner/CustomPlanner/CustomPlanner.h"
 #include <cpsCore/Utilities/DataPresentation/detail/BasicSerialization.h>
 #include "uavAP/Core/SensorData.h"
+#include "uavAP/Core/DataHandling/DataHandling.h"
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
 #include <cpsCore/Utilities/IPC/IPC.h>
 
@@ -80,39 +81,48 @@ CustomPlanner::run(RunStage stage)
 {
 	switch (stage)
 	{
-	case RunStage::INIT:
-	{
-		if (!checkIsSet<IPC, IScheduler, IGlobalPlanner>())
+		case RunStage::INIT:
 		{
-			CPSLOG_ERROR << "CustomPlanner: Missing deps.";
-			return true;
+			if (!checkIsSet<IPC, IScheduler, IGlobalPlanner, DataHandling>())
+			{
+				CPSLOG_ERROR << "CustomPlanner: Missing deps.";
+				return true;
+			}
+
+			break;
 		}
-
-		break;
-	}
-	case RunStage::NORMAL:
-	{
-		auto ipc = get<IPC>();
-
-		sensorDataSubscription_ = ipc->subscribe<SensorData>("sensor_data",
-				std::bind(&CustomPlanner::onSensorData, this, std::placeholders::_1));
-
-		if (!sensorDataSubscription_.connected())
+		case RunStage::NORMAL:
 		{
-			CPSLOG_ERROR << "Sensor Data Missing.";
-			return true;
-		}
+			auto ipc = get<IPC>();
 
-		auto scheduler = get<IScheduler>();
-		scheduler->schedule(std::bind(&CustomPlanner::publishMission, this), Milliseconds(100));
-		break;
-	}
-	case RunStage::FINAL:
-	{
-		break;
-	}
-	default:
-		break;
+			sensorDataSubscription_ = ipc->subscribe<SensorData>("sensor_data",
+																 std::bind(&CustomPlanner::onSensorData, this,
+																		   std::placeholders::_1));
+
+			if (!sensorDataSubscription_.connected())
+			{
+				CPSLOG_ERROR << "Sensor Data Missing.";
+				return true;
+			}
+
+			if (auto dh = get<DataHandling>())
+			{
+				dh->subscribeOnCommand<std::string>(Content::SELECT_MISSION,
+													std::bind(&CustomPlanner::missionRequest, this,
+															  std::placeholders::_1));
+			}
+
+
+			auto scheduler = get<IScheduler>();
+			scheduler->schedule(std::bind(&CustomPlanner::publishMission, this), Milliseconds(100));
+			break;
+		}
+		case RunStage::FINAL:
+		{
+			break;
+		}
+		default:
+			break;
 	}
 	return false;
 }

@@ -29,15 +29,18 @@
 #include <cpsCore/Framework/StaticHelper.h>
 #include <cpsCore/Utilities/TimeProvider/TimeProviderFactory.h>
 #include <cpsCore/Utilities/Scheduler/SchedulerFactory.h>
-#include "uavAP/MissionControl/DataHandling/MissionControlDataHandling.h"
-#include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
+//#include "uavAP/MissionControl/DataHandling/MissionControlDataHandling.h"
+//#include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/GlobalPlanner/GlobalPlannerFactory.h"
 #include "uavAP/MissionControl/MissionPlanner/MissionPlannerFactory.h"
-#include "uavAP/MissionControl/Geofencing/Geofencing.h"
-#include "uavAP/MissionControl/Geofencing/GeofencingModelFactory.h"
+//#include "uavAP/MissionControl/Geofencing/Geofencing.h"
+//#include "uavAP/MissionControl/Geofencing/GeofencingModelFactory.h"
 #include "uavAP/MissionControl/LocalFrameManager/LocalFrameManager.h"
-#include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
-#include "uavAP/MissionControl/WindAnalysis/WindAnalysis.h"
+#include "uavAP/Core/DataHandling/DataHandling.h"
+#include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
+#include <cpsCore/Utilities/SignalHandler/SignalHandler.h>
+//#include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
+//#include "uavAP/MissionControl/WindAnalysis/WindAnalysis.h"
 //
 //class MissionControlHelper: public Helper
 //{
@@ -62,19 +65,37 @@
 //	}
 //};
 
+//using MissionControlHelper = StaticHelper<
+//		IPC,
+//		MissionControlDataHandling,
+//		ConditionManager,
+//		SchedulerFactory,
+//		TimeProviderFactory,
+//		DataPresentation,
+//		ManeuverPlanner,
+//		LocalFrameManager,
+//		MissionPlannerFactory,
+//		GlobalPlannerFactory,
+//		GeofencingModelFactory,
+//		Geofencing,
+//		WindAnalysis>;
+
 using MissionControlHelper = StaticHelper<
 		IPC,
-		MissionControlDataHandling,
-		ConditionManager,
+//		MissionControlDataHandling,
+//		ConditionManager,
 		SchedulerFactory,
 		TimeProviderFactory,
 		DataPresentation,
-		ManeuverPlanner,
+		DataHandling,
+//		ManeuverPlanner,
 		LocalFrameManager,
 		MissionPlannerFactory,
 		GlobalPlannerFactory,
-		GeofencingModelFactory,
-		Geofencing,
-		WindAnalysis>;
+		SignalHandler
+//		GeofencingModelFactory,
+//		Geofencing,
+//		WindAnalysis
+		>;
 
 #endif /* UAVAP_MISSIONCONTROL_MISSIONCONTROLHELPER_H_ */

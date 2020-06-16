@@ -26,7 +26,6 @@
 #include "uavAP/API/ap_ext/latLongToUTM.h"
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include <cmath>
 #include <iostream>
 #include <boost/thread/thread_time.hpp>
@@ -105,6 +104,8 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	sampleNr_ = 0;
 
 	SensorData sens;
+	ServoData servo;
+	PowerData power;
 
 	//************************
 	// IMU Data
@@ -113,7 +114,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	Vector3 angularRate;
 	Vector3 euler;
 	Eigen::Quaterniond attitude;
-	imu_sample_t* imuSample = NULL;
+	imu_sample_t* imuSample = nullptr;
 
 	angularRate << 0.0, 0.0, 0.0;
 
@@ -128,7 +129,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 
 	if (!imuSample)
 	{
-		APLOG_ERROR << "Cannot read imu sample from external imu.";
+		CPSLOG_ERROR << "Cannot read imu sample from external imu.";
 	}
 	else
 	{
@@ -180,7 +181,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 				sens.timestamp = TimePoint(duration) + Nanoseconds(dur.total_nanoseconds());
 			} catch (std::out_of_range& err)
 			{
-				APLOG_ERROR << "Time is not valid. " << err.what();
+				CPSLOG_ERROR << "Time is not valid. " << err.what();
 				sens.timestamp = TimePoint();
 			}
 		}
@@ -233,7 +234,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 		auto pic = sample->pic_sample;
 		if (!pic)
 		{
-			APLOG_ERROR << "PIC sample not available. Cannot read ext GPS data.";
+			CPSLOG_ERROR << "PIC sample not available. Cannot read ext GPS data.";
 			sens.hasGPSFix = false;
 			sens.timestamp = TimePoint();
 		}
@@ -271,7 +272,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	}
 	else
 	{
-		imu_sample_t* imu = NULL;
+		imu_sample_t* imu = nullptr;
 		if (internalImu_)
 		{
 			imu = sample->int_imu_sample;
@@ -283,7 +284,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 
 		if (!imu)
 		{
-			APLOG_ERROR << "IMU sample not available. Cannot read GPS data.";
+			CPSLOG_ERROR << "IMU sample not available. Cannot read GPS data.";
 			sens.hasGPSFix = false;
 		}
 		else
@@ -346,7 +347,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 		const airs_sample_t* airspeed = sample->airs_sample;
 		if (!airspeed)
 		{
-			APLOG_ERROR << "Cannot read airspeed sample. Set airspeed to groundspeed.";
+			CPSLOG_ERROR << "Cannot read airspeed sample. Set airspeed to groundspeed.";
 			sens.airSpeed = sens.groundSpeed;
 		}
 		else
@@ -393,15 +394,12 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	auto pic = sample->pic_sample;
 	if (!pic)
 	{
-		APLOG_ERROR << "Cannot read PIC sample. Set autopilot active to true.";
+		CPSLOG_ERROR << "Cannot read PIC sample. Set autopilot active to true.";
 		sens.autopilotActive = true;
 	}
 	else
 	{
 		sens.autopilotActive = pic->adc_channels[20] > 2000;
-
-		if (traceSeqNr_)
-			sens.sequenceNr = static_cast<uint32_t>(pic->pwm_channels[21]);
 
 		PWMFeedback pwmFeed;
 		std::copy(pic->pwm_channels, pic->pwm_channels + PWM_CHS, pwmFeed.ch);
@@ -410,10 +408,10 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	auto slink = sample->slink_sample;
 	if (slink)
 	{
-		sens.batteryVoltage = slink->channels->volt;
-		sens.batteryCurrent = slink->channels->current;
-		sens.throttle = slink->channels->throttle;
-		sens.rpm = slink->channels->rpm;
+		power.batteryVoltage = slink->channels->volt;
+		power.batteryCurrent = slink->channels->current;
+		servo.throttle = slink->channels->throttle;
+		servo.rpm = slink->channels->rpm;
 	}
 
 	//************************
@@ -449,6 +447,8 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	}
 
 	uavapAPI_.setSensorData(sens);
+	uavapAPI_.setServoData(servo);
+	uavapAPI_.setPowerData(power);
 
 	return 0;
 }
@@ -460,7 +460,7 @@ ApExtManager::ap_actuate(unsigned long* pwm, unsigned int num_channels)
 
 	if (num_channels < outputChannels_.size())
 	{
-		APLOG_ERROR << "More output channels than available: " << num_channels << " < "
+		CPSLOG_ERROR << "More output channels than available: " << num_channels << " < "
 				<< outputChannels_.size();
 		return -1;
 	}
@@ -483,8 +483,6 @@ ApExtManager::onControllerOutput(const ControllerOutput& output)
 		outputChannels_.push_back(round(mix[i]));
 	}
 
-	if (traceSeqNr_)
-		outputChannels_.push_back(static_cast<unsigned long>(output.sequenceNr));
 	lock.unlock();
 }
 

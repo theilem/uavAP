@@ -22,14 +22,14 @@
  *  Created on: Sep 15, 2017
  *      Author: mircot
  */
-#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
-#include <cpsCore/Utilities/IPC/IPC.h>
 #include <cpsCore/Utilities/Scheduler/IScheduler.h>
 
 #include <uavAP/Core/DataHandling/Content.hpp>
 #include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/detail/ManeuverCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/ManeuverPIDController.h"
+#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
+#include <cpsCore/Utilities/IPC/IPC.h>
 #include "uavAP/Core/DataHandling/DataHandling.h"
 
 std::shared_ptr<ManeuverPIDController>
@@ -155,7 +155,7 @@ ManeuverPIDController::calculateControl()
 	}
 	pidCascade_->evaluate();
 
-	controllerOutput_.sequenceNr = std::min(sensorData_.sequenceNr, controllerTarget_.sequenceNr);
+//	controllerOutput_.sequenceNr = std::min(sensorData_.sequenceNr, controllerTarget_.sequenceNr);
 
 	targetLock.unlock();
 

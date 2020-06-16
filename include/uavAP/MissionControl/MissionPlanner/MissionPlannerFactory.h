@@ -30,7 +30,7 @@
 
 #include "uavAP/MissionControl/MissionPlanner/IMissionPlanner.h"
 #include "uavAP/MissionControl/MissionPlanner/CustomPlanner/CustomPlanner.h"
-#include "uavAP/MissionControl/MissionPlanner/SimpleMissionPlanner/SimpleMissionPlanner.h"
+//#include "uavAP/MissionControl/MissionPlanner/SimpleMissionPlanner/SimpleMissionPlanner.h"
 
 //class MissionPlannerFactory: public Factory<IMissionPlanner>
 //{

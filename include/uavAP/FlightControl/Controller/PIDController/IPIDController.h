@@ -30,7 +30,7 @@
 #include "uavAP/FlightControl/Controller/ControlElements/Control.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDCascade.h"
 #include "uavAP/FlightControl/Controller/IController.h"
-#include "uavAP/Core/PropertyMapper/Configuration.h"
+#include <cpsCore/Configuration/Configuration.hpp>
 
 class IPIDController : public IController
 {

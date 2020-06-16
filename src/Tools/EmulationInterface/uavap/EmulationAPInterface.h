@@ -25,22 +25,23 @@
 
 #ifndef AUTOPILOT_INTERFACE_INCLUDE_AUTOPILOT_INTERFACE_AUTOPILOTINTERFACE_H_
 #define AUTOPILOT_INTERFACE_INCLUDE_AUTOPILOT_INTERFACE_AUTOPILOTINTERFACE_H_
-#include <boost/property_tree/ptree.hpp>
-#include <uavAP/Core/IPC/Publisher.h>
-#include <uavAP/Core/IPC/Subscription.h>
-#include <uavAP/Core/Object/IAggregatableObject.h>
-#include <uavAP/Core/Object/ObjectHandle.h>
-#include <uavAP/Core/Runner/IRunnableObject.h>
 
 #include <uavAP/API/ap_ext/ap_ext.h>
-#include <uavAP/API/ap_ext/ServoMapping.h>
 #include <uavAP/API/ChannelMixing.h>
-#include <uavAP/Core/DataPresentation/DataPresentation.h>
-#include <uavAP/Core/IDC/Serial/SerialIDC.h>
 #include <uavAP/Core/SensorData.h>
-#include <uavAP/Core/Scheduler/IScheduler.h>
+#include <cpsCore/cps_object>
+#include "EmulationAPInterfaceParams.h"
 
-class EmulationAPInterface: public IAggregatableObject, public IRunnableObject
+class DataPresentation;
+
+class IScheduler;
+
+class INetworkLayer;
+
+class EmulationAPInterface:
+				public ConfigurableObject<EmulationAPInterfaceParams>,
+				public IRunnableObject,
+				public AggregatableObject<IDC, DataPresentation, IScheduler>
 {
 public:
 
@@ -48,16 +49,7 @@ public:
 
 	EmulationAPInterface();
 
-	~EmulationAPInterface();
-
-	static std::shared_ptr<EmulationAPInterface>
-	create(const Configuration& config);
-
-	bool
-	configure(const Configuration& config);
-
-	void
-	notifyAggregationOnUpdate(const Aggregator& agg) override;
+	~EmulationAPInterface() override;
 
 	bool
 	run(RunStage stage) override;
@@ -82,15 +74,11 @@ private:
 
 	ChannelMixing channelMixing_;
 	ServoMapping servoMapping_;
-	ObjectHandle<DataPresentation> dataPresentation_;
-	ObjectHandle<IScheduler> scheduler_;
-	ObjectHandle<INetworkLayer> idc_;
 
 	std::string serialPort_;
 	Sender actuationSender_;
 
 	const int numChannels_;
-	uint32_t lastSequenceNr_;
 };
 
 #endif /* AUTOPILOT_INTERFACE_INCLUDE_AUTOPILOT_INTERFACE_AUTOPILOTINTERFACE_H_ */

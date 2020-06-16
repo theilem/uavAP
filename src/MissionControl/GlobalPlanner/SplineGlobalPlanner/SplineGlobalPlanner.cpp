@@ -27,54 +27,48 @@
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 #include "uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlanner.h"
 #include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
+#include "uavAP/Core/DataHandling/DataHandling.h"
 #include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 #include <cpsCore/Utilities/IPC/IPC.h>
 
-SplineGlobalPlanner::SplineGlobalPlanner()
-{
-}
-
-std::shared_ptr<IGlobalPlanner>
-SplineGlobalPlanner::create(const Configuration& config)
-{
-	auto gp = std::make_shared<SplineGlobalPlanner>();
-	gp->configure(config);
-	return gp;
-}
 
 bool
 SplineGlobalPlanner::run(RunStage stage)
 {
 	switch (stage)
 	{
-	case RunStage::INIT:
-	{
-		if (!isSet<ILocalPlanner>())
+		case RunStage::INIT:
 		{
-			if (!checkIsSet<IPC, DataPresentation>())
+			if (!isSet<ILocalPlanner>())
 			{
-				CPSLOG_ERROR << "SplineGlobalPlanner: Local planner and IPC missing. Needs one.";
+				if (!checkIsSet<IPC, DataPresentation>())
+				{
+					CPSLOG_ERROR << "SplineGlobalPlanner: Local planner and IPC missing. Needs one.";
 
-				return true;
+					return true;
+				}
 			}
-		}
-		if (!isSet<ILocalPlanner>())
-		{
-			CPSLOG_DEBUG << "Using IPC to publish trajectory";
+			if (!isSet<ILocalPlanner>())
+			{
+				CPSLOG_DEBUG << "Using IPC to publish trajectory";
 
-			auto ipc = get<IPC>();
-			trajectoryPublisher_ = ipc->publishPackets("trajectory");
+				auto ipc = get<IPC>();
+				trajectoryPublisher_ = ipc->publishPackets("trajectory");
+			}
+			break;
 		}
-		break;
-	}
-	case RunStage::NORMAL:
-	{
-		break;
-	}
-	case RunStage::FINAL:
-		break;
-	default:
-		break;
+		case RunStage::NORMAL:
+		{
+			if (auto dh = get<DataHandling>())
+			{
+				dh->addTriggeredStatusFunction<Mission, DataRequest>(
+						std::bind(&SplineGlobalPlanner::missionRequest, this,
+								  std::placeholders::_1), Content::MISSION, Content::REQUEST_DATA);
+			}
+			break;
+		}
+		default:
+			break;
 	}
 	return false;
 }
@@ -158,7 +152,7 @@ SplineGlobalPlanner::createNaturalSplines(const Mission& mission)
 		else
 			temp.row(0) = wp[j + 1].location - wp[j].location;
 
-		P.push_back(Rn * temp);
+		P.emplace_back(Rn * temp);
 	}
 
 	auto C = P;
@@ -179,7 +173,7 @@ SplineGlobalPlanner::createNaturalSplines(const Mission& mission)
 		FloatingType velocity = (!wp[j].velocity) ? mission.velocity : *wp[j].velocity;
 
 		auto spline = std::make_shared<CubicSpline>(wp[j].location, C[j].row(0), C[j].row(1),
-				C[j].row(2), velocity);
+													C[j].row(2), velocity);
 		traj.push_back(spline);
 
 	}
@@ -198,7 +192,9 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 	PathSections traj;
 
 	Eigen::Matrix<FloatingType, 4, 4> tauMat;
-	tauMat << 0, 1, 0, 0, -params.tau(), 0, params.tau(), 0, 2 * params.tau(), params.tau() - 3, 3 - 2 * params.tau(), -params.tau(), -params.tau(), 2
+	tauMat << 0, 1, 0, 0, -params.tau(), 0, params.tau(), 0, 2 * params.tau(), params.tau() - 3, 3 - 2 *
+																									 params.tau(), -params.tau(), -params.tau(),
+			2
 			- params.tau(), params.tau() - 2, params.tau();
 	Eigen::Matrix<FloatingType, 4, 3> pointMat;
 	Eigen::Matrix<FloatingType, 4, 3> approachMat;
@@ -262,7 +258,7 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 				FloatingType velocity = (!it->velocity) ? mission.velocity : *it->velocity;
 				traj.push_back(
 						std::make_shared<Orbit>(it->location, Vector3::UnitZ(), params.orbitRadius(),
-								velocity));
+												velocity));
 				break;
 			}
 			nextIt = wp.begin();
@@ -310,7 +306,7 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 		Eigen::Matrix<FloatingType, 3, 4> C = (tauMat * pointMat).transpose();
 		FloatingType velocity = (!it->velocity) ? mission.velocity : *it->velocity;
 		auto spline = std::make_shared<CubicSpline>(C.col(0), C.col(1), C.col(2), C.col(3),
-				velocity);
+													velocity);
 		traj.push_back(spline);
 
 		pointMat.topRows(3) = pointMat.bottomRows(3);
@@ -326,15 +322,23 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 		approachMat.row(1) = init.location.transpose();
 		if (init.direction)
 			approachMat.row(0) = approachMat.row(2)
-					- (init.direction->transpose() * mission.velocity);
+								 - (init.direction->transpose() * mission.velocity);
 		else
 			approachMat.row(0) = approachMat.row(1);
 
 		Eigen::Matrix<FloatingType, 3, 4> C = (tauMat * approachMat).transpose();
 		auto spline = std::make_shared<CubicSpline>(C.col(0), C.col(1), C.col(2), C.col(3),
-				mission.velocity);
+													mission.velocity);
 		result.approachSection = spline;
 	}
 
 	return result;
+}
+
+Mission
+SplineGlobalPlanner::missionRequest(const DataRequest& request)
+{
+	if (request == DataRequest::MISSION)
+		return mission_;
+	return Mission();
 }

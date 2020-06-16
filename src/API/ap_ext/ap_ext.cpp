@@ -22,7 +22,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include "uavAP/API/ap_ext/ap_ext.h"
 #include "uavAP/API/ap_ext/ApExtManager.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
+#include <cpsCore/Configuration/PropertyMapper.hpp>
 #include <string>
 
 #define SERVO_MIN 3600
@@ -35,10 +35,10 @@ static std::string configPath = "/usr/local/config/alvolo.json";
 int
 ap_ext_setup()
 {
-	APLOG_DEBUG << "Setup of ap_ext";
+	CPSLOG_DEBUG << "Setup of ap_ext";
 	if (apManager)
 	{
-		APLOG_ERROR << "Setup already executed.";
+		CPSLOG_ERROR << "Setup already executed.";
 		return -1;
 	}
 
@@ -53,18 +53,18 @@ ap_ext_setup()
 
 	} catch (boost::property_tree::json_parser_error& err)
 	{
-		APLOG_ERROR << "Configuration file problem: " << err.what();
+		CPSLOG_ERROR << "Configuration file problem: " << err.what();
 		return -1;
 	}
 
 	apManager = new ApExtManager();
 	if (!apManager->configure(interfaceConf))
 	{
-		APLOG_ERROR << "Configuration of ApExtManager failed. Further behavior undefined.";
+		CPSLOG_ERROR << "Configuration of ApExtManager failed. Further behavior undefined.";
 		return -1;
 	}
 
-	APLOG_DEBUG << "Successful setup.";
+	CPSLOG_DEBUG << "Successful setup.";
 
 	return 0;
 }
@@ -75,7 +75,7 @@ ap_ext_sense(const struct data_sample_t * sample)
 
 	if (!apManager)
 	{
-		APLOG_ERROR << "Setup not called before sensing.";
+		CPSLOG_ERROR << "Setup not called before sensing.";
 		return -1;
 	}
 
@@ -87,7 +87,7 @@ ap_ext_actuate(unsigned long * pwm, unsigned int num_channels)
 {
 	if (!apManager)
 	{
-		APLOG_ERROR << "Setup not called before actuating.";
+		CPSLOG_ERROR << "Setup not called before actuating.";
 		return -1;
 	}
 
@@ -97,10 +97,10 @@ ap_ext_actuate(unsigned long * pwm, unsigned int num_channels)
 int
 ap_ext_teardown()
 {
-	APLOG_DEBUG << "Ap_ext teardown called";
+	CPSLOG_DEBUG << "Ap_ext teardown called";
 	if (!apManager)
 	{
-		APLOG_ERROR << "Teardown called without setup.";
+		CPSLOG_ERROR << "Teardown called without setup.";
 		return -1;
 	}
 	delete apManager;

@@ -18,12 +18,12 @@
 #-------------------------------------------------------------------------------
 add_executable(JsonPopulation JsonPopulation.cpp)
 
-target_link_libraries(JsonPopulation  	uavap_core
-										uavap_flight_control
-										uavap_mission_control
-										uavap_mission_control_geo
-										)
+target_link_libraries(JsonPopulation uavap_core
+        uavap_flight_control
+        uavap_mission_control
+        cps_core
+        )
 
 install(TARGETS JsonPopulation OPTIONAL
-		RUNTIME DESTINATION bin/uavAP
-		LIBRARY DESTINATION lib OPTIONAL)
+        RUNTIME DESTINATION bin/uavAP
+        LIBRARY DESTINATION lib OPTIONAL)

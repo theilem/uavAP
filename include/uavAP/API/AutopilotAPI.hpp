@@ -41,6 +41,12 @@ public:
 	void
 	setSensorData(const SensorData& sd);
 
+	void
+	setServoData(const ServoData& sd);
+
+	void
+	setPowerData(const PowerData& pd);
+
 	/**
 	 * @brief Establishes connection to Autopilot shared memory instances. Creates sensor_data in SM and
 	 * 		  subscribes on actuation and advanced_control SM.
@@ -75,6 +81,8 @@ private:
 	OnAdvancedControl onAdvancedControl_;
 
 	Publisher<SensorData> sensorDataPublisher_;
+	Publisher<ServoData> servoDataPublisher_;
+	Publisher<PowerData> powerDataPublisher_;
 	Subscription controllerOutSubscription_;
 	Subscription advancedControlSubscription_;
 	Subscription localFrameSubscription_;

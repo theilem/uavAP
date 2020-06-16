@@ -74,7 +74,7 @@ public:
 private:
 
 	void
-	createLocalPlan(const Vector3& position, double heading, bool hasGPSFix, uint32_t seqNum);
+	createLocalPlan(const Vector3& position, double heading, bool hasGPSFix);
 
 	std::shared_ptr<IPathSection>
 	updatePathSection(const Vector3& position);

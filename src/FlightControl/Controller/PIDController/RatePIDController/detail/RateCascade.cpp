@@ -31,7 +31,7 @@
 #include "uavAP/FlightControl/Controller/PIDController/RatePIDController/detail/RateCascade.h"
 
 RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& accInertial,
-		ControllerTarget* target, ControllerOutput* output) :
+		ControllerTarget* target, ControllerOutput* output, ServoData* servoData) :
 		sensorData_(sensorData), controllerTarget_(target), controlEnv_(&sensorData->timestamp), hardRollConstraint_(
 				30.0), hardRollRateConstraint_(30.0), hardPitchConstraint_(30.0), hardPitchRateConstraint_(
 				30.0), rollConstraint_(30.0), rollRateConstraint_(30.0), rollOutConstraint_(1.0), pitchConstraint_(
@@ -95,17 +95,32 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 	auto velocityPID = controlEnv_.addPID(velocityTarget, velocityInput, accelerationInput,
 			defaultParams);
 
-	/* RPM Control */
-	auto rpmInput = controlEnv_.addInput(&sensorData->rpm);
-	auto rpmInputFilter = controlEnv_.addFilter(rpmInput, 0.5);
-	auto rpmTarget = controlEnv_.addConstant(0);
-	auto rpmPID = controlEnv_.addPID(rpmTarget, rpmInputFilter, defaultParams);
+	Control::Element throttleTarget = velocityPID;
+	if (servoData)
+	{
+		/* RPM Control */
+		auto rpmInput = controlEnv_.addInput(&servoData->rpm);
+		auto rpmInputFilter = controlEnv_.addFilter(rpmInput, 0.5);
+		auto rpmTarget = controlEnv_.addConstant(0);
+		auto rpmPID = controlEnv_.addPID(rpmTarget, rpmInputFilter, defaultParams);
+
+		pids_.insert(std::make_pair(PIDs::RPM, rpmPID));
+
+		throttleManualSwitch_ = controlEnv_.addManualSwitch(rpmPID, velocityPID);
+		throttleManualSwitch_->switchTo(useRPMController_);
+		throttleTarget = throttleManualSwitch_;
+	}
+	else
+	{
+		if (useRPMController_)
+		{
+			CPSLOG_ERROR << "RPM Controller requested but not available because ServoData is missing";
+		}
+	}
 
 	/* Throttle Output */
-	throttleManualSwitch_ = controlEnv_.addManualSwitch(rpmPID, velocityPID);
-	throttleManualSwitch_->switchTo(useRPMController_);
 	auto throttleOffset = controlEnv_.addConstant(1);
-	auto throttleDifference = controlEnv_.addDifference(throttleManualSwitch_, throttleOffset);
+	auto throttleDifference = controlEnv_.addDifference(throttleTarget, throttleOffset);
 	throttleOutputConstraint_ = controlEnv_.addConstraint(throttleDifference, -1, 1);
 	auto throttleOut = controlEnv_.addOutput(throttleOutputConstraint_, &output->throttleOutput);
 
@@ -147,7 +162,6 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 	pids_.insert(std::make_pair(PIDs::PITCH, pitchPID));
 	pids_.insert(std::make_pair(PIDs::PITCH_RATE, pitchRatePID));
 	pids_.insert(std::make_pair(PIDs::VELOCITY, velocityPID));
-	pids_.insert(std::make_pair(PIDs::RPM, rpmPID));
 	pids_.insert(std::make_pair(PIDs::RUDDER, rudderPID));
 
 }

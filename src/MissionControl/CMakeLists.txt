@@ -21,12 +21,12 @@ set(MISSION_CONTROL_GEO_SRC "")
 
 add_subdirectory(MissionPlanner)
 add_subdirectory(GlobalPlanner)
-add_subdirectory(DataHandling)
+#add_subdirectory(DataHandling)
 add_subdirectory(ManeuverPlanner)
-add_subdirectory(ConditionManager)
+#add_subdirectory(ConditionManager)
 add_subdirectory(LocalFrameManager)
-add_subdirectory(Geofencing)
-add_subdirectory(WindAnalysis)
+#add_subdirectory(Geofencing)
+#add_subdirectory(WindAnalysis)
 
 set(MISSION_CONTROL_SRC ${MISSION_CONTROL_SRC}
 						MissionControlPrint.cpp
@@ -39,21 +39,21 @@ add_library(uavap_mission_control SHARED ${MISSION_CONTROL_SRC}
 target_link_libraries(uavap_mission_control 	uavap_core
 												control)
 
-add_library(uavap_mission_control_geo SHARED ${MISSION_CONTROL_GEO_SRC})
+#add_library(uavap_mission_control_geo SHARED ${MISSION_CONTROL_GEO_SRC})
 
-target_link_libraries(uavap_mission_control_geo 	uavap_core
-													uavap_mission_control
-													control
-												${ARB})
+#target_link_libraries(uavap_mission_control_geo 	uavap_core
+#													uavap_mission_control
+#													control
+#												${ARB})
 
-add_executable(MissionControl   MissionControl.cpp
-								DataHandling/MissionControlDataHandling.cpp)
+add_executable(MissionControl   MissionControl.cpp)
 
 target_link_libraries(MissionControl    uavap_mission_control
 										uavap_mission_control_geo
+										cps_core
                                         )
                                         
 		
-install(TARGETS MissionControl uavap_mission_control uavap_mission_control_geo OPTIONAL
+install(TARGETS MissionControl uavap_mission_control OPTIONAL
 		RUNTIME DESTINATION bin/uavAP
 		LIBRARY DESTINATION lib )

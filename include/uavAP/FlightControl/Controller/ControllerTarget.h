@@ -30,6 +30,7 @@
 
 #include <cpsCore/Utilities/LinearAlgebra.h>
 #include <cpsCore/Utilities/EnumMap.hpp>
+#include <cpsCore/Utilities/DataPresentation/detail/SerializeCustom.h>
 
 struct ControllerTarget : SerializeCustom
 {
@@ -37,10 +38,11 @@ struct ControllerTarget : SerializeCustom
 	FloatingType yawRate;
 	FloatingType climbAngle;
 
-	uint32_t sequenceNr; //Trace sequence number to get timing
+//	uint32_t sequenceNr; //Trace sequence number to get timing
 
 	ControllerTarget() :
-			velocity(0), yawRate(0), climbAngle(0), sequenceNr(0)
+			velocity(0), yawRate(0), climbAngle(0)
+//			, sequenceNr(0)
 	{
 	}
 };

@@ -61,6 +61,8 @@ AutopilotAPI::initialize()
 {
 	auto ipc = aggregator_.getOne<IPC>();
 	sensorDataPublisher_ = ipc->publish<SensorData>("sensor_data");
+	servoDataPublisher_ = ipc->publish<ServoData>("servo_data");
+	powerDataPublisher_ = ipc->publish<PowerData>("power_data");
 
 	IPCOptions opts;
 	opts.retry = true;
@@ -141,4 +143,16 @@ AutopilotAPI::configure(const Configuration& config)
 {
 	aggregator_ = APIHelper::createAggregation(config);
 
+}
+
+void
+AutopilotAPI::setServoData(const ServoData& sd)
+{
+	servoDataPublisher_.publish(sd);
+}
+
+void
+AutopilotAPI::setPowerData(const PowerData& pd)
+{
+	powerDataPublisher_.publish(pd);
 }

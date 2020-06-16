@@ -67,17 +67,18 @@ ENUMMAP_INIT(Waveforms, { {Waveforms::NONE, "none"}, {Waveforms::SINE, "sine"}, 
 		"square"}, {Waveforms::RAMP, "ramp"}, {Waveforms::SAWTOOTH, "sawtooth"},
 		{Waveforms::TRIANGULAR, "triangular"} });
 
-struct ControllerOutput: SerializeCustom
+struct ControllerOutput : SerializeCustom
 {
 	FloatingType rollOutput;
 	FloatingType pitchOutput;
 	FloatingType yawOutput;
 	FloatingType throttleOutput;
 
-	uint32_t sequenceNr; //Trace sequence number to get timing
+//	uint32_t sequenceNr; //Trace sequence number to get timing
 
 	ControllerOutput() :
-			rollOutput(0), pitchOutput(0), yawOutput(0), throttleOutput(-1), sequenceNr(0)
+			rollOutput(0), pitchOutput(0), yawOutput(0), throttleOutput(-1)
+//			, sequenceNr(0)
 	{
 	}
 };
@@ -92,7 +93,7 @@ serialize(Archive& ar, ControllerOutput& t)
 	ar & t.pitchOutput;
 	ar & t.yawOutput;
 	ar & t.throttleOutput;
-	ar & t.sequenceNr;
+//	ar & t.sequenceNr;
 }
 }
 

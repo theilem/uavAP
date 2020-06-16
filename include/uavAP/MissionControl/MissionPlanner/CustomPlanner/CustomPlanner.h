@@ -36,10 +36,9 @@
 #include "uavAP/MissionControl/MissionPlanner/Mission.h"
 
 class IPC;
-
 class IGlobalPlanner;
-
 class IScheduler;
+class DataHandling;
 
 struct SensorData;
 
@@ -49,7 +48,7 @@ struct SensorData;
  *          has switches which can be switched from PID output to override output.
  */
 class CustomPlanner
-		: public IMissionPlanner, public AggregatableObject<IPC, IGlobalPlanner, IScheduler>, public IRunnableObject
+		: public IMissionPlanner, public AggregatableObject<IPC, IGlobalPlanner, IScheduler, DataHandling>, public IRunnableObject
 {
 public:
 

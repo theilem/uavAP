@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <cpsCore/Utilities/IPC/IPC.h>
+#include <cpsCore/Utilities/SignalHandler/SignalHandler.h>
 
 int
 main(int argc, char** argv)
@@ -45,11 +46,11 @@ main(int argc, char** argv)
 	{
 		input.clear();
 		std::cin >> input;
-		if (input.compare("q") == 0)
+		if (input == "q")
 		{
 			break;
 		}
-		if (input.compare("u") == 0)
+		if (input == "u")
 		{
 			sd.timestamp = Clock::now();
 			pub.publish(sd);

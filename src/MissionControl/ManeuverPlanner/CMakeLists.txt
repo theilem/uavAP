@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
 set(MISSION_CONTROL_SRC ${MISSION_CONTROL_SRC}
-						${CMAKE_CURRENT_SOURCE_DIR}/ManeuverPlanner.cpp
+#						${CMAKE_CURRENT_SOURCE_DIR}/ManeuverPlanner.cpp
 						${CMAKE_CURRENT_SOURCE_DIR}/Override.cpp
 						PARENT_SCOPE)
 						

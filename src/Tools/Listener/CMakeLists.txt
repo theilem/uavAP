@@ -18,7 +18,8 @@
 #-------------------------------------------------------------------------------
 add_executable(Listener Listener)
 
-target_link_libraries(Listener  uavap_core) #uavap_core_proto)
+target_link_libraries(Listener  uavap_core
+								cps_core)
 
 install(TARGETS Listener OPTIONAL
 		RUNTIME DESTINATION bin/uavAP

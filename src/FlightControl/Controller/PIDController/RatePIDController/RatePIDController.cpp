@@ -22,14 +22,14 @@
  *  Created on: Sep 15, 2017
  *      Author: mircot
  */
-#include <cpsCore/Utilities/IPC/IPC.h>
-#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
-#include <uavAP/Core/DataHandling/Content.hpp>
 
 #include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
 #include "uavAP/FlightControl/Controller/PIDController/RatePIDController/detail/RateCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/RatePIDController/RatePIDController.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
+#include <cpsCore/Utilities/IPC/IPC.h>
+#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
+#include <uavAP/Core/DataHandling/Content.hpp>
 
 RatePIDController::RatePIDController()
 {
@@ -159,7 +159,7 @@ RatePIDController::calculateControl()
 	}
 	pidCascade_->evaluate();
 
-	controllerOutput_.sequenceNr = std::min(sensorData_.sequenceNr, controllerTarget_.sequenceNr);
+//	controllerOutput_.sequenceNr = std::min(sensorData_.sequenceNr, controllerTarget_.sequenceNr);
 
 	targetLock.unlock();
 

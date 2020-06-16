@@ -43,7 +43,7 @@ class RateCascade: public IPIDCascade
 public:
 
 	RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& accInertial,
-			ControllerTarget* target, ControllerOutput* output);
+			ControllerTarget* target, ControllerOutput* output, ServoData* servoData = nullptr);
 
 	bool
 	configure(const Configuration& config);

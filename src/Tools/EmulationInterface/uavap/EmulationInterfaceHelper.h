@@ -25,26 +25,34 @@
 
 #ifndef SRC_CORE_TOOLS_EMULATIONINTERFACE_EMULATIONINTERFACEHELPER_H_
 #define SRC_CORE_TOOLS_EMULATIONINTERFACE_EMULATIONINTERFACEHELPER_H_
-#include <uavAP/Core/IDC/NetworkFactory.h>
-#include "uavAP/Core/TimeProvider/TimeProviderFactory.h"
-#include "uavAP/Core/DataPresentation/DataPresentation.h"
-#include "uavAP/Core/Scheduler/SchedulerFactory.h"
-#include "uavAP/Core/Framework/Helper.h"
 
 #include "EmulationAPInterface.h"
 
-class EmulationInterfaceHelper: public Helper
-{
-public:
-	EmulationInterfaceHelper()
-	{
-		addDefault<SchedulerFactory>();
-		addDefault<TimeProviderFactory>();
-		addDefault<NetworkFactory>();
-		addDefault<DataPresentation>();
+#include <cpsCore/Framework/StaticHelper.h>
+#include <cpsCore/Utilities/Scheduler/SchedulerFactory.h>
+#include <cpsCore/Utilities/TimeProvider/TimeProviderFactory.h>
+#include <cpsCore/Utilities/IDC/NetworkLayer/NetworkFactory.h>
+#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
+//
+//class EmulationInterfaceHelper: public Helper
+//{
+//public:
+//	EmulationInterfaceHelper()
+//	{
+//		addDefault<SchedulerFactory>();
+//		addDefault<TimeProviderFactory>();
+//		addDefault<NetworkFactory>();
+//		addDefault<DataPresentation>();
+//
+//		addCreator<EmulationAPInterface>();
+//	}
+//};
 
-		addCreator<EmulationAPInterface>();
-	}
-};
+using EmulationInterfaceHelper = StaticHelper<SchedulerFactory,
+		TimeProviderFactory,
+		NetworkFactory,
+		DataPresentation,
+		EmulationAPInterface,
+		SignalHandler>;
 
 #endif /* SRC_CORE_TOOLS_EMULATIONINTERFACE_EMULATIONINTERFACEHELPER_H_ */

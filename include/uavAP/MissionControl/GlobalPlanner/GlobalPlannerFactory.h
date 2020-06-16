@@ -29,19 +29,21 @@
 #include <memory>
 #include <boost/property_tree/ptree.hpp>
 
-#include "uavAP/Core/Framework/Factory.h"
+#include <cpsCore/Framework/StaticFactory.h>
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
 #include "uavAP/MissionControl/GlobalPlanner/FilletGlobalPlanner/FilletGlobalPlanner.h"
 #include "uavAP/MissionControl/GlobalPlanner/SplineGlobalPlanner/SplineGlobalPlanner.h"
+//
+//class GlobalPlannerFactory: public Factory<IGlobalPlanner>
+//{
+//public:
+//	GlobalPlannerFactory()
+//	{
+//		addCreator<FilletGlobalPlanner>();
+//		addCreator<SplineGlobalPlanner>();
+//	}
+//};
 
-class GlobalPlannerFactory: public Factory<IGlobalPlanner>
-{
-public:
-	GlobalPlannerFactory()
-	{
-		addCreator<FilletGlobalPlanner>();
-		addCreator<SplineGlobalPlanner>();
-	}
-};
+using GlobalPlannerFactory = StaticFactory<IGlobalPlanner, false, SplineGlobalPlanner, FilletGlobalPlanner>;
 
 #endif /* FLIGHTPLANNER_FLIGHTPLANNERFACTORY_H_ */

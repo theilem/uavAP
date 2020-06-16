@@ -7,8 +7,8 @@
 
 #ifndef UAVAP_FLIGHTCONTROL_LOCALPLANNER_MANEUVERLOCALPLANNER_MANEUVERLOCALPLANNERSTATUS_H_
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_MANEUVERLOCALPLANNER_MANEUVERLOCALPLANNERSTATUS_H_
-#include <uavAP/Core/DataPresentation/APDataPresentation/SerializeCustom.h>
-#include "uavAP/Core/LinearAlgebra.h"
+#include <cpsCore/Utilities/DataPresentation/detail/SerializeCustom.h>
+#include <cpsCore/Utilities/LinearAlgebra.h>
 
 struct ManeuverLocalPlannerStatus : public SerializeCustom
 {

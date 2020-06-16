@@ -24,17 +24,14 @@
  */
 
 #include <boost/property_tree/json_parser.hpp>
-#include "uavAP/Core/Runner/SimpleRunner.h"
-#include "uavAP/Core/Runner/SynchronizedRunner.h"
+#include <cpsCore/Synchronization/SynchronizedRunner.h>
 #include "uavAP/MissionControl/MissionControlHelper.h"
-
-#include "uavAP/Core/Logging/APLogger.h"
 
 int
 main(int argc, char** argv)
 {
-	APLogger::instance()->setLogLevel(LogLevel::DEBUG);
-	APLogger::instance()->setModuleName("MissionControl");
+	CPSLogger::instance()->setLogLevel(LogLevel::DEBUG);
+	CPSLogger::instance()->setModuleName("MissionControl");
 	std::string configPath;
 	if (argc == 2)
 	{

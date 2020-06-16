@@ -138,8 +138,7 @@ LinearLocalPlanner::nextSection()
 }
 
 void
-LinearLocalPlanner::createLocalPlan(const Vector3& position, FloatingType heading, bool hasGPSFix,
-		uint32_t seqNum)
+LinearLocalPlanner::createLocalPlan(const Vector3& position, FloatingType heading, bool hasGPSFix)
 {
 
 	Lock lock(trajectoryMutex_);
@@ -194,7 +193,7 @@ LinearLocalPlanner::createLocalPlan(const Vector3& position, FloatingType headin
 		controllerTarget_.velocity = currentSection->getVelocity();
 		controllerTarget_.yawRate = 0;
 	}
-	controllerTarget_.sequenceNr = seqNum;
+//	controllerTarget_.sequenceNr = seqNum;
 
 	auto controller = get<IController>();
 	if (!controller)
@@ -220,9 +219,9 @@ LinearLocalPlanner::onSensorData(const SensorData& sd)
 	Vector3 position = sd.position;
 	FloatingType heading = sd.attitude.z();
 	bool hasFix = sd.hasGPSFix;
-	uint32_t seq = sd.sequenceNr;
+//	uint32_t seq = sd.sequenceNr;
 
-	createLocalPlan(position, heading, hasFix, seq);
+	createLocalPlan(position, heading, hasFix);
 }
 
 void
@@ -237,7 +236,7 @@ LinearLocalPlanner::update()
 	}
 
 	SensorData data = sensing->getSensorData();
-	createLocalPlan(data.position, data.attitude.z(), data.hasGPSFix, data.sequenceNr);
+	createLocalPlan(data.position, data.attitude.z(), data.hasGPSFix);
 }
 
 ControllerTarget

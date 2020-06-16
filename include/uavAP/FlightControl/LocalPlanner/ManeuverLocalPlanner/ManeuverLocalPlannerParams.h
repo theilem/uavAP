@@ -7,9 +7,9 @@
 
 #ifndef UAVAP_FLIGHTCONTROL_LOCALPLANNER_MANEUVERLOCALPLANNER_MANEUVERLOCALPLANNERPARAMS_H_
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_MANEUVERLOCALPLANNER_MANEUVERLOCALPLANNERPARAMS_H_
-#include "uavAP/Core/LinearAlgebra.h"
-#include "uavAP/Core/PropertyMapper/Parameter.h"
 
+#include <cpsCore/Configuration/Parameter.hpp>
+#include <cpsCore/Utilities/LinearAlgebra.h>
 
 struct ManeuverLocalPlannerParams
 {

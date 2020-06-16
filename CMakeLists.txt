@@ -88,5 +88,5 @@ set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY true)
 add_subdirectory(src)
 add_subdirectory(test)
 
-install(DIRECTORY uavAP DESTINATION include) 
+install(DIRECTORY include/uavAP DESTINATION include)
 install(DIRECTORY config DESTINATION .) 

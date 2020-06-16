@@ -30,6 +30,7 @@
 #include <cpsCore/Utilities/TimeProvider/TimeProviderFactory.h>
 #include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 #include <cpsCore/Utilities/IPC/IPC.h>
+#include <cpsCore/Utilities/SignalHandler/SignalHandler.h>
 #include "uavAP/FlightControl/Controller/ControllerFactory.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
 #include "uavAP/FlightControl/LocalPlanner/LocalPlannerFactory.h"
@@ -61,6 +62,7 @@ using FlightControlHelper = StaticHelper<SchedulerFactory,
 		SensingActuationIOFactory,
 		DataHandling,
 		ControllerFactory,
-		LocalPlannerFactory>;
+		LocalPlannerFactory,
+		SignalHandler>;
 
 #endif /* UAVAP_FLIGHTCONTROL_FLIGHTCONTROLHELPER_H_ */

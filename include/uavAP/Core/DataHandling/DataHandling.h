@@ -41,7 +41,7 @@ public:
 
 	template<typename Type, typename TriggerType>
 	void
-	addTriggeredStatusFunction(std::function<boost::optional<Type>
+	addTriggeredStatusFunction(std::function<Optional<Type>
 	(const TriggerType&)> statusFunc, Content statusContent, Content TriggerCommand);
 
 	template<typename Type>
@@ -71,7 +71,7 @@ private:
 
 	template<typename Type, typename TriggerType>
 	void
-	evaluateTrigger(const TriggerType& any, std::function<boost::optional<Type>
+	evaluateTrigger(const TriggerType& any, std::function<Optional<Type>
 	(const TriggerType&)> callback, Content statusContent);
 
 	std::vector<std::function<Packet
@@ -141,7 +141,7 @@ DataHandling::forwardCommand(const Packet& packet, std::function<void
 
 template<typename Type, typename TriggerType>
 inline void
-DataHandling::addTriggeredStatusFunction(std::function<boost::optional<Type>
+DataHandling::addTriggeredStatusFunction(std::function<Optional<Type>
 (const TriggerType&)> statusFunc, Content statusContent, Content triggerCommand)
 {
 	std::function<void
@@ -152,7 +152,7 @@ DataHandling::addTriggeredStatusFunction(std::function<boost::optional<Type>
 
 template<typename Type, typename TriggerType>
 inline void
-DataHandling::evaluateTrigger(const TriggerType& trigger, std::function<boost::optional<Type>
+DataHandling::evaluateTrigger(const TriggerType& trigger, std::function<Optional<Type>
 (const TriggerType&)> callback, Content statusContent)
 {
 	auto status = callback(trigger);

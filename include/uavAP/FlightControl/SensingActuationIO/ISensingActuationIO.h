@@ -27,6 +27,7 @@
 #define UAVAP_FLIGHTCONTROL_IO_SENSINGACTUATIONIO_ISENSINGACTUATIONIO_H_
 
 #include "uavAP/Core/SensorData.h"
+#include <boost/signals2.hpp>
 
 struct ControllerOutput;
 

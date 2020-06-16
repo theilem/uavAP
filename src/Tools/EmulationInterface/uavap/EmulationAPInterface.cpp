@@ -25,15 +25,15 @@
 
 #include <uavAP/API/ap_ext/ap_ext.h>
 #include <uavAP/API/ap_ext/ApExtManager.h>
-#include <uavAP/Core/LinearAlgebra.h>
-#include <uavAP/Core/Time.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
+#include <cpsCore/Utilities/IDC/IDC.h>
+#include <cpsCore/Utilities/IDC/NetworkLayer/Serial/SerialNetworkParams.h>
 
 #include "UTMToLatLong.h"
 #include "EmulationAPInterface.h"
 
 EmulationAPInterface::EmulationAPInterface() :
-		setup_(false), numChannels_(7), lastSequenceNr_(0)
+		setup_(false), numChannels_(7)
 {
 }
 
@@ -47,7 +47,7 @@ EmulationAPInterface::create(const Configuration& config)
 {
 	auto emulation = std::make_shared<EmulationAPInterface>();
 	if (!emulation->configure(config))
-		APLOG_ERROR << "Configuration of EmulationAPInterface not successfull.";
+		CPSLOG_ERROR << "Configuration of EmulationAPInterface not successfull.";
 	return emulation;
 }
 
@@ -59,14 +59,6 @@ EmulationAPInterface::configure(const Configuration& config)
 	return channelMixing_.configure(config) && servoMapping_.configure(config) && pm.map();
 }
 
-void
-EmulationAPInterface::notifyAggregationOnUpdate(const Aggregator& agg)
-{
-	idc_.setFromAggregationIfNotSet(agg);
-	scheduler_.setFromAggregationIfNotSet(agg);
-	dataPresentation_.setFromAggregationIfNotSet(agg);
-}
-
 bool
 EmulationAPInterface::run(RunStage stage)
 {
@@ -74,30 +66,19 @@ EmulationAPInterface::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!idc_.isSet())
+		if (!checkIsSet<IDC, DataPresentation, IScheduler>())
 		{
-			APLOG_ERROR << "EmulationAPInterface idc missing.";
-			return true;
-		}
-		if (!dataPresentation_.isSet())
-		{
-			APLOG_ERROR << "EmulationAPInterface dataPresentation missing.";
-			return true;
-		}
-		if (!scheduler_.isSet())
-		{
-			APLOG_ERROR << "EmulationAPInterface Scheduler missing.";
+			CPSLOG_ERROR << "EmulationAPInterface: missing dependencies.";
 			return true;
 		}
 		break;
 	}
 	case RunStage::NORMAL:
 	{
-		auto idc = idc_.get();
-		auto sched = scheduler_.get();
+		auto idc = get<IDC>();
+		auto sched = get<IScheduler>();
 
-		SerialNetworkParams params(serialPort_, 115200, "*-*
-");
+		SerialNetworkParams params(serialPort_, 115200, "*-*");
 		idc->subscribeOnPacket(params,
 				std::bind(&EmulationAPInterface::onPacket, this, std::placeholders::_1));
 		actuationSender_ = idc->createSender(params);
@@ -128,7 +109,7 @@ EmulationAPInterface::onSensorData(const SensorData& sensorData)
 {
 	if (!setup_)
 	{
-		APLOG_WARN << "ApExt not setup. Cannot send sensor data to ap.";
+		CPSLOG_WARN << "ApExt not setup. Cannot send sensor data to ap.";
 		return;
 	}
 
@@ -192,7 +173,7 @@ EmulationAPInterface::onSensorData(const SensorData& sensorData)
 	}
 	else
 	{
-		APLOG_WARN << "Timestamp not set.";
+		CPSLOG_WARN << "Timestamp not set.";
 	}
 
 	dataSample_.pic_sample->pwm_channels[21] = static_cast<unsigned long>(sensorData.sequenceNr);
@@ -201,18 +182,18 @@ EmulationAPInterface::onSensorData(const SensorData& sensorData)
 
 	if (sensResult != 0)
 	{
-		APLOG_WARN << "Something went wrong sending the data sample.";
+		CPSLOG_WARN << "Something went wrong sending the data sample.";
 	}
 }
 
 void
 EmulationAPInterface::onPacket(const Packet& packet)
 {
-	APLOG_DEBUG << "Received packet.";
+	CPSLOG_DEBUG << "Received packet.";
 	auto dp = dataPresentation_.get();
 	if (!dp)
 	{
-		APLOG_ERROR << "Data presentation missing. Cannot deserialize packet.";
+		CPSLOG_ERROR << "Data presentation missing. Cannot deserialize packet.";
 		return;
 	}
 
@@ -229,7 +210,7 @@ EmulationAPInterface::onPacket(const Packet& packet)
 	}
 	else
 	{
-		APLOG_ERROR
+		CPSLOG_ERROR
 				<< "Invalid packet received. Only sensor data and sensorDataLight allowed. Content: "
 				<< static_cast<int>(content);
 		return;
@@ -258,7 +239,7 @@ EmulationAPInterface::sendActuation()
 
 	if (actResult != 0)
 	{
-		APLOG_WARN << "Something went wrong getting actuation data.";
+		CPSLOG_WARN << "Something went wrong getting actuation data.";
 		return;
 	}
 
@@ -269,7 +250,7 @@ EmulationAPInterface::sendActuation()
 	auto dp = dataPresentation_.get();
 	if (!dp)
 	{
-		APLOG_ERROR << "Data presentation missing. Cannot send Actuation.";
+		CPSLOG_ERROR << "Data presentation missing. Cannot send Actuation.";
 		return;
 	}
 	auto actLight = fromControllerOutput(act);

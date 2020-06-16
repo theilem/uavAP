@@ -4,14 +4,10 @@
  *  Created on: Aug 28, 2019
  *      Author: mirco
  */
-#include <uavAP/Core/PropertyMapper/JsonPopulator.h>
-#include <uavAP/Core/Scheduler/MultiThreadingScheduler.h>
-#include <uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRatePIDController.h>
-#include <uavAP/MissionControl/Geofencing/ConstRollRateModel.h>
-#include <uavAP/MissionControl/Geofencing/Geofencing.h>
-#include <uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h>
 #include <fstream>
 #include <string>
+
+#include <cpsCore/Configuration/JsonPopulator.h>
 
 
 
@@ -31,7 +27,7 @@ main(int argc, char** argv)
 
 	JsonPopulator pop(file);
 
-	pop.populate<Geofencing, ConstRollRateModel>();
+//	pop.populate<Geofencing, ConstRollRateModel>();
 
 	return 0;
 

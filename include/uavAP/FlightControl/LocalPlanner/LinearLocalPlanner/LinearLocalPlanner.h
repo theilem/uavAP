@@ -71,7 +71,7 @@ public:
 private:
 
 	void
-	createLocalPlan(const Vector3& position, FloatingType heading, bool hasGPSFix, uint32_t seqNum);
+	createLocalPlan(const Vector3& position, FloatingType heading, bool hasGPSFix);
 
 	void
 	nextSection();

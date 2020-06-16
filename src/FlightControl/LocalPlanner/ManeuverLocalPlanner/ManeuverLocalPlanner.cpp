@@ -22,15 +22,15 @@
  * @author Mirco Theile, mirco.theile@tum.de
  * @brief Description
  */
-#include <cpsCore/Utilities/Scheduler/IScheduler.h>
-#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
-#include <cpsCore/Utilities/IPC/IPC.h>
 
 #include "uavAP/FlightControl/Controller/IController.h"
 #include "uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h"
 #include "uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlanner.h"
 #include "uavAP/MissionControl/ManeuverPlanner/Override.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
+#include <cpsCore/Utilities/Scheduler/IScheduler.h>
+#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
+#include <cpsCore/Utilities/IPC/IPC.h>
 
 
 void
@@ -135,8 +135,7 @@ ManeuverLocalPlanner::run(RunStage stage)
 }
 
 void
-ManeuverLocalPlanner::createLocalPlan(const Vector3& position, double heading, bool hasGPSFix,
-		uint32_t seqNum)
+ManeuverLocalPlanner::createLocalPlan(const Vector3& position, double heading, bool hasGPSFix)
 {
 	bool safety = false;
 
@@ -177,7 +176,7 @@ ManeuverLocalPlanner::createLocalPlan(const Vector3& position, double heading, b
 
 	plannerLock.unlock();
 
-	controllerTarget_.sequenceNr = seqNum;
+//	controllerTarget_.sequenceNr = seqNum;
 	status_.climbAngleTarget = controllerTarget_.climbAngle;
 	status_.velocityTarget = controllerTarget_.velocity;
 	status_.yawRateTarget = controllerTarget_.yawRate;
@@ -360,9 +359,9 @@ ManeuverLocalPlanner::onSensorData(const SensorData& sd)
 	Vector3 position = sd.position;
 	double heading = sd.attitude.z();
 	bool hasFix = sd.hasGPSFix;
-	uint32_t seq = sd.sequenceNr;
+//	uint32_t seq = sd.sequenceNr;
 
-	createLocalPlan(position, heading, hasFix, seq);
+	createLocalPlan(position, heading, hasFix);
 }
 
 void
@@ -394,7 +393,7 @@ ManeuverLocalPlanner::update()
 	}
 
 	SensorData data = sensing->getSensorData();
-	createLocalPlan(data.position, data.attitude.z(), data.hasGPSFix, data.sequenceNr);
+	createLocalPlan(data.position, data.attitude.z(), data.hasGPSFix);
 }
 
 Trajectory

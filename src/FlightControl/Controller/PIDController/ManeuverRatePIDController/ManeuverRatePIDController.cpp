@@ -4,11 +4,8 @@
  *  Created on: Oct 10, 2019
  *      Author: mirco
  */
-#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
-#include <cpsCore/Utilities/IPC/IPC.h>
-#include <cpsCore/Utilities/Scheduler/IScheduler.h>
-
 #include <uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRatePIDController.h>
+
 #include <uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRateCascade.h>
 #include <uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h>
 #include <uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h>
@@ -16,6 +13,9 @@
 #include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
 #include <uavAP/Core/DataHandling/DataHandling.h>
 #include <uavAP/Core/DataHandling/Content.hpp>
+#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
+#include <cpsCore/Utilities/IPC/IPC.h>
+#include <cpsCore/Utilities/Scheduler/IScheduler.h>
 
 ManeuverRatePIDController::ManeuverRatePIDController() :
 		cascade_(sensorData_, target_, output_)

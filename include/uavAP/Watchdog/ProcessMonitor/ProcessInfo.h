@@ -27,9 +27,9 @@
 #define UAVAP_WATCHDOG_PROCESSINFO_H_
 
 #include <boost/process.hpp>
-#include "uavAP/Core/Time.h"
 #include <string>
-#include <uavAP/Core/PropertyMapper/Configuration.h>
+#include <cpsCore/Utilities/Time.hpp>
+#include <cpsCore/Configuration/Configuration.hpp>
 
 struct ProcessInfo
 {

@@ -23,18 +23,14 @@
  *      Author: mircot
  */
 #include <boost/property_tree/json_parser.hpp>
-#include <uavAP/Core/Runner/SimpleRunner.h>
-
-#include "uavAP/Core/Scheduler/MultiThreadingScheduler.h"
-#include "uavAP/Core/Logging/APLogger.h"
 
 #include "EmulationInterfaceHelper.h"
 
 int
 main(int argc, char** argv)
 {
-	APLogger::instance()->setLogLevel(LogLevel::WARN);
-	APLogger::instance()->setModuleName("EmulationInterface");
+	CPSLogger::instance()->setLogLevel(LogLevel::WARN);
+	CPSLogger::instance()->setModuleName("EmulationInterface");
 	std::string configPath;
 	if (argc == 2)
 	{
@@ -42,7 +38,7 @@ main(int argc, char** argv)
 	}
 	else
 	{
-		APLOG_ERROR << "Please provide a config path";
+		CPSLOG_ERROR << "Please provide a config path";
 		return 1;
 	}
 
@@ -56,7 +52,7 @@ main(int argc, char** argv)
 	SimpleRunner runner(agg);
 	if (runner.runAllStages())
 	{
-		APLOG_ERROR << "Errors occured in run all stages";
+		CPSLOG_ERROR << "Errors occured in run all stages";
 		return 1;
 	}
 

@@ -23,8 +23,6 @@
  *      Author: mircot
  */
 #include "uavAP/API/ChannelMixing.h"
-#include "uavAP/Core/IPC/IPC.h"
-#include "uavAP/Core/PropertyMapper/PropertyMapper.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 
 ChannelMixing::ChannelMixing() :
@@ -51,7 +49,7 @@ ChannelMixing::configure(const Configuration& config)
 
 	if (!pm.map())
 	{
-		APLOG_ERROR << "Failed to Configure ChannelMixing.";
+		CPSLOG_ERROR << "Failed to Configure ChannelMixing.";
 		return false;
 	}
 
@@ -76,7 +74,7 @@ ChannelMixing::configure(const Configuration& config)
 
 		if (throwsEnum == ThrowsControl::INVALID)
 		{
-			APLOG_ERROR << "Invalid Throws Control " << it.first;
+			CPSLOG_ERROR << "Invalid Throws Control " << it.first;
 			continue;
 		}
 
@@ -92,7 +90,7 @@ ChannelMixing::configure(const Configuration& config)
 
 		if (camberEnum == CamberControl::INVALID)
 		{
-			APLOG_ERROR << "Invalid Camber Control " << it.first;
+			CPSLOG_ERROR << "Invalid Camber Control " << it.first;
 			continue;
 		}
 
@@ -110,7 +108,7 @@ ChannelMixing::configure(const Configuration& config)
 
 		if (specialEnum == SpecialControl::INVALID)
 		{
-			APLOG_ERROR << "Invalid Special Control " << it.first;
+			CPSLOG_ERROR << "Invalid Special Control " << it.first;
 			continue;
 		}
 
@@ -144,7 +142,7 @@ ChannelMixing::mapChannels(const ControllerOutput& out, const AdvancedControl& a
 	auto throws = mapping_.find(advanced.throwsSelection);
 	if (throws == mapping_.end())
 	{
-		APLOG_ERROR << "Throws not available. Set to first mapping.";
+		CPSLOG_ERROR << "Throws not available. Set to first mapping.";
 		throws = mapping_.begin();
 	}
 
@@ -160,7 +158,7 @@ ChannelMixing::mapChannels(const ControllerOutput& out, const AdvancedControl& a
 		auto camber = camberOffsets_.find(advanced.camberSelection);
 		if (camber == camberOffsets_.end())
 		{
-			APLOG_ERROR << "camber not available. Set to first camber.";
+			CPSLOG_ERROR << "camber not available. Set to first camber.";
 			camber = camberOffsets_.begin();
 		}
 
@@ -172,7 +170,7 @@ ChannelMixing::mapChannels(const ControllerOutput& out, const AdvancedControl& a
 		auto special = specialOffsets_.find(advanced.specialSelection);
 		if (special == specialOffsets_.end())
 		{
-			APLOG_ERROR << "special not available. Set to first special.";
+			CPSLOG_ERROR << "special not available. Set to first special.";
 			special = specialOffsets_.begin();
 		}
 

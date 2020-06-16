@@ -30,16 +30,18 @@
 
 #include <cpsCore/cps_object>
 #include <cpsCore/Utilities/IPC/Publisher.h>
+#include <uavAP/Core/DataHandling/Content.hpp>
 
 #include "uavAP/Core/Frames/VehicleOneFrame.h"
 #include "uavAP/MissionControl/LocalFrameManager/LocalFrameManagerParams.h"
 
 class IPC;
+class DataHandling;
 
 class IScheduler;
 
 class LocalFrameManager
-		: public AggregatableObject<IPC, IScheduler>,
+		: public AggregatableObject<IPC, IScheduler, DataHandling>,
 		  public ConfigurableObject<LocalFrameManagerParams>,
 		  public IRunnableObject
 {
@@ -67,6 +69,9 @@ private:
 	Publisher<VehicleOneFrame> framePublisher_;
 	VehicleOneFrame frame_;
 	mutable std::mutex frameMutex_;
+
+	VehicleOneFrame
+	localFrameRequest(const DataRequest& request);
 };
 
 #endif /* UAVAP_MISSIONCONTROL_LOCALFRAMEMANAGER_LOCALFRAMEMANAGER_H_ */
