@@ -28,9 +28,12 @@ if(NO_DL)
 endif(NO_DL)
 
 #Set Variable inputs
-set(EIGEN_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/eigen3/")
-set(Boost_LIBRARY_DIRS "${LIBRARY_ROOT_DIR}/usr/local/lib/")
-set(Boost_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/")
+set(EIGEN_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/eigen3/"
+		"${LIBRARY_ROOT_DIR}/usr/include/eigen3/")
+set(Boost_LIBRARY_DIRS "${LIBRARY_ROOT_DIR}/usr/local/lib/"
+		"${LIBRARY_ROOT_DIR}/usr/lib/")
+set(Boost_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/"
+		"${LIBRARY_ROOT_DIR}/usr/include/")
 
 if(CMAKE_COMPILER_IS_GNUCC)
 
