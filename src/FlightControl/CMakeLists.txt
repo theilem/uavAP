@@ -39,6 +39,6 @@ add_executable(FlightControl FlightControl.cpp
 target_link_libraries(FlightControl uavap_flight_control cps_core
         )
 
-install(TARGETS FlightControl uavap_flight_control OPTIONAL
+install(TARGETS FlightControl uavap_flight_control
         RUNTIME DESTINATION bin/uavAP
         LIBRARY DESTINATION lib)

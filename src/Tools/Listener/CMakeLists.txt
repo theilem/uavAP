@@ -21,6 +21,6 @@ add_executable(Listener Listener)
 target_link_libraries(Listener  uavap_core
 								cps_core)
 
-install(TARGETS Listener OPTIONAL
+install(TARGETS Listener
 		RUNTIME DESTINATION bin/uavAP
 		LIBRARY DESTINATION lib)

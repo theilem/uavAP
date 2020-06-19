@@ -54,6 +54,6 @@ target_link_libraries(MissionControl    uavap_mission_control
                                         )
                                         
 		
-install(TARGETS MissionControl uavap_mission_control OPTIONAL
+install(TARGETS MissionControl uavap_mission_control
 		RUNTIME DESTINATION bin/uavAP
 		LIBRARY DESTINATION lib )

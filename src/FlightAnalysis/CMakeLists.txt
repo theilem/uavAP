@@ -35,7 +35,7 @@ add_executable(FlightAnalysis	FlightAnalysis.cpp
 target_link_libraries(FlightAnalysis 	uavap_flight_analysis
 										)
 
-install(TARGETS FlightAnalysis uavap_flight_analysis OPTIONAL
+install(TARGETS FlightAnalysis uavap_flight_analysis
 		RUNTIME DESTINATION bin/uavAP
 		LIBRARY DESTINATION lib)
 		

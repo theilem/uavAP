@@ -24,6 +24,6 @@ target_link_libraries(JsonPopulation uavap_core
         cps_core
         )
 
-install(TARGETS JsonPopulation OPTIONAL
+install(TARGETS JsonPopulation
         RUNTIME DESTINATION bin/uavAP
         LIBRARY DESTINATION lib OPTIONAL)

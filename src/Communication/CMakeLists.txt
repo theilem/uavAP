@@ -23,6 +23,6 @@ add_executable(Communication Communication.cpp
 target_link_libraries(Communication uavap_core cps_core
         )
 
-install(TARGETS Communication OPTIONAL
+install(TARGETS Communication
         RUNTIME DESTINATION bin/uavAP
         LIBRARY DESTINATION lib)
