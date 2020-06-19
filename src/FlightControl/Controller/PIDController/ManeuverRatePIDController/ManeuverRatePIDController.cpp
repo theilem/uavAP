@@ -68,7 +68,7 @@ ManeuverRatePIDController::run(RunStage stage)
 			{
 				dh->addStatusFunction<std::map<PIDs, PIDStatus>>(
 						std::bind(&IPIDCascade::getPIDStatus, &cascade_), Content::PID_STATUS);
-				dh->subscribeOnCommand<PIDTuning>(Content::TUNE_PID,
+				dh->subscribeOnData<PIDTuning>(Content::TUNE_PID,
 												  std::bind(&ManeuverRatePIDController::tunePID, this,
 															std::placeholders::_1));
 				dh->addTriggeredStatusFunction<PIDParams, DataRequest>(

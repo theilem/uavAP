@@ -13,15 +13,16 @@
 #include <cpsCore/cps_object>
 #include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 #include <cpsCore/Utilities/IPC/IPC.h>
+#include <cpsCore/Utilities/IDC/IDCSender.h>
 
 #include "uavAP/Core/DataHandling/DataHandlingParams.h"
 #include "uavAP/Core/DataHandling/Content.hpp"
 
 class IScheduler;
 
-class DataHandling: public AggregatableObject<DataPresentation, IScheduler, IPC>,
-		public ConfigurableObject<DataHandlingParams>,
-		public IRunnableObject
+class DataHandling : public AggregatableObject<DataPresentation, IScheduler, IPC, IDC>,
+					 public ConfigurableObject<DataHandlingParams>,
+					 public IRunnableObject
 {
 public:
 
@@ -31,18 +32,18 @@ public:
 
 	template<typename Type>
 	void
-	subscribeOnCommand(Content content, std::function<void
-	(const Type&)> commandFunc);
+	subscribeOnData(Content content, std::function<void
+			(const Type&)> commandFunc);
 
 	template<typename Type>
 	void
 	addStatusFunction(std::function<Type
-	()> statusFunc, Content content);
+			()> statusFunc, Content content);
 
 	template<typename Type, typename TriggerType>
 	void
 	addTriggeredStatusFunction(std::function<Optional<Type>
-	(const TriggerType&)> statusFunc, Content statusContent, Content TriggerCommand);
+			(const TriggerType&)> statusFunc, Content statusContent, Content TriggerCommand);
 
 	template<typename Type>
 	void
@@ -62,31 +63,35 @@ private:
 	template<typename Type>
 	Packet
 	createPacket(std::function<Type
-	()> statusFunc, Content content);
+			()> statusFunc, Content content);
 
 	template<typename Type>
 	void
 	forwardCommand(const Packet& packet, std::function<void
-	(const Type&)> callback);
+			(const Type&)> callback);
 
 	template<typename Type, typename TriggerType>
 	void
-	evaluateTrigger(const TriggerType& any, std::function<Optional<Type>
-	(const TriggerType&)> callback, Content statusContent);
+	evaluateTrigger(const TriggerType& trigger, std::function<Optional<Type>
+			(const TriggerType&)> callback, Content statusContent);
+
+	void
+	publish(const Packet& packet);
 
 	std::vector<std::function<Packet
-	()>> statusPackaging_;
+			()>> statusPackaging_;
 
 	std::map<Content, std::vector<std::function<void
-	(const Packet&)>>> subscribers_;
+			(const Packet&)>>> subscribers_;
 
 	Publisher<Packet> publisher_;
+	IDCSender sender_;
 };
 
 template<typename Type>
 inline void
 DataHandling::addStatusFunction(std::function<Type
-()> statusFunc, Content content)
+		()> statusFunc, Content content)
 {
 	auto func = std::bind(&DataHandling::createPacket<Type>, this, statusFunc, content);
 	statusPackaging_.push_back(func);
@@ -95,7 +100,7 @@ DataHandling::addStatusFunction(std::function<Type
 template<typename Type>
 inline Packet
 DataHandling::createPacket(std::function<Type
-()> statusFunc, Content content)
+		()> statusFunc, Content content)
 {
 	auto status = statusFunc();
 	auto dp = get<DataPresentation>();
@@ -112,11 +117,11 @@ DataHandling::createPacket(std::function<Type
 
 template<typename Type>
 inline void
-DataHandling::subscribeOnCommand(Content content, std::function<void
-(const Type&)> commandFunc)
+DataHandling::subscribeOnData(Content content, std::function<void
+		(const Type&)> commandFunc)
 {
 	auto func = std::bind(&DataHandling::forwardCommand<Type>, this, std::placeholders::_1,
-			commandFunc);
+						  commandFunc);
 	auto it = subscribers_.find(content);
 	if (it != subscribers_.end())
 	{
@@ -124,8 +129,7 @@ DataHandling::subscribeOnCommand(Content content, std::function<void
 		return;
 	}
 
-	std::vector<std::function<void
-	(const Packet&)>> vec;
+	std::vector<std::function<void(const Packet&)>> vec;
 	vec.push_back(func);
 	subscribers_.insert(std::make_pair(content, vec));
 }
@@ -133,7 +137,7 @@ DataHandling::subscribeOnCommand(Content content, std::function<void
 template<typename Type>
 inline void
 DataHandling::forwardCommand(const Packet& packet, std::function<void
-(const Type&)> callback)
+		(const Type&)> callback)
 {
 	auto dp = get<DataPresentation>();
 	callback(dp->deserialize<Type>(packet));
@@ -142,18 +146,18 @@ DataHandling::forwardCommand(const Packet& packet, std::function<void
 template<typename Type, typename TriggerType>
 inline void
 DataHandling::addTriggeredStatusFunction(std::function<Optional<Type>
-(const TriggerType&)> statusFunc, Content statusContent, Content triggerCommand)
+		(const TriggerType&)> statusFunc, Content statusContent, Content triggerCommand)
 {
 	std::function<void
-	(const TriggerType&)> func = std::bind(&DataHandling::evaluateTrigger<Type, TriggerType>, this,
-			std::placeholders::_1, statusFunc, statusContent);
-	subscribeOnCommand(triggerCommand, func);
+			(const TriggerType&)> func = std::bind(&DataHandling::evaluateTrigger<Type, TriggerType>, this,
+												   std::placeholders::_1, statusFunc, statusContent);
+	subscribeOnData(triggerCommand, func);
 }
 
 template<typename Type, typename TriggerType>
 inline void
 DataHandling::evaluateTrigger(const TriggerType& trigger, std::function<Optional<Type>
-(const TriggerType&)> callback, Content statusContent)
+		(const TriggerType&)> callback, Content statusContent)
 {
 	auto status = callback(trigger);
 	if (status)
@@ -166,7 +170,7 @@ DataHandling::evaluateTrigger(const TriggerType& trigger, std::function<Optional
 		}
 		auto packet = dp->serialize(*status);
 		dp->addHeader(packet, statusContent);
-		publisher_.publish(packet);
+		publish(packet);
 	}
 }
 
@@ -184,7 +188,7 @@ DataHandling::sendData(const Type& data, Content content, Target target)
 	Packet packet = dp->serialize(data);
 	dp->addHeader(packet, content);
 	dp->addHeader(packet, target);
-	publisher_.publish(packet);
+	publish(packet);
 
 }
 

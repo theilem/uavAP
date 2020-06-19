@@ -93,7 +93,7 @@ RatePIDController::run(RunStage stage)
 		{
 			dh->addStatusFunction<std::map<PIDs, PIDStatus>>(
 					std::bind(&IPIDCascade::getPIDStatus, pidCascade_), Content::PID_STATUS);
-			dh->subscribeOnCommand<PIDTuning>(Content::TUNE_PID,
+			dh->subscribeOnData<PIDTuning>(Content::TUNE_PID,
 					std::bind(&RatePIDController::tunePID, this, std::placeholders::_1));
 		}
 

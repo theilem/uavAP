@@ -67,7 +67,7 @@ SensingActuationIO::run(RunStage stage)
 		{
 			dh->addStatusFunction<SensorData>(
 					std::bind(&SensingActuationIO::getSensorData, this), Content::SENSOR_DATA);
-			dh->subscribeOnCommand<AdvancedControl>(Content::ADVANCED_CONTROL,
+			dh->subscribeOnData<AdvancedControl>(Content::ADVANCED_CONTROL,
 					std::bind(&SensingActuationIO::onAdvancedControl, this, std::placeholders::_1));
 		}
 		break;

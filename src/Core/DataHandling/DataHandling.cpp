@@ -5,6 +5,7 @@
  *      Author: mirco
  */
 #include <cpsCore/Utilities/Scheduler/IScheduler.h>
+#include <cpsCore/Utilities/IDC/IDC.h>
 
 #include <uavAP/Core/DataHandling/DataHandling.h>
 
@@ -13,35 +14,72 @@ DataHandling::run(RunStage stage)
 {
 	switch (stage)
 	{
-	case RunStage::INIT:
-	{
-		if (!checkIsSet<DataPresentation, IScheduler, IPC>())
+		case RunStage::INIT:
 		{
-			CPSLOG_ERROR << "DataHandling: missing deps";
-			return true;
+			if (!checkIsSet<DataPresentation, IScheduler>())
+			{
+				CPSLOG_ERROR << "DataHandling: missing deps";
+				return true;
+			}
+
+			if (params.useIDC())
+			{
+				if (!checkIsSet<IDC>())
+				{
+					CPSLOG_ERROR << "DataHandling: missing deps";
+					return true;
+				}
+
+				auto idc = get<IDC>();
+				sender_ = idc->createSender(params.idcTarget());
+			}
+
+			if (params.useIPC())
+			{
+				if (!checkIsSet<IPC>())
+				{
+					CPSLOG_ERROR << "DataHandling: missing deps";
+					return true;
+				}
+
+				std::string publication = EnumMap<Target>::convert(params.target()) + "_to_comm";
+				CPSLOG_DEBUG << "Publishing to " << publication;
+				auto ipc = get<IPC>();
+
+				publisher_ = ipc->publishPackets(publication);
+			}
+
+
+			break;
 		}
+		case RunStage::NORMAL:
+		{
+			auto scheduler = get<IScheduler>();
+			scheduler->schedule([this]
+								{ sendStatus(); }, Milliseconds(0), Milliseconds(params.period()));
 
-		std::string publication = EnumMap<Target>::convert(params.target()) + "_to_comm";
-		CPSLOG_DEBUG << "Publishing to " << publication;
-		auto ipc = get<IPC>();
+			if (params.useIDC())
+			{
+				auto idc = get<IDC>();
 
-		publisher_ = ipc->publishPackets(publication);
-		break;
-	}
-	case RunStage::NORMAL:
-	{
-		auto scheduler = get<IScheduler>();
-		scheduler->schedule(std::bind(&DataHandling::sendStatus, this), Milliseconds(0), Milliseconds(params.period()));
+				idc->subscribeOnPacket(params.idcTarget(),
+									   std::bind(&DataHandling::onPacket, this, std::placeholders::_1));
+			}
 
-		std::string subscription = "comm_to_" + EnumMap<Target>::convert(params.target());
-		auto ipc = get<IPC>();
+			if (params.useIPC())
+			{
+				std::string subscription = "comm_to_" + EnumMap<Target>::convert(params.target());
+				auto ipc = get<IPC>();
 
-		ipc->subscribeOnPackets(subscription,
-				std::bind(&DataHandling::onPacket, this, std::placeholders::_1));
-		break;
-	}
-	default:
-		break;
+				ipc->subscribeOnPackets(subscription,
+										std::bind(&DataHandling::onPacket, this, std::placeholders::_1));
+			}
+
+
+			break;
+		}
+		default:
+			break;
 	}
 	return false;
 }
@@ -62,7 +100,7 @@ DataHandling::onPacket(const Packet& packet)
 	if (it == subscribers_.end())
 	{
 		CPSLOG_WARN << "Packet with content " << static_cast<int>(content)
-				<< " received, but no subscribers";
+					<< " received, but no subscribers";
 		return;
 	}
 
@@ -77,6 +115,19 @@ DataHandling::sendStatus()
 {
 	for (const auto& it : statusPackaging_)
 	{
-		publisher_.publish(it());
+		publish(it());
+	}
+}
+
+void
+DataHandling::publish(const Packet& packet)
+{
+	if (params.useIDC())
+	{
+		sender_.sendPacket(packet);
+	}
+	if (params.useIPC())
+	{
+		publisher_.publish(packet);
 	}
 }

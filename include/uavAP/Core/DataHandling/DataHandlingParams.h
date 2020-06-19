@@ -11,10 +11,15 @@
 #include <cpsCore/Configuration/Parameter.hpp>
 #include "uavAP/Core/DataHandling/Content.hpp"
 
+
+
 struct DataHandlingParams
 {
 	Parameter<int> period = {100, "period", true};
-	Parameter<Target> target = {Target::INVALID, "target", true};
+	Parameter<bool> useIPC = {true, "use_ipc", false};
+	Parameter<Target> target = {Target::BROADCAST, "target", false};
+	Parameter<bool> useIDC = {false, "use_idc", false};
+	Parameter<std::string> idcTarget = {"autopilot", "idc_target", false};
 
 	template <typename Config>
 	inline void
@@ -22,6 +27,9 @@ struct DataHandlingParams
 	{
 		c & period;
 		c & target;
+		c & useIPC;
+		c & useIDC;
+		c & idcTarget;
 	}
 };
 

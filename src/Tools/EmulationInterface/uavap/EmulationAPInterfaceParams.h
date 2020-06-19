@@ -10,7 +10,14 @@
 class EmulationAPInterfaceParams
 {
 
-	Parameter<std::string> serialPort = {"serial_port", "/dev/tty0", true};
+	Parameter<std::string> serialPort = {"/dev/tty0", "serial_port", true};
+
+	template<typename Config>
+	void
+	configure(Config& c)
+	{
+		c & serialPort;
+	}
 
 
 };

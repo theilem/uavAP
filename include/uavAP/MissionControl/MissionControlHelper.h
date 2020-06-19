@@ -39,31 +39,9 @@
 #include "uavAP/Core/DataHandling/DataHandling.h"
 #include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
 #include <cpsCore/Utilities/SignalHandler/SignalHandler.h>
+#include <cpsCore/Utilities/IDC/IDC.h>
 //#include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
 //#include "uavAP/MissionControl/WindAnalysis/WindAnalysis.h"
-//
-//class MissionControlHelper: public Helper
-//{
-//public:
-//	MissionControlHelper()
-//	{
-//		addDefaultConfigurable<IPC>();
-//		addDefaultCreator<MissionControlDataHandling>();
-//		addDefaultCreator<ConditionManager>();
-//
-//		addDefault<SchedulerFactory>();
-//		addDefault<TimeProviderFactory>();
-//		addDefaultCreator<DataPresentation>();
-//
-//		addCreator<ManeuverPlanner>();
-//		addCreator<LocalFrameManager>();
-//		addFactory<MissionPlannerFactory>();
-//		addFactory<GlobalPlannerFactory>();
-//		addFactory<GeofencingModelFactory>();
-//		addConfigurable<Geofencing>();
-//		addConfigurable<WindAnalysis>();
-//	}
-//};
 
 //using MissionControlHelper = StaticHelper<
 //		IPC,

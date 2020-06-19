@@ -93,7 +93,7 @@ LocalFrameManager::getFrame() const
 }
 
 void
-LocalFrameManager::setFrame(VehicleOneFrame frame)
+LocalFrameManager::setFrame(const VehicleOneFrame& frame)
 {
 	std::unique_lock<std::mutex> lock(frameMutex_);
 	frame_ = frame;

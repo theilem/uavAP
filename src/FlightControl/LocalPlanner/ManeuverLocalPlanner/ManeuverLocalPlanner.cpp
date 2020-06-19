@@ -113,7 +113,7 @@ ManeuverLocalPlanner::run(RunStage stage)
 			dh->addStatusFunction<ManeuverLocalPlannerStatus>(
 					std::bind(&ManeuverLocalPlanner::getStatus, this),
 					Content::MANEUVER_LOCAL_PLANNER_STATUS);
-			dh->subscribeOnCommand<ManeuverLocalPlannerParams>(Content::TUNE_MANEUVER_LOCAL_PLANNER,
+			dh->subscribeOnData<ManeuverLocalPlannerParams>(Content::TUNE_MANEUVER_LOCAL_PLANNER,
 					std::bind(&ManeuverLocalPlanner::setParams, this, std::placeholders::_1));
 			dh->addTriggeredStatusFunction<Trajectory, DataRequest>(
 					std::bind(&ManeuverLocalPlanner::trajectoryRequest, this,

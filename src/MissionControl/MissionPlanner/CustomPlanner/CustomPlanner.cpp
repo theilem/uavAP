@@ -107,7 +107,7 @@ CustomPlanner::run(RunStage stage)
 
 			if (auto dh = get<DataHandling>())
 			{
-				dh->subscribeOnCommand<std::string>(Content::SELECT_MISSION,
+				dh->subscribeOnData<std::string>(Content::SELECT_MISSION,
 													std::bind(&CustomPlanner::missionRequest, this,
 															  std::placeholders::_1));
 			}

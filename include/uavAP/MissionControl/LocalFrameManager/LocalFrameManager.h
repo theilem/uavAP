@@ -59,7 +59,7 @@ public:
 	getFrame() const;
 
 	void
-	setFrame(VehicleOneFrame frame);
+	setFrame(const VehicleOneFrame& frame);
 
 private:
 
