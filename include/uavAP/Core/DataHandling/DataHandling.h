@@ -45,6 +45,10 @@ public:
 	addTriggeredStatusFunction(std::function<Optional<Type>
 			(const TriggerType&)> statusFunc, Content statusContent, Content TriggerCommand);
 
+	template<class Object>
+	void
+	addConfig(Object* obj, Content configContent);
+
 	template<typename Type>
 	void
 	sendData(const Type& data, Content content, Target target = Target::BROADCAST);
@@ -74,6 +78,11 @@ private:
 	void
 	evaluateTrigger(const TriggerType& trigger, std::function<Optional<Type>
 			(const TriggerType&)> callback, Content statusContent);
+
+
+	template<class Object>
+	void
+	getConfig(Object* obj, Content configContent, Content trigger);
 
 	void
 	publish(const Packet& packet);
@@ -153,6 +162,35 @@ DataHandling::addTriggeredStatusFunction(std::function<Optional<Type>
 												   std::placeholders::_1, statusFunc, statusContent);
 	subscribeOnData(triggerCommand, func);
 }
+
+
+template<class Object>
+void
+DataHandling::addConfig(Object* obj, Content configContent)
+{
+	std::function<void
+			(const Content&)> func = std::bind(&DataHandling::getConfig<Object>, this,
+												   obj, configContent, std::placeholders::_1);
+	subscribeOnData(Content::REQUEST_CONFIG, func);
+}
+
+template<class Object>
+void
+DataHandling::getConfig(Object* obj, Content configContent, Content trigger)
+{
+	if (trigger != Content::REQUEST_CONFIG)
+		return;
+	auto dp = get<DataPresentation>();
+	if (!dp)
+	{
+		CPSLOG_ERROR << "Data Presentation Missing, cannot create packet.";
+		return;
+	}
+	auto packet = dp->serialize(obj->getParams());
+	dp->addHeader(packet, configContent);
+	publish(packet);
+}
+
 
 template<typename Type, typename TriggerType>
 inline void

@@ -27,6 +27,7 @@ struct PIDStatus;
 class ManeuverRateCascade: public ConfigurableObject<ManeuverRateCascadeParams>, public IPIDCascade
 {
 public:
+	ManeuverRateCascade();
 
 	ManeuverRateCascade(const SensorData& sd, const ControllerTarget& target,
 			ControllerOutput& out);

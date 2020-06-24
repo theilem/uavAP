@@ -1,23 +1,5 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
 /**
- *  @file         SerialComm.cpp
+ *  @file         IDCComm.cpp
  *  @author Mirco Theile
  *  @date      30 July 2017
  *  @brief      UAV Autopilot Communication Serial Comm Source File
@@ -42,68 +24,70 @@ IDCComm::run(RunStage stage)
 {
 	switch (stage)
 	{
-	case RunStage::INIT:
-	{
-		if (!checkIsSet<IPC, IDC, DataPresentation>())
+		case RunStage::INIT:
 		{
-			CPSLOG_ERROR << "SerialComm: missing dependency";
-			return true;
-		}
-
-		auto ipc = get<IPC>();
-
-		for (int k = static_cast<int>(Target::INVALID) + 1;
-				k < static_cast<int>(Target::COMMUNICATION); k++)
-		{
-			publishers_.push_back(
-					ipc->publishPackets(
-							"comm_to_" + EnumMap<Target>::convert(static_cast<Target>(k))));
-		}
-
-		auto idc = get<IDC>();
-		sender_ = idc->createSender("ground_station");
-
-		idcConnection_ = idc->subscribeOnPacket("ground_station",
-				std::bind(&IDCComm::receivePacket, this, std::placeholders::_1));
-
-		break;
-	}
-	case RunStage::NORMAL:
-	{
-		auto ipc = get<IPC>();
-
-		IPCOptions options;
-		options.multiTarget = true;
-		options.retry = true;
-
-		subscriptions_ = std::vector<Subscription>(static_cast<int>(Target::COMMUNICATION) - 1);
-		for (int k = static_cast<int>(Target::INVALID) + 1;
-				k < static_cast<int>(Target::COMMUNICATION); k++)
-		{
-			options.retrySuccessCallback = std::bind(&IDCComm::subscribeCallback, this,
-					std::placeholders::_1, static_cast<Target>(k));
-
-			subscriptions_[k - 1] = ipc->subscribeOnPackets(
-					EnumMap<Target>::convert(static_cast<Target>(k)) + "_to_comm",
-					std::bind(&IDCComm::sendPacket, this, std::placeholders::_1), options);
-
-			if (!subscriptions_[k - 1].connected())
+			if (!checkIsSet<IPC, IDC, DataPresentation>())
 			{
-				CPSLOG_DEBUG << EnumMap<Target>::convert(static_cast<Target>(k))
-						<< " not found. Retry later.";
+				CPSLOG_ERROR << "SerialComm: missing dependency";
+				return true;
 			}
+
+			auto ipc = get<IPC>();
+
+			for (int k = static_cast<int>(Target::INVALID) + 1;
+				 k < static_cast<int>(Target::COMMUNICATION); k++)
+			{
+				publishers_.push_back(
+						ipc->publishPackets(
+								"comm_to_" + EnumMap<Target>::convert(static_cast<Target>(k))));
+			}
+
+			auto idc = get<IDC>();
+			sender_ = idc->createSender("ground_station");
+
+			break;
 		}
-		break;
-	}
-	case RunStage::FINAL:
-	{
-		CPSLOG_DEBUG << "Run stage final";
-		break;
-	}
-	default:
-	{
-		break;
-	}
+		case RunStage::NORMAL:
+		{
+
+			auto idc = get<IDC>();
+
+			idcConnection_ = idc->subscribeOnPacket("ground_station",
+													std::bind(&IDCComm::receivePacket, this, std::placeholders::_1));
+			auto ipc = get<IPC>();
+
+			IPCOptions options;
+			options.multiTarget = true;
+			options.retry = true;
+
+			subscriptions_ = std::vector<Subscription>(static_cast<int>(Target::COMMUNICATION) - 1);
+			for (int k = static_cast<int>(Target::INVALID) + 1;
+				 k < static_cast<int>(Target::COMMUNICATION); k++)
+			{
+				options.retrySuccessCallback = std::bind(&IDCComm::subscribeCallback, this,
+														 std::placeholders::_1, static_cast<Target>(k));
+
+				subscriptions_[k - 1] = ipc->subscribeOnPackets(
+						EnumMap<Target>::convert(static_cast<Target>(k)) + "_to_comm",
+						std::bind(&IDCComm::sendPacket, this, std::placeholders::_1), options);
+
+				if (!subscriptions_[k - 1].connected())
+				{
+					CPSLOG_DEBUG << EnumMap<Target>::convert(static_cast<Target>(k))
+								 << " not found. Retry later.";
+				}
+			}
+			break;
+		}
+		case RunStage::FINAL:
+		{
+			CPSLOG_DEBUG << "Run stage final";
+			break;
+		}
+		default:
+		{
+			break;
+		}
 	}
 
 	return false;

@@ -14,7 +14,7 @@
 #include <cmath>
 
 ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerTarget& target,
-		ControllerOutput& out) :
+										 ControllerOutput& out) :
 		controlEnv_(&sd.timestamp)
 {
 
@@ -23,8 +23,9 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	auto airspeed = controlEnv_.addInput(&sd.airSpeed);
 
 	auto rollCalc = std::make_shared<Control::CustomFunction2>(yawrateTarget, airspeed,
-			std::bind(&ManeuverRateCascade::yawrateToRoll, this, std::placeholders::_1,
-					std::placeholders::_2));
+															   std::bind(&ManeuverRateCascade::yawrateToRoll, this,
+																		 std::placeholders::_1,
+																		 std::placeholders::_2));
 
 	rollConstraint_ = std::make_shared<Control::Constraint<Angle<FloatingType>>>(rollCalc);
 
@@ -70,7 +71,7 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	auto velocityTarget = controlEnv_.addInput(&target.velocity);
 
 	auto velocityPID = controlEnv_.addPID(velocityTarget, airspeed, accelerationInput,
-			defaultParams);
+										  defaultParams);
 
 	/* Throttle Output */
 	auto velocityOffset = controlEnv_.addConstant(1);
@@ -189,4 +190,9 @@ ManeuverRateCascade::getPIDParams(const DataRequest& request)
 	}
 
 	return pidParams;
+}
+
+ManeuverRateCascade::ManeuverRateCascade() : controlEnv_(nullptr)
+{
+
 }

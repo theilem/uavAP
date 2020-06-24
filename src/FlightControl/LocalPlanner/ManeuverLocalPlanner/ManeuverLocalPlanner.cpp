@@ -399,7 +399,6 @@ ManeuverLocalPlanner::update()
 Trajectory
 ManeuverLocalPlanner::trajectoryRequest(const DataRequest& request)
 {
-	CPSLOG_DEBUG << "Called trajectoryRequest with " << (int) request;
 	if (request == DataRequest::TRAJECTORY)
 		return getTrajectory();
 	return Trajectory();

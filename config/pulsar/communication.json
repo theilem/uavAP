@@ -1,15 +1,40 @@
 {
-	"comm": {
-		"type": "idc"
-	},
-	"network": {
-		"type": "serial",
-		"ports": {
-			"ground_station": {
-				"serial_port": "/dev/ttyUSB0",
-				"delimiter_string": "*\n",
-				"use_crc": true
-			}
-		}
-	}
+  "signal_handler": {
+  },
+  "ipc": {
+  },
+  "idc": {
+  },
+  "scheduler": {
+    "thread": {
+      "priority": 20
+    }
+  },
+  "time_provider": {
+    "system_time": {
+    }
+  },
+  "data_presentation": {
+    "compress_double": true
+  },
+  "comm": {
+    "idc": {
+    }
+  },
+  "network": {
+    "serial": {
+      "ports": [
+        {
+          "id": "ground_station",
+          "serial_port": "/dev/tnt0",
+          "baud_rate": 115200,
+          "delimiter_string": "*-*",
+          "use_crc": 1,
+          "flow_control": "none",
+          "direction": "both",
+          "send_blocking": 0
+        }
+      ]
+    }
+  }
 }
