@@ -45,9 +45,7 @@ main(int argc, char** argv)
 		configPath = "/usr/local/config/edu.json";
 	}
 
-	EduInterfaceHelper helper;
-
-	auto agg = helper.createAggregation(configPath);
+	auto agg = EduInterfaceHelper::createAggregation(configPath);
 
 	auto sched = agg.getOne<IScheduler>();
 	sched->setMainThread();

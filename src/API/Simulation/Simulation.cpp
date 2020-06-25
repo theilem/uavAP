@@ -43,8 +43,7 @@ main(int argc, char** argv)
 		return 1;
 	}
 
-	SimulationHelper helper;
-	Aggregator aggregator = helper.createAggregation(argv[1]);
+	Aggregator aggregator = SimulationHelper::createAggregation(argv[1]);
 	SimpleRunner run(aggregator);
 
 	if (run.runAllStages())
