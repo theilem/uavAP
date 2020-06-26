@@ -32,8 +32,7 @@ main(int argc, char** argv)
 		return 0;
 	}
 
-	FlightControlHelper helper;
-	Aggregator aggregator = helper.createAggregation(configPath);
+	Aggregator aggregator = FlightControlHelper::createAggregation(configPath);
 	auto sched = aggregator.getOne<IScheduler>();
 	sched->setMainThread();
 

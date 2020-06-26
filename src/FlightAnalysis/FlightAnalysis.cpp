@@ -31,7 +31,6 @@ int
 main(int argc, char** argv)
 {
 	std::string configPath;
-	FlightAnalysisHelper helper;
 	SynchronizedRunner runner;
 
 	APLogger::instance()->setLogLevel(LogLevel::WARN);
@@ -42,7 +41,7 @@ main(int argc, char** argv)
 		configPath = argv[1];
 	}
 
-	Aggregator aggregator = helper.createAggregation(configPath);
+	Aggregator aggregator = FlightAnalysisHelper::createAggregation(configPath);
 	auto sched = aggregator.getOne<IScheduler>();
 	sched->setMainThread();
 

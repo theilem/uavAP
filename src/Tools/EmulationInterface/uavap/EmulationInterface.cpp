@@ -42,9 +42,7 @@ main(int argc, char** argv)
 		return 1;
 	}
 
-	EmulationInterfaceHelper helper;
-
-	auto agg = helper.createAggregation(configPath);
+	auto agg = EmulationInterfaceHelper::createAggregation(configPath);
 
 	auto sched = agg.getOne<IScheduler>();
 	sched->setMainThread();
