@@ -90,28 +90,28 @@ FilletGlobalPlanner::setMission(const Mission& mission)
 	mission_ = mission;
 	bool infinite = true;
 	PathSections traj;
-	if (mission.waypoints.size() == 1)
+	if (mission.waypoints().size() == 1)
 	{
 		infinite = false;
 	}
 	//Avoid reallocation and iterator missmatch during iterations by reserving
-	traj.reserve(mission.waypoints.size() * 2);
+	traj.reserve(mission.waypoints().size() * 2);
 	//Connect waypoints with lines first
-	for (auto it = mission.waypoints.begin(); it != mission.waypoints.end(); ++it)
+	for (auto it = mission.waypoints().begin(); it != mission.waypoints().end(); ++it)
 	{
 		auto nextIt = it + 1;
-		if (nextIt == mission.waypoints.end())
+		if (nextIt == mission.waypoints().end())
 		{
 			if (!infinite)
 				break;
 
-			nextIt = mission.waypoints.begin();
+			nextIt = mission.waypoints().begin();
 		}
-		EigenLine line = EigenLine::Through(it->location, nextIt->location);
-		double vel = mission_.velocity;
-		if (nextIt->velocity)
-			vel = *nextIt->velocity;
-		traj.push_back(std::make_shared<Line>(line, nextIt->location, vel));
+		EigenLine line = EigenLine::Through(it->location(), nextIt->location());
+		double vel = mission_.velocity();
+		if (nextIt->velocity())
+			vel = *nextIt->velocity();
+		traj.push_back(std::make_shared<Line>(line, nextIt->location(), vel));
 	}
 
 	//Now cut the lines with fillets
@@ -160,8 +160,8 @@ FilletGlobalPlanner::setMission(const Mission& mission)
 		//Make orbit in the end to not just crash down
 		if (traj.empty())
 		{
-			center = mission.waypoints.back().location;
-			vel = mission.velocity;
+			center = mission.waypoints().back().location();
+			vel = mission.velocity();
 		}
 		else
 		{
@@ -176,7 +176,7 @@ FilletGlobalPlanner::setMission(const Mission& mission)
 	if (auto dp = get<DataPresentation>())
 	{
 		CPSLOG_DEBUG << "Send trajectory";
-		auto packet = dp->serialize(Trajectory(traj, mission.infinite));
+		auto packet = dp->serialize(Trajectory(traj, mission.infinite()));
 		trajectoryPublisher_.publish(packet);
 	}
 }

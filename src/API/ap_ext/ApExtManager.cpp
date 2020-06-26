@@ -394,7 +394,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	auto pic = sample->pic_sample;
 	if (!pic)
 	{
-		CPSLOG_ERROR << "Cannot read PIC sample. Set autopilot active to true.";
+//		CPSLOG_ERROR << "Cannot read PIC sample. Set autopilot active to true.";
 		sens.autopilotActive = true;
 	}
 	else

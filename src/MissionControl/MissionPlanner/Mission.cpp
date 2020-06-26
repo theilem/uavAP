@@ -26,71 +26,71 @@
 #include <cpsCore/Configuration/PropertyMapper.hpp>
 #include "uavAP/MissionControl/MissionPlanner/Mission.h"
 
-bool
-Waypoint::configure(const Configuration& config)
-{
-	PropertyMapper<Configuration> pm(config);
-	pm.add<double>("n", location[1], true);
-	pm.add<double>("e", location[0], true);
-	if (!pm.add<double>("d", location[2], false))
-		pm.add<double>("u", location[2], true);
-	else
-		location[2] *= -1;
-
-	Configuration directionConfig;
-
-	if (pm.add("direction", directionConfig, false))
-	{
-		Vector3 dir;
-		PropertyMapper<Configuration> pmDir(directionConfig);
-		pmDir.add<double>("n", dir[1], true);
-		pmDir.add<double>("e", dir[0], true);
-		if (!pmDir.add<double>("d", dir[2], false))
-			pmDir.add<double>("u", dir[2], true);
-		else
-			dir[2] *= -1;
-		if (pmDir.map())
-			direction = dir;
-	}
-
-	double vel = DEFAULT_VELOCITY;
-	if (pm.add<double>("velocity", vel, false))
-		velocity = vel;
-
-	return pm.map();
-
-}
-
-bool
-Mission::configure(const Configuration& config)
-{
-	PropertyMapper<Configuration> pm(config);
-	pm.add<double>("velocity", velocity, true);
-	pm.add<bool>("infinite", infinite, true);
-
-	Waypoint offset;
-	bool hasOffset = false;
-	Configuration offsetWaypoint;
-	if (pm.add("offset", offsetWaypoint, false))
-	{
-		if (offset.configure(offsetWaypoint))
-			hasOffset = true;
-	}
-
-	Configuration waypointConfig;
-	if (pm.add("waypoints", waypointConfig, true))
-	{
-		for (auto& it : waypointConfig)
-		{
-			Waypoint wp;
-			if (wp.configure(it.second))
-			{
-				if (hasOffset)
-					wp.location = wp.location + offset.location;
-				waypoints.push_back(wp);
-			}
-		}
-	}
-
-	return pm.map();
-}
+//bool
+//Waypoint::configure(const Configuration& config)
+//{
+//	PropertyMapper<Configuration> pm(config);
+//	pm.add<double>("n", location[1], true);
+//	pm.add<double>("e", location[0], true);
+//	if (!pm.add<double>("d", location[2], false))
+//		pm.add<double>("u", location[2], true);
+//	else
+//		location[2] *= -1;
+//
+//	Configuration directionConfig;
+//
+//	if (pm.add("direction", directionConfig, false))
+//	{
+//		Vector3 dir;
+//		PropertyMapper<Configuration> pmDir(directionConfig);
+//		pmDir.add<double>("n", dir[1], true);
+//		pmDir.add<double>("e", dir[0], true);
+//		if (!pmDir.add<double>("d", dir[2], false))
+//			pmDir.add<double>("u", dir[2], true);
+//		else
+//			dir[2] *= -1;
+//		if (pmDir.map())
+//			direction = dir;
+//	}
+//
+//	double vel = DEFAULT_VELOCITY;
+//	if (pm.add<double>("velocity", vel, false))
+//		velocity = vel;
+//
+//	return pm.map();
+//
+//}
+//
+//bool
+//Mission::configure(const Configuration& config)
+//{
+//	PropertyMapper<Configuration> pm(config);
+//	pm.add<double>("velocity", velocity, true);
+//	pm.add<bool>("infinite", infinite, true);
+//
+//	Waypoint offset;
+//	bool hasOffset = false;
+//	Configuration offsetWaypoint;
+//	if (pm.add("offset", offsetWaypoint, false))
+//	{
+//		if (offset.configure(offsetWaypoint))
+//			hasOffset = true;
+//	}
+//
+//	Configuration waypointConfig;
+//	if (pm.add("waypoints", waypointConfig, true))
+//	{
+//		for (auto& it : waypointConfig)
+//		{
+//			Waypoint wp;
+//			if (wp.configure(it.second))
+//			{
+//				if (hasOffset)
+//					wp.location = wp.location + offset.location;
+//				waypoints.push_back(wp);
+//			}
+//		}
+//	}
+//
+//	return pm.map();
+//}
