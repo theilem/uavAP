@@ -31,113 +31,6 @@
 #include <cpsCore/Utilities/Scheduler/IScheduler.h>
 #include <cpsCore/Synchronization/SimpleRunner.h>
 
-AutopilotAPI::AutopilotAPI() :
-		localFrame_(0)
-{
-}
-
-boost::signals2::connection
-AutopilotAPI::subscribeOnControllerOut(const OnControllerOut::slot_type& slot)
-{
-	return onControllerOut_.connect(slot);
-}
-
-boost::signals2::connection
-AutopilotAPI::subscribeOnAdvancedControl(const OnAdvancedControl::slot_type& slot)
-{
-	return onAdvancedControl_.connect(slot);
-}
-
-void
-AutopilotAPI::setSensorData(const SensorData& sd)
-{
-	SensorData data = sd;
-	changeFrame(InertialFrame(), localFrame_, data);
-	sensorDataPublisher_.publish(data);
-}
-
-void
-AutopilotAPI::initialize()
-{
-	auto ipc = aggregator_.getOne<IPC>();
-	sensorDataPublisher_ = ipc->publish<SensorData>("sensor_data");
-	servoDataPublisher_ = ipc->publish<ServoData>("servo_data");
-	powerDataPublisher_ = ipc->publish<PowerData>("power_data");
-
-	IPCOptions opts;
-	opts.retry = true;
-	ipc->subscribe<ControllerOutput>("actuation",
-									 std::bind(&AutopilotAPI::onControllerOut, this, std::placeholders::_1), opts);
-	ipc->subscribe<AdvancedControl>("advanced_control_maneuver",
-									std::bind(&AutopilotAPI::onAdvancedControl, this, std::placeholders::_1), opts);
-	ipc->subscribe<VehicleOneFrame>("local_frame",
-									std::bind(&AutopilotAPI::onLocalFrame, this, std::placeholders::_1), opts);
-	SimpleRunner runner(aggregator_);
-	runner.runAllStages();
-}
-
-void
-AutopilotAPI::tryConnectControllerOut()
-{
-	CPSLOG_DEBUG << "Try connect to controller out.";
-	auto ipc = aggregator_.getOne<IPC>();
-	controllerOutSubscription_ = ipc->subscribe<ControllerOutput>("actuation",
-																  std::bind(&AutopilotAPI::onControllerOut, this,
-																			std::placeholders::_1));
-	if (!controllerOutSubscription_.connected())
-	{
-		CPSLOG_DEBUG << "Was not able to subscribe to actuation. Try again in 1sec.";
-		auto scheduler = aggregator_.getOne<IScheduler>();
-		scheduler->schedule(std::bind(&AutopilotAPI::tryConnectControllerOut, this), Seconds(1));
-	}
-}
-
-void
-AutopilotAPI::tryConnectAdvancedControl()
-{
-	auto ipc = aggregator_.getOne<IPC>();
-	advancedControlSubscription_ = ipc->subscribe<AdvancedControl>("advanced_control_maneuver",
-																   std::bind(&AutopilotAPI::onAdvancedControl, this,
-																			 std::placeholders::_1));
-	if (!advancedControlSubscription_.connected())
-	{
-		auto scheduler = aggregator_.getOne<IScheduler>();
-		scheduler->schedule(std::bind(&AutopilotAPI::tryConnectAdvancedControl, this), Seconds(1));
-	}
-}
-
-void
-AutopilotAPI::tryConnectLocalFrame()
-{
-	auto ipc = aggregator_.getOne<IPC>();
-	localFrameSubscription_ = ipc->subscribe<VehicleOneFrame>("local_frame",
-															  std::bind(&AutopilotAPI::onLocalFrame, this,
-																		std::placeholders::_1));
-	if (!localFrameSubscription_.connected())
-	{
-		auto scheduler = aggregator_.getOne<IScheduler>();
-		scheduler->schedule(std::bind(&AutopilotAPI::tryConnectLocalFrame, this), Seconds(1));
-	}
-}
-
-void
-AutopilotAPI::onControllerOut(const ControllerOutput& control)
-{
-	onControllerOut_(control);
-}
-
-void
-AutopilotAPI::onAdvancedControl(const AdvancedControl& control)
-{
-	onAdvancedControl_(control);
-}
-
-void
-AutopilotAPI::onLocalFrame(const VehicleOneFrame& frame)
-{
-	localFrame_ = frame;
-}
-
 void
 AutopilotAPI::configure(const Configuration& config)
 {
@@ -146,13 +39,38 @@ AutopilotAPI::configure(const Configuration& config)
 }
 
 void
+AutopilotAPI::initialize()
+{
+	SimpleRunner runner(aggregator_);
+	runner.runAllStages();
+}
+
+boost::signals2::connection
+AutopilotAPI::subscribeOnControllerOut(const OnControllerOut::slot_type& slot)
+{
+	return aggregator_.getOne<AggregatableAutopilotAPI>()->subscribeOnControllerOut(slot);
+}
+
+boost::signals2::connection
+AutopilotAPI::subscribeOnAdvancedControl(const OnAdvancedControl::slot_type& slot)
+{
+	return aggregator_.getOne<AggregatableAutopilotAPI>()->subscribeOnAdvancedControl(slot);
+}
+
+void
+AutopilotAPI::setSensorData(const SensorData& sd)
+{
+	return aggregator_.getOne<AggregatableAutopilotAPI>()->setSensorData(sd);
+}
+
+void
 AutopilotAPI::setServoData(const ServoData& sd)
 {
-	servoDataPublisher_.publish(sd);
+	return aggregator_.getOne<AggregatableAutopilotAPI>()->setServoData(sd);
 }
 
 void
 AutopilotAPI::setPowerData(const PowerData& pd)
 {
-	powerDataPublisher_.publish(pd);
+	return aggregator_.getOne<AggregatableAutopilotAPI>()->setPowerData(pd);
 }

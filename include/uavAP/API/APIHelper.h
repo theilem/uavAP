@@ -16,6 +16,9 @@
 #include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 #include <cpsCore/Utilities/SignalHandler/SignalHandler.h>
 
-using APIHelper = StaticHelper<TimeProviderFactory, SchedulerFactory, IPC, DataPresentation, SignalHandler>;
+#include "uavAP/API/AggregatableAutopilotAPI.h"
+
+using APIHelperDefaults = StaticHelper<TimeProviderFactory, SchedulerFactory, IPC, DataPresentation, SignalHandler, AggregatableAutopilotAPI>;
+using APIHelper = StaticHelper<APIHelperDefaults>;
 
 #endif /* UAVAP_API_APIHELPER_H_ */

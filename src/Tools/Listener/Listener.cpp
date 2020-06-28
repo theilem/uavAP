@@ -26,9 +26,14 @@
 #include <boost/property_tree/json_parser.hpp>
 
 #include <cpsCore/Synchronization/SimpleRunner.h>
+#include <cpsCore/Utilities/TimeProvider/SystemTimeProvider.h>
+#include <cpsCore/Utilities/Scheduler/MultiThreadingScheduler.h>
 
 #include "uavAP/API/ap_ext/ApExtManager.h"
-#include "uavAP/FlightControl/FlightControlHelper.h"
+#include "uavAP/Core/SensorData.h"
+
+#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
+#include <cpsCore/Utilities/IPC/IPC.h>
 
 bool showControl = false;
 bool showSensor = false;
