@@ -9,8 +9,10 @@
 #include "LogParser.h"
 #include <cpsCore/Utilities/Scheduler/SchedulerFactory.h>
 #include <cpsCore/Utilities/TimeProvider/TimeProviderFactory.h>
+#include <cpsCore/Utilities/SignalHandler/SignalHandler.h>
 
-using LogParsingHelper = StaticHelper<LogParser, SchedulerFactory, TimeProviderFactory>;
+using LogParsingDefaults = StaticHelper<SchedulerFactory, TimeProviderFactory, SignalHandler>;
+using LogParsingHelper = StaticHelper<LogParsingDefaults, LogParser>;
 
 
 #endif //UAVAP_LOGPARSINGHELPER_H

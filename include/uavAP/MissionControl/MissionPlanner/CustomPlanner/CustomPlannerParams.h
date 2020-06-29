@@ -15,7 +15,7 @@ struct CustomPlannerParams
 	Parameter<FloatingType> defaultAltitude = {{}, "default_altitude", true};
 	Parameter<bool> useApproach = {false, "use_approach", false};
 
-	Parameter<std::unordered_map<std::string, Mission>> missions = {{}, "missions", true};
+	Parameter<std::map<std::string, Mission>> missions = {{}, "missions", true};
 
 	template<typename Config>
 	inline void

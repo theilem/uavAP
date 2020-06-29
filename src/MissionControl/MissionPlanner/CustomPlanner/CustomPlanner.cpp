@@ -22,43 +22,6 @@ CustomPlanner::CustomPlanner() :
 {
 }
 
-//bool
-//CustomPlanner::configure(const Configuration& config)
-//{
-//	PropertyMapper<Configuration> pm(config);
-//	CPSLOG_ERROR << "Mission configure called";
-//
-//	pm.add<double>("default_velocity", defaultVelocity_, true);
-//	pm.add<double>("default_altitude", defaultAltitude_, true);
-//	pm.add<bool>("use_approach", useApproach_, true);
-//	Mission defaultMission;
-//	Waypoint centerWP(Vector3(0, 0, defaultAltitude_), defaultVelocity_);
-//	defaultMission.waypoints.push_back(centerWP);
-//	missionMap_.insert(std::make_pair("default", defaultMission));
-//
-//	Configuration missions;
-//	pm.add("missions", missions, false);
-//
-//	for (auto& it : missions)
-//	{
-//		Mission mis;
-//		mis.configure(it.second);
-//		missionMap_.insert(std::make_pair(it.first, mis));
-//	}
-//
-//	std::string defMission;
-//	if (pm.add("default_mission", defMission, false))
-//	{
-//		currentMission_ = missionMap_.find(defMission);
-//	}
-//	else
-//	{
-//		currentMission_ = missionMap_.find("default");
-//	}
-//
-//	return pm.map();
-//}
-
 bool
 CustomPlanner::run(RunStage stage)
 {
@@ -74,7 +37,7 @@ CustomPlanner::run(RunStage stage)
 
 			//Creating default mission
 			Waypoint centerWP;
-			centerWP.location = Vector3(0,0, params.defaultAltitude());
+			centerWP.location = Vector3(0, 0, params.defaultAltitude());
 			Mission defaultMission;
 			defaultMission.velocity = params.defaultVelocity();
 			defaultMission.infinite = true;
@@ -83,6 +46,11 @@ CustomPlanner::run(RunStage stage)
 			auto it = params.missions().insert(std::make_pair("default_mission", defaultMission));
 			if (it.second)
 				currentMission_ = it.first;
+
+			for (const auto& k : params.missions())
+			{
+				CPSLOG_ERROR << "Mission " << k.first << " available";
+			}
 
 			break;
 		}
@@ -103,8 +71,16 @@ CustomPlanner::run(RunStage stage)
 			if (auto dh = get<DataHandling>())
 			{
 				dh->subscribeOnData<std::string>(Content::SELECT_MISSION,
-													std::bind(&CustomPlanner::missionRequest, this,
-															  std::placeholders::_1));
+												 std::bind(&CustomPlanner::missionRequest, this,
+														   std::placeholders::_1));
+				dh->addTriggeredStatusFunction<MissionMap, DataRequest>([this](const DataRequest& req)
+																		{
+																			return req == DataRequest::MISSION_LIST
+																				   ? std::make_optional<MissionMap>(
+																							params.missions())
+																				   : std::nullopt;
+																		}, Content::MISSION_LIST,
+																		Content::REQUEST_DATA);
 			}
 
 
@@ -125,9 +101,9 @@ CustomPlanner::run(RunStage stage)
 void
 CustomPlanner::missionRequest(const std::string& mission)
 {
-	auto newMission = missionMap_.find(mission);
+	auto newMission = params.missions().find(mission);
 
-	if (newMission == missionMap_.end())
+	if (newMission == params.missions().end())
 	{
 		CPSLOG_ERROR << "Requested Mission " << mission << " Not Found.";
 		return;
@@ -141,7 +117,7 @@ CustomPlanner::missionRequest(const std::string& mission)
 void
 CustomPlanner::publishMission()
 {
-	if (currentMission_ == missionMap_.end())
+	if (currentMission_ == params.missions().end())
 	{
 		CPSLOG_ERROR << "No Mission Selected. Cannot Publish.";
 		return;

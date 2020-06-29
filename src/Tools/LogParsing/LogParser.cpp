@@ -28,6 +28,26 @@ LogParser::setupLog()
 	if (!logFile_.is_open())
 		return false;
 
+	//Count lines
+	std::string str;
+	int counter = 0;
+	auto offset = logFile_.tellg();
+	while (std::getline(logFile_, str))
+	{
+		counter++;
+		if (counter * params.period() < params.offsetSecs() * 1000)
+			offset = logFile_.tellg();
+	}
+	logFile_.clear();
+	logFile_.seekg(offset, std::ios_base::beg);
+	if (logFile_.fail())
+	{
+		CPSLOG_ERROR << "Log file failed";
+		return false;
+	}
+	CPSLOG_DEBUG << "Log length: " << counter * params.period() / 1000.0 << " secs";
+	CPSLOG_DEBUG << "Starting at sec: " << params.offsetSecs();
+
 	std::ifstream headerFile(params.logHeaderPath());
 	std::string header;
 	std::getline(headerFile, header);
@@ -126,7 +146,14 @@ LogParser::createAndSendSample()
 	}
 
 	std::string line;
-	std::getline(logFile_, line);
+	if (!std::getline(logFile_, line))
+	{
+		if (logFile_.eof())
+			CPSLOG_ERROR << "Logfile end of file";
+		else
+			CPSLOG_ERROR << "Unknown error";
+		return;
+	}
 	std::vector<std::string> items;
 
 	boost::split(items, line, boost::is_any_of(";"), boost::token_compress_off);

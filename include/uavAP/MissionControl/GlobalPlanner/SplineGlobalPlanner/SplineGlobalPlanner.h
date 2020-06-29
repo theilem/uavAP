@@ -51,7 +51,7 @@ private:
 	Trajectory
 	createCatmulRomSplines(const Mission& mission);
 
-	Mission
+	Optional<Mission>
 	missionRequest(const DataRequest& request);
 
 	Mission mission_;

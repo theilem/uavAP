@@ -9,14 +9,15 @@
 #define UAVAP_MISSIONCONTROL_MISSIONPLANNER_CUSTOMPLANNER_H_
 
 #include <memory>
-#include <unordered_map>
+#include <map>
 
 #include <cpsCore/cps_object>
 #include <cpsCore/Utilities/IPC/Subscription.h>
+#include <uavAP/Core/DataHandling/Content.hpp>
 
 #include "uavAP/MissionControl/MissionPlanner/IMissionPlanner.h"
 #include "uavAP/MissionControl/MissionPlanner/Mission.h"
-#include "CustomPlannerParams.h"
+#include "uavAP/MissionControl/MissionPlanner/CustomPlanner/CustomPlannerParams.h"
 
 class IPC;
 
@@ -27,6 +28,7 @@ class IScheduler;
 class DataHandling;
 
 struct SensorData;
+enum class DataRequest;
 
 /**
  * @brief   The CustomPlanner class is a mission planner that can accept
@@ -59,7 +61,7 @@ public:
 
 private:
 
-	using MissionMap = std::unordered_map<std::string, Mission>;
+	using MissionMap = std::map<std::string, Mission>;
 
 	/**
 	 * @brief   publishMission notifies the global planner of the new mission to
@@ -77,13 +79,13 @@ private:
 	void
 	onSensorData(const SensorData& data);
 
+
 	double defaultVelocity_;
 	double defaultAltitude_;
 	bool useApproach_;
 
 	Subscription sensorDataSubscription_;
 
-	MissionMap missionMap_;
 	MissionMap::const_iterator currentMission_;
 
 	Vector3 currentPosition_;

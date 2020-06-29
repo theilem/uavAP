@@ -1,0 +1,88 @@
+{
+  "controller": {
+    "maneuver_rate": {
+      "period": 0,
+      "cascade": {
+        "velocity": {
+          "kp": 0.5,
+          "ki": 0.2,
+          "kd": 0,
+          "imax": 3,
+          "ff": 0
+        },
+        "climb_angle": {
+          "kp": 0.4,
+          "ki": 0,
+          "kd": 0,
+          "imax": 2,
+          "ff": 0
+        },
+        "pitch": {
+          "kp": 1,
+          "ki": 0.2,
+          "kd": 0,
+          "imax": 0.2,
+          "ff": 0
+        },
+        "roll": {
+          "kp": 1.2,
+          "ki": 0.4,
+          "kd": 0,
+          "imax": 0.2,
+          "ff": 0
+        },
+        "roll_rate": {
+          "kp": 0,
+          "ki": 0,
+          "kd": 0,
+          "imax": 1.79769e+308,
+          "ff": 3
+        },
+        "roll_constraint": {
+          "min": -30,
+          "max": 30
+        },
+        "roll_rate_constraint": {
+          "min": -20,
+          "max": 20
+        },
+        "pitch_constraint": {
+          "min": -15,
+          "max": 15
+        }
+      }
+    }
+  },
+  "local_planner": {
+    "maneuver": {
+      "period": 0,
+      "safety_velocity": 10,
+      "k_altitude": 0.8,
+      "k_convergence": 0.01,
+      "k_yaw_rate": 0.65
+    }
+  },
+  "data_handling": {
+    "period": 200,
+    "target": "flight_control"
+  },
+  "data_presentation": {
+    "compress_double": true
+  },
+  "scheduler": {
+    "thread": {
+      "priority": 20
+    }
+  },
+  "time_provider": {
+    "system_time": {
+    }
+  },
+  "ipc": {},
+  "sens_act_io": {
+    "shared_memory": {
+    }
+  },
+  "signal_handler": {
+  }
+}

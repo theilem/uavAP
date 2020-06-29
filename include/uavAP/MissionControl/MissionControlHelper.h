@@ -19,7 +19,6 @@
 //#include "uavAP/MissionControl/Geofencing/GeofencingModelFactory.h"
 #include "uavAP/MissionControl/LocalFrameManager/LocalFrameManager.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
-#include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
 #include <cpsCore/Utilities/SignalHandler/SignalHandler.h>
 #include <cpsCore/Utilities/IDC/IDC.h>
 //#include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
@@ -29,14 +28,14 @@ using MissionControlDefaults = StaticHelper<IPC, SchedulerFactory, TimeProviderF
 
 using MissionControlHelper = StaticHelper<MissionControlDefaults,
 //		ConditionManager,
-		DataHandling,
 //		ManeuverPlanner,
+//		GeofencingModelFactory,
+//		Geofencing,
+//		WindAnalysis,
+		DataHandling,
 		LocalFrameManager,
 		MissionPlannerFactory,
 		GlobalPlannerFactory
-//		GeofencingModelFactory,
-//		Geofencing,
-//		WindAnalysis
 		>;
 
 #endif /* UAVAP_MISSIONCONTROL_MISSIONCONTROLHELPER_H_ */

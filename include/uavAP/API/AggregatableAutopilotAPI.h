@@ -5,30 +5,35 @@
 #ifndef UAVAP_AGGREGATABLEAUTOPILOTAPI_H
 #define UAVAP_AGGREGATABLEAUTOPILOTAPI_H
 
-#include <cpsCore/Aggregation/AggregatableObject.hpp>
-#include <cpsCore/Synchronization/IRunnableObject.h>
-#include <cpsCore/Utilities/Scheduler/IScheduler.h>
+#include <cpsCore/cps_object>
 #include <cpsCore/Utilities/IPC/Subscription.h>
 #include <cpsCore/Utilities/IPC/Publisher.h>
 
 #include "uavAP/Core/Frames/VehicleOneFrame.h"
+#include <boost/signals2.hpp>
 
 class SensorData;
+
 class ServoData;
+
 class PowerData;
+
 class AdvancedControl;
+
 class ControllerOutput;
+
+class IScheduler;
+
 class IPC;
 
-#include <boost/signals2.hpp>
 
 using OnControllerOut = boost::signals2::signal<void(const ControllerOutput&)>;
 using OnAdvancedControl = boost::signals2::signal<void(const AdvancedControl&)>;
 
-class AggregatableAutopilotAPI : public AggregatableObject<IScheduler, IPC>, IRunnableObject
+class AggregatableAutopilotAPI : public AggregatableObject<IPC, IScheduler>, public IRunnableObject
 {
 public:
-	static constexpr TypeId typeId = "autopilotapi";
+	static constexpr TypeId typeId = "autopilot_api";
 
 	AggregatableAutopilotAPI();
 

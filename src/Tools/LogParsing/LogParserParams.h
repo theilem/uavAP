@@ -13,6 +13,7 @@ struct LogParserParams
 	Parameter<std::string> logHeaderPath = {"", "log_header_path", true};
 	Parameter<std::string> alvoloConfigPath = {"/usr/local/config/alvolo.json", "alvolo_config_path", true};
 	Parameter<unsigned> period = {10, "period", true};
+	Parameter<unsigned> offsetSecs = {0, "offset_secs", false};
 	Parameter<bool> internalImu = {false, "internal_imu", true};
 	Parameter<bool> externalGps = {false, "external_gps", true};
 	Parameter<bool> useEuler = {true, "use_euler", true};
@@ -26,6 +27,7 @@ struct LogParserParams
 		c & logHeaderPath;
 		c & alvoloConfigPath;
 		c & period;
+		c & offsetSecs;
 		c & internalImu;
 		c & externalGps;
 		c & useEuler;

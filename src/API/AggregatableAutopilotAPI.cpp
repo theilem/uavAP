@@ -9,6 +9,7 @@
 #include "uavAP/FlightControl/Controller/AdvancedControl.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include <cpsCore/Utilities/IPC/IPC.h>
+#include <cpsCore/Utilities/Scheduler/IScheduler.h>
 
 AggregatableAutopilotAPI::AggregatableAutopilotAPI() :
 		localFrame_(0)
@@ -63,6 +64,7 @@ AggregatableAutopilotAPI::run(RunStage stage)
 		}
 		case RunStage::NORMAL:
 		{
+			CPSLOG_ERROR << "Advertising sensor data";
 			auto ipc = get<IPC>();
 			sensorDataPublisher_ = ipc->publish<SensorData>("sensor_data");
 			servoDataPublisher_ = ipc->publish<ServoData>("servo_data");

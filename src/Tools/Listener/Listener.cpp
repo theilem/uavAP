@@ -1,21 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
 /*
  * OutputListener.cpp
  *
@@ -28,6 +10,7 @@
 #include <cpsCore/Synchronization/SimpleRunner.h>
 #include <cpsCore/Utilities/TimeProvider/SystemTimeProvider.h>
 #include <cpsCore/Utilities/Scheduler/MultiThreadingScheduler.h>
+#include <cpsCore/Utilities/SignalHandler/SignalHandler.h>
 
 #include "uavAP/API/ap_ext/ApExtManager.h"
 #include "uavAP/Core/SensorData.h"
@@ -78,8 +61,9 @@ main(int argc, char** argv)
 	auto dp = std::make_shared<DataPresentation>();
 	auto tp = std::make_shared<SystemTimeProvider>();
 	auto sched = std::make_shared<MultiThreadingScheduler>();
+	auto sh = std::make_shared<SignalHandler>();
 	auto agg = Aggregator::aggregate(
-	{ ipc, dp, tp, sched });
+	{ ipc, dp, tp, sched, sh });
 
 	ArchiveOptions opts;
 	opts.compressDouble = true;
@@ -88,13 +72,16 @@ main(int argc, char** argv)
 	ipc->subscribe<ControllerOutput>("actuation", &dispControl);
 	ipc->subscribe<SensorData>("sensor_data", &dispSens);
 
+	bool running = true;
+	sh->subscribeOnExit([&running](){running = false;});
+
 	SimpleRunner runner(agg);
 	runner.runAllStages();
 	ControllerOutput data;
 
 	std::string input;
 
-	while (1)
+	while (running)
 	{
 		input.clear();
 		std::cout << "Enter shared memory object to listen to: " << std::endl;
@@ -102,29 +89,29 @@ main(int argc, char** argv)
 		std::cout << "ControllerOutput: control" << std::endl;
 		std::cout << "Pause: p, Quit: q" << std::endl;
 		std::cin >> input;
-		if (input.compare("q") == 0)
+		if (input == "q")
 		{
 			break;
 		}
-		else if (input.compare("p") == 0)
+		else if (input == "p")
 		{
 			showSensor = false;
 			showControl = false;
 			showOutput = false;
 		}
-		else if (input.compare("sensor") == 0)
+		else if (input == "sensor")
 		{
 			showSensor = true;
 			showControl = false;
 			showOutput = false;
 		}
-		else if (input.compare("control") == 0)
+		else if (input == "control")
 		{
 			showSensor = false;
 			showControl = true;
 			showOutput = false;
 		}
-		else if (input.compare("output") == 0)
+		else if (input == "output")
 		{
 			showSensor = false;
 			showControl = false;

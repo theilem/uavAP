@@ -312,10 +312,10 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 	return result;
 }
 
-Mission
+Optional<Mission>
 SplineGlobalPlanner::missionRequest(const DataRequest& request)
 {
 	if (request == DataRequest::MISSION)
 		return mission_;
-	return Mission();
+	return std::nullopt;
 }

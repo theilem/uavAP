@@ -66,6 +66,7 @@ enum class Content
 	CONTROLLER_OUTPUT_TRIM,     //!< CONTROLLER_OUTPUT_TRIM
 	CONTROLLER_OUTPUT_OFFSET,   //!< CONTROLLER_OUTPUT_OFFSET
 	LOCAL_FRAME,
+	MISSION_LIST,
 	CRITICAL_POINTS,			//!< Critical points from geofencing
 
 	//GS to FlightControl in UAVAP
@@ -98,6 +99,7 @@ enum class DataRequest
 	MISSION,      //!< MISSION
 	TRAJECTORY,   //!< TRAJECTORY
 	PID_PARAMS, //!< PID PARAMETERS
+	MISSION_LIST, //!< List of possible missions
 	SAFETY_BOUNDS,   //!< SAFETY_BOUNDS
 	LOCAL_FRAME,   //!< LOCAL_FRAME
 	START_LOGGING,   //!< START_LOGGING

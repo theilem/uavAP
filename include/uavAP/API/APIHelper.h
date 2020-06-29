@@ -18,7 +18,15 @@
 
 #include "uavAP/API/AggregatableAutopilotAPI.h"
 
-using APIHelperDefaults = StaticHelper<TimeProviderFactory, SchedulerFactory, IPC, DataPresentation, SignalHandler, AggregatableAutopilotAPI>;
+using APIHelperDefaults = StaticHelper<
+		AggregatableAutopilotAPI,
+		TimeProviderFactory,
+		SchedulerFactory,
+		IPC,
+		DataPresentation,
+		SignalHandler
+        >;
+
 using APIHelper = StaticHelper<APIHelperDefaults>;
 
 #endif /* UAVAP_API_APIHELPER_H_ */

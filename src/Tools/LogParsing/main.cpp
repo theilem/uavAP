@@ -41,6 +41,8 @@ main(int argc, char** argv)
 
 	sched->startSchedule();
 
+	CPSLOG_DEBUG << "Done";
+
 	//Terminated -> Cleanup
 	aggregator.cleanUp();
 
