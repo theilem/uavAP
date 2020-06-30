@@ -55,7 +55,7 @@ AggregatableAutopilotAPI::run(RunStage stage)
 	{
 		case RunStage::INIT:
 		{
-			if (!checkIsSet<IScheduler, IPC, DataPresentation>())
+			if (!checkIsSet<IScheduler, IPC>())
 			{
 				CPSLOG_ERROR << "Dependencies missing";
 				return true;
@@ -71,12 +71,6 @@ AggregatableAutopilotAPI::run(RunStage stage)
 			sensorDataPublisher_ = ipc->publish<SensorData>("sensor_data");
 			servoDataPublisher_ = ipc->publish<ServoData>("servo_data");
 			powerDataPublisher_ = ipc->publish<PowerData>("power_data");
-
-
-			ArchiveOptions archOpts;
-			archOpts.compressDouble = true;
-			auto dp = get<DataPresentation>();
-			dp->setParams(archOpts);
 
 			ipc->subscribe<ControllerOutput>("actuation", std::bind(&AggregatableAutopilotAPI::onControllerOut, this,
 																	std::placeholders::_1), ipcOpts);
