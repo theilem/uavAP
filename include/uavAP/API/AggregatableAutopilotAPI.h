@@ -26,11 +26,13 @@ class IScheduler;
 
 class IPC;
 
+class DataPresentation;
+
 
 using OnControllerOut = boost::signals2::signal<void(const ControllerOutput&)>;
 using OnAdvancedControl = boost::signals2::signal<void(const AdvancedControl&)>;
 
-class AggregatableAutopilotAPI : public AggregatableObject<IPC, IScheduler>, public IRunnableObject
+class AggregatableAutopilotAPI : public AggregatableObject<IPC, IScheduler, DataPresentation>, public IRunnableObject
 {
 public:
 	static constexpr TypeId typeId = "autopilot_api";
