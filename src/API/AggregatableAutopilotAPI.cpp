@@ -64,7 +64,6 @@ AggregatableAutopilotAPI::run(RunStage stage)
 		}
 		case RunStage::NORMAL:
 		{
-			CPSLOG_ERROR << "Advertising sensor data";
 			auto ipc = get<IPC>();
 			sensorDataPublisher_ = ipc->publish<SensorData>("sensor_data");
 			servoDataPublisher_ = ipc->publish<ServoData>("servo_data");
@@ -86,7 +85,6 @@ AggregatableAutopilotAPI::run(RunStage stage)
 			break;
 	}
 
-	CPSLOG_TRACE << "Finish run XPlaneInterface";
 	return false;
 }
 
