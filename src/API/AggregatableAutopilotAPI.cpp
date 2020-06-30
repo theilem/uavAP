@@ -55,7 +55,7 @@ AggregatableAutopilotAPI::run(RunStage stage)
 	{
 		case RunStage::INIT:
 		{
-			if (!checkIsSet<IScheduler, IPC>())
+			if (!checkIsSet<IScheduler, IPC, DataPresentation>())
 			{
 				CPSLOG_ERROR << "Dependencies missing";
 				return true;
@@ -64,21 +64,27 @@ AggregatableAutopilotAPI::run(RunStage stage)
 		}
 		case RunStage::NORMAL:
 		{
-			CPSLOG_ERROR << "Advertising sensor data";
 			auto ipc = get<IPC>();
+			IPCOptions ipcOpts;
+			ipcOpts.retry = true;
+
 			sensorDataPublisher_ = ipc->publish<SensorData>("sensor_data");
 			servoDataPublisher_ = ipc->publish<ServoData>("servo_data");
 			powerDataPublisher_ = ipc->publish<PowerData>("power_data");
 
-			IPCOptions opts;
-			opts.retry = true;
+
+			ArchiveOptions archOpts;
+			archOpts.compressDouble = true;
+			auto dp = get<DataPresentation>();
+			dp->setParams(archOpts);
+
 			ipc->subscribe<ControllerOutput>("actuation", std::bind(&AggregatableAutopilotAPI::onControllerOut, this,
-																	std::placeholders::_1), opts);
+																	std::placeholders::_1), ipcOpts);
 			ipc->subscribe<AdvancedControl>("advanced_control_maneuver",
 											std::bind(&AggregatableAutopilotAPI::onAdvancedControl, this,
-													  std::placeholders::_1), opts);
+													  std::placeholders::_1), ipcOpts);
 			ipc->subscribe<VehicleOneFrame>("local_frame", std::bind(&AggregatableAutopilotAPI::onLocalFrame, this,
-																	 std::placeholders::_1), opts);
+																	 std::placeholders::_1), ipcOpts);
 
 			break;
 		}
