@@ -12,7 +12,7 @@
 
 #include "uavAP/API/AggregatableAutopilotAPI.h"
 
-class AutopilotAPI
+class AutopilotAPI : public IAutopilotAPI
 {
 public:
 
@@ -21,19 +21,19 @@ public:
 
 
 	boost::signals2::connection
-	subscribeOnControllerOut(const OnControllerOut::slot_type& slot);
+	subscribeOnControllerOut(const OnControllerOut::slot_type& slot) override;
 
 	boost::signals2::connection
-	subscribeOnAdvancedControl(const OnAdvancedControl::slot_type& slot);
+	subscribeOnAdvancedControl(const OnAdvancedControl::slot_type& slot) override;
 
 	void
-	setSensorData(const SensorData& sd);
+	setSensorData(const SensorData& sd) override;
 
 	void
-	setServoData(const ServoData& sd);
+	setServoData(const ServoData& sd) override;
 
 	void
-	setPowerData(const PowerData& pd);
+	setPowerData(const PowerData& pd) override;
 
 	/**
 	 * @brief Establishes connection to Autopilot shared memory instances. Creates sensor_data in SM and

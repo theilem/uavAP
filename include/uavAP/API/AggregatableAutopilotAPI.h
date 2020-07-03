@@ -10,7 +10,7 @@
 #include <cpsCore/Utilities/IPC/Publisher.h>
 
 #include "uavAP/Core/Frames/VehicleOneFrame.h"
-#include <boost/signals2.hpp>
+#include "uavAP/API/IAutopilotAPI.h"
 
 class SensorData;
 
@@ -26,11 +26,7 @@ class IScheduler;
 
 class IPC;
 
-
-using OnControllerOut = boost::signals2::signal<void(const ControllerOutput&)>;
-using OnAdvancedControl = boost::signals2::signal<void(const AdvancedControl&)>;
-
-class AggregatableAutopilotAPI : public AggregatableObject<IPC, IScheduler>, public IRunnableObject
+class AggregatableAutopilotAPI : public AggregatableObject<IPC, IScheduler>, public IRunnableObject, public IAutopilotAPI
 {
 public:
 	static constexpr TypeId typeId = "autopilot_api";
@@ -38,19 +34,19 @@ public:
 	AggregatableAutopilotAPI();
 
 	boost::signals2::connection
-	subscribeOnControllerOut(const OnControllerOut::slot_type& slot);
+	subscribeOnControllerOut(const OnControllerOut::slot_type& slot) override;
 
 	boost::signals2::connection
-	subscribeOnAdvancedControl(const OnAdvancedControl::slot_type& slot);
+	subscribeOnAdvancedControl(const OnAdvancedControl::slot_type& slot) override;
 
 	void
-	setSensorData(const SensorData& sd);
+	setSensorData(const SensorData& sd) override;
 
 	void
-	setServoData(const ServoData& sd);
+	setServoData(const ServoData& sd) override;
 
 	void
-	setPowerData(const PowerData& pd);
+	setPowerData(const PowerData& pd) override;
 
 	bool
 	run(RunStage stage) override;

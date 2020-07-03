@@ -18,7 +18,7 @@
 #include <uavAP/API/AutopilotAPI.hpp>
 #include "LogParserParams.h"
 
-class IAutopilotInterface;
+class IAutopilotAPI;
 
 class IScheduler;
 
