@@ -47,11 +47,6 @@ CustomPlanner::run(RunStage stage)
 			if (it.second)
 				currentMission_ = it.first;
 
-			for (const auto& k : params.missions())
-			{
-				CPSLOG_ERROR << "Mission " << k.first << " available";
-			}
-
 			break;
 		}
 		case RunStage::NORMAL:

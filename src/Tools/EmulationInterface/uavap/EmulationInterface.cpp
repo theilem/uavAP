@@ -1,30 +1,15 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
 /*
  * EmulationInterface.cpp
  *
  *  Created on: Jan 22, 2018
  *      Author: mircot
  */
-#include <boost/property_tree/json_parser.hpp>
 
 #include "EmulationInterfaceHelper.h"
+
+#include <cpsCore/Configuration/JsonPopulator.h>
+#include <fstream>
+#include <cpsCore/Synchronization/SimpleRunner.h>
 
 int
 main(int argc, char** argv)
@@ -38,8 +23,13 @@ main(int argc, char** argv)
 	}
 	else
 	{
-		CPSLOG_ERROR << "Please provide a config path";
-		return 1;
+		std::ofstream file;
+		file.open("emulation_interface.json", std::ofstream::out);
+		JsonPopulator pop(file);
+
+		pop.populateContainer(EmulationInterfaceHelper());
+		std::cout << "Populated json" << std::endl;
+		return 0;
 	}
 
 	auto agg = EmulationInterfaceHelper::createAggregation(configPath);

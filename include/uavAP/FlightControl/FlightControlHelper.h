@@ -21,31 +21,18 @@
 
 #include <cpsCore/Framework/StaticHelper.h>
 
-//class FlightControlHelper : public Helper
-//{
-//public:
-//	FlightControlHelper()
-//	{
-//		addFactory<LocalPlannerFactory>();
-//		addFactory<ControllerFactory>();
-//
-//		addDefault<SchedulerFactory>();
-//		addDefault<TimeProviderFactory>();
-//		addDefaultConfigurable<IPC>();
-//		addDefault<SensingActuationIOFactory>();
-//		addConfigurable<DataHandling>();
-//		addDefaultCreator<DataPresentation>();
-//	}
-//};
-
-using FlightControlHelper = StaticHelper<SchedulerFactory,
+using FlightControlDefaults = StaticHelper<SchedulerFactory,
 		TimeProviderFactory,
 		IPC,
 		DataPresentation,
+		SignalHandler
+		>;
+
+using FlightControlHelper = StaticHelper<FlightControlDefaults,
 		SensingActuationIOFactory,
 		DataHandling,
 		ControllerFactory,
-		LocalPlannerFactory,
-		SignalHandler>;
+		LocalPlannerFactory
+		>;
 
 #endif /* UAVAP_FLIGHTCONTROL_FLIGHTCONTROLHELPER_H_ */

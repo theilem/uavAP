@@ -43,6 +43,7 @@ SplineGlobalPlanner::run(RunStage stage)
 				dh->addTriggeredStatusFunction<Mission, DataRequest>(
 						std::bind(&SplineGlobalPlanner::missionRequest, this,
 								  std::placeholders::_1), Content::MISSION, Content::REQUEST_DATA);
+				dh->addConfig(this, Content::SPLINE_GLOBAL_PLANNER_PARAMS);
 			}
 			break;
 		}

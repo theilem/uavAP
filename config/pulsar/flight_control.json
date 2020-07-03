@@ -69,20 +69,8 @@
   "data_presentation": {
     "compress_double": true
   },
-  "scheduler": {
-    "thread": {
-      "priority": 20
-    }
-  },
-  "time_provider": {
-    "system_time": {
-    }
-  },
-  "ipc": {},
   "sens_act_io": {
     "shared_memory": {
     }
-  },
-  "signal_handler": {
   }
 }

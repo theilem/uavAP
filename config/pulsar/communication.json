@@ -1,19 +1,4 @@
 {
-  "signal_handler": {
-  },
-  "ipc": {
-  },
-  "idc": {
-  },
-  "scheduler": {
-    "thread": {
-      "priority": 20
-    }
-  },
-  "time_provider": {
-    "system_time": {
-    }
-  },
   "data_presentation": {
     "compress_double": true
   },
