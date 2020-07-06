@@ -21,6 +21,8 @@ class IAutopilotAPI
 {
 public:
 
+	static constexpr auto typeId = "autopilot_api";
+
 	using OnControllerOut = boost::signals2::signal<void(const ControllerOutput&)>;
 	using OnAdvancedControl = boost::signals2::signal<void(const AdvancedControl&)>;
 

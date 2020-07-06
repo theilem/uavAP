@@ -29,7 +29,7 @@ class IPC;
 class AggregatableAutopilotAPI : public AggregatableObject<IPC, IScheduler>, public IRunnableObject, public IAutopilotAPI
 {
 public:
-	static constexpr TypeId typeId = "autopilot_api";
+	static constexpr TypeId typeId = "agg_autopilot_api";
 
 	AggregatableAutopilotAPI();
 
