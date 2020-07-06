@@ -54,6 +54,8 @@ enum class Content
 	INVALID,                	//!< INVALID
 	//UAVAP to GS
 	SENSOR_DATA,            	//!< SENSOR_DATA
+	SERVO_DATA,
+	POWER_DATA,
 	MISSION,                	//!< MISSION
 	TRAJECTORY,             	//!< TRAJECTORY
 	PID_STATUS,             	//!< PID_STATUS
