@@ -10,11 +10,12 @@
 #include "EmulationDirectInterfaceParams.h"
 
 class AggregatableAutopilotAPI;
-
 class IDC;
+class DataPresentation;
+struct ControllerOutput;
 
 class EmulationDirectInterface
-		: public AggregatableObject<AggregatableAutopilotAPI, IDC>,
+		: public AggregatableObject<AggregatableAutopilotAPI, IDC, DataPresentation>,
 		  public IRunnableObject,
 		  public ConfigurableObject<EmulationDirectInterfaceParams>
 {
@@ -29,6 +30,9 @@ private:
 
 	void
 	onSensorDataPacket(const Packet& packet);
+
+	void
+	sendControllerOutput(const ControllerOutput& output);
 
 	IDCSender controlSender_;
 };

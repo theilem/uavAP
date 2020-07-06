@@ -9,7 +9,8 @@
 
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
-#include <cpsCore/Utilities/DataPresentation/BinarySerialization.hpp>
+#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
+#include <uavAP/Core/DataHandling/Content.hpp>
 
 bool
 EmulationDirectInterface::run(RunStage stage)
@@ -18,7 +19,7 @@ EmulationDirectInterface::run(RunStage stage)
 	{
 		case RunStage::INIT:
 		{
-			if (!checkIsSet<AggregatableAutopilotAPI, IDC>())
+			if (!checkIsSetAll())
 			{
 				CPSLOG_ERROR << "Missing dependencies";
 				return true;
@@ -26,14 +27,15 @@ EmulationDirectInterface::run(RunStage stage)
 			auto idc = get<IDC>();
 
 			controlSender_ = idc->createSender(params.controllerOutputTarget());
-			idc->subscribeOnPacket(params.sensorDataTarget(), [this](const auto& p){this->onSensorDataPacket(p);});
+			idc->subscribeOnPacket(params.sensorDataTarget(), [this](const auto& p)
+			{ this->onSensorDataPacket(p); });
 			break;
 		}
 		case RunStage::NORMAL:
 		{
 			auto api = get<AggregatableAutopilotAPI>();
 			api->subscribeOnControllerOut([this](const ControllerOutput& co)
-										  { controlSender_.sendPacket(dp::serialize<ControllerOutput>(co)); });
+										  {sendControllerOutput(co); });
 
 
 			break;
@@ -48,7 +50,34 @@ void
 EmulationDirectInterface::onSensorDataPacket(const Packet& packet)
 {
 	auto api = get<AggregatableAutopilotAPI>();
-	auto sd = dp::deserialize<SensorData>(packet);
+	auto dp = get<DataPresentation>();
 
-	api->setSensorData(sd);
+	auto p = packet;
+	auto content = dp->extractHeader<Content>(p);
+
+	switch (content)
+	{
+		case Content::SENSOR_DATA:
+			api->setSensorData(dp->deserialize<SensorData>(p));
+			break;
+		case Content::SERVO_DATA:
+			api->setServoData(dp->deserialize<ServoData>(p));
+			break;
+		case Content::POWER_DATA:
+			api->setPowerData(dp->deserialize<PowerData>(p));
+			break;
+		default:
+			CPSLOG_WARN << "Unknown packet of content: " << static_cast<int>(content);
+	}
+}
+
+void
+EmulationDirectInterface::sendControllerOutput(const ControllerOutput& output)
+{
+	auto dp = get<DataPresentation>();
+
+	auto packet = dp->serialize(output);
+	dp->addHeader(packet, Content::CONTROLLER_OUTPUT);
+	controlSender_.sendPacket(packet);
+
 }

@@ -53,6 +53,9 @@ public:
 	void
 	sendData(const Type& data, Content content, Target target = Target::BROADCAST);
 
+	void
+	subscribeOnPackets(const std::function<void(const Packet&)> packetSub);
+
 	bool
 	run(RunStage stage) override;
 
@@ -89,6 +92,8 @@ private:
 
 	std::vector<std::function<Packet
 			()>> statusPackaging_;
+
+	std::vector<std::function<void(const Packet&)>> packetSubscriptions_;
 
 	std::map<Content, std::vector<std::function<void
 			(const Packet&)>>> subscribers_;

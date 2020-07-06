@@ -87,6 +87,10 @@ DataHandling::run(RunStage stage)
 void
 DataHandling::onPacket(const Packet& packet)
 {
+	for (const auto& packetSub : packetSubscriptions_)
+	{
+		packetSub(packet);
+	}
 	auto dp = get<DataPresentation>();
 	if (!dp)
 	{
@@ -130,4 +134,10 @@ DataHandling::publish(const Packet& packet)
 	{
 		publisher_.publish(packet);
 	}
+}
+
+void
+DataHandling::subscribeOnPackets(std::function<void(const Packet&)> packetSub)
+{
+	packetSubscriptions_.push_back(packetSub);
 }
