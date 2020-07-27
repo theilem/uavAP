@@ -15,6 +15,7 @@
 #include <cpsCore/Utilities/TimeProvider/TimeProviderFactory.h>
 #include <cpsCore/Utilities/IDC/NetworkLayer/NetworkFactory.h>
 #include <cpsCore/Utilities/IDC/IDC.h>
+#include <cpsCore/Utilities/IPC/IPC.h>
 #include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 #include <cpsCore/Utilities/SignalHandler/SignalHandler.h>
 
@@ -24,6 +25,7 @@ using EmulationInterfaceDefaults = StaticHelper<SchedulerFactory,
 		TimeProviderFactory,
 		DataPresentation,
 		IDC,
+		IPC,
 		SignalHandler,
 		AggregatableAutopilotAPI
 		>;

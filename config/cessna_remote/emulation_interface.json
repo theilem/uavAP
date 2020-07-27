@@ -1,0 +1,28 @@
+{
+	"agg_autopilot_api":{
+	},
+	"network": {
+		"redis":{
+			"sub":{
+				"sensor_data": {
+					"host_ip":"127.0.0.1",
+					"auth":"",
+					"port":6379,
+					"channel":"to_uavap_emu"
+				}
+			},
+			"pub":{
+				"controller_output": {
+					"host_ip":"127.0.0.1",
+					"auth":"",
+					"port":6379,
+					"channel":"to_uavee"
+				}
+			}
+		}
+	},
+	"emulation_direct_interface":{
+		"sensor_data_target":"sensor_data",
+		"controller_output_target":"controller_output"
+	}
+}

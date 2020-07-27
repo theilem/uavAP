@@ -1,0 +1,62 @@
+{
+	"scheduler": {
+		"thread": {
+			"priority": 20
+		}
+	},
+	"data_handling": {
+		"period": 200,
+		"target": "mission_control"
+	},
+	"local_frame": {
+		"origin": [
+			367826.57,
+			4435393.06,
+			168
+		],
+		"yaw": 0
+	},
+	"global_planner": {
+		"spline": {
+			"tau": 0.6
+		}
+	},
+	"mission_planner": {
+		"custom": {
+			"use_approach": false,
+			"default_velocity": 60,
+			"default_altitude": 1500,
+			"missions": {
+				"simple": {
+					"velocity": 60,
+					"infinite": true,
+					"offset": [0,0,1500],
+					"waypoints": [
+						{"location": [1500,800,0]},
+						{"location": [1500,-800,0]},
+						{"location": [-1500,-800,0]},
+						{"location": [-1500,800,0]}
+					]
+				},
+				"validation": {
+					"velocity": 60,
+					"infinite": true,
+					"offset": [0,0,1000],
+					"waypoints": [
+						{"location": [3000,1500,0]},
+						{"location": [3000,-1500,0]},
+						{"location": [1500,-1500,0]},
+						{"location": [-1500,-1500,500]},
+						{"location": [-3000,-1500,500]},
+						{"location": [-3000,1500,500]},
+						{"location": [-1500,1500,500]},
+						{"location": [1500,1500,0]}
+					]
+				}
+			}
+		}
+	},
+	"data_presentation": {
+		"compress_double": true
+	}
+}
