@@ -138,6 +138,14 @@ CustomPlanner::publishMission()
 		wp.direction = currentDirection_;
 	}
 
+	if (mission.offset())
+	{
+		for (auto& wp : mission.waypoints())
+		{
+			wp.location() += *mission.offset();
+		}
+	}
+
 	gp->setMission(mission);
 }
 
