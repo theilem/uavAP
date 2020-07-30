@@ -10,8 +10,7 @@
 #include <uavAP/Core/DataHandling/Content.hpp>
 #include <uavAP/Core/DataHandling/DataHandling.h>
 
-LocalFrameManager::LocalFrameManager() :
-		frame_(0)
+LocalFrameManager::LocalFrameManager()
 {
 }
 
@@ -33,8 +32,6 @@ LocalFrameManager::run(RunStage stage)
 			CPSLOG_WARN << "LocalFrameManager: Cannot send local frame. DataHandling missing";
 		}
 
-		frame_ = VehicleOneFrame(params.yaw()(), params.origin());
-
 		auto ipc = get<IPC>();
 
 
@@ -51,6 +48,8 @@ LocalFrameManager::run(RunStage stage)
 			dh->addTriggeredStatusFunction<VehicleOneFrame, DataRequest>(
 					std::bind(&LocalFrameManager::localFrameRequest, this,
 							  std::placeholders::_1), Content::LOCAL_FRAME, Content::REQUEST_DATA);
+
+			dh->addConfig(this, Content::LOCAL_FRAME_MANAGER_PARAMS);
 		}
 		break;
 	}
@@ -64,31 +63,14 @@ void
 LocalFrameManager::publishFrame()
 {
 	std::unique_lock<std::mutex> lock(frameMutex_);
-	framePublisher_.publish(frame_);
+	framePublisher_.publish(params.toVehicleOneFrame());
 }
-
-const VehicleOneFrame&
-LocalFrameManager::getFrame() const
-{
-	std::lock_guard<std::mutex> lg(frameMutex_);
-	return frame_;
-}
-
-void
-LocalFrameManager::setFrame(const VehicleOneFrame& frame)
-{
-	std::unique_lock<std::mutex> lock(frameMutex_);
-	frame_ = frame;
-	lock.unlock();
-}
-
-
 
 Optional<VehicleOneFrame>
 LocalFrameManager::localFrameRequest(const DataRequest& request)
 {
 	if (request == DataRequest::LOCAL_FRAME)
-		return frame_;
+		return params.toVehicleOneFrame();
 	return std::nullopt;
 }
 

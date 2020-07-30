@@ -19,6 +19,8 @@ struct ManeuverLocalPlannerParams
 	Parameter<FloatingType> safetyVelocity = {25.0, "safety_velocity", true};
 	Parameter<FloatingType> safetyYawRate = {0.0, "safety_yaw_rate", false};
 	Parameter<int> period = {0, "period", false};
+	Parameter<FloatingType> overrideVelocity = {25.0, "override_velocity", false};
+	Parameter<bool> doOverrideVelocity = {false, "do_override_velocity", false};
 
 	template <class Configurator>
 	inline void
@@ -30,6 +32,8 @@ struct ManeuverLocalPlannerParams
 		c & safetyVelocity;
 		c & safetyYawRate;
 		c & period;
+		c & overrideVelocity;
+		c & doOverrideVelocity;
 	}
 };
 

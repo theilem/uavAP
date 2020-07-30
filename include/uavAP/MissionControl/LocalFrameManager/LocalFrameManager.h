@@ -38,12 +38,6 @@ public:
 	bool
 	run(RunStage stage) override;
 
-	const VehicleOneFrame&
-	getFrame() const;
-
-	void
-	setFrame(const VehicleOneFrame& frame);
-
 private:
 
 	void
@@ -53,7 +47,6 @@ private:
 	localFrameRequest(const DataRequest& request);
 
 	Publisher<VehicleOneFrame> framePublisher_;
-	VehicleOneFrame frame_;
 	mutable std::mutex frameMutex_;
 
 };

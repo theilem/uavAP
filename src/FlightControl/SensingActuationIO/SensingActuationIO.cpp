@@ -1,31 +1,13 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
 /*
  * SensingActuationIO.cpp
  *
  *  Created on: Jul 26, 2017
  *      Author: mircot
  */
-#include <uavAP/FlightControl/Controller/AdvancedControl.h>
+#include "uavAP/FlightControl/Controller/AdvancedControl.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h"
-#include <uavAP/Core/DataHandling/DataHandling.h>
+#include "uavAP/Core/DataHandling/DataHandling.h"
 #include <cpsCore/Utilities/IPC/IPC.h>
 #include "uavAP/Core/DataHandling/Content.hpp"
 
@@ -35,51 +17,56 @@ SensingActuationIO::run(RunStage stage)
 
 	switch (stage)
 	{
-	case RunStage::INIT:
-	{
-		if (!isSet<IPC>())
+		case RunStage::INIT:
 		{
-			CPSLOG_ERROR << "SensingActuationIO: IPC is missing.";
-			return true;
-		}
-		if (!isSet<DataHandling>())
-		{
-			CPSLOG_DEBUG << "SensingActuationIO: DataHandling not set. Debugging disabled.";
-		}
-		auto ipc = get<IPC>();
+			if (!isSet<IPC>())
+			{
+				CPSLOG_ERROR << "SensingActuationIO: IPC is missing.";
+				return true;
+			}
+			if (!isSet<DataHandling>())
+			{
+				CPSLOG_DEBUG << "SensingActuationIO: DataHandling not set. Debugging disabled.";
+			}
+			auto ipc = get<IPC>();
 
-		actuationPublisher_ = ipc->publish<ControllerOutput>("actuation");
-		advancedControlPublisher_ = ipc->publish<AdvancedControl>("advanced_control");
+			actuationPublisher_ = ipc->publish<ControllerOutput>("actuation");
+			advancedControlPublisher_ = ipc->publish<AdvancedControl>("advanced_control");
 
-		break;
-	}
-	case RunStage::NORMAL:
-	{
-		auto ipc = get<IPC>();
-		sensorSubscription_ = ipc->subscribe<SensorData>("sensor_data",
-				std::bind(&SensingActuationIO::onSensorData, this, std::placeholders::_1));
-		if (!sensorSubscription_.connected())
-		{
-			CPSLOG_ERROR << "SensorData in shared memory missing. Cannot continue.";
-			return true;
+			break;
 		}
-		if (auto dh = get<DataHandling>())
+		case RunStage::NORMAL:
 		{
-			dh->addStatusFunction<SensorData>(
-					std::bind(&SensingActuationIO::getSensorData, this), Content::SENSOR_DATA);
-			dh->subscribeOnData<AdvancedControl>(Content::ADVANCED_CONTROL,
-					std::bind(&SensingActuationIO::onAdvancedControl, this, std::placeholders::_1));
+			auto ipc = get<IPC>();
+			sensorSubscription_ = ipc->subscribe<SensorData>("sensor_data", [this](const auto& sd)
+			{ onSensorData(sd); });
+			powerSubscription_ = ipc->subscribe<PowerData>("power_data", [this](const auto& pd)
+			{ powerData_ = pd; });
+			servoSubscription_ = ipc->subscribe<ServoData>("servo_data", [this](const auto& sd)
+			{ servoData_ = sd; });
+			if (!sensorSubscription_.connected())
+			{
+				CPSLOG_ERROR << "SensorData in shared memory missing. Cannot continue.";
+				return true;
+			}
+			if (auto dh = get<DataHandling>())
+			{
+				dh->addStatusFunction<SensorData>(
+						std::bind(&SensingActuationIO::getSensorData, this), Content::SENSOR_DATA);
+				dh->addStatusFunction<PowerData>(
+						[this]{return powerData_;}, Content::POWER_DATA);
+				dh->addStatusFunction<ServoData>(
+						[this]{return servoData_;}, Content::SERVO_DATA);
+				dh->subscribeOnData<AdvancedControl>(Content::ADVANCED_CONTROL,
+													 std::bind(&SensingActuationIO::onAdvancedControl, this,
+															   std::placeholders::_1));
+			}
+			break;
 		}
-		break;
-	}
-	case RunStage::FINAL:
-	{
-		break;
-	}
-	default:
-	{
-		break;
-	}
+		default:
+		{
+			break;
+		}
 	}
 
 	return false;

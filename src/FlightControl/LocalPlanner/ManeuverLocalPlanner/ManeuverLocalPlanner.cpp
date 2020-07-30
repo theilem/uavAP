@@ -169,6 +169,11 @@ ManeuverLocalPlanner::createLocalPlan(const Vector3& position, double heading, b
 		return;
 	}
 
+	if (params.doOverrideVelocity())
+	{
+		controllerTarget_.velocity = params.overrideVelocity();
+	}
+
 	controller->setControllerTarget(controllerTarget_);
 }
 

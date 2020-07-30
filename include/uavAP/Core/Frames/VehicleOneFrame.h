@@ -35,7 +35,7 @@ public:
 
 	VehicleOneFrame();
 
-	VehicleOneFrame(double yaw, const Vector3& origin = Vector3(0, 0, 0));
+	VehicleOneFrame(FloatingType yaw, const Vector3& origin = Vector3(0, 0, 0));
 
 	Vector3
 	toInertialFramePosition(const Vector3& pos) const override;
@@ -59,12 +59,12 @@ public:
 	getId() const override;
 
 	void
-	setYaw(double yaw);
+	setYaw(FloatingType yaw);
 
 	void
 	setOrigin(const Vector3& origin);
 
-	double
+	FloatingType
 	getYaw() const;
 
 	const Vector3&
@@ -72,7 +72,7 @@ public:
 
 private:
 
-	double yaw_;
+	FloatingType yaw_;
 	Vector3 origin_;
 
 };
@@ -87,9 +87,9 @@ inline void
 load(Archive& ar, VehicleOneFrame& t)
 {
 	Vector3 origin;
-	double yaw;
-	ar & origin;
+	FloatingType yaw;
 	ar & yaw;
+	ar & origin;
 	t.setOrigin(origin);
 	t.setYaw(yaw);
 }
@@ -98,8 +98,8 @@ template<class Archive, typename Type>
 inline void
 store(Archive& ar, VehicleOneFrame& t)
 {
-	ar & t.getOrigin();
 	ar & t.getYaw();
+	ar & t.getOrigin();
 }
 
 template<class Archive, typename Type>
