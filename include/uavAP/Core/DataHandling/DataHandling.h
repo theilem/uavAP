@@ -47,7 +47,7 @@ public:
 
 	template<class Object>
 	void
-	addConfig(Object* obj, Content configContent);
+	addConfig(Object* obj, Content configContent, const Optional<std::function<void(void)>>& callback = std::nullopt);
 
 	template<typename Type>
 	void
@@ -171,13 +171,22 @@ DataHandling::addTriggeredStatusFunction(std::function<Optional<Type>
 
 template<class Object>
 void
-DataHandling::addConfig(Object* obj, Content configContent)
+DataHandling::addConfig(Object* obj, Content configContent, const Optional<std::function<void(void)>>& callback)
 {
 	std::function<void
 			(const Content&)> func = std::bind(&DataHandling::getConfig<Object>, this,
-												   obj, configContent, std::placeholders::_1);
+											   obj, configContent, std::placeholders::_1);
 	subscribeOnData(Content::REQUEST_CONFIG, func);
-	subscribeOnData<typename Object::ParamType>(configContent, [obj](const auto& p){obj->setParams(p);});
+	if (callback)
+		subscribeOnData<typename Object::ParamType>(configContent, [obj, callback](const auto& p)
+		{
+			obj->setParams(p);
+			(*callback)();
+		});
+	else
+		subscribeOnData<typename Object::ParamType>(configContent, [obj](const auto& p)
+		{ obj->setParams(p); });
+
 }
 
 template<class Object>

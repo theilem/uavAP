@@ -15,6 +15,7 @@
 #include <cpsCore/Utilities/IDC/IDC.h>
 #include <cpsCore/Utilities/SignalHandler/SignalHandler.h>
 #include "uavAP/FlightControl/Controller/ControllerFactory.h"
+#include "uavAP/FlightControl/ThrottleLimiter/ThrottleLimiter.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
 #include "uavAP/FlightControl/LocalPlanner/LocalPlannerFactory.h"
 #include "uavAP/FlightControl/SensingActuationIO/SensingActuationIOFactory.h"
@@ -32,7 +33,8 @@ using FlightControlHelper = StaticHelper<FlightControlDefaults,
 		SensingActuationIOFactory,
 		DataHandling,
 		ControllerFactory,
-		LocalPlannerFactory
+		LocalPlannerFactory,
+		ThrottleLimiter
 		>;
 
 #endif /* UAVAP_FLIGHTCONTROL_FLIGHTCONTROLHELPER_H_ */

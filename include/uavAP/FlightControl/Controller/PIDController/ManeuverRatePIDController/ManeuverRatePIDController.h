@@ -56,6 +56,9 @@ public:
 	void
 	configureParams(Config& c);
 
+	void
+	setThrottleLimit(FloatingType maxThrottle);
+
 private:
 
 	void

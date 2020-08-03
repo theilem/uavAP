@@ -44,6 +44,9 @@ public:
 	bool
 	tunePitchBounds(double min, double max) override;
 
+	void
+	setThrottleLimit(FloatingType maxThrottle);
+
 	std::map<PIDs, PIDStatus>
 	getPIDStatus() override;
 
@@ -74,6 +77,7 @@ private:
 	std::shared_ptr<AngleConstraint> rollConstraint_;
 	std::shared_ptr<AngleConstraint> rollRateTargetConstraint_;
 	std::shared_ptr<AngleConstraint> pitchConstraint_;
+	std::shared_ptr<Control::Constraint<FloatingType>> throttleConstraint_;
 
 };
 

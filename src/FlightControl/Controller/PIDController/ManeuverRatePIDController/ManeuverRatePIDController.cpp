@@ -133,3 +133,10 @@ ManeuverRatePIDController::tunePID(const PIDTuning& tune)
 	Lock l(cascadeMutex_);
 	cascade_.tunePID(static_cast<PIDs>(tune.pid), tune.params);
 }
+
+void
+ManeuverRatePIDController::setThrottleLimit(FloatingType maxThrottle)
+{
+	Lock l(cascadeMutex_);
+	cascade_.setThrottleLimit(maxThrottle);
+}

@@ -77,8 +77,8 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	auto velocityOffset = controlEnv_.addConstant(1);
 	auto velocityDifference = controlEnv_.addDifference(velocityPID, velocityOffset);
 
-	auto velocityConstraint = controlEnv_.addConstraint(velocityDifference, -1, 1);
-	auto throttleOut = controlEnv_.addOutput(velocityConstraint, &out.throttleOutput);
+	throttleConstraint_ = controlEnv_.addConstraint(velocityDifference, -1, 1);
+	auto throttleOut = controlEnv_.addOutput(throttleConstraint_, &out.throttleOutput);
 
 	/* Rudder Output */
 //	auto rudderBeta = controlEnv_.addInput(&beta_);
@@ -195,4 +195,10 @@ ManeuverRateCascade::getPIDParams(const DataRequest& request)
 ManeuverRateCascade::ManeuverRateCascade() : controlEnv_(nullptr)
 {
 
+}
+
+void
+ManeuverRateCascade::setThrottleLimit(FloatingType maxThrottle)
+{
+	throttleConstraint_->setConstraintValue(-1, maxThrottle);
 }

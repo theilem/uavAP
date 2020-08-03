@@ -84,5 +84,7 @@
 		}
 	},
 	"signal_handler": {
+	},
+	"throttle_limiter": {
 	}
 }
