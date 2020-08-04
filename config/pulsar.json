@@ -12,7 +12,7 @@
 		},
 		"communication": {
 			"binary": "Communication",
-			"config": "communication.json"
+			"config": "communication_serial.json"
 		}
 	}
 }
