@@ -32,7 +32,8 @@ target_link_libraries(uavap_core 	${BOOST}
 									${REDIS}
 									pthread
 									rt
-									dl									
+									dl
+									cps_core
 									)
 
 add_custom_target(core DEPENDS uavap_core uavap_framework_api)
