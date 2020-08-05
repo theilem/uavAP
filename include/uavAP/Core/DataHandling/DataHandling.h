@@ -47,14 +47,18 @@ public:
 
 	template<class Object>
 	void
-	addConfig(Object* obj, Content configContent, const Optional<std::function<void(void)>>& callback = std::nullopt);
+	addConfig(Object* obj, Content configContent, const std::function<void(void)>& callback);
+
+	template<class Object>
+	void
+	addConfig(Object* obj, Content configContent);
 
 	template<typename Type>
 	void
 	sendData(const Type& data, Content content, Target target = Target::BROADCAST);
 
 	void
-	subscribeOnPackets(const std::function<void(const Packet&)> packetSub);
+	subscribeOnPackets(const std::function<void(const Packet&)>& packetSub);
 
 	bool
 	run(RunStage stage) override;
@@ -171,21 +175,31 @@ DataHandling::addTriggeredStatusFunction(std::function<Optional<Type>
 
 template<class Object>
 void
-DataHandling::addConfig(Object* obj, Content configContent, const Optional<std::function<void(void)>>& callback)
+DataHandling::addConfig(Object* obj, Content configContent, const std::function<void(void)>& callback)
 {
 	std::function<void
 			(const Content&)> func = std::bind(&DataHandling::getConfig<Object>, this,
 											   obj, configContent, std::placeholders::_1);
 	subscribeOnData(Content::REQUEST_CONFIG, func);
-	if (callback)
-		subscribeOnData<typename Object::ParamType>(configContent, [obj, callback](const auto& p)
-		{
-			obj->setParams(p);
-			(*callback)();
-		});
-	else
-		subscribeOnData<typename Object::ParamType>(configContent, [obj](const auto& p)
-		{ obj->setParams(p); });
+	subscribeOnData<typename Object::ParamType>(configContent, [obj, callback](const auto& p)
+	{
+		obj->setParams(p);
+		callback();
+	});
+
+}
+
+
+template<class Object>
+void
+DataHandling::addConfig(Object* obj, Content configContent)
+{
+	std::function<void
+			(const Content&)> func = std::bind(&DataHandling::getConfig<Object>, this,
+											   obj, configContent, std::placeholders::_1);
+	subscribeOnData(Content::REQUEST_CONFIG, func);
+	subscribeOnData<typename Object::ParamType>(configContent, [obj](const auto& p)
+	{ obj->setParams(p); });
 
 }
 

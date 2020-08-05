@@ -137,7 +137,7 @@ DataHandling::publish(const Packet& packet)
 }
 
 void
-DataHandling::subscribeOnPackets(std::function<void(const Packet&)> packetSub)
+DataHandling::subscribeOnPackets(const std::function<void(const Packet&)>& packetSub)
 {
 	packetSubscriptions_.push_back(packetSub);
 }

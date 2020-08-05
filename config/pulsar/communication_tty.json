@@ -1,19 +1,4 @@
 {
-	"signal_handler": {
-	},
-	"ipc": {
-	},
-	"idc": {
-	},
-	"scheduler": {
-		"thread": {
-			"priority": 20
-		}
-	},
-	"time_provider": {
-		"system_time": {
-		}
-	},
 	"data_presentation": {
 		"compress_double": true
 	},
@@ -27,11 +12,11 @@
 				"ground_station": {
 					"serial_port": "/dev/ttyUSB0",
 					"baud_rate": 115200,
-					"delimiter_string": "*-*",
-					"use_crc": 1,
+					"delimiter_string": "--*",
+					"use_crc": true,
 					"flow_control": "none",
 					"direction": "both",
-					"send_blocking": 0
+					"send_blocking": false
 				}
 			}
 		}

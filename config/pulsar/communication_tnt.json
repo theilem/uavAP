@@ -1,0 +1,24 @@
+{
+	"data_presentation": {
+		"compress_double": true
+	},
+	"comm": {
+		"idc": {
+		}
+	},
+	"network": {
+		"serial": {
+			"ports": {
+				"ground_station": {
+					"serial_port": "/dev/tnt0",
+					"baud_rate": 115200,
+					"delimiter_string": "--*",
+					"use_crc": true,
+					"flow_control": "none",
+					"direction": "both",
+					"send_blocking": false
+				}
+			}
+		}
+	}
+}

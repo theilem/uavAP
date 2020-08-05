@@ -39,7 +39,7 @@ add_library(uavap_api SHARED	AutopilotAPI.cpp
 							ap_ext/UTM.cpp
 								)
 
-target_link_libraries(uavap_api	uavap_core)
+target_link_libraries(uavap_api	uavap_core cps_core)
 
 install(TARGETS ap_ext uavap_api
 		RUNTIME DESTINATION bin/uavAP

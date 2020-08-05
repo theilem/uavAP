@@ -1,218 +1,218 @@
 {
-  "interface": {
-    "api": {
-      "data_presentation": {
-        "compress_double": true
-      },
-      "ipc": {},
-      "time_provider": {
-        "system_time": {}
-      },
-      "scheduler": {
-        "thread": {}
-      },
-      "signal_handler": {}
-    },
-    "num_output_channel": 7,
-    "trace_seq_nr": false,
-    "internal_imu": true,
-    "use_airspeed": true,
-    "use_euler": true,
-    "external_gps": false,
-    "airspeed_filter": {
-      "cut_off_frequency": 5
-    },
-    "course_as_heading": false,
-    "rotation_offset": {
-      "w": 1,
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "channel_naming": {
-      "flap_r": 0,
-      "aileron_l": 5,
-      "rudder": 4,
-      "aileron_r": 3,
-      "throttle": 2,
-      "flap_l": 1,
-      "elevator": 6
-    },
-    "channel_mixing": {
-      "roll_out": [
-        1,
-        1,
-        0,
-        -1,
-        0,
-        -1,
-        0
-      ],
-      "pitch_out": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1
-      ],
-      "yaw_out": [
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0
-      ],
-      "throttle_out": [
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0
-      ]
-    },
-    "channel_mapping": {
-      "normal": {
-        "min": [
-          5652,
-          6148,
-          4900,
-          5172,
-          5196,
-          5764,
-          5300
-        ],
-        "center": [
-          5652,
-          6336,
-          6578,
-          5844,
-          6200,
-          6120,
-          6104
-        ],
-        "max": [
-          5844,
-          6336,
-          8256,
-          6200,
-          7188,
-          6768,
-          6776
-        ]
-      },
-      "cruise": {
-        "min": [
-          5436,
-          6024,
-          4900,
-          5016,
-          5324,
-          5328,
-          5300
-        ],
-        "center": [
-          5652,
-          6366,
-          6578,
-          5844,
-          6200,
-          6120,
-          6104
-        ],
-        "max": [
-          5936,
-          6556,
-          8256,
-          6644,
-          7060,
-          6936,
-          6776
-        ]
-      }
-    },
-    "camber_offset": {
-      "normal": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "thermal": [
-        -116,
-        132,
-        0,
-        80,
-        0,
-        -64,
-        0
-      ],
-      "cruise": [
-        124,
-        -116,
-        0,
-        -64,
-        0,
-        76,
-        -32
-      ]
-    },
-    "special_control": {
-      "none": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "flap": [
-        -1344,
-        1344,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "crow": [
-        -1268,
-        1272,
-        0,
-        -432,
-        0,
-        424,
-        -420
-      ]
-    },
-    "channel_constraints": {
-      "min": [
-        4308,
-        6024,
-        4900,
-        5016,
-        5196,
-        5328,
-        5300
-      ],
-      "max": [
-        5936,
-        7680,
-        8256,
-        6644,
-        7188,
-        6936,
-        6776
-      ]
-    }
-  }
+	"interface": {
+		"api": {
+			"data_presentation": {
+				"compress_double": true
+			},
+			"ipc": {},
+			"time_provider": {
+				"system_time": {}
+			},
+			"scheduler": {
+				"thread": {}
+			},
+			"signal_handler": {}
+		},
+		"num_output_channel": 7,
+		"trace_seq_nr": false,
+		"internal_imu": true,
+		"use_airspeed": true,
+		"use_euler": true,
+		"external_gps": false,
+		"airspeed_filter": {
+			"cut_off_frequency": 5
+		},
+		"course_as_heading": false,
+		"rotation_offset": {
+			"w": 1,
+			"x": 0,
+			"y": 0,
+			"z": 0
+		},
+		"channel_naming": {
+			"flap_r": 0,
+			"aileron_l": 5,
+			"rudder": 4,
+			"aileron_r": 3,
+			"throttle": 2,
+			"flap_l": 1,
+			"elevator": 6
+		},
+		"channel_mixing": {
+			"roll_out": [
+				1,
+				1,
+				0,
+				-1,
+				0,
+				-1,
+				0
+			],
+			"pitch_out": [
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				1
+			],
+			"yaw_out": [
+				0,
+				0,
+				0,
+				0,
+				1,
+				0,
+				0
+			],
+			"throttle_out": [
+				0,
+				0,
+				1,
+				0,
+				0,
+				0,
+				0
+			]
+		},
+		"channel_mapping": {
+			"normal": {
+				"min": [
+					5652,
+					6148,
+					4900,
+					5172,
+					5196,
+					5764,
+					5300
+				],
+				"center": [
+					5652,
+					6336,
+					6578,
+					5844,
+					6200,
+					6120,
+					6104
+				],
+				"max": [
+					5844,
+					6336,
+					8256,
+					6200,
+					7188,
+					6768,
+					6776
+				]
+			},
+			"cruise": {
+				"min": [
+					5436,
+					6024,
+					4900,
+					5016,
+					5324,
+					5328,
+					5300
+				],
+				"center": [
+					5652,
+					6366,
+					6578,
+					5844,
+					6200,
+					6120,
+					6104
+				],
+				"max": [
+					5936,
+					6556,
+					8256,
+					6644,
+					7060,
+					6936,
+					6776
+				]
+			}
+		},
+		"camber_offset": {
+			"normal": [
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0
+			],
+			"thermal": [
+				-116,
+				132,
+				0,
+				80,
+				0,
+				-64,
+				0
+			],
+			"cruise": [
+				124,
+				-116,
+				0,
+				-64,
+				0,
+				76,
+				-32
+			]
+		},
+		"special_control": {
+			"none": [
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0
+			],
+			"flap": [
+				-1344,
+				1344,
+				0,
+				0,
+				0,
+				0,
+				0
+			],
+			"crow": [
+				-1268,
+				1272,
+				0,
+				-432,
+				0,
+				424,
+				-420
+			]
+		},
+		"channel_constraints": {
+			"min": [
+				4308,
+				6024,
+				4900,
+				5016,
+				5196,
+				5328,
+				5300
+			],
+			"max": [
+				5936,
+				7680,
+				8256,
+				6644,
+				7188,
+				6936,
+				6776
+			]
+		}
+	}
 }
