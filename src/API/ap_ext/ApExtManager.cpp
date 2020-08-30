@@ -1,21 +1,4 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
+
 /*
  * ApExtManager.cpp
  *
@@ -23,86 +6,72 @@
  *      Author: mircot
  */
 #include "uavAP/API/ap_ext/ApExtManager.h"
+#include "uavAP/API/ap_ext/LinearSensorManager.h"
 #include "uavAP/API/ap_ext/latLongToUTM.h"
 #include "uavAP/Core/SensorData.h"
+#include "uavAP/Core/DataHandling/DataHandling.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include <cmath>
 #include <iostream>
 #include <boost/thread/thread_time.hpp>
 
 ApExtManager::ApExtManager() :
-		internalImu_(false), externalGps_(false), useAirspeed_(false), useEuler_(false), traceSeqNr_(
-				false), courseAsHeading_(false), gpsTimeout_(Seconds(1)), airspeedTimeout_(
-				Milliseconds(500)), downsample_(0), gpsSampleTimestamp_(), sampleNr_(0)
+gpsSampleTimestamp_()
 {
 }
+
 
 bool
-ApExtManager::configure(const Configuration& config)
+ApExtManager::run(RunStage stage)
 {
-	bool success = channelMixing_.configure(config);
-
-	PropertyMapper<Configuration> pm(config);
-
-	Configuration apiConfig;
-	pm.add("api", apiConfig, true);
-
-	uavapAPI_.configure(apiConfig);
-	uavapAPI_.initialize();
-
-	AdvancedControl advanced;
-	ControllerOutput control;
-
-	onAdvancedControl(advanced);
-	onControllerOutput(control);
-
-	uavapAPI_.subscribeOnControllerOut(
-			std::bind(&ApExtManager::onControllerOutput, this, std::placeholders::_1));
-	uavapAPI_.subscribeOnAdvancedControl(
-			std::bind(&ApExtManager::onAdvancedControl, this, std::placeholders::_1));
-
-	Configuration rotationOffsetConfig;
-	if (pm.add("rotation_offset", rotationOffsetConfig, false))
+	switch (stage)
 	{
-		PropertyMapper<Configuration> rotPm(rotationOffsetConfig);
-		double w, x, y, z;
-		rotPm.add<double>("w", w, true);
-		rotPm.add<double>("x", x, true);
-		rotPm.add<double>("y", y, true);
-		rotPm.add<double>("z", z, true);
-		if (!rotPm.map())
-			success = false;
-		else
+		case RunStage::INIT:
 		{
-			rotationOffset_ = Eigen::Quaterniond(w, x, y, z);
-			rotationOffset_->normalize();
+			if (!checkIsSet<AggregatableAutopilotAPI>())
+			{
+				CPSLOG_ERROR << "Missing deps";
+				return true;
+			}
+			if (!channelMixing_.configure(params.channelMixing()))
+			{
+				CPSLOG_ERROR << "Channel mixing configuration failed";
+				return true;
+			}
+			airspeedFilter_.setParams(params.airspeedFilter());
+
+			AdvancedControl advanced;
+			ControllerOutput control;
+			// Initialize last control and advanced control
+			onAdvancedControl(advanced);
+			onControllerOutput(control);
+			break;
 		}
+		case RunStage::NORMAL:
+		{
+			auto aggAPI = get<AggregatableAutopilotAPI>();
+			aggAPI->subscribeOnControllerOut([this](const auto& controllerOut)
+											 { this->onControllerOutput(controllerOut); });
+			aggAPI->subscribeOnAdvancedControl([this](const auto& advanced)
+											   { this->onAdvancedControl(advanced); });
+
+			if (auto dh = get<DataHandling>())
+			{
+				dh->addStatusFunction<std::map<std::string, FloatingType>>([this](){return this->getMiscValues();}, Content::MISC_VALUES);
+			}
+
+			break;
+		}
+		default:
+			break;
 	}
-	pm.add<bool>("internal_imu", internalImu_, false);
-	pm.add<bool>("external_gps", externalGps_, false);
-	pm.add<bool>("use_airspeed", useAirspeed_, false);
-	pm.add<bool>("use_euler", useEuler_, false);
-	pm.add<bool>("trace_seq_nr", traceSeqNr_, false);
-	pm.add<bool>("course_as_heading", courseAsHeading_, false);
-	pm.add("gps_timeout_ms", gpsTimeout_, false);
-	pm.add<unsigned int>("downsample", downsample_, false);
-
-	ParameterRef<Control::LowPassFilter> airspeedFilter(airspeedFilter_, "airspeed_filter", true);
-	pm & airspeedFilter;
-
-	return success;
+	return false;
 }
+
 
 int
 ApExtManager::ap_sense(const data_sample_t* sample)
 {
-	sampleNr_++;
-	if (sampleNr_ < downsample_)
-	{
-		return 0;
-	}
-	sampleNr_ = 0;
-
 	SensorData sens;
 	ServoData servo;
 	PowerData power;
@@ -118,7 +87,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 
 	angularRate << 0.0, 0.0, 0.0;
 
-	if (internalImu_)
+	if (params.internalImu())
 	{
 		imuSample = sample->int_imu_sample;
 	}
@@ -129,12 +98,12 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 
 	if (!imuSample)
 	{
-		CPSLOG_ERROR << "Cannot read imu sample from external imu.";
+		CPSLOG_ERROR << "Cannot read imu sample from imu.";
 	}
 	else
 	{
 		//Attitude
-		if (useEuler_)
+		if (params.useEuler())
 		{
 			euler.x() = imuSample->imu_euler_roll;
 			euler.y() = imuSample->imu_euler_pitch;
@@ -158,7 +127,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 		angularRate[1] = imuSample->imu_rot_y;
 		angularRate[2] = imuSample->imu_rot_z;
 
-		if (internalImu_)
+		if (params.internalImu())
 		{
 			sens.timestamp = Clock::now();
 		}
@@ -167,17 +136,17 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			try
 			{
 				boost::gregorian::date date(imuSample->imu_time_year, imuSample->imu_time_month,
-						imuSample->imu_time_day);
+											imuSample->imu_time_day);
 
 				boost::posix_time::ptime time(date, boost::posix_time::milliseconds(0));
 
 				auto dur = time
-						- boost::posix_time::ptime(
-								boost::posix_time::special_values::min_date_time);
+						   - boost::posix_time::ptime(
+						boost::posix_time::special_values::min_date_time);
 
 				Duration duration = Hours(imuSample->imu_time_hour)
-						+ Minutes(imuSample->imu_time_minute) + Seconds(imuSample->imu_time_second)
-						+ Nanoseconds(imuSample->imu_time_nano);
+									+ Minutes(imuSample->imu_time_minute) + Seconds(imuSample->imu_time_second)
+									+ Nanoseconds(imuSample->imu_time_nano);
 				sens.timestamp = TimePoint(duration) + Nanoseconds(dur.total_nanoseconds());
 			} catch (std::out_of_range& err)
 			{
@@ -188,26 +157,26 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	}
 
 	//Rotation Offset
-	if (rotationOffset_)
-	{
-		//Rotation is offset. Use quaternions instead of eulers to read values.
-		auto rotationInverse = rotationOffset_->inverse();
-		attitude = (attitude * rotationInverse).normalized();
-
-		Eigen::Quaterniond acc;
-		acc.w() = 0;
-		acc.vec() = acceleration;
-		acceleration = (*rotationOffset_ * acc * rotationInverse).vec();
-
-		Eigen::Quaterniond angRate;
-		angRate.w() = 0;
-		angRate.vec() = angularRate;
-		angularRate = (*rotationOffset_ * angRate * rotationInverse).vec();
-	}
+//	if (params.rotationOffset())
+//	{
+//		//Rotation is offset. Use quaternions instead of eulers to read values.
+//		auto rotationInverse = rotationOffset_->inverse();
+//		attitude = (attitude * rotationInverse).normalized();
+//
+//		Eigen::Quaterniond acc;
+//		acc.w() = 0;
+//		acc.vec() = acceleration;
+//		acceleration = (*rotationOffset_ * acc * rotationInverse).vec();
+//
+//		Eigen::Quaterniond angRate;
+//		angRate.w() = 0;
+//		angRate.vec() = angularRate;
+//		angularRate = (*rotationOffset_ * angRate * rotationInverse).vec();
+//	}
 
 	sens.angularRate = angularRate;
 
-	if (useEuler_)
+	if (params.useEuler())
 	{
 		sens.attitude = degToRad(euler);
 	}
@@ -221,7 +190,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	//Remove gravity from acceleration
 	Vector3 gravityInertial(0, 0, 9.81);
 	Vector3 gravityBody = Eigen::AngleAxisd(-sens.attitude[0], Vector3::UnitX())
-			* Eigen::AngleAxisd(-sens.attitude[1], Vector3::UnitY()) * gravityInertial;
+						  * Eigen::AngleAxisd(-sens.attitude[1], Vector3::UnitY()) * gravityInertial;
 	sens.acceleration = acceleration + gravityBody;
 
 	//************************
@@ -229,7 +198,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	//************************
 	double longitude = 0, latitude = 0, altitude = 0;
 	double courseAngle = 0;
-	if (externalGps_)
+	if (params.externalGps())
 	{
 		auto pic = sample->pic_sample;
 		if (!pic)
@@ -245,7 +214,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			if (gps->flags != 7)
 			{
 				gps = &lastGPSSample_;
-				if (Clock::now() - gpsSampleTimestamp_ > gpsTimeout_)
+				if (Clock::now() - gpsSampleTimestamp_ > params.gpsTimeout())
 				{
 					sens.hasGPSFix = false;
 				}
@@ -273,7 +242,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	else
 	{
 		imu_sample_t* imu = nullptr;
-		if (internalImu_)
+		if (params.internalImu())
 		{
 			imu = sample->int_imu_sample;
 		}
@@ -342,7 +311,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	//************************
 	// Airspeed
 	//************************
-	if (useAirspeed_)
+	if (params.useAirspeed())
 	{
 		const airs_sample_t* airspeed = sample->airs_sample;
 		if (!airspeed)
@@ -359,7 +328,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			{
 				oldAirspeed = true;
 				airspeed = &lastAirspeedSample_;
-				if (Clock::now() - airspeedTimestamp_ > airspeedTimeout_)
+				if (Clock::now() - airspeedTimestamp_ > params.airspeedTimeout())
 				{
 					setGroundSpeed = true;
 					sens.airSpeed = sens.groundSpeed; // Set to ground speed if timeout
@@ -377,7 +346,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 				if (!oldAirspeed)
 				{
 					airspeedFilter_.update(airspeed->cal_airs,
-							std::chrono::duration_cast<Microseconds>(timeDiff).count() / 1e6);
+										   std::chrono::duration_cast<Microseconds>(timeDiff).count() / 1e6);
 				}
 				sens.airSpeed = airspeedFilter_.getValue();
 			}
@@ -401,8 +370,19 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	{
 		sens.autopilotActive = pic->adc_channels[20] > 2000;
 
-		PWMFeedback pwmFeed;
+
+		if (auto lsm = get<LinearSensorManager>())
+		{
+			miscValues_ = lsm->getValues(pic->adc_channels);
+		}
+
+
+		PWMFeedback pwmFeed = {};
 		std::copy(pic->pwm_channels, pic->pwm_channels + PWM_CHS, pwmFeed.ch);
+
+		servo.aileron = pic->pwm_channels[3];
+		servo.elevator = pic->pwm_channels[4];
+		servo.rudder = pic->pwm_channels[5];
 	}
 
 	auto slink = sample->slink_sample;
@@ -410,6 +390,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	{
 		power.batteryVoltage = slink->channels->volt;
 		power.batteryCurrent = slink->channels->current;
+		power.propulsionPower = power.batteryVoltage * power.batteryCurrent;
 		servo.throttle = slink->channels->throttle;
 		servo.rpm = slink->channels->rpm;
 	}
@@ -432,8 +413,8 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	double yaw = sens.attitude.z();
 
 	rotationMatrix = Eigen::AngleAxisd(-roll, Vector3::UnitX())
-			* Eigen::AngleAxisd(-pitch, Vector3::UnitY())
-			* Eigen::AngleAxisd(-yaw, Vector3::UnitZ());
+					 * Eigen::AngleAxisd(-pitch, Vector3::UnitY())
+					 * Eigen::AngleAxisd(-yaw, Vector3::UnitZ());
 
 	velocityBody = rotationMatrix * sens.velocity;
 	velocityBodyTotal = velocityBody.norm();
@@ -441,15 +422,21 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 
 	sens.angleOfSideslip = asin(velocityBodyLateral / velocityBodyTotal);
 
-	if (courseAsHeading_)
+	if (params.courseAsHeading())
 	{
 		sens.attitude[2] = boundAngleRad(-(courseAngle - M_PI / 2));
 	}
 
-	uavapAPI_.setSensorData(sens);
-	uavapAPI_.setServoData(servo);
-	uavapAPI_.setPowerData(power);
+	auto aggAPI = get<AggregatableAutopilotAPI>();
+	if (!aggAPI)
+	{
+		CPSLOG_ERROR << "aggAPI missing";
+		return -1;
+	}
 
+	aggAPI->setSensorData(sens);
+	aggAPI->setServoData(servo);
+	aggAPI->setPowerData(power);
 	return 0;
 }
 
@@ -461,11 +448,11 @@ ApExtManager::ap_actuate(unsigned long* pwm, unsigned int num_channels)
 	if (num_channels < outputChannels_.size())
 	{
 		CPSLOG_ERROR << "More output channels than available: " << num_channels << " < "
-				<< outputChannels_.size();
+					 << outputChannels_.size();
 		return -1;
 	}
 	std::copy(outputChannels_.begin(), outputChannels_.end(), pwm);
-	OutPWM outputPWM;
+	OutPWM outputPWM = {};
 	memcpy(&outputPWM, pwm, sizeof(OutPWM));
 
 	return 0;
@@ -478,9 +465,9 @@ ApExtManager::onControllerOutput(const ControllerOutput& output)
 	std::unique_lock<std::mutex> lock(outputMutex_);
 
 	outputChannels_.clear();
-	for (unsigned int i = 0; i < mix.size(); i++)
+	for (const auto& channel : mix)
 	{
-		outputChannels_.push_back(round(mix[i]));
+		outputChannels_.push_back(round(channel));
 	}
 
 	lock.unlock();
@@ -491,4 +478,10 @@ ApExtManager::onAdvancedControl(const AdvancedControl& control)
 {
 	std::lock_guard<std::mutex> lock(advancedControlMutex_);
 	lastAdvancedControl_ = control;
+}
+
+std::map<std::string, FloatingType>
+ApExtManager::getMiscValues() const
+{
+	return miscValues_;
 }

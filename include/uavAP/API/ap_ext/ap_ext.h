@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cpsCore/Aggregation/Aggregator.h>
 
 #define PWM_CHS 22
 #define ADC_CHS 32
@@ -499,10 +500,8 @@ ap_ext_ctrl(int* cmd);
 
 #undef EXTERNC
 
-class ApExtManager;
-
-ApExtManager*
-getApExtManager();
+Aggregator&
+getAggregator();
 
 void
 setConfigPath(const std::string& configPath);

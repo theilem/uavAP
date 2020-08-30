@@ -1,21 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
 /**
  *  @file         ControllerOutput.h
  *  @author Simon Yu, Mirco Theile
@@ -74,11 +56,8 @@ struct ControllerOutput : SerializeCustom
 	FloatingType yawOutput;
 	FloatingType throttleOutput;
 
-//	uint32_t sequenceNr; //Trace sequence number to get timing
-
 	ControllerOutput() :
 			rollOutput(0), pitchOutput(0), yawOutput(0), throttleOutput(-1)
-//			, sequenceNr(0)
 	{
 	}
 };
@@ -93,7 +72,6 @@ serialize(Archive& ar, ControllerOutput& t)
 	ar & t.pitchOutput;
 	ar & t.yawOutput;
 	ar & t.throttleOutput;
-//	ar & t.sequenceNr;
 }
 }
 

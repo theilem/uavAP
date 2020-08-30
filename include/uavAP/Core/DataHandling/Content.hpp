@@ -72,6 +72,7 @@ enum class Content
 	THROTTLE_LIMITER_PARAMS,
 	MISSION_LIST,
 	CRITICAL_POINTS,			//!< Critical points from geofencing
+	MISC_VALUES,
 
 	//GS to FlightControl in UAVAP
 	TUNE_PID,               	//!< TUNE_PID

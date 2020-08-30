@@ -1,97 +1,20 @@
-#-------------------------------------------------------------------------------
-# Copyright (C) 2018 University of Illinois Board of Trustees
-# 
-# This file is part of uavAP.
-# 
-# uavAP is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# 
-# uavAP is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#-------------------------------------------------------------------------------
-set (TEST_SOURCES 	TestRunner.cpp
-					#Core/APLoggerTest.cpp
-					Core/RunnerTest.cpp
-					Core/DataPresentationTest.cpp
-					Core/IPCTest.cpp
-					Core/SchedulerTest.cpp
-					Core/PropertyMapperTest.cpp
-					Core/ConfigurableObjectTest.cpp
-	                Core/ObjectHandleTest.cpp
-					#Core/FramesTest.cpp
-					Core/FrameworkAPITest.cpp
-					Core/DataHandlingTest.cpp
-					Core/JsonPopulatorTest.cpp
-					Core/AngleTest.cpp
-					Math/BetaIncompleteTest.cpp
-					API/ApExtTest.cpp
-					
-					)
+set(TEST_SRCS Test.cpp
+        API/ApExtTest.cpp
+        API/LinearSensorManagerTest.cpp
+        Core/EnumAccess.cpp
+        )
 
-set (TEST_DEPENDENCIES 	boost_system
-        		boost_unit_test_framework.a
-        		boost_serialization
-        		boost_date_time
-        		pthread
-        		rt
-        		uavap_core
-        		uavap_flight_control
-        		uavap_mission_control
-        		uavap_mission_control_geo
-        		uavap_framework_api
-        		ap_ext
-        		uavap_api
-        		arb
-        		flint
-        		)
-        		
-add_subdirectory(Plugin)
-add_subdirectory(FullAutopilot)
+include_directories(${SUBMODULE_DIR}/Catch2/single_include
+        ${CMAKE_CURRENT_SOURCE_DIR})
 
+add_executable(tests EXCLUDE_FROM_ALL ${TEST_SRCS})
 
-add_executable (tests EXCLUDE_FROM_ALL ${TEST_SOURCES})
-target_link_libraries (tests ${TEST_DEPENDENCIES})
-
-add_dependencies(tests test_plugin)
-
-add_executable(testman EXCLUDE_FROM_ALL TestRunner.cpp
-										TestMan.cpp)
-										
-target_link_libraries(testman boost_unit_test_framework.a)
-
-configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/P_Airplane.json ${CMAKE_BINARY_DIR}/test/FlightControl/Controller/config/P_Airplane.json COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/PD_Airplane.json ${CMAKE_BINARY_DIR}/test/FlightControl/Controller/config/PD_Airplane.json COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/PFF_Airplane.json ${CMAKE_BINARY_DIR}/test/FlightControl/Controller/config/PFF_Airplane.json COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/PI_Airplane.json ${CMAKE_BINARY_DIR}/test/FlightControl/Controller/config/PI_Airplane.json COPYONLY)
-
-configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/P_Helicopter.json ${CMAKE_BINARY_DIR}/test/FlightControl/Controller/config/P_Helicopter.json COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/PD_Helicopter.json ${CMAKE_BINARY_DIR}/test/FlightControl/Controller/config/PD_Helicopter.json COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/PFF_Helicopter.json ${CMAKE_BINARY_DIR}/test/FlightControl/Controller/config/PFF_Helicopter.json COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/test/FlightControl/Controller/config/PI_Helicopter.json ${CMAKE_BINARY_DIR}/test/FlightControl/Controller/config/PI_Helicopter.json COPYONLY)
-
-configure_file(${PROJECT_SOURCE_DIR}/test/Core/config/pm_test.json ${CMAKE_BINARY_DIR}/test/Core/config/pm_test.json COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/test/Core/config/agg1.json ${CMAKE_BINARY_DIR}/test/Core/config/agg1.json COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/test/Core/config/agg2.json ${CMAKE_BINARY_DIR}/test/Core/config/agg2.json COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/test/Core/config/datahandling1.json ${CMAKE_BINARY_DIR}/test/Core/config/datahandling1.json COPYONLY)
-
-configure_file(${PROJECT_SOURCE_DIR}/test/Plugin/test_config.json ${CMAKE_BINARY_DIR}/test/Plugin/test_config.json COPYONLY)
-
-
-#Real Time tests
-set (RT_TEST_SOURCES    TestRunner.cpp
-                        Core/SchedulerRTTest.cpp
-                        )
-                        
-add_executable (rttests EXCLUDE_FROM_ALL ${RT_TEST_SOURCES})
-target_link_libraries (rttests ${TEST_DEPENDENCIES})
+target_link_libraries(tests cps_core
+        uavap_core
+        uavap_api
+        ap_ext
+        )
 
 
 
-
+configure_file(${PROJECT_SOURCE_DIR}/test/API/config/ap_ext.json ${CMAKE_BINARY_DIR}/test/API/config/ap_ext.json COPYONLY)

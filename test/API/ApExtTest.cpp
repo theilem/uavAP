@@ -1,21 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
 /*
  * ApExtTest.cpp
  *
@@ -23,58 +5,70 @@
  *      Author: sim
  */
 
-#include <boost/test/unit_test.hpp>
+#include <cpsCore/Utilities/Test/TestInfo.h>
 #include <uavAP/API/ap_ext/ap_ext.h>
-#include <uavAP/FlightControl/Controller/AdvancedControl.h>
-#include <uavAP/FlightControl/Controller/ControllerOutput.h>
-#include <uavAP/Core/IPC/IPC.h>
+#include <uavAP/API/ap_ext/ApExtManager.h>
+#include <cpsCore/Logging/CPSLogger.h>
+#include <cpsCore/Utilities/Scheduler/IScheduler.h>
+#include <thread>
 
-
-BOOST_AUTO_TEST_SUITE(ApExtTest)
-
-
-BOOST_AUTO_TEST_CASE(test001)
+TEST_CASE("General ApExtTest")
 {
-	auto ipc = std::make_shared<IPC>();
-	auto dp = std::make_shared<DataPresentation>();
-	auto agg = Aggregator::aggregate({ipc, dp});
+	setConfigPath(TestInfo::getInstance().testDir + "API/config/ap_ext.json");
+	REQUIRE(ap_ext_setup() == 0);
 
-	auto pub = ipc->publish<ControllerOutput>("actuation");
-	auto pubAdv = ipc->publish<AdvancedControl>("advanced_control");
+	auto agg = getAggregator();
 
-	setConfigPath("/usr/local/config/sailplane/alvolo.json");
-	BOOST_REQUIRE_EQUAL(ap_ext_setup(), 0);
-	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	CHECK_FALSE(agg.empty());
+	CHECK(agg.getOne<IScheduler>());
+	CHECK(agg.getOne<ApExtManager>());
+	std::this_thread::sleep_for(Milliseconds(10));
+	REQUIRE(ap_ext_teardown() == 0);
 
-	unsigned long channels[32] = {0};
+	//Create and kill again
+	REQUIRE(ap_ext_setup() == 0);
+	std::this_thread::sleep_for(Milliseconds(10));
+	REQUIRE(ap_ext_teardown() == 0);
 
-
-	AdvancedControl adv;
-	adv.throwsSelection = ThrowsControl::NORMAL;
-	adv.specialSelection = SpecialControl::FLAP;
-	adv.specialValue = 1;
-
-	pubAdv.publish(adv);
-
-	ControllerOutput out;
-	out.rollOutput = 0;
-	out.pitchOutput = 0;
-	out.yawOutput = 0;
-	out.throttleOutput = 0;
-
-	pub.publish(out);
-	std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
-	ap_ext_actuate(channels, 7);
-
-//	for (int i = 0; i < 32; i++)
-//	{
-//		std::cout << channels[i] << ",";
-//	}
-//	std::cout << std::endl;
-
-
-	BOOST_REQUIRE_EQUAL(ap_ext_teardown(), 0);
 }
 
-BOOST_AUTO_TEST_SUITE_END()
+TEST_CASE("LinearSensorManager in ApExt")
+{
+	setConfigPath(TestInfo::getInstance().testDir + "API/config/ap_ext.json");
+	REQUIRE(ap_ext_setup() == 0);
+
+	auto agg = getAggregator();
+
+	CHECK_FALSE(agg.empty());
+	CHECK(agg.getOne<IScheduler>());
+	auto apExtMan = agg.getOne<ApExtManager>();
+	REQUIRE(apExtMan);
+
+	data_sample_t dataSample = {};
+	{
+		auto logScope = CPSLogger::LogLevelScope(LogLevel::NONE);
+		CHECK(ap_ext_sense(&dataSample) == 0);
+	}
+
+	pic_sample_t picSample = {};
+	imu_sample_t imuSample = {};
+	imu_sample_t intimuSample = {};
+	airs_sample_t airsSample = {};
+
+	intimuSample.imu_euler_pitch = 0.7;
+
+	dataSample.pic_sample = &picSample;
+	dataSample.imu_sample = &imuSample;
+	dataSample.int_imu_sample = &intimuSample;
+	dataSample.airs_sample = &airsSample;
+	CHECK(ap_ext_sense(&dataSample) == 0);
+
+	auto miscValues = apExtMan->getMiscValues();
+	CHECK(miscValues.size() == 2);
+
+
+
+	REQUIRE(ap_ext_teardown() == 0);
+
+
+}

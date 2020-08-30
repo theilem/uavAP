@@ -1,21 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
 /**
  * @file SensorEnumData.h
  * @brief SensorEnumData definitions
@@ -133,39 +115,128 @@ ENUMMAP_INIT(ServoEnum,
  */
 struct SensorData
 {
-	Vector3 position;                //!< UTM Frame, [X: East, Y: North, Z: Up]
-	Vector3 velocity;                //!< Earth Frame
-	Vector3 acceleration;            //!< Body Frame
-	Vector3 attitude;                //!< [X: Roll, Y: Pitch, Z: Yaw]
-	Vector3 angularRate;            //!< [X: Roll, Y: Pitch, Z: Yaw]
-	bool hasGPSFix;                    //!< Shows whether the GPS has a fix
-	bool autopilotActive;            //!< Shows if the autopilot is active
-	FloatingType airSpeed;            //!< total velocity w.r.t. wind
-	FloatingType groundSpeed;        //!< total velocity w.r.t. ground
-	FloatingType angleOfAttack;        //!< current angle of attack
-	FloatingType angleOfSideslip;    //!< current angle of sideslip
+	Vector3 position = {0., 0., 0.};                //!< UTM Frame, [X: East, Y: North, Z: Up]
+	Vector3 velocity = {0., 0., 0.};                //!< Earth Frame
+	Vector3 acceleration = {0., 0., 0.};            //!< Body Frame
+	Vector3 attitude = {0., 0., 0.};                //!< [X: Roll, Y: Pitch, Z: Yaw]
+	Vector3 angularRate = {0., 0., 0.};            //!< [X: Roll, Y: Pitch, Z: Yaw]
+	bool hasGPSFix = false;                    //!< Shows whether the GPS has a fix
+	bool autopilotActive = false;            //!< Shows if the autopilot is active
+	FloatingType airSpeed = 0.;            //!< total velocity w.r.t. wind
+	FloatingType groundSpeed = 0.;        //!< total velocity w.r.t. ground
+	FloatingType angleOfAttack = 0.;        //!< current angle of attack
+	FloatingType angleOfSideslip = 0.;    //!< current angle of sideslip
 	TimePoint timestamp;            //!< Timestamp of SensorEnum data
 
 };
+
+template<typename RetType>
+RetType
+enumAccess(const SensorData& data, const SensorEnum& e)
+{
+	switch (e)
+	{
+		case SensorEnum::POSITION_X:
+			return static_cast<RetType>(data.position.x());
+		case SensorEnum::POSITION_Y:
+			return static_cast<RetType>(data.position.y());
+		case SensorEnum::POSITION_Z:
+			return static_cast<RetType>(data.position.z());
+		case SensorEnum::VELOCITY_X:
+			return static_cast<RetType>(data.velocity.x());
+		case SensorEnum::VELOCITY_Y:
+			return static_cast<RetType>(data.velocity.y());
+		case SensorEnum::VELOCITY_Z:
+			return static_cast<RetType>(data.velocity.z());
+		case SensorEnum::ACCELERATION_X:
+			return static_cast<RetType>(data.acceleration.x());
+		case SensorEnum::ACCELERATION_Y:
+			return static_cast<RetType>(data.acceleration.y());
+		case SensorEnum::ACCELERATION_Z:
+			return static_cast<RetType>(data.acceleration.z());
+		case SensorEnum::ATTITUDE_X:
+			return static_cast<RetType>(data.attitude.x());
+		case SensorEnum::ATTITUDE_Y:
+			return static_cast<RetType>(data.attitude.y());
+		case SensorEnum::ATTITUDE_Z:
+			return static_cast<RetType>(data.attitude.z());
+		case SensorEnum::ANGULAR_RATE_X:
+			return static_cast<RetType>(data.angularRate.x());
+		case SensorEnum::ANGULAR_RATE_Y:
+			return static_cast<RetType>(data.angularRate.y());
+		case SensorEnum::ANGULAR_RATE_Z:
+			return static_cast<RetType>(data.angularRate.z());
+		case SensorEnum::AIR_SPEED:
+			return static_cast<RetType>(data.airSpeed);
+		case SensorEnum::GROUND_SPEED:
+			return static_cast<RetType>(data.groundSpeed);
+		case SensorEnum::ANGLE_OF_ATTACK:
+			return static_cast<RetType>(data.angleOfAttack);
+		case SensorEnum::ANGLE_OF_SIDESLIP:
+			return static_cast<RetType>(data.angleOfSideslip);
+		default:
+			return enumAccessUnknown<RetType>(e);
+	}
+}
 
 struct PowerData
 {
-	FloatingType propulsionPower;    //!< measured or estimated current propulsion power
-	FloatingType consumedEnergy;    //!< measured or estimated total used energy for propulsion
-	FloatingType batteryVoltage;    //!< current battery voltage
-	FloatingType batteryCurrent;    //!< current battery current
-	TimePoint timestamp;            //!< Timestamp of SensorEnum data
+	FloatingType propulsionPower = 0.;    //!< measured or estimated current propulsion power
+	FloatingType consumedEnergy = 0.;    //!< measured or estimated total used energy for propulsion
+	FloatingType batteryVoltage = 0.;    //!< current battery voltage
+	FloatingType batteryCurrent = 0.;    //!< current battery current
+	TimePoint timestamp;            //!< Timestamp of PowerData data
 };
+
+template<typename RetType>
+RetType
+enumAccess(const PowerData& data, const PowerEnum& e)
+{
+	switch (e)
+	{
+		case PowerEnum::PROPULSION_POWER:
+			return static_cast<RetType>(data.propulsionPower);
+		case PowerEnum::CONSUMED_ENERGY:
+			return static_cast<RetType>(data.consumedEnergy);
+		case PowerEnum::BATTERY_VOLTAGE:
+			return static_cast<RetType>(data.batteryVoltage);
+		case PowerEnum::BATTERY_CURRENT:
+			return static_cast<RetType>(data.batteryCurrent);
+		default:
+			return enumAccessUnknown<RetType>(e);
+	}
+}
 
 struct ServoData
 {
-	FloatingType aileron;            //!< current aileron position
-	FloatingType elevator;            //!< current elevator position
-	FloatingType rudder;            //!< current rudder position
-	FloatingType throttle;            //!< current throttle position
-	FloatingType rpm;                //!< current motor rotation speed
-	TimePoint timestamp;            //!< Timestamp of SensorEnum data
+	FloatingType aileron = 0.;            //!< current aileron position
+	FloatingType elevator = 0.;            //!< current elevator position
+	FloatingType rudder = 0.;            //!< current rudder position
+	FloatingType throttle = 0.;            //!< current throttle position
+	FloatingType rpm = 0.;                //!< current motor rotation speed
+	TimePoint timestamp;            //!< Timestamp of ServoData data
 };
+
+template<typename RetType>
+RetType
+enumAccess(const ServoData& data, const ServoEnum& e)
+{
+	switch (e)
+	{
+		case ServoEnum::AILERON:
+			return static_cast<RetType>(data.aileron);
+		case ServoEnum::ELEVATOR:
+			return static_cast<RetType>(data.elevator);
+		case ServoEnum::RUDDER:
+			return static_cast<RetType>(data.rudder);
+		case ServoEnum::THROTTLE:
+			return static_cast<RetType>(data.throttle);
+		case ServoEnum::RPM:
+			return static_cast<RetType>(data.rpm);
+		default:
+			return enumAccessUnknown<RetType>(e);
+	}
+}
 
 SensorData&
 changeFrame(const IFrame& orig, const IFrame& dest, SensorData& data);
