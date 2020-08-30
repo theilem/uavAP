@@ -380,9 +380,9 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 		PWMFeedback pwmFeed = {};
 		std::copy(pic->pwm_channels, pic->pwm_channels + PWM_CHS, pwmFeed.ch);
 
-		servo.aileron = pic->pwm_channels[3];
-		servo.elevator = pic->pwm_channels[4];
-		servo.rudder = pic->pwm_channels[5];
+		servo.elevator = pic->pwm_channels[3];
+		servo.rudder = pic->pwm_channels[4];
+		servo.aileron = pic->pwm_channels[5];
 	}
 
 	auto slink = sample->slink_sample;
