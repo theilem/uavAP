@@ -17,7 +17,19 @@
 #include "uavAP/API/AggregatableAutopilotAPI.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
 
-using ApExtHelperDefaults = StaticHelper<DataPresentation, IPC, SystemTimeProvider, MultiThreadingScheduler, SignalHandler, AggregatableAutopilotAPI>;
-using ApExtHelper = StaticHelper<ApExtHelperDefaults, ApExtManager, LinearSensorManager, DataHandling>;
+using ApExtHelperDefaults = StaticHelper<
+        DataPresentation,
+		IPC,
+		SystemTimeProvider,
+		MultiThreadingScheduler,
+		SignalHandler,
+		AggregatableAutopilotAPI
+>;
+
+using ApExtHelper = StaticHelper<ApExtHelperDefaults,
+		ApExtManager,
+		LinearSensorManager,
+		DataHandling
+>;
 
 #endif //UAVAP_APEXTHELPER_H

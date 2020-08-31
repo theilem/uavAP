@@ -200,15 +200,35 @@
 	},
 	"linear_sensor_manager": {
 		"sensors": {
-			"current_sensor": {
-				"channel": 6,
+			"T_Bat": {
+				"channel": 1,
 				"offset": 0.0,
-				"slope": 3.5
+				"slope": 0.122
 			},
-			"temperature_sensor": {
+			"T_Mot": {
+				"channel": 7,
+				"offset": 0.0,
+				"slope": 0.122
+			},
+			"I_ESC": {
+				"channel": 4,
+				"offset": -70.19,
+				"slope": 0.03052
+			},
+			"I_L": {
+				"channel": 2,
+				"offset": -7.019,
+				"slope": 0.003052
+			},
+			"I_C": {
+				"channel": 5,
+				"offset": -7.019,
+				"slope": 0.003052
+			},
+			"I_R": {
 				"channel": 8,
-				"offset": 25.0,
-				"slope": 2.1
+				"offset": -7.019,
+				"slope": 0.003052
 			}
 		}
 	},

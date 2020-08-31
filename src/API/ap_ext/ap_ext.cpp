@@ -24,7 +24,7 @@ ap_ext_setup()
 		return -1;
 	}
 
-	aggregator = Aggregator(ApExtHelper::createAggregation(configPath));
+	aggregator = ApExtHelper::createAggregation(configPath);
 
 	SimpleRunner runner(aggregator);
 	if (runner.runAllStages())
