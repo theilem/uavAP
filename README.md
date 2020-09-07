@@ -17,7 +17,7 @@ The required operating system is a Linux distribution. The provided setup script
 ```shell script
 git clone https://github.com/theilem/uavAP.git
 
-cd uavEE
+cd uavAP
 mkdir -p bld/release && cd bld/release
 
 cmake -DCMAKE_BUILD_TYPE=Release ../../
