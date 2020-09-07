@@ -9,33 +9,24 @@
 The required operating system is a Linux distribution. The provided setup script runs on Debian/Ubuntu distributions as well as Arch-Linux.
 
 
-<b>Setup</b>
+## Dependencies
+ - cpsCore (https://github.com/theilem/cpsCore.git)
 
-For the setup of uavAP the setup.sh script can be executed. It installs necessary dependencies from the regular debian repository. Additionally, libraries (such as boost, eigen, protobuf etc.) are compiled from source and installed on the system. 
-The setup script adds the build folders as ./bld/Release and ./bld/Debug. Entering the required path and executing make and (sudo) make install, installs the libraries and executables of uavAP.
+## Cloning and Compiling
 
-If the .proto files are changed, the generate_proto.sh script in the repository root folder has to be executed.
+```shell script
+git clone https://github.com/theilem/uavAP.git
 
+cd uavEE
+mkdir -p bld/release && cd bld/release
 
-<b>Core Framework</b>
-
-The Core of uavAP is meant to be used for different projects and is thus highly generalized. The main idea is that a specific Helper (e.g. FlightControlHelper) reads in a configuration file and based on that creates specified Objects using Factories. These Objects are aggregated, meaning that they are interconnected to meet the dependencies of each object, and run through 3 RunStages (INIT, NORMAL, FINAL). During these stages the dependencies are evaluated, schedule prepared, and finally started. 
-
-
-<b>Utility Classes</b>
-
-Main utility classes implemented in uavAP are:
-<ul>
-  <li>Inter-Process Communcation (Using Shared Memory or Message Queues)</li>
-  <li>Inter-Device Communcation (Serial Communication)</li>
-  <li>Data Presentation for serialization of structs and objects</li>
-  <li>Scheduler for scheduled execution of tasks (Multi-threaded)</li>
-  <li>APLogger for logging of debug/error messages</li>
-  <li>PropertyMapper for parsing of .json configuration files and mapping the content to objects</li>
-</ul>
+cmake -DCMAKE_BUILD_TYPE=Release ../../
+make
+make install
+```
 
 
-<b>Control Stack</b>
+## Control Stack
 
 The planning and control stack of uavAP is aimed to be as modular as possible, however, its interfaces are mainly focused on fixed-wing UAV control. The stack is structured as follows:
 <ul>
@@ -45,6 +36,6 @@ The planning and control stack of uavAP is aimed to be as modular as possible, h
   <li>Controller calculates the ControllerOutput based on the ControllerTarget provided by the LocalPlanner</li>
 </ul>
 
-<b>References</b>
+## References
 
 Theile, M., Dantsker, O., Nai, R., Caccamo, M., & Yu, S. (2020). uavAP: A Modular Autopilot Framework for UAVs. In AIAA AVIATION 2020 FORUM (p. 3268).
