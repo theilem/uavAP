@@ -27,7 +27,7 @@
 				"ground_station": {
 					"serial_port": "/dev/tnt0",
 					"baud_rate": 115200,
-					"delimiter_string": "*-*",
+					"delimiter_string": "--*",
 					"use_crc": 1,
 					"flow_control": "none",
 					"direction": "both",
