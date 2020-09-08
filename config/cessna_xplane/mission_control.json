@@ -24,33 +24,33 @@
 	"mission_planner": {
 		"custom": {
 			"use_approach": false,
-			"default_velocity": 10,
-			"default_altitude": 150,
+			"default_velocity": 60,
+			"default_altitude": 1500,
 			"missions": {
 				"simple": {
-					"velocity": 10,
+					"velocity": 60,
 					"infinite": true,
-					"offset": [0,0,150],
+					"offset": [0,0,1500],
 					"waypoints": [
-						{"location": [150,80,0]},
-						{"location": [150,-80,0]},
-						{"location": [-150,-80,0]},
-						{"location": [-150,80,0]}
+						{"location": [1500,800,0]},
+						{"location": [1500,-800,0]},
+						{"location": [-1500,-800,0]},
+						{"location": [-1500,800,0]}
 					]
 				},
 				"validation": {
-					"velocity": 12,
+					"velocity": 60,
 					"infinite": true,
-					"offset": [0,0,100],
+					"offset": [0,0,1000],
 					"waypoints": [
-						{"location": [300,150,0]},
-						{"location": [300,-150,0]},
-						{"location": [150,-150,0]},
-						{"location": [-150,-150,50]},
-						{"location": [-300,-150,50]},
-						{"location": [-300,150,50]},
-						{"location": [-150,150,50]},
-						{"location": [150,150,0]}
+						{"location": [3000,1500,0]},
+						{"location": [3000,-1500,0]},
+						{"location": [1500,-1500,0]},
+						{"location": [-1500,-1500,500]},
+						{"location": [-3000,-1500,500]},
+						{"location": [-3000,1500,500]},
+						{"location": [-1500,1500,500]},
+						{"location": [1500,1500,0]}
 					]
 				}
 			}
