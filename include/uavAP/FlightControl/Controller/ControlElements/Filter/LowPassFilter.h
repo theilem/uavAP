@@ -53,6 +53,10 @@ public:
 	inline Type
 	update(const Type& input, Duration deltaTime)
 	{
+		if (params.minValue() && input < *params.minValue())
+			return output_;
+		if (params.maxValue() && input > *params.maxValue())
+			return output_;
 
 		FloatingType ePow = 1 - std::exp(-std::chrono::duration_cast<Microseconds>(deltaTime).count() / 1e6 * params.cutOffFrequency());
 		output_ += (input - output_) * ePow;
@@ -62,6 +66,10 @@ public:
 	inline Type
 	update(const Type& input)
 	{
+		if (params.minValue() && input < *params.minValue())
+			return output_;
+		if (params.maxValue() && input > *params.maxValue())
+			return output_;
 		if (!params.samplingPeriod())
 		{
 			CPSLOG_ERROR << "Calling update without specifying sampling period";
@@ -83,6 +91,7 @@ private:
 
 	Type output_;
 };
+
 
 }
 
