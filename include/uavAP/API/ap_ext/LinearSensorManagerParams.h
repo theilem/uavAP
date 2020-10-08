@@ -6,12 +6,14 @@
 #define UAVAP_LINEARSENSORMANAGERPARAMS_H
 
 #include <cpsCore/Configuration/Parameter.hpp>
+#include <uavAP/FlightControl/Controller/ControlElements/Filter/LowPassFilterParams.h>
 
 struct LinearSensorParams
 {
 	Parameter<unsigned> channel = {0, "channel", true};
 	Parameter<FloatingType> offset = {0., "offset", true};
 	Parameter<FloatingType> slope = {1., "slope", true};
+	Parameter<Optional<Control::LowPassFilterParams>> filter = {{}, "filter", false};
 
 	template <typename Config>
 	inline void
@@ -20,6 +22,7 @@ struct LinearSensorParams
 		c & channel;
 		c & offset;
 		c & slope;
+		c & filter;
 	}
 };
 

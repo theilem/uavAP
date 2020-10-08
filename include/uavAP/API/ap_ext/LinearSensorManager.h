@@ -6,11 +6,22 @@
 #define UAVAP_LINEARSENSORMANAGER_H
 
 #include <cpsCore/cps_object>
+#include <uavAP/FlightControl/Controller/ControlElements/Filter/LowPassFilter.h>
 #include "uavAP/API/ap_ext/LinearSensorManagerParams.h"
 
 class LinearSensor : public ConfigurableObject<LinearSensorParams>
 {
 public:
+
+	void
+	initialize()
+	{
+		if (params.filter())
+		{
+			filter_ = Control::LowPassFilterGeneric<FloatingType>();
+			filter_->setParams(*params.filter());
+		}
+	}
 
 	template<typename Type, unsigned NumChannels>
 	FloatingType
@@ -21,8 +32,13 @@ public:
 			CPSLOG_ERROR << "Channel out of range";
 			return -1.;
 		}
-		return static_cast<FloatingType>(channels[params.channel()]) * params.slope() + params.offset();
+		auto value = static_cast<FloatingType>(channels[params.channel()]) * params.slope() + params.offset();
+		if (filter_)
+			return filter_->update(value);
+		return value;
 	}
+private:
+	mutable Optional<Control::LowPassFilterGeneric<FloatingType>> filter_;
 };
 
 

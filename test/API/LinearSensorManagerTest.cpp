@@ -76,3 +76,56 @@ TEST_CASE("Test LinearSensorManager Get Values")
 	CHECK(vals.at("sensor_2") == Approx(-872.9));
 
 }
+
+TEST_CASE("Test LinearSensorManager Filtering")
+{
+	LinearSensorParams sensorParams;
+	sensorParams.channel = 5;
+	sensorParams.offset = 2.0;
+	sensorParams.slope = 3.0;
+
+	LinearSensorParams sensorParamsWithFilter;
+	sensorParamsWithFilter.channel = 3;
+	sensorParamsWithFilter.offset = 5.5;
+	sensorParamsWithFilter.slope = -12.2;
+
+	Control::LowPassFilterParams filterParams;
+	filterParams.samplingPeriod = 10;
+	filterParams.cutOffFrequency = 30;
+
+	sensorParamsWithFilter.filter = filterParams;
+
+	LinearSensorManager sensorMan;
+	LinearSensorManagerParams sensorManParams;
+	sensorManParams.sensors().insert(std::make_pair("sensor", sensorParams));
+	sensorManParams.sensors().insert(std::make_pair("sensor_with_filter", sensorParamsWithFilter));
+	sensorMan.setParams(sensorManParams);
+
+	CHECK_FALSE(sensorMan.run(RunStage::INIT));
+
+	unsigned short channelArray1[10] = {};
+	unsigned short channelArray2[5] = {};
+
+	channelArray1[5] = 7;
+	channelArray1[3] = 1856;
+
+	channelArray2[3] = 72;
+
+	auto vals = sensorMan.getValues(channelArray1);
+	REQUIRE(vals.size() == 2);
+	REQUIRE_NOTHROW(vals.at("sensor"));
+	REQUIRE_NOTHROW(vals.at("sensor_with_filter"));
+
+	CHECK(vals.at("sensor") == 23.0);
+	CHECK(vals.at("sensor_with_filter") == Approx(-5867.3));
+
+
+	auto logScope = CPSLogger::LogLevelScope(LogLevel::NONE);
+	vals = sensorMan.getValues(channelArray2);
+	REQUIRE_NOTHROW(vals.at("sensor"));
+	REQUIRE_NOTHROW(vals.at("sensor_with_filter"));
+
+	CHECK(vals.at("sensor") == -1.0);
+	CHECK(vals.at("sensor_with_filter") == Approx(-4572.8));
+
+}

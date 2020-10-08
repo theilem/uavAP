@@ -15,6 +15,7 @@ LinearSensorManager::run(RunStage stage)
 			{
 				LinearSensor sensor;
 				sensor.setParams(sensorParams);
+				sensor.initialize();
 				sensors_.emplace_back(std::make_pair(sensorName, sensor));
 			}
 			break;

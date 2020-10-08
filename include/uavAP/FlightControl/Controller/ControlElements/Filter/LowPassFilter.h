@@ -59,6 +59,19 @@ public:
 		return output_;
 	}
 
+	inline Type
+	update(const Type& input)
+	{
+		if (!params.samplingPeriod())
+		{
+			CPSLOG_ERROR << "Calling update without specifying sampling period";
+			return output_;
+		}
+		FloatingType ePow = 1 - std::exp(-(*params.samplingPeriod()) / 1e3 * params.cutOffFrequency());
+		output_ += (input - output_) * ePow;
+		return output_;
+	}
+
 	//get and set funtions
 	inline Type
 	getValue() const
