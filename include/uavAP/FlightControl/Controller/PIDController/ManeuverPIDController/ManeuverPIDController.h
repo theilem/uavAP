@@ -45,9 +45,10 @@ class IScheduler;
 class IPC;
 class DataHandling;
 class Packet;
+class DataPresentation;
 
 class ManeuverPIDController: public IPIDController, public AggregatableObject<IPC, IScheduler,
-		ISensingActuationIO, DataHandling>, public IRunnableObject
+		ISensingActuationIO, DataHandling, DataPresentation>, public IRunnableObject
 {
 public:
 
