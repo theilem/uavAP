@@ -126,6 +126,9 @@ struct SensorData
 	FloatingType groundSpeed = 0.;        //!< total velocity w.r.t. ground
 	FloatingType angleOfAttack = 0.;        //!< current angle of attack
 	FloatingType angleOfSideslip = 0.;    //!< current angle of sideslip
+	FloatingType courseAngle = 0.;       //!< course angle obtained from GPS
+	FloatingType pressure = 0.;       //!< pressure obtained from airspeed sensor
+	FloatingType temperature = 0.;     //!< temperature obtained from airspeed sensor
 	TimePoint timestamp;            //!< Timestamp of SensorEnum data
 
 };
