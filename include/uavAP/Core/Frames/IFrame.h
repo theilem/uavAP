@@ -49,6 +49,9 @@ public:
 	virtual Vector3
 	toInertialFrameRotation(const Vector3& rot) const = 0;
 
+	virtual FloatingType
+	toInertialFrameCourse(FloatingType chi) const = 0;
+
 	virtual Vector3
 	fromFramePosition(const IFrame& orig, const Vector3& pos) const = 0;
 
@@ -57,6 +60,9 @@ public:
 
 	virtual Vector3
 	fromFrameRotation(const IFrame& orig, const Vector3& rot) const = 0;
+
+	virtual FloatingType
+	fromFrameCourse(const IFrame &orig, FloatingType chi) const = 0;
 
 	virtual Frame
 	getId() const = 0;

@@ -36,6 +36,12 @@ VehicleOneFrame::toInertialFrameRotation(const Vector3& rot) const
 	return res;
 }
 
+FloatingType
+VehicleOneFrame::toInertialFrameCourse(FloatingType chi) const
+{
+	return chi + yaw_;
+}
+
 Vector3
 VehicleOneFrame::fromFramePosition(const IFrame& orig, const Vector3& pos) const
 {
@@ -55,6 +61,12 @@ VehicleOneFrame::fromFrameRotation(const IFrame& orig, const Vector3& rot) const
 	Vector3 res = orig.toInertialFrameRotation(rot) - Vector3(0, 0, yaw_);
 	res[2] = boundAngleRad(res[2]);
 	return res;
+}
+
+FloatingType
+VehicleOneFrame::fromFrameCourse(const IFrame &orig, FloatingType chi) const
+{
+	return orig.toInertialFrameCourse(chi) - yaw_;;
 }
 
 Frame

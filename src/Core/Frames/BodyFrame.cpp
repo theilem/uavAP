@@ -51,6 +51,12 @@ BodyFrame::toInertialFrameRotation(const Vector3& rot) const
 	return rot - rotation_;
 }
 
+FloatingType
+BodyFrame::toInertialFrameCourse(FloatingType chi) const
+{
+	return chi - rotation_[2];
+}
+
 Vector3
 BodyFrame::fromFramePosition(const IFrame& orig, const Vector3& pos) const
 {
@@ -67,6 +73,12 @@ Vector3
 BodyFrame::fromFrameRotation(const IFrame& orig, const Vector3& rot) const
 {
 	return rotation_ + orig.toInertialFrameRotation(rot);
+}
+
+FloatingType
+BodyFrame::fromFrameCourse(const IFrame &orig, FloatingType chi) const
+{
+	return rotation_[2] + orig.toInertialFrameCourse(chi);
 }
 
 Frame
