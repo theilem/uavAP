@@ -1,8 +1,10 @@
 set(TEST_SRCS Test.cpp
-        API/ApExtTest.cpp
-        API/LinearSensorManagerTest.cpp
-        Core/EnumAccess.cpp
         )
+
+add_subdirectory(API)
+add_subdirectory(Core)
+#add_subdirectory(FlightControl)
+#add_subdirectory(Math)
 
 include_directories(${SUBMODULE_DIR}/Catch2/single_include
         ${CMAKE_CURRENT_SOURCE_DIR})

@@ -5,32 +5,26 @@
  *      Author: mirco
  */
 
-#include <boost/test/unit_test.hpp>
-#include <uavAP/Core/DataPresentation/Content.h>
-#include <uavAP/Core/EnumMap.hpp>
-#include <uavAP/Core/Framework/Helper.h>
-#include <uavAP/Core/IPC/Publisher.h>
-#include <uavAP/Core/Runner/SimpleRunner.h>
-#include <uavAP/Core/Scheduler/MicroSimulator.h>
+#include <cpsCore/Utilities/Test/TestInfo.h>
+#include <uavAP/Core/DataHandling/Content.hpp>
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/Core/DataHandling/DataHandling.h>
-#include <uavAP/Core/IPC/IPC.h>
-#include <uavAP/Core/DataPresentation/DataPresentation.h>
 #include <functional>
+#include <cpsCore/Utilities/Scheduler/MicroSimulator.h>
+#include <cpsCore/Synchronization/SimpleRunner.h>
+#include <cpsCore/Framework/StaticHelper.h>
+#include <cpsCore/Utilities/Scheduler/SchedulerFactory.h>
 
 namespace
 {
-class DataHandlingTestHelper: public Helper
-{
-public:
-	DataHandlingTestHelper()
-	{
-		addDefaultCreator<MicroSimulator>();
-		addCreator<DataHandling>();
-		addDefaultCreator<IPC>();
-		addDefaultCreator<DataPresentation>();
-	}
-};
+
+using DataHandlingTestDefaultHelper = StaticHelper<SchedulerFactory,
+		DataHandling,
+		DataPresentation>;
+
+using DataHandlingTestHelper = StaticHelper<DataHandlingTestDefaultHelper,
+		IPC
+		>;
 
 SensorData
 statusFunction()
@@ -46,9 +40,9 @@ statusFunction()
 void
 commandFunction(const SensorData& data)
 {
-	BOOST_CHECK_EQUAL(data.position.x(), 6);
-	BOOST_CHECK_EQUAL(data.position.y(), 2);
-	BOOST_CHECK_EQUAL(data.position.z(), 1);
+	CHECK(data.position.x() == 6);
+	CHECK(data.position.y() == 2);
+	CHECK(data.position.z() == 1);
 }
 //
 //void
@@ -60,17 +54,16 @@ onPacket(const Packet& packet, std::shared_ptr<DataPresentation> dp)
 	auto p = packet;
 	Content content = dp->extractHeader<Content>(p);
 	SensorData data = dp->deserialize<SensorData>(p);
-	BOOST_CHECK_EQUAL(data.position.x(), 5);
-	BOOST_CHECK_EQUAL(data.position.y(), 2);
-	BOOST_CHECK_EQUAL(data.position.z(), 1);
+	CHECK(data.position.x() == 5);
+	CHECK(data.position.y() == 2);
+	CHECK(data.position.z() == 1);
 }
 
 }
 
-BOOST_AUTO_TEST_CASE(data_handling_test001)
+TEST_CASE("Data Handling Test")
 {
-	DataHandlingTestHelper helper;
-	Aggregator agg = helper.createAggregation("Core/config/datahandling1.json");
+	Aggregator agg = DataHandlingTestHelper::createAggregation("Core/config/datahandling1.json");
 
 	auto dataHandling = agg.getOne<DataHandling>();
 	auto ipc = agg.getOne<IPC>();
@@ -79,13 +72,13 @@ BOOST_AUTO_TEST_CASE(data_handling_test001)
 //	dataHandling->addStatusFunction(std::function<SensorData()>(statusFunction));
 	dataHandling->addStatusFunction<SensorData>(std::bind(statusFunction), Content::SENSOR_DATA);
 
-	dataHandling->subscribeOnCommand(Content::SENSOR_DATA, std::function<void
+	dataHandling->subscribeOnData(Content::SENSOR_DATA, std::function<void
 	(const SensorData&)>(commandFunction));
 	auto pub = ipc->publishPackets("comm_to_flight_control");
 
 	SimpleRunner runner(agg);
 
-	BOOST_REQUIRE(!runner.runAllStages());
+	CHECK(!runner.runAllStages());
 	ipc->subscribeOnPackets("flight_control_to_comm",
 			std::bind(onPacket, std::placeholders::_1, dp));
 

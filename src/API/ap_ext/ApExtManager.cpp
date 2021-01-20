@@ -317,8 +317,6 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	if (params.useAirspeed())
 	{
 		const airs_sample_t* airspeed = sample->airs_sample;
-		sens.pressure = airspeed->press;
-		sens.temperature = airspeed->temp;
 		if (!airspeed)
 		{
 			CPSLOG_ERROR << "Cannot read airspeed sample. Set airspeed to groundspeed.";
@@ -328,6 +326,8 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 		{
 			bool setGroundSpeed = false;
 			bool oldAirspeed = false;
+			sens.pressure = airspeed->press;
+			sens.temperature = airspeed->temp;
 			Duration timeDiff;
 			if (std::isnan(airspeed->cal_airs) || airspeed->cal_airs == -1)
 			{
