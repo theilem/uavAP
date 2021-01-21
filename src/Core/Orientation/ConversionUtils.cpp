@@ -67,13 +67,13 @@ directionalToFrameENU(FramedVector3& input, const Vector3& attitude, Frame targe
 			break;
 		case Frame::VEHICLE_2:
 			input = Eigen::AngleAxisd(attitude[2], Vector3::UnitZ()) *
-						 Eigen::AngleAxisd(attitude[0], Vector3::UnitY()) * input;
+					Eigen::AngleAxisd(attitude[0], Vector3::UnitY()) * input;
 			input.frame = Frame::VEHICLE_2;
 			break;
 		case Frame::BODY:
 			input = Eigen::AngleAxisd(attitude[2], Vector3::UnitZ()) *
-						 Eigen::AngleAxisd(attitude[0], Vector3::UnitY()) *
-						 Eigen::AngleAxisd(attitude[1], Vector3::UnitX()) * input;
+					Eigen::AngleAxisd(attitude[0], Vector3::UnitY()) *
+					Eigen::AngleAxisd(attitude[1], Vector3::UnitX()) * input;
 			input.frame = Frame::BODY;
 			break;
 		default:
@@ -103,13 +103,13 @@ directionalToFrameNED(FramedVector3& input, const Vector3& attitude, Frame targe
 			break;
 		case Frame::VEHICLE_2:
 			input = Eigen::AngleAxisd(attitude[2], Vector3::UnitZ()) *
-						 Eigen::AngleAxisd(attitude[1], Vector3::UnitY()) * input;
+					Eigen::AngleAxisd(attitude[1], Vector3::UnitY()) * input;
 			input.frame = Frame::VEHICLE_2;
 			break;
 		case Frame::BODY:
 			input = Eigen::AngleAxisd(attitude[2], Vector3::UnitZ()) *
-						 Eigen::AngleAxisd(attitude[1], Vector3::UnitY()) *
-						 Eigen::AngleAxisd(attitude[0], Vector3::UnitX()) * input;
+					Eigen::AngleAxisd(attitude[1], Vector3::UnitY()) *
+					Eigen::AngleAxisd(attitude[0], Vector3::UnitX()) * input;
 			input.frame = Frame::BODY;
 			break;
 		default:
@@ -129,10 +129,10 @@ angularToInertialENU(FramedVector3& angularRate, const Vector3& attitude)
 	{
 		case Frame::BODY:
 			angularRate = Vector3({
-					q - r * tan(theta) * cos(phi) - p * tan(theta) * sin(phi),
-					p * cos(phi) - r * sin(phi),
-					(r * cos(phi) + p * sin(phi)) / cos(theta)
-			});
+										  q - r * tan(theta) * cos(phi) - p * tan(theta) * sin(phi),
+										  p * cos(phi) - r * sin(phi),
+										  (r * cos(phi) + p * sin(phi)) / cos(theta)
+								  });
 			angularRate.frame = Frame::INERTIAL;
 			break;
 		case Frame::INERTIAL:
@@ -160,10 +160,10 @@ angularToBodyENU(FramedVector3& angularRate, const Vector3& attitude)
 	{
 		case Frame::INERTIAL:
 			angularRate = Vector3({
-					dpsi * sin(phi) * cos(theta) - dtheta * cos(phi),
-					dpsi * sin(theta) - dphi,
-					dpsi * cos(phi) * cos(theta) - dtheta * sin(phi)
-			});
+										  dpsi * sin(phi) * cos(theta) - dtheta * cos(phi),
+										  dpsi * sin(theta) - dphi,
+										  dpsi * cos(phi) * cos(theta) - dtheta * sin(phi)
+								  });
 			angularRate.frame = Frame::BODY;
 			break;
 		case Frame::BODY:
@@ -191,10 +191,10 @@ angularToInertialNED(FramedVector3& angularRate, const Vector3& attitude)
 	{
 		case Frame::BODY:
 			angularRate = Vector3({
-					p + q * sin(phi) * tan(theta) + r * cos(phi) * tan(theta),
-					q * cos(phi) - r * sin(phi),
-					(q * cos(phi) + r * cos(phi)) / cos(theta)
-			});
+										  p + q * sin(phi) * tan(theta) + r * cos(phi) * tan(theta),
+										  q * cos(phi) - r * sin(phi),
+										  (q * cos(phi) + r * cos(phi)) / cos(theta)
+								  });
 			angularRate.frame = Frame::INERTIAL;
 			break;
 		case Frame::INERTIAL:
@@ -222,10 +222,10 @@ angularToBodyNED(FramedVector3& angularRate, const Vector3& attitude)
 	{
 		case Frame::INERTIAL:
 			angularRate = Vector3({
-					dphi - dpsi * sin(theta),
-					dtheta * cos(phi) + dpsi * cos(theta) * sin(phi),
-					dpsi * cos(theta) * cos(phi) - dtheta * sin(phi)
-			});
+										  dphi - dpsi * sin(theta),
+										  dtheta * cos(phi) + dpsi * cos(theta) * sin(phi),
+										  dpsi * cos(theta) * cos(phi) - dtheta * sin(phi)
+								  });
 			angularRate.frame = Frame::BODY;
 			break;
 		case Frame::BODY:
@@ -239,4 +239,11 @@ angularToBodyNED(FramedVector3& angularRate, const Vector3& attitude)
 		default:
 			CPSLOG_ERROR << "Unknown frame!";
 	}
+}
+
+void
+simpleFlipInertial(Vector3& input)
+{
+	std::swap(input.x(), input.y());
+	input.z() *= -1;
 }

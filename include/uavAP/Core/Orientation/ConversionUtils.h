@@ -74,4 +74,7 @@ angularToInertialNED(FramedVector3& angularRate, const Vector3& attitude);
 void
 angularToBodyNED(FramedVector3& angularRate, const Vector3& attitude);
 
+void
+simpleFlipInertial(Vector3& input);
+
 #endif //UAVAP_CONVERSIONUTILS_H

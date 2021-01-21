@@ -33,9 +33,4 @@ public:
 	convert(SensorData &sd) = 0;
 };
 
-static void simpleFlipIntertial(Vector3 input) {
-	std::swap(input.x(), input.y());
-	input.z()  *= -1;
-}
-
 #endif //UAVAP_IORIENTATION_H
