@@ -16,8 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-set(CORE_SRC 	${CORE_SRC}
-				${CMAKE_CURRENT_SOURCE_DIR}/ENU.cpp
+set(CORE_SRC	${CORE_SRC}
 				${CMAKE_CURRENT_SOURCE_DIR}/ConversionUtils.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/ENU.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/NED.cpp
 				PARENT_SCOPE)
 

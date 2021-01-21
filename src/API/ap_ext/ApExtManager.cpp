@@ -175,6 +175,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 //	}
 
 	sens.angularRate = angularRate;
+	sens.angularRate.frame = Frame::BODY;
 
 	if (params.useEuler())
 	{
@@ -192,6 +193,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	Vector3 gravityBody = Eigen::AngleAxisd(-sens.attitude[0], Vector3::UnitX())
 						  * Eigen::AngleAxisd(-sens.attitude[1], Vector3::UnitY()) * gravityInertial;
 	sens.acceleration = acceleration + gravityBody;
+	sens.acceleration.frame = Frame::BODY;
 
 	//************************
 	// GPS Data
@@ -233,6 +235,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			sens.velocity[0] = sin(courseRad) * horSpeed;
 			sens.velocity[1] = cos(courseRad) * horSpeed;
 			sens.velocity[2] = gps->vert_velocity;
+			sens.velocity.frame = Frame::INERTIAL;
 			courseAngle = courseRad;
 
 			sens.courseAngle = courseAngle;
@@ -280,18 +283,16 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			sens.velocity[0] = imu->imu_vel_x;
 			sens.velocity[1] = imu->imu_vel_y;
 			sens.velocity[2] = imu->imu_vel_z;
+			sens.velocity.frame = Frame::INERTIAL;
 
-			if (sens.velocity[0] == 0 || sens.velocity[1] == 0 || sens.velocity[2] == 0)
+			//If any recorded values are 0, assume corruption and use last data
+			if (!(sens.velocity[0] && sens.velocity[1] && sens.velocity[2]))
 			{
-				sens.velocity[0] = lastVelocity_.x();
-				sens.velocity[1] = lastVelocity_.y();
-				sens.velocity[2] = lastVelocity_.z();
+				sens.velocity = lastVelocity_;
 			}
 			else
 			{
-				lastVelocity_.x() = sens.velocity[0];
-				lastVelocity_.y() = sens.velocity[1];
-				lastVelocity_.z() = sens.velocity[2];
+				lastVelocity_ = sens.velocity;
 			}
 
 //			courseAngle = atan2(imu->imu_vel_y, imu->imu_vel_x);

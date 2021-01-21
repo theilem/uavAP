@@ -8,6 +8,7 @@
 #ifndef UAVAP_CORE_SensorEnumDATA_H_
 #define UAVAP_CORE_SensorEnumDATA_H_
 
+#include "uavAP/Core/FramedVector3.h"
 #include "uavAP/Core/Frames/IFrame.h"
 #include "uavAP/Core/Orientation/IOrientation.h"
 #include <cpsCore/Utilities/LinearAlgebra.h>
@@ -118,34 +119,28 @@ ENUMMAP_INIT(ServoEnum,
 			 }
 );
 
-struct FramedVector3
-{
-	Vector3 data = {0., 0., 0.};
-	Frame frame = Frame::INERTIAL;
-};
-
 /**
  * @brief SensorData struct. Contains everything needed for calculation of control.
  */
 struct SensorData
 {
-	Vector3 position = {0., 0., 0.};		//!< UTM Frame, [X: East, Y: North, Z: Up]
-	FramedVector3 velocity;							//!< Earth Frame
-	FramedVector3 acceleration;						//!< Body Frame
-	Vector3 attitude;								//!< [X: Roll, Y: Pitch, Z: Yaw]
-	FramedVector3 angularRate;						//!< [X: Roll, Y: Pitch, Z: Yaw]
-													//!< Body->PQR, Inertial->dot Phi, dot Theta, dot Psi
-	bool hasGPSFix = false;							//!< Shows whether the GPS has a fix
-	bool autopilotActive = false;					//!< Shows if the autopilot is active
-	FloatingType airSpeed = 0.;						//!< total velocity w.r.t. wind
-	FloatingType groundSpeed = 0.;					//!< total velocity w.r.t. ground
-	FloatingType angleOfAttack = 0.;				//!< current angle of attack
-	FloatingType angleOfSideslip = 0.;				//!< current angle of sideslip
-	FloatingType courseAngle = 0.;					//!< course angle obtained from GPS
-	FloatingType pressure = 0.;						//!< pressure obtained from airspeed sensor
-	FloatingType temperature = 0.;					//!< temperature obtained from airspeed sensor
-	Orientation orientation = Orientation::ENU;		//!< ENU or NED
-	TimePoint timestamp;							//!< Timestamp of SensorEnum data
+	Vector3 position = {0., 0., 0.};        //!< UTM Frame, [X: East, Y: North, Z: Up]
+	FramedVector3 velocity;                            //!< Earth Frame
+	FramedVector3 acceleration;                        //!< Body Frame
+	Vector3 attitude;                                //!< [X: Roll, Y: Pitch, Z: Yaw]
+	FramedVector3 angularRate;                        //!< [X: Roll, Y: Pitch, Z: Yaw]
+	//!< Body->PQR, Inertial->dot Phi, dot Theta, dot Psi
+	bool hasGPSFix = false;                            //!< Shows whether the GPS has a fix
+	bool autopilotActive = false;                    //!< Shows if the autopilot is active
+	FloatingType airSpeed = 0.;                        //!< total velocity w.r.t. wind
+	FloatingType groundSpeed = 0.;                    //!< total velocity w.r.t. ground
+	FloatingType angleOfAttack = 0.;                //!< current angle of attack
+	FloatingType angleOfSideslip = 0.;                //!< current angle of sideslip
+	FloatingType courseAngle = 0.;                    //!< course angle obtained from GPS
+	FloatingType pressure = 0.;                        //!< pressure obtained from airspeed sensor
+	FloatingType temperature = 0.;                    //!< temperature obtained from airspeed sensor
+	Orientation orientation = Orientation::ENU;        //!< ENU or NED
+	TimePoint timestamp;                            //!< Timestamp of SensorEnum data
 
 };
 
@@ -162,29 +157,29 @@ enumAccess(const SensorData& data, const SensorEnum& e)
 		case SensorEnum::POSITION_Z:
 			return static_cast<RetType>(data.position.z());
 		case SensorEnum::VELOCITY_X:
-			return static_cast<RetType>(data.velocity.data.x());
+			return static_cast<RetType>(data.velocity.x());
 		case SensorEnum::VELOCITY_Y:
-			return static_cast<RetType>(data.velocity.data.y());
+			return static_cast<RetType>(data.velocity.y());
 		case SensorEnum::VELOCITY_Z:
-			return static_cast<RetType>(data.velocity.data.z());
+			return static_cast<RetType>(data.velocity.z());
 		case SensorEnum::ACCELERATION_X:
-			return static_cast<RetType>(data.acceleration.data.x());
+			return static_cast<RetType>(data.acceleration.x());
 		case SensorEnum::ACCELERATION_Y:
-			return static_cast<RetType>(data.acceleration.data.y());
+			return static_cast<RetType>(data.acceleration.y());
 		case SensorEnum::ACCELERATION_Z:
-			return static_cast<RetType>(data.acceleration.data.z());
+			return static_cast<RetType>(data.acceleration.z());
 		case SensorEnum::ATTITUDE_X:
-			return static_cast<RetType>(data.attitude.data.x());
+			return static_cast<RetType>(data.attitude.x());
 		case SensorEnum::ATTITUDE_Y:
-			return static_cast<RetType>(data.attitude.data.y());
+			return static_cast<RetType>(data.attitude.y());
 		case SensorEnum::ATTITUDE_Z:
-			return static_cast<RetType>(data.attitude.data.z());
+			return static_cast<RetType>(data.attitude.z());
 		case SensorEnum::ANGULAR_RATE_X:
-			return static_cast<RetType>(data.angularRate.data.x());
+			return static_cast<RetType>(data.angularRate.x());
 		case SensorEnum::ANGULAR_RATE_Y:
-			return static_cast<RetType>(data.angularRate.data.y());
+			return static_cast<RetType>(data.angularRate.y());
 		case SensorEnum::ANGULAR_RATE_Z:
-			return static_cast<RetType>(data.angularRate.data.z());
+			return static_cast<RetType>(data.angularRate.z());
 		case SensorEnum::AIR_SPEED:
 			return static_cast<RetType>(data.airSpeed);
 		case SensorEnum::GROUND_SPEED:
@@ -268,6 +263,7 @@ changeFrame(const IFrame& orig, const IFrame& dest, SensorData& data);
 
 namespace dp
 {
+
 template<class Archive, typename Type>
 inline void
 serialize(Archive& ar, SensorData& t)
