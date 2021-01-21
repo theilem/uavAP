@@ -27,11 +27,21 @@
 #define UAVAP_CORE_FRAMES_IFRAME_H_
 
 #include <cpsCore/Utilities/LinearAlgebra.h>
+#include <cpsCore/Utilities/EnumMap.hpp>
 
 enum class Frame
 {
 	INERTIAL, VEHICLE_1, VEHICLE_2, BODY,
 };
+
+ENUMMAP_INIT(Frame,
+			 {
+				 { Frame::INERTIAL, "inertial" },
+				 { Frame::VEHICLE_1, "vehicle 1" },
+				 { Frame::VEHICLE_2, "vehicle 2" },
+				 { Frame::BODY, "body" }
+			 }
+);
 
 class IFrame
 {
@@ -62,7 +72,7 @@ public:
 	fromFrameRotation(const IFrame& orig, const Vector3& rot) const = 0;
 
 	virtual FloatingType
-	fromFrameCourse(const IFrame &orig, FloatingType chi) const = 0;
+	fromFrameCourse(const IFrame& orig, FloatingType chi) const = 0;
 
 	virtual Frame
 	getId() const = 0;

@@ -16,34 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-set(CORE_SRC "")
-
-add_subdirectory(DataHandling)
-add_subdirectory(Frames)
-add_subdirectory(OverrideHandler)
-add_subdirectory(Orientation)
-
 set(CORE_SRC 	${CORE_SRC}
-				${CMAKE_CURRENT_SOURCE_DIR}/SensorData.cpp
-				)
+				${CMAKE_CURRENT_SOURCE_DIR}/ENU.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/ConversionUtils.cpp
+				PARENT_SCOPE)
 
-				
-add_library(uavap_core SHARED ${CORE_SRC})
-
-target_link_libraries(uavap_core
-		Eigen3::Eigen
-		${Boost_LIBRARIES}
-									${REDIS}
-									pthread
-									rt
-									dl
-									cps_core
-									)
-
-add_custom_target(core DEPENDS uavap_core uavap_framework_api)
-									
-									
-install(TARGETS uavap_core 
-		RUNTIME DESTINATION bin
-		LIBRARY DESTINATION lib
-		ARCHIVE DESTINATION lib)
