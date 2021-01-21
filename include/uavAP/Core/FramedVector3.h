@@ -14,7 +14,7 @@ class FramedVector3 : public Vector3
 {
 public:
 	// Taken from here: https://eigen.tuxfamily.org/dox/TopicCustomizing_InheritingMatrix.html
-	FramedVector3(void):Vector3(){}
+	FramedVector3():Vector3(){}
 
 	template<typename OtherDerived>
 	FramedVector3(const Eigen::MatrixBase<OtherDerived>& other) : Vector3(other) {}

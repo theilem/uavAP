@@ -6,5 +6,11 @@ build/
 
 # Ignoring Qt User Profiles
 *.user
+uavAP.cflags
+uavAP.config
+uavAP.creator
+uavAP.cxxflags
+uavAP.files
+uavAP.includes
 
 .idea
