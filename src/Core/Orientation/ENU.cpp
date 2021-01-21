@@ -15,13 +15,15 @@ ENU::convert(SensorData& sd)
 			simpleFlipIntertial(sd.position);
 
 			directionalToInertialNED(sd.velocity, sd.attitude);
-			simpleFlipIntertial(sd.velocity.data);
+			simpleFlipIntertial(sd.velocity);
+			directionalToFrameNED(sd.velocity, sd.attitude, Frame::BODY);
 
 			directionalToInertialNED(sd.acceleration, sd.attitude);
-			simpleFlipIntertial(sd.acceleration.data);
+			simpleFlipIntertial(sd.acceleration);
 
 			angularToInertialNED(sd.angularRate, sd.attitude);
-			simpleFlipIntertial(sd.angularRate.data);
+			simpleFlipIntertial(sd.angularRate);
+			angularToBodyNED(sd.angularRate, sd.attitude);
 
 			sd.orientation = Orientation::ENU;
 			break;

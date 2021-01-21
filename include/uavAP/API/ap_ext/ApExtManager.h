@@ -15,6 +15,7 @@
 #include "uavAP/API/ap_ext/ApExtManagerParams.h"
 #include "uavAP/FlightControl/Controller/AdvancedControl.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
+#include "uavAP/Core/FramedVector3.h"
 #include <mutex>
 #include <functional>
 
@@ -83,7 +84,7 @@ private:
 	airs_sample_t lastAirspeedSample_{};
 
 	Vector3 lastPosition_;
-	Vector3 lastVelocity_;
+	FramedVector3 lastVelocity_;
 
 	std::map<std::string, FloatingType> miscValues_;
 };
