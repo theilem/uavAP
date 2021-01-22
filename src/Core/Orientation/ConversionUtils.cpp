@@ -4,116 +4,215 @@
 
 #include "uavAP/Core/Orientation/ConversionUtils.h"
 
+// Helper Functions
+static void
+upConversionENU(FramedVector3& input, const Vector3& attitude, Frame target);
+
+static void
+downConversionENU(FramedVector3& input, const Vector3& attitude, Frame target);
+
+static void
+upConversionNED(FramedVector3& input, const Vector3& attitude, Frame target);
+
+static void
+downConversionNED(FramedVector3& input, const Vector3& attitude, Frame target);
+
+/**
+ * Converts angular rate into inertial frame for ENU
+ * (dot Phi, dot Theta, dot Psi)
+ * @param angularRate
+ * @param attitude
+ */
+static void
+angularToInertialENU(FramedVector3& angularRate, const Vector3& attitude);
+
+/**
+ * Converts inertial angular rate (dot phi, dot theta, dot psi) to body angular rate (pqr) for ENU
+ * @param angularRate
+ * @param attitude
+ */
+static void
+angularToBodyENU(FramedVector3& angularRate, const Vector3& attitude);
+
+/**
+ * Converts angular rate into inertial frame for NED
+ * (dot Phi, dot Theta, dot Psi)
+ * @param angularRate
+ * @param attitude
+ */
+static void
+angularToInertialNED(FramedVector3& angularRate, const Vector3& attitude);
+
+/**
+ * Converts inertial angular rate (dot phi, dot theta, dot psi) to body angular rate (pqr) for NED
+ * @param angularRate
+ * @param attitude
+ */
+static void
+angularToBodyNED(FramedVector3& angularRate, const Vector3& attitude);
 
 void
-directionalToInertialENU(FramedVector3& input, const Vector3& attitude)
+directionalConversion(FramedVector3& input, const Vector3& attitude, Frame target, Orientation orientation)
+{
+	if (input.frame == target)
+	{
+		return;
+	}
+	else if (input.frame < target)
+	{
+		if (orientation == Orientation::NED)
+			upConversionNED(input, attitude, target);
+		else
+			upConversionENU(input, attitude, target);
+	}
+	else
+	{
+		if (orientation == Orientation::NED)
+			downConversionNED(input, attitude, target);
+		else
+			downConversionENU(input, attitude, target);
+	}
+}
+
+
+void
+angularConversion(FramedVector3& angularRate, const Vector3& attitude, Frame target, Orientation orientation)
+{
+	if (angularRate.frame == target)
+	{
+		return;
+	}
+	if (target == Frame::VEHICLE_1 || target == Frame::VEHICLE_2 || angularRate.frame == Frame::VEHICLE_1 ||
+		angularRate.frame == Frame::VEHICLE_2)
+	{
+		CPSLOG_ERROR << "Vehicle 1/Vehicle 2 frame is undefined for angular rate.";
+		return;
+	}
+	if (orientation == Orientation::NED)
+	{
+		if (target == Frame::BODY)
+		{
+			angularToBodyNED(angularRate, attitude);
+		}
+		else
+		{
+			angularToInertialNED(angularRate, attitude);
+		}
+	}
+	else
+	{
+		if (target == Frame::BODY)
+		{
+			angularToBodyENU(angularRate, attitude);
+		}
+		else
+		{
+			angularToInertialENU(angularRate, attitude);
+		}
+	}
+}
+
+static void
+upConversionENU(FramedVector3& input, const Vector3& attitude, Frame target)
 {
 	switch (input.frame)
 	{
-		case Frame::BODY:
+		case Frame::INERTIAL:
+			input = Eigen::AngleAxisd(-attitude[2], Vector3::UnitZ()) * input;
+			input.frame = Frame::VEHICLE_1;
+		case Frame::VEHICLE_1:
+			if (target == Frame::VEHICLE_1)
+				break;
 			input = Eigen::AngleAxisd(-attitude[1], Vector3::UnitX()) * input;
+			input.frame = Frame::VEHICLE_2;
 		case Frame::VEHICLE_2:
-			input = Eigen::AngleAxisd(-attitude[0], Vector3::UnitY()) * input;
-		case Frame::VEHICLE_1:
-			input = Eigen::AngleAxisd(-attitude[2], Vector3::UnitZ()) * input;
-			input.frame = Frame::INERTIAL;
-			break;
-		case Frame::INERTIAL:
-			break;
+			if (target == Frame::VEHICLE_2)
+				break;
+			input = Eigen::AngleAxisd(attitude[0], Vector3::UnitY()) * input;
+			input.frame = Frame::BODY;
+		case Frame::BODY:
+			if (target == Frame::BODY)
+				break;
 		default:
-			CPSLOG_ERROR << "Unknown frame!";
+			CPSLOG_ERROR << "Unknown Frame";
 	}
 }
 
-void
-directionalToInertialNED(FramedVector3& input, const Vector3& attitude)
+static void
+downConversionENU(FramedVector3& input, const Vector3& attitude, Frame target)
 {
 	switch (input.frame)
 	{
 		case Frame::BODY:
-			input = Eigen::AngleAxisd(-attitude[0], Vector3::UnitX()) * input;
+			input = Eigen::AngleAxisd(-attitude[0], Vector3::UnitY()) * input;
+			input.frame = Frame::VEHICLE_2;
 		case Frame::VEHICLE_2:
-			input = Eigen::AngleAxisd(-attitude[1], Vector3::UnitY()) * input;
+			if (target == Frame::VEHICLE_2)
+				break;
+			input = Eigen::AngleAxisd(attitude[1], Vector3::UnitX()) * input;
+			input.frame = Frame::VEHICLE_1;
 		case Frame::VEHICLE_1:
-			input = Eigen::AngleAxisd(-attitude[2], Vector3::UnitZ()) * input;
+			if (target == Frame::VEHICLE_1)
+				break;
+			input = Eigen::AngleAxisd(attitude[2], Vector3::UnitZ()) * input;
 			input.frame = Frame::INERTIAL;
-			break;
 		case Frame::INERTIAL:
-			break;
+			if (target == Frame::INERTIAL)
+				break;
 		default:
-			CPSLOG_ERROR << "Unknown frame!";
+			CPSLOG_ERROR << "Unknown Frame";
 	}
 }
 
-void
-directionalToFrameENU(FramedVector3& input, const Vector3& attitude, Frame target)
+static void
+upConversionNED(FramedVector3& input, const Vector3& attitude, Frame target)
 {
-	if (input.frame == target)
-	{
-		return;
-	}
-	if (input.frame != Frame::INERTIAL)
-	{
-		directionalToInertialENU(input, attitude);
-	}
-
-	switch (target)
+	switch (input.frame)
 	{
 		case Frame::INERTIAL:
-			break;
-		case Frame::VEHICLE_1:
-			input = Eigen::AngleAxisd(attitude[2], Vector3::UnitZ()) * input;
+			input = Eigen::AngleAxisd(-attitude[2], Vector3::UnitZ()) * input;
 			input.frame = Frame::VEHICLE_1;
-			break;
-		case Frame::VEHICLE_2:
-			input = Eigen::AngleAxisd(attitude[2], Vector3::UnitZ()) *
-					Eigen::AngleAxisd(attitude[0], Vector3::UnitY()) * input;
+		case Frame::VEHICLE_1:
+			if (target == Frame::VEHICLE_1)
+				break;
+			input = Eigen::AngleAxisd(-attitude[1], Vector3::UnitY()) * input;
 			input.frame = Frame::VEHICLE_2;
-			break;
-		case Frame::BODY:
-			input = Eigen::AngleAxisd(attitude[2], Vector3::UnitZ()) *
-					Eigen::AngleAxisd(attitude[0], Vector3::UnitY()) *
-					Eigen::AngleAxisd(attitude[1], Vector3::UnitX()) * input;
+		case Frame::VEHICLE_2:
+			if (target == Frame::VEHICLE_2)
+				break;
+			input = Eigen::AngleAxisd(-attitude[0], Vector3::UnitX()) * input;
 			input.frame = Frame::BODY;
-			break;
+		case Frame::BODY:
+			if (target == Frame::BODY)
+				break;
 		default:
-			CPSLOG_ERROR << "Unknown frame!";
+			CPSLOG_ERROR << "Unknown Frame";
 	}
 }
 
-void
-directionalToFrameNED(FramedVector3& input, const Vector3& attitude, Frame target)
+static void
+downConversionNED(FramedVector3& input, const Vector3& attitude, Frame target)
 {
-	if (input.frame == target)
+	switch (input.frame)
 	{
-		return;
-	}
-	if (input.frame != Frame::INERTIAL)
-	{
-		directionalToInertialNED(input, attitude);
-	}
-
-	switch (target)
-	{
-		case Frame::INERTIAL:
-			break;
-		case Frame::VEHICLE_1:
-			input = Eigen::AngleAxisd(attitude[2], Vector3::UnitZ()) * input;
-			input.frame = Frame::VEHICLE_1;
-			break;
-		case Frame::VEHICLE_2:
-			input = Eigen::AngleAxisd(attitude[2], Vector3::UnitZ()) *
-					Eigen::AngleAxisd(attitude[1], Vector3::UnitY()) * input;
-			input.frame = Frame::VEHICLE_2;
-			break;
 		case Frame::BODY:
-			input = Eigen::AngleAxisd(attitude[2], Vector3::UnitZ()) *
-					Eigen::AngleAxisd(attitude[1], Vector3::UnitY()) *
-					Eigen::AngleAxisd(attitude[0], Vector3::UnitX()) * input;
-			input.frame = Frame::BODY;
-			break;
+			input = Eigen::AngleAxisd(attitude[0], Vector3::UnitX()) * input;
+			input.frame = Frame::VEHICLE_2;
+		case Frame::VEHICLE_2:
+			if (target == Frame::VEHICLE_2)
+				break;
+			input = Eigen::AngleAxisd(attitude[1], Vector3::UnitY()) * input;
+			input.frame = Frame::VEHICLE_1;
+		case Frame::VEHICLE_1:
+			if (target == Frame::VEHICLE_1)
+				break;
+			input = Eigen::AngleAxisd(attitude[2], Vector3::UnitZ()) * input;
+			input.frame = Frame::INERTIAL;
+		case Frame::INERTIAL:
+			if (target == Frame::INERTIAL)
+				break;
 		default:
-			CPSLOG_ERROR << "Unknown frame!";
+			CPSLOG_ERROR << "Unknown Frame";
 	}
 }
 
