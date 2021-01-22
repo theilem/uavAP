@@ -51,3 +51,10 @@ TEST_CASE("Preserve Frame Test")
 	CHECK(framedData.z() == 30.3);
 	CHECK(framedData.frame == Frame::BODY);
 }
+
+TEST_CASE("Infer Inertial Test")
+{
+	Vector3 data = {1.1, 2.2, 3.3};
+	FramedVector3 framedData = data;
+	CHECK(framedData.frame == Frame::INERTIAL);
+}
