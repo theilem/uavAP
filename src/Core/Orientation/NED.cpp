@@ -23,7 +23,7 @@ NED::convert(SensorData& sd)
 			simpleFlipInertial(sd.angularRate);
 			angularConversion(sd.angularRate, sd.attitude, Frame::BODY, Orientation::ENU);
 
-			sd.orientation = Orientation::ENU;
+			sd.orientation = Orientation::NED;
 			break;
 		case Orientation::NED:
 			break;

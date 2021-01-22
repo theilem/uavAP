@@ -8,11 +8,11 @@
 #include <uavAP/Core/SensorData.h>
 #include "IOrientation.h"
 
-class NED : public IOrientation
+class NED// : public IOrientation
 {
 public:
-	void
-	convert(SensorData& sd) override;
+	static void
+	convert(SensorData& sd);
 };
 
 

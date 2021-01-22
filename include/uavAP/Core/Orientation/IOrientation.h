@@ -21,16 +21,16 @@ ENUMMAP_INIT(Orientation,
 			 }
 );
 
-class IOrientation
-{
-public:
-
-	/**
-	 * Converts sensor data into class frame
-	 * @param sd
-	 */
-	virtual void
-	convert(SensorData &sd) = 0;
-};
+//class IOrientation
+//{
+//public:
+//
+//	/**
+//	 * Converts sensor data into class frame
+//	 * @param sd
+//	 */
+//	static virtual void
+//	convert(SensorData &sd) = 0;
+//};
 
 #endif //UAVAP_IORIENTATION_H
