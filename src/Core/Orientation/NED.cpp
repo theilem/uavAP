@@ -12,18 +12,18 @@ NED::convert(SensorData& sd)
 		case Orientation::ENU:
 			simpleFlipInertial(sd.position);
 
-			directionalToInertialENU(sd.velocity, sd.attitude);
+			directionalConversion(sd.velocity, sd.attitude, Frame::INERTIAL, Orientation::ENU);
 			simpleFlipInertial(sd.velocity);
-			directionalToFrameENU(sd.velocity, sd.attitude, Frame::BODY);
+			directionalConversion(sd.velocity, sd.attitude, Frame::BODY, Orientation::NED);
 
-			directionalToInertialENU(sd.acceleration, sd.attitude);
+			directionalConversion(sd.acceleration, sd.attitude, Frame::INERTIAL, Orientation::ENU);
 			simpleFlipInertial(sd.acceleration);
 
-			angularToInertialENU(sd.angularRate, sd.attitude);
+			angularConversion(sd.angularRate, sd.attitude, Frame::INERTIAL, Orientation::NED);
 			simpleFlipInertial(sd.angularRate);
-			angularToBodyENU(sd.angularRate, sd.attitude);
+			angularConversion(sd.angularRate, sd.attitude, Frame::BODY, Orientation::ENU);
 
-			sd.orientation = Orientation::NED;
+			sd.orientation = Orientation::ENU;
 			break;
 		case Orientation::NED:
 			break;
