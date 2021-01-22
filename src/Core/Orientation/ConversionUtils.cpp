@@ -52,28 +52,27 @@ static void
 angularToBodyNED(FramedVector3& angularRate, const Vector3& attitude);
 
 void
-directionalConversion(FramedVector3& input, const Vector3& attitude, Frame target, Orientation orientation)
+directionalConversion(FramedVector3& direction, const Vector3& attitude, Frame target, Orientation orientation)
 {
-	if (input.frame == target)
+	if (direction.frame == target)
 	{
 		return;
 	}
-	else if (input.frame < target)
+	else if (direction.frame < target)
 	{
 		if (orientation == Orientation::NED)
-			upConversionNED(input, attitude, target);
+			upConversionNED(direction, attitude, target);
 		else
-			upConversionENU(input, attitude, target);
+			upConversionENU(direction, attitude, target);
 	}
 	else
 	{
 		if (orientation == Orientation::NED)
-			downConversionNED(input, attitude, target);
+			downConversionNED(direction, attitude, target);
 		else
-			downConversionENU(input, attitude, target);
+			downConversionENU(direction, attitude, target);
 	}
 }
-
 
 void
 angularConversion(FramedVector3& angularRate, const Vector3& attitude, Frame target, Orientation orientation)
@@ -110,6 +109,13 @@ angularConversion(FramedVector3& angularRate, const Vector3& attitude, Frame tar
 			angularToInertialENU(angularRate, attitude);
 		}
 	}
+}
+
+void
+simpleFlipInertial(Vector3& input)
+{
+	std::swap(input.x(), input.y());
+	input.z() *= -1;
 }
 
 static void
@@ -216,7 +222,7 @@ downConversionNED(FramedVector3& input, const Vector3& attitude, Frame target)
 	}
 }
 
-void
+static void
 angularToInertialENU(FramedVector3& angularRate, const Vector3& attitude)
 {
 	const auto& p = angularRate[0];
@@ -247,7 +253,7 @@ angularToInertialENU(FramedVector3& angularRate, const Vector3& attitude)
 	}
 }
 
-void
+static void
 angularToBodyENU(FramedVector3& angularRate, const Vector3& attitude)
 {
 	const auto& dphi = angularRate[0];
@@ -259,8 +265,8 @@ angularToBodyENU(FramedVector3& angularRate, const Vector3& attitude)
 	{
 		case Frame::INERTIAL:
 			angularRate = Vector3({
-										  dpsi * sin(phi) * cos(theta) - dtheta * cos(phi),
-										  dpsi * sin(theta) - dphi,
+										  dpsi * sin(phi) * cos(theta) + dtheta * cos(phi),
+										  dpsi * sin(theta) + dphi,
 										  dpsi * cos(phi) * cos(theta) - dtheta * sin(phi)
 								  });
 			angularRate.frame = Frame::BODY;
@@ -278,7 +284,7 @@ angularToBodyENU(FramedVector3& angularRate, const Vector3& attitude)
 	}
 }
 
-void
+static void
 angularToInertialNED(FramedVector3& angularRate, const Vector3& attitude)
 {
 	const auto& p = angularRate[0];
@@ -292,7 +298,7 @@ angularToInertialNED(FramedVector3& angularRate, const Vector3& attitude)
 			angularRate = Vector3({
 										  p + q * sin(phi) * tan(theta) + r * cos(phi) * tan(theta),
 										  q * cos(phi) - r * sin(phi),
-										  (q * cos(phi) + r * cos(phi)) / cos(theta)
+										  (q * sin(phi) + r * cos(phi)) / cos(theta)
 								  });
 			angularRate.frame = Frame::INERTIAL;
 			break;
@@ -309,7 +315,7 @@ angularToInertialNED(FramedVector3& angularRate, const Vector3& attitude)
 	}
 }
 
-void
+static void
 angularToBodyNED(FramedVector3& angularRate, const Vector3& attitude)
 {
 	const auto& dphi = angularRate[0];
@@ -338,11 +344,4 @@ angularToBodyNED(FramedVector3& angularRate, const Vector3& attitude)
 		default:
 			CPSLOG_ERROR << "Unknown frame!";
 	}
-}
-
-void
-simpleFlipInertial(Vector3& input)
-{
-	std::swap(input.x(), input.y());
-	input.z() *= -1;
 }
