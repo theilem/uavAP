@@ -5,17 +5,17 @@
 #ifndef UAVAP_LOCALFRAMEMANAGERPARAMS_H
 #define UAVAP_LOCALFRAMEMANAGERPARAMS_H
 
-#include "uavAP/Core/Frames/VehicleOneFrame.h"
+#include "uavAP/Core/Frames/LocalFrame.h"
 
 struct LocalFrameManagerParams
 {
 	Parameter<Angle<FloatingType>> yaw = {{}, "yaw", true};
 	Parameter<Vector3> origin = {Vector3(0,0,0), "origin", true};
 
-	VehicleOneFrame
-	toVehicleOneFrame() const
+	LocalFrame
+	toLocalFrame() const
 	{
-		return VehicleOneFrame(yaw(), origin());
+		return LocalFrame(origin(), yaw());
 	}
 
 	template <typename Config>

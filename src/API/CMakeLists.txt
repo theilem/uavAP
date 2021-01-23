@@ -16,7 +16,9 @@ add_library(ap_ext SHARED
 target_link_libraries(ap_ext uavap_core
         uavap_api
         control
-        cps_core)
+        cps_core
+
+		)
 
 add_library(uavap_api SHARED AutopilotAPI.cpp
         AggregatableAutopilotAPI.cpp

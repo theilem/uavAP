@@ -14,7 +14,7 @@
 #include <cpsCore/Utilities/IPC/Publisher.h>
 #include <uavAP/Core/DataHandling/Content.hpp>
 
-#include "uavAP/Core/Frames/VehicleOneFrame.h"
+#include "uavAP/Core/Frames/LocalFrame.h"
 #include "uavAP/MissionControl/LocalFrameManager/LocalFrameManagerParams.h"
 
 class IPC;
@@ -43,10 +43,10 @@ private:
 	void
 	publishFrame();
 
-	Optional<VehicleOneFrame>
+	Optional<LocalFrame>
 	localFrameRequest(const DataRequest& request);
 
-	Publisher<VehicleOneFrame> framePublisher_;
+	Publisher<LocalFrame> framePublisher_;
 	mutable std::mutex frameMutex_;
 
 };

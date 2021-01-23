@@ -35,7 +35,7 @@ LocalFrameManager::run(RunStage stage)
 		auto ipc = get<IPC>();
 
 
-		framePublisher_ = ipc->publish<VehicleOneFrame>("local_frame");
+		framePublisher_ = ipc->publish<LocalFrame>("local_frame");
 		break;
 	}
 	case RunStage::NORMAL:
@@ -45,7 +45,7 @@ LocalFrameManager::run(RunStage stage)
 
 		if (auto dh = get<DataHandling>())
 		{
-			dh->addTriggeredStatusFunction<VehicleOneFrame, DataRequest>(
+			dh->addTriggeredStatusFunction<LocalFrame, DataRequest>(
 					std::bind(&LocalFrameManager::localFrameRequest, this,
 							  std::placeholders::_1), Content::LOCAL_FRAME, Content::REQUEST_DATA);
 
@@ -63,14 +63,14 @@ void
 LocalFrameManager::publishFrame()
 {
 	std::unique_lock<std::mutex> lock(frameMutex_);
-	framePublisher_.publish(params.toVehicleOneFrame());
+	framePublisher_.publish(params.toLocalFrame());
 }
 
-Optional<VehicleOneFrame>
+Optional<LocalFrame>
 LocalFrameManager::localFrameRequest(const DataRequest& request)
 {
 	if (request == DataRequest::LOCAL_FRAME)
-		return params.toVehicleOneFrame();
+		return params.toLocalFrame();
 	return std::nullopt;
 }
 
