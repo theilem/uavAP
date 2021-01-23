@@ -17,8 +17,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
 set(CORE_SRC 	${CORE_SRC}
-				${CMAKE_CURRENT_SOURCE_DIR}/BodyFrame.cpp
-				${CMAKE_CURRENT_SOURCE_DIR}/InertialFrame.cpp
-				${CMAKE_CURRENT_SOURCE_DIR}/VehicleOneFrame.cpp
+#				${CMAKE_CURRENT_SOURCE_DIR}/BodyFrame.cpp
+#				${CMAKE_CURRENT_SOURCE_DIR}/InertialFrame.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/LocalFrame.cpp
+#				${CMAKE_CURRENT_SOURCE_DIR}/VehicleOneFrame.cpp
 				PARENT_SCOPE)
 

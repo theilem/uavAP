@@ -8,6 +8,7 @@
 #include <cpsCore/cps_object>
 #include <cpsCore/Utilities/IPC/Subscription.h>
 #include <cpsCore/Utilities/IPC/Publisher.h>
+#include <uavAP/Core/Frames/LocalFrame.h>
 
 #include "uavAP/Core/Frames/VehicleOneFrame.h"
 #include "uavAP/API/IAutopilotAPI.h"
@@ -70,7 +71,7 @@ private:
 	onAdvancedControl(const AdvancedControl& control);
 
 	void
-	onLocalFrame(const VehicleOneFrame& frame);
+	onLocalFrame(const LocalFrame& frame);
 
 
 	OnControllerOut onControllerOut_;
@@ -83,7 +84,7 @@ private:
 	Subscription advancedControlSubscription_;
 	Subscription localFrameSubscription_;
 
-	VehicleOneFrame localFrame_;
+	LocalFrame localFrame_;
 };
 
 

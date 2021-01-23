@@ -34,7 +34,9 @@ template<class Archive, typename Type>
 inline void
 serialize(Archive& ar, FramedVector3& t)
 {
-	ar & (Vector3)t;
+	ar & t[0];
+	ar & t[1];
+	ar & t[2];
 	ar & t.frame;
 }
 }

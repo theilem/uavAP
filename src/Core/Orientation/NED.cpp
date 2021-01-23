@@ -19,9 +19,9 @@ NED::convert(SensorData& sd)
 			directionalConversion(sd.acceleration, sd.attitude, Frame::INERTIAL, Orientation::ENU);
 			simpleFlipInertial(sd.acceleration);
 
-			angularConversion(sd.angularRate, sd.attitude, Frame::INERTIAL, Orientation::NED);
+			angularConversion(sd.angularRate, sd.attitude, Frame::INERTIAL, Orientation::ENU);
 			simpleFlipInertial(sd.angularRate);
-			angularConversion(sd.angularRate, sd.attitude, Frame::BODY, Orientation::ENU);
+			angularConversion(sd.angularRate, sd.attitude, Frame::BODY, Orientation::NED);
 
 			sd.orientation = Orientation::NED;
 			break;

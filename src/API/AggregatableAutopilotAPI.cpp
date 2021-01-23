@@ -11,8 +11,7 @@
 #include <cpsCore/Utilities/IPC/IPC.h>
 #include <cpsCore/Utilities/Scheduler/IScheduler.h>
 
-AggregatableAutopilotAPI::AggregatableAutopilotAPI() :
-		localFrame_(0)
+AggregatableAutopilotAPI::AggregatableAutopilotAPI()
 {
 }
 
@@ -32,7 +31,7 @@ void
 AggregatableAutopilotAPI::setSensorData(const SensorData& sd)
 {
 	SensorData data = sd;
-	changeFrame(InertialFrame(), localFrame_, data);
+	localFrame_.toLocalFrame(data);
 	sensorDataPublisher_.publish(data);
 }
 
@@ -77,7 +76,7 @@ AggregatableAutopilotAPI::run(RunStage stage)
 			ipc->subscribe<AdvancedControl>("advanced_control_maneuver",
 											std::bind(&AggregatableAutopilotAPI::onAdvancedControl, this,
 													  std::placeholders::_1), ipcOpts);
-			ipc->subscribe<VehicleOneFrame>("local_frame", std::bind(&AggregatableAutopilotAPI::onLocalFrame, this,
+			ipc->subscribe<LocalFrame>("local_frame", std::bind(&AggregatableAutopilotAPI::onLocalFrame, this,
 																	 std::placeholders::_1), ipcOpts);
 
 			break;
@@ -124,7 +123,7 @@ void
 AggregatableAutopilotAPI::tryConnectLocalFrame()
 {
 	auto ipc = get<IPC>();
-	localFrameSubscription_ = ipc->subscribe<VehicleOneFrame>("local_frame",
+	localFrameSubscription_ = ipc->subscribe<LocalFrame>("local_frame",
 															  std::bind(&AggregatableAutopilotAPI::onLocalFrame, this,
 																		std::placeholders::_1));
 	if (!localFrameSubscription_.connected())
@@ -147,7 +146,7 @@ AggregatableAutopilotAPI::onAdvancedControl(const AdvancedControl& control)
 }
 
 void
-AggregatableAutopilotAPI::onLocalFrame(const VehicleOneFrame& frame)
+AggregatableAutopilotAPI::onLocalFrame(const LocalFrame& frame)
 {
 	localFrame_ = frame;
 }

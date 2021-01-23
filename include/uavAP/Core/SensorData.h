@@ -136,6 +136,7 @@ struct SensorData
 	//!< Body->PQR, Inertial->dot Phi, dot Theta, dot Psi
 	bool hasGPSFix = false;                    //!< Shows whether the GPS has a fix
 	bool autopilotActive = false;            //!< Shows if the autopilot is active
+	bool isInLocalFrame = false;					//!< Position and yaw are offset
 	FloatingType airSpeed = 0.;            //!< total velocity w.r.t. wind
 	FloatingType groundSpeed = 0.;        //!< total velocity w.r.t. ground
 	FloatingType angleOfAttack = 0.;        //!< current angle of attack
@@ -281,10 +282,11 @@ serialize(Archive& ar, SensorData& t)
 	ar & t.acceleration;
 	ar & t.attitude;
 	ar & t.angularRate;
-	ar & t.airSpeed;
-	ar & t.groundSpeed;
 	ar & t.hasGPSFix;
 	ar & t.autopilotActive;
+	ar & t.isInLocalFrame;
+	ar & t.airSpeed;
+	ar & t.groundSpeed;
 	ar & t.angleOfAttack;
 	ar & t.angleOfSideslip;
 	ar & t.courseAngle;
