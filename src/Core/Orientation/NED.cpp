@@ -14,14 +14,17 @@ NED::convert(SensorData& sd)
 
 			directionalConversion(sd.velocity, sd.attitude, Frame::INERTIAL, Orientation::ENU);
 			simpleFlipInertial(sd.velocity);
-			directionalConversion(sd.velocity, sd.attitude, Frame::BODY, Orientation::NED);
-
 			directionalConversion(sd.acceleration, sd.attitude, Frame::INERTIAL, Orientation::ENU);
 			simpleFlipInertial(sd.acceleration);
-
 			angularConversion(sd.angularRate, sd.attitude, Frame::INERTIAL, Orientation::ENU);
-			simpleFlipInertial(sd.angularRate);
+
+			sd.attitude[2] = boundAngleRad(-sd.attitude[2] + degToRad(90));
+			sd.angularRate[2] *= -1;
+
+			directionalConversion(sd.velocity, sd.attitude, Frame::BODY, Orientation::NED);
 			angularConversion(sd.angularRate, sd.attitude, Frame::BODY, Orientation::NED);
+
+			sd.angleOfAttack = -sd.angleOfAttack;
 
 			sd.orientation = Orientation::NED;
 			break;

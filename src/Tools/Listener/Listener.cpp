@@ -46,8 +46,8 @@ dispSens(const SensorData& sd)
 			<< "; 	" << sd.acceleration.z() << "]" << std::endl;
 	std::cout << "Attitude: 	[" << radToDeg(sd.attitude.x()) << "; 	" << radToDeg(sd.attitude.y()) << "; 	"
 			<< radToDeg(sd.attitude.z()) << "]" << std::endl;
-	std::cout << "AngularRate: 	[" << sd.angularRate.x() << "; 	" << sd.angularRate.y() << "; 	"
-			<< sd.angularRate.z() << "]" << std::endl;
+	std::cout << "AngularRate: 	[" << radToDeg(sd.angularRate.x()) << "; 	" << radToDeg(sd.angularRate.y()) << "; 	"
+			<< radToDeg(sd.angularRate.z()) << "]" << std::endl;
 	std::cout << "α, β, χ:	[" << radToDeg(sd.angleOfAttack) << "; 	" << radToDeg(sd.angleOfSideslip) << "; 	"
 								 << radToDeg(sd.courseAngle) << "]" << std::endl;
 	std::cout << "Airspeed: 	" << sd.airSpeed << std::endl;

@@ -16,9 +16,17 @@ struct LocalFrame
 
 	LocalFrame(const Vector3& origin, FloatingType yaw);
 
-	void toLocalFrame(SensorData &sd);
+	void
+	toLocalFrame(SensorData& sd) const;
 
-	void toGlobalFrame(SensorData &sd);
+	void
+	toGlobalFrame(SensorData& sd) const;
+
+	Vector3
+	globalPositionToLocal(const Vector3 &globalPos) const;
+
+	Vector3
+	localPositionToGlobal(const Vector3 &localPos) const;
 
 	Vector3 origin;
 	FloatingType yaw;

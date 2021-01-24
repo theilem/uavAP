@@ -41,7 +41,7 @@ TEST_CASE("ENU vehicle 2 -> Body conversion test 1"){
 	FramedVector3 velocity = Vector3({1, 2, 3});
 	velocity.frame = Frame::VEHICLE_2;
 
-	Vector3 expected = {3, 2, -1};
+	Vector3 expected = {-3, 2, 1};
 	Vector3 attitude = {degToRad(90), degToRad(12),degToRad(23)};
 
 	directionalConversion(velocity, attitude, Frame::BODY, Orientation::ENU);
@@ -55,7 +55,7 @@ TEST_CASE("ENU inertial -> body conversion test 1"){
 	FramedVector3 velocity = Vector3({1, 2, 3});
 	velocity.frame = Frame::INERTIAL;
 
-	Vector3 expected = {1, 3, -2};
+	Vector3 expected = {-1, 3, 2};
 	Vector3 attitude = {degToRad(90), degToRad(90), degToRad(90)};
 
 	directionalConversion(velocity, attitude, Frame::BODY, Orientation::ENU);
@@ -97,7 +97,7 @@ TEST_CASE("ENU vehicle 2 -> Body conversion test 2"){
 	FramedVector3 velocity = Vector3({1, 2, 3});
 	velocity.frame = Frame::VEHICLE_2;
 
-	Vector3 expected = {2*sqrt(2), 2, sqrt(2)};
+	Vector3 expected = {-sqrt(2), 2, 2*sqrt(2)};
 	Vector3 attitude = {degToRad(45), degToRad(12),degToRad(23)};
 
 	directionalConversion(velocity, attitude, Frame::BODY, Orientation::ENU);
@@ -111,7 +111,7 @@ TEST_CASE("ENU inertial -> body conversion test 2"){
 	FramedVector3 velocity = Vector3({1, 2, 3});
 	velocity.frame = Frame::INERTIAL;
 
-	Vector3 expected = {3.0 - sqrt(2.0)/4.0, 1.0/2.0 + 3.0/sqrt(2.0), -sqrt(2.0)/4.0};
+	Vector3 expected = {sqrt(2.0)/4.0, 1.0/2.0 + 3.0/sqrt(2.0), 3 - sqrt(2.0)/4.0};
 	Vector3 attitude = {degToRad(45), degToRad(45), degToRad(45)};
 
 	directionalConversion(velocity, attitude, Frame::BODY, Orientation::ENU);
@@ -150,7 +150,7 @@ TEST_CASE("ENU vehicle 2 -> vehicle 1 conversion test 1"){
 }
 
 TEST_CASE("ENU Body -> vehicle 2 conversion test 1"){
-	FramedVector3 velocity = Vector3({3, 2, -1});
+	FramedVector3 velocity = Vector3({-3, 2, 1});
 	velocity.frame = Frame::BODY;
 
 	Vector3 expected = {1, 2, 3};
@@ -167,7 +167,7 @@ TEST_CASE("ENU Body -> inertial conversion test 1"){
 	FramedVector3 velocity = Vector3({1, 2, 3});
 	velocity.frame = Frame::BODY;
 
-	Vector3 expected = {1, -3, 2};
+	Vector3 expected = {-1, 3, 2};
 	Vector3 attitude = {degToRad(90), degToRad(90),degToRad(90)};
 
 	directionalConversion(velocity, attitude, Frame::INERTIAL, Orientation::ENU);
@@ -207,7 +207,7 @@ TEST_CASE("ENU vehicle 2 -> vehicle 1 conversion test 2"){
 }
 
 TEST_CASE("ENU Body -> vehicle 2 conversion test 2"){
-	FramedVector3 velocity = Vector3({2*sqrt(2), 2, sqrt(2)});
+	FramedVector3 velocity = Vector3({-sqrt(2), 2, 2 *sqrt(2)});
 	velocity.frame = Frame::BODY;
 
 	Vector3 expected = {1, 2, 3};
@@ -221,7 +221,7 @@ TEST_CASE("ENU Body -> vehicle 2 conversion test 2"){
 }
 
 TEST_CASE("ENU body -> inertial conversion test 2"){
-	FramedVector3 velocity = Vector3({3.0 - sqrt(2.0)/4.0, 1.0/2.0 + 3.0/sqrt(2.0), -sqrt(2.0)/4.0});
+	FramedVector3 velocity = Vector3({sqrt(2.0)/4.0, 1.0/2.0 + 3.0/sqrt(2.0), 3 - sqrt(2.0)/4.0});
 	velocity.frame = Frame::BODY;
 
 	Vector3 expected = {1, 2, 3};
@@ -244,9 +244,9 @@ TEST_CASE("ENU inertial -> body test")
 	FloatingType yawRate = degToRad(60);
 	Vector3 attitude({roll, pitch, yaw});
 	FramedVector3 angularRate = Vector3({rollRate, pitchRate, yawRate});
-	FloatingType p = yawRate * sin(roll) * cos(pitch) + pitchRate * cos(roll);
+	FloatingType p = pitchRate * cos(roll) - yawRate * sin(roll) * cos(pitch);
 	FloatingType q = yawRate * sin(pitch) + rollRate;
-	FloatingType r = yawRate * cos(roll) * cos(pitch) - pitchRate * sin(roll);
+	FloatingType r = yawRate * cos(roll) * cos(pitch) + pitchRate * sin(roll);
 
 
 	CHECK(angularRate.frame == Frame::INERTIAL);
@@ -267,9 +267,9 @@ TEST_CASE("ENU body -> inertial test")
 	FloatingType rollRate = degToRad(20);
 	FloatingType pitchRate = degToRad(40);
 	FloatingType yawRate = degToRad(60);
-	FloatingType p = yawRate * sin(roll) * cos(pitch) + pitchRate * cos(roll);
+	FloatingType p = pitchRate * cos(roll) - yawRate * sin(roll) * cos(pitch);
 	FloatingType q = yawRate * sin(pitch) + rollRate;
-	FloatingType r = yawRate * cos(roll) * cos(pitch) - pitchRate * sin(roll);
+	FloatingType r = yawRate * cos(roll) * cos(pitch) + pitchRate * sin(roll);
 	FramedVector3 angularRate = Vector3({p, q, r});
 	angularRate.frame = Frame::BODY;
 
