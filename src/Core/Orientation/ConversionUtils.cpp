@@ -134,7 +134,7 @@ upConversionENU(FramedVector3& input, const Vector3& attitude, Frame target)
 		case Frame::VEHICLE_2:
 			if (target == Frame::VEHICLE_2)
 				break;
-			input = Eigen::AngleAxisd(attitude[0], Vector3::UnitY()) * input;
+			input = Eigen::AngleAxisd(-attitude[0], Vector3::UnitY()) * input;
 			input.frame = Frame::BODY;
 		case Frame::BODY:
 			if (target == Frame::BODY)
@@ -150,7 +150,7 @@ downConversionENU(FramedVector3& input, const Vector3& attitude, Frame target)
 	switch (input.frame)
 	{
 		case Frame::BODY:
-			input = Eigen::AngleAxisd(-attitude[0], Vector3::UnitY()) * input;
+			input = Eigen::AngleAxisd(attitude[0], Vector3::UnitY()) * input;
 			input.frame = Frame::VEHICLE_2;
 		case Frame::VEHICLE_2:
 			if (target == Frame::VEHICLE_2)
@@ -234,9 +234,9 @@ angularToInertialENU(FramedVector3& angularRate, const Vector3& attitude)
 	{
 		case Frame::BODY:
 			angularRate = Vector3({
-										  q - r * tan(theta) * cos(phi) - p * tan(theta) * sin(phi),
-										  p * cos(phi) - r * sin(phi),
-										  (r * cos(phi) + p * sin(phi)) / cos(theta)
+										  q + tan(theta) * (p * sin(phi) - r * cos(phi)),
+										  p * cos(phi) + r * sin(phi),
+										  (r * cos(phi) - p * sin(phi)) / cos(theta)
 								  });
 			angularRate.frame = Frame::INERTIAL;
 			break;
@@ -251,6 +251,8 @@ angularToInertialENU(FramedVector3& angularRate, const Vector3& attitude)
 		default:
 			CPSLOG_ERROR << "Unknown frame!";
 	}
+//	std::swap(angularRate[0], angularRate[1]);
+//	angularToInertialNED(angularRate, attitude);
 }
 
 static void
@@ -265,9 +267,9 @@ angularToBodyENU(FramedVector3& angularRate, const Vector3& attitude)
 	{
 		case Frame::INERTIAL:
 			angularRate = Vector3({
-										  dpsi * sin(phi) * cos(theta) + dtheta * cos(phi),
+										  dtheta * cos(phi) - dpsi * sin(phi) * cos(theta),
 										  dpsi * sin(theta) + dphi,
-										  dpsi * cos(phi) * cos(theta) - dtheta * sin(phi)
+										  dpsi * cos(phi) * cos(theta) + dtheta * sin(phi)
 								  });
 			angularRate.frame = Frame::BODY;
 			break;
@@ -282,6 +284,8 @@ angularToBodyENU(FramedVector3& angularRate, const Vector3& attitude)
 		default:
 			CPSLOG_ERROR << "Unknown frame!";
 	}
+//	angularToBodyNED(angularRate, attitude);
+//	std::swap(angularRate[0], angularRate[1]);
 }
 
 static void
@@ -296,7 +300,7 @@ angularToInertialNED(FramedVector3& angularRate, const Vector3& attitude)
 	{
 		case Frame::BODY:
 			angularRate = Vector3({
-										  p + q * sin(phi) * tan(theta) + r * cos(phi) * tan(theta),
+										  p + tan(theta) * (q * sin(phi) + r * cos(phi)),
 										  q * cos(phi) - r * sin(phi),
 										  (q * sin(phi) + r * cos(phi)) / cos(theta)
 								  });

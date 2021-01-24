@@ -4,6 +4,7 @@ set(TEST_SRCS ${TEST_SRCS}
         ${CMAKE_CURRENT_SOURCE_DIR}/EnumAccess.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/FramedVector3Test.cpp
 #        ${CMAKE_CURRENT_SOURCE_DIR}/FramesTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/LocalFrameTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/OrientationTest.cpp
         PARENT_SCOPE)
 
