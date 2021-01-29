@@ -39,6 +39,14 @@ ManeuverCascade::ManeuverCascade(SensorData* sensorData, Vector3& velInertial, V
 {
 	CPSLOG_TRACE << "Create ManeuverCascade";
 
+	assert(sensorData_->orientation == Orientation::ENU);
+	assert(sensorData_->acceleration.frame == Frame::BODY);
+
+
+	// Richard: Come to think of it, I think this PID cascade should use phi dot, theta dot, psi dot (inertial frame)
+	// instead of pqr, but I'll keep it as it was before
+	assert(sensorData_->angularRate.frame == Frame::BODY);
+
 	Control::PIDParameters defaultParams;
 
 	/* Roll Control */
@@ -47,7 +55,7 @@ ManeuverCascade::ManeuverCascade(SensorData* sensorData, Vector3& velInertial, V
 												hardRollConstraint_ * M_PI / 180.0);
 
 	auto rollInput = controlEnv_.addInput(&sensorData->attitude[0]);
-	auto rollRateInput = controlEnv_.addInput(&sensorData->angularRate[0]);
+	auto rollRateInput = controlEnv_.addInput(&sensorData->angularRate[1]);
 
 	auto rollPID = controlEnv_.addPID(rollConstraint_, rollInput, rollRateInput, defaultParams);
 
@@ -61,7 +69,8 @@ ManeuverCascade::ManeuverCascade(SensorData* sensorData, Vector3& velInertial, V
 	auto aoaInput = controlEnv_.addInput(&sensorData->angleOfAttack);
 	auto pitchInput = controlEnv_.addInput(&sensorData->attitude[1]);
 
-	auto climbAngle = controlEnv_.addDifference(pitchInput, aoaInput);
+	// Alpha = tan(w/u), hence in ENU, it should be added to pitch
+	auto climbAngle = controlEnv_.addSum(pitchInput, aoaInput);
 
 	auto climbAngleTarget = controlEnv_.addInput(&target->climbAngle);
 
@@ -72,7 +81,7 @@ ManeuverCascade::ManeuverCascade(SensorData* sensorData, Vector3& velInertial, V
 
 	/* Pitch Control */
 
-	auto pitchRateInput = controlEnv_.addInput(&sensorData->angularRate[1]);
+	auto pitchRateInput = controlEnv_.addInput(&sensorData->angularRate[0]);
 
 	auto pitchPID = controlEnv_.addPID(pitchConstraint_, pitchInput, pitchRateInput, defaultParams);
 
