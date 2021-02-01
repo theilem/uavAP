@@ -14,7 +14,6 @@
 #include <uavAP/FlightControl/Controller/ControlElements/ControlEnvironment.h>
 #include <uavAP/FlightControl/Controller/ControlElements/Filter/LowPassFilter.h>
 #include <uavAP/FlightControl/Controller/PIDController/IPIDCascade.h>
-#include <uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRateCascadeParams.h>
 #include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
 
 struct SensorData;
@@ -24,8 +23,7 @@ struct PIDStatus;
 
 class OverrideHandler;
 
-
-class ManeuverRateCascade : public ConfigurableObject<ManeuverRateCascadeParams>, public IPIDCascade
+class ManeuverRateCascade: public ConfigurableObject<PlaceholderParams>, public IPIDCascade
 {
 public:
 	ManeuverRateCascade();
