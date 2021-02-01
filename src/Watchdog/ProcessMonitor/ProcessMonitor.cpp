@@ -134,7 +134,7 @@ ProcessMonitor::startAll()
 		try
 		{
 			CPSLOG_DEBUG << "Start Process " << it.name;
-			CPSLOG_DEBUG << "with absolut path: " << binaryPath_;
+			CPSLOG_DEBUG << "with absolute path: " << binaryPath_;
 			CPSLOG_DEBUG << "with binary path: " << it.binaryPath;
 			CPSLOG_DEBUG << "with config path: " << it.configPath;
 			it.startChild(binaryPath_, configPath_);

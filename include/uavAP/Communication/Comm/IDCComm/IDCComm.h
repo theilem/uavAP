@@ -12,7 +12,6 @@
 
 #include <cpsCore/cps_object>
 
-#include <uavAP/Communication/Comm/IDCComm/IDCCommParams.h>
 #include <uavAP/Core/DataHandling/Content.hpp>
 #include <cpsCore/Utilities/Packet.h>
 #include <cpsCore/Utilities/IPC/Subscription.h>
@@ -28,7 +27,7 @@ class IPC;
 
 class IDCComm: public IComm,
 			   public AggregatableObject<IPC, IDC, DataPresentation>,
-			   public ConfigurableObject<IDCCommParams>,
+			   public ConfigurableObject<PlaceholderParams>,
 			   public IRunnableObject
 {
 public:
