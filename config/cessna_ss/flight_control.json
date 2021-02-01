@@ -1,0 +1,29 @@
+{
+  "controller": {
+    "statespace_pitch": {
+      "a" : [-0.0277, 0.0945, 0, -9.8026, 0, 0.3168, -2.3789, 62.7611, -0.3817, 0, -0.0030, -0.2362, -3.6163, 0, 0, 0, 0, 1.0000, 0, 0, 0, 0, 0, -1.0000, 0],
+      "b" : [ -0.1939, 10.0000, -12.7494, 0, -30.3993, 0],
+      "k" : [-0.0095, -2.1158, -2.9587, -63.2109, 31.5594, 4.4699, -0.0759, 0.0065, 3.9922, -2.0007]
+    }
+  },
+  "local_planner": {
+    "maneuver": {
+      "period": 0,
+      "safety_velocity": 10,
+      "k_altitude": 0.8,
+      "k_convergence": 0.01,
+      "k_yaw_rate": 0.65
+    }
+  },
+  "data_handling": {
+    "period": 200,
+    "target": "flight_control"
+  },
+  "data_presentation": {
+    "compress_double": true
+  },
+  "sens_act_io": {
+    "shared_memory": {
+    }
+  }
+}
