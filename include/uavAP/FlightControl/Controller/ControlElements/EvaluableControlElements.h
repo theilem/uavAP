@@ -110,6 +110,22 @@ private:
 	FloatingType phase_;
 };
 
+class Integrator: public IEvaluableControlElement
+{
+public:
+	Integrator(Element input, FloatingType initial = 0);
+
+	void
+	evaluate() override;
+
+	FloatingType
+	getValue() const override;
+
+private:
+	Element in_;
+	FloatingType val_;
+};
+
 struct PIDParameters
 {
 	Parameter<FloatingType> kp = {1, "kp", true};
@@ -118,7 +134,7 @@ struct PIDParameters
 	Parameter<FloatingType> imax = {std::numeric_limits<FloatingType>::max(), "imax", false};
 	Parameter<FloatingType> ff = {0, "ff", false};
 
-	template <typename Config>
+	template<typename Config>
 	inline void
 	configure(Config& c)
 	{
@@ -137,7 +153,7 @@ public:
 	PID(Element target, Element current, const PIDParameters& params, Duration* timeDiff);
 
 	PID(Element target, Element current, Element differential, const PIDParameters& params,
-			Duration* timeDiff);
+		Duration* timeDiff);
 
 	void
 	overrideTarget(FloatingType newTarget);

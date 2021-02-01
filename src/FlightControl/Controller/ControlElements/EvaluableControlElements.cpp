@@ -203,6 +203,25 @@ Output::getWaveformOutput()
 	return waveformOutput;
 }
 
+Integrator::Integrator(Element input, FloatingType initial) : in_(std::move(input)), val_(initial)
+{
+}
+
+void
+Integrator::evaluate()
+{
+	if (in_)
+	{
+		val_ += in_->getValue();
+	}
+}
+
+FloatingType
+Integrator::getValue() const
+{
+	return val_;
+}
+
 PID::PID(Element target, Element current, const PIDParameters& p, Duration* timeDiff) :
 		ConfigurableObject(p), target_(target), current_(current), timeDiff_(timeDiff), targetValue_(
 				0), currentError_(0), integrator_(0), lastError_(0), lastTarget_(0), output_(0), override_(

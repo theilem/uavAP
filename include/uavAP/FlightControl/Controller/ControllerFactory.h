@@ -32,6 +32,7 @@
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverPIDController/ManeuverPIDController.h"
 #include "uavAP/FlightControl/Controller/PIDController/RatePIDController/RatePIDController.h"
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRatePIDController.h"
+#include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController.h"
 
 //class ControllerFactory : public Factory<IController>
 //{
@@ -48,6 +49,7 @@
 using ControllerFactory = StaticFactory<IController, false,
 		ManeuverPIDController,
 		RatePIDController,
-		ManeuverRatePIDController>;
+		ManeuverRatePIDController,
+		PitchStateSpaceController>;
 
 #endif /* FLIGHTCONTROLLER_FLIGHTCONTROLLERFACTORY_H_ */
