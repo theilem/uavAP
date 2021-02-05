@@ -4,17 +4,17 @@
       "period": 0,
       "cascade": {
         "velocity": {
-          "kp": 0.5,
-          "ki": 0.2,
+          "kp": 1.0,
+          "ki": 0.3,
           "kd": 0,
-          "imax": 3,
+          "imax": 6,
           "ff": 0
         },
         "climb_angle": {
-          "kp": 0.4,
-          "ki": 0,
-          "kd": 0,
-          "imax": 2,
+          "kp": 0.6,
+          "ki": 0.2,
+          "kd": 0.3,
+          "imax": 0.8,
           "ff": 0
         },
         "pitch": {
@@ -25,9 +25,9 @@
           "ff": 0
         },
         "roll": {
-          "kp": 1.2,
+          "kp": 0.6,
           "ki": 0.4,
-          "kd": 0,
+          "kd": 0.2,
           "imax": 0.2,
           "ff": 0
         },
@@ -56,7 +56,7 @@
   "local_planner": {
     "maneuver": {
       "period": 0,
-      "safety_velocity": 10,
+      "safety_velocity": 60,
       "k_altitude": 0.8,
       "k_convergence": 0.01,
       "k_yaw_rate": 0.65
@@ -69,20 +69,8 @@
   "data_presentation": {
     "compress_double": true
   },
-  "scheduler": {
-    "thread": {
-      "priority": 20
-    }
-  },
-  "time_provider": {
-    "system_time": {
-    }
-  },
-  "ipc": {},
   "sens_act_io": {
     "shared_memory": {
     }
-  },
-  "signal_handler": {
   }
 }

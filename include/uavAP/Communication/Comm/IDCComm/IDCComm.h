@@ -27,7 +27,6 @@ class IPC;
 
 class IDCComm: public IComm,
 			   public AggregatableObject<IPC, IDC, DataPresentation>,
-			   public ConfigurableObject<PlaceholderParams>,
 			   public IRunnableObject
 {
 public:

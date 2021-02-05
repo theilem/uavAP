@@ -147,6 +147,14 @@ ControlEnvironment::addPID(Element target, Element current, Element derivative,
 	return pid;
 }
 
+std::shared_ptr<Integrator>
+ControlEnvironment::addIntegrator(Element input)
+{
+	auto integrator = std::make_shared<Integrator>(input, &timeDiff_);
+	evaluableControlElements_.push_back(integrator);
+	return integrator;
+}
+
 const Duration*
 ControlEnvironment::getTimeDiff() const
 {

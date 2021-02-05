@@ -30,7 +30,7 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	rollConstraint_ = std::make_shared<Control::Constraint<Angle<FloatingType>>>(rollCalc);
 
 	auto rollInput = controlEnv_.addInput(&sd.attitude[0]);
-	auto rollRateInput = controlEnv_.addInput(&sd.angularRate[0]);
+	auto rollRateInput = controlEnv_.addInput(&sd.angularRate[1]);
 
 	Control::PIDParameters defaultParams;
 	auto rollPID = controlEnv_.addPID(rollConstraint_, rollInput, rollRateInput, defaultParams);
@@ -49,7 +49,7 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	auto aoaInput = controlEnv_.addInput(&sd.angleOfAttack);
 	auto pitchInput = controlEnv_.addInput(&sd.attitude[1]);
 
-	auto climbAngle = controlEnv_.addDifference(pitchInput, aoaInput);
+	auto climbAngle = controlEnv_.addSum(pitchInput, aoaInput);
 
 	auto climbAngleTarget = controlEnv_.addInput(&target.climbAngle);
 
@@ -57,7 +57,7 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	pitchConstraint_ = std::make_shared<Control::Constraint<Angle<FloatingType>>>(climbAnglePID);
 
 	/* Pitch Control */
-	auto pitchRateInput = controlEnv_.addInput(&sd.angularRate[1]);
+	auto pitchRateInput = controlEnv_.addInput(&sd.angularRate[0]);
 
 	auto pitchPID = controlEnv_.addPID(pitchConstraint_, pitchInput, pitchRateInput, defaultParams);
 

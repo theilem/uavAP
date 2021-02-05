@@ -236,7 +236,8 @@ Output::getTrimAlpha()
 //
 //}
 
-Integrator::Integrator(Element input, FloatingType initial) : in_(std::move(input)), val_(initial)
+Integrator::Integrator(Element input, Duration* timeDiff, FloatingType initial) : in_(std::move(input)), val_(initial),
+																				  timeDiff_(timeDiff)
 {
 }
 
@@ -245,7 +246,8 @@ Integrator::evaluate()
 {
 	if (in_)
 	{
-		val_ += in_->getValue();
+		val_ += in_->getValue()
+				* std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC;
 	}
 }
 
