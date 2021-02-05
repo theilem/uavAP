@@ -113,7 +113,7 @@ private:
 class Integrator: public IEvaluableControlElement
 {
 public:
-	Integrator(Element input, FloatingType initial = 0);
+	Integrator(Element input, Duration* timeDiff, FloatingType initial = 0);
 
 	void
 	evaluate() override;
@@ -124,6 +124,7 @@ public:
 private:
 	Element in_;
 	FloatingType val_;
+	Duration* timeDiff_;
 };
 
 struct PIDParameters

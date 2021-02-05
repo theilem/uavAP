@@ -11,16 +11,16 @@
 #include <cpsCore/Utilities/IPC/IPC.h>
 #include <uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h>
 #include <uavAP/Core/DataHandling/DataHandling.h>
+#include <uavAP/FlightControl/Controller/ControllerTarget.h>
 #include "uavAP/Core/SensorData.h"
 
 
-#include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceParams.h"
 #include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceCascade.h"
 
 //class PitchStateSpaceController: public IPIDController, public AggregatableObject<IPC, IScheduler,
 //		ISensingActuationIO, DataHandling, DataPresentation>, public ConfigurableObject<PlaceholderParams>, public IRunnableObject
-class PitchStateSpaceController: public ConfigurableObject<PitchStateSpaceParams>, public AggregatableObject<>,
-								 public IPIDController, public IRunnableObject
+class PitchStateSpaceController: public IPIDController, public ConfigurableObject<PlaceholderParams>,
+								 public IRunnableObject, public AggregatableObject<ISensingActuationIO>
 {
 public:
 	PitchStateSpaceController();
@@ -41,8 +41,13 @@ public:
 
 
 private:
-	std::unique_ptr<PitchStateSpaceCascade> cascade_;
+	PitchStateSpaceCascade cascade_;
+	SensorData sensorDataENU_;
+	SensorData sensorDataNED_;
+	ControllerTarget target_;
+	ControllerOutput output_;
 
+	Mutex cascadeMutex_;
 };
 
 

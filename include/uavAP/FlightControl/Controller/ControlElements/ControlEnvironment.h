@@ -84,6 +84,9 @@ public:
 	std::shared_ptr<PID>
 	addPID(Element target, Element current, Element derivative, const PIDParameters& params);
 
+	std::shared_ptr<Integrator>
+	addIntegrator(Element input);
+
 	const Duration*
 	getTimeDiff() const;
 

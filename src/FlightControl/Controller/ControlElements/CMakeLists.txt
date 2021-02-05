@@ -19,6 +19,8 @@
 add_library(control SHARED 	ControlEnvironment.cpp
 							ControlElements.cpp
 							EvaluableControlElements.cpp
+							# I would need to rewrite all of control environment for this :(
+#							VectoredControlElements.cpp
 		Filter/LowPassFilter.cpp
 		Filter/LowPassFilterAngle.cpp)
 					

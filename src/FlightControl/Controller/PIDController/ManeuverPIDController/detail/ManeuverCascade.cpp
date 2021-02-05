@@ -38,15 +38,6 @@ ManeuverCascade::ManeuverCascade(SensorData* sensorData, Vector3& velInertial, V
 		30.0), hardPitchConstraint_(30.0), rollTarget_(0)
 {
 	CPSLOG_TRACE << "Create ManeuverCascade";
-
-	assert(sensorData_->orientation == Orientation::ENU);
-	assert(sensorData_->acceleration.frame == Frame::BODY);
-
-
-	// Richard: Come to think of it, I think this PID cascade should use phi dot, theta dot, psi dot (inertial frame)
-	// instead of pqr, but I'll keep it as it was before
-	assert(sensorData_->angularRate.frame == Frame::BODY);
-
 	Control::PIDParameters defaultParams;
 
 	/* Roll Control */

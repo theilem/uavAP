@@ -61,7 +61,7 @@ Filter::setAlpha(FloatingType alpha)
 
 Output::Output(Element in, FloatingType* out) :
 		in_(in), start_(), waveform_(), out_(out), override_(false), overrideOut_(0), wavelength_(
-				0), phase_(0)
+		0), phase_(0)
 {
 }
 
@@ -120,90 +120,91 @@ Output::getWaveformOutput()
 
 	switch (waveform_)
 	{
-	case Waveforms::NONE:
-	{
-		waveformOutput = overrideOut_;
-
-		break;
-	}
-	case Waveforms::SINE:
-	{
-		TimePoint current = Clock::now();
-		FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
-				/ 1000.0;
-		FloatingType period = (2 * M_PI) / wavelength_;
-
-		waveformOutput = overrideOut_ * sin(period * (time + phase_));
-
-		break;
-	}
-	case Waveforms::SQUARE:
-	{
-		TimePoint current = Clock::now();
-		FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
-				/ 1000.0;
-		FloatingType period = (2 * M_PI) / wavelength_;
-		FloatingType sine = sin(period * (time + phase_));
-
-		if (sine > 0)
+		case Waveforms::NONE:
 		{
 			waveformOutput = overrideOut_;
+
+			break;
 		}
-		else if (sine == 0)
+		case Waveforms::SINE:
 		{
-			waveformOutput = 0;
+			TimePoint current = Clock::now();
+			FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
+								/ 1000.0;
+			FloatingType period = (2 * M_PI) / wavelength_;
+
+			waveformOutput = overrideOut_ * sin(period * (time + phase_));
+
+			break;
 		}
-		else if (sine < 0)
+		case Waveforms::SQUARE:
 		{
-			waveformOutput = -overrideOut_;
+			TimePoint current = Clock::now();
+			FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
+								/ 1000.0;
+			FloatingType period = (2 * M_PI) / wavelength_;
+			FloatingType sine = sin(period * (time + phase_));
+
+			if (sine > 0)
+			{
+				waveformOutput = overrideOut_;
+			}
+			else if (sine == 0)
+			{
+				waveformOutput = 0;
+			}
+			else if (sine < 0)
+			{
+				waveformOutput = -overrideOut_;
+			}
+
+			break;
 		}
+		case Waveforms::RAMP:
+		{
+			TimePoint current = Clock::now();
+			FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
+								/ 1000.0;
+			FloatingType time_mod = fmod(time + phase_, wavelength_);
+			FloatingType slope = (2 * overrideOut_) / wavelength_;
+			FloatingType intercept = -overrideOut_;
 
-		break;
-	}
-	case Waveforms::RAMP:
-	{
-		TimePoint current = Clock::now();
-		FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
-				/ 1000.0;
-		FloatingType time_mod = fmod(time + phase_, wavelength_);
-		FloatingType slope = (2 * overrideOut_) / wavelength_;
-		FloatingType intercept = -overrideOut_;
+			waveformOutput = slope * time_mod + intercept;
 
-		waveformOutput = slope * time_mod + intercept;
+			break;
+		}
+		case Waveforms::SAWTOOTH:
+		{
+			TimePoint current = Clock::now();
+			FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
+								/ 1000.0;
+			FloatingType time_mod = fmod(time + phase_, wavelength_);
+			FloatingType slope = -(2 * overrideOut_) / wavelength_;
+			FloatingType intercept = overrideOut_;
 
-		break;
-	}
-	case Waveforms::SAWTOOTH:
-	{
-		TimePoint current = Clock::now();
-		FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
-				/ 1000.0;
-		FloatingType time_mod = fmod(time + phase_, wavelength_);
-		FloatingType slope = -(2 * overrideOut_) / wavelength_;
-		FloatingType intercept = overrideOut_;
+			waveformOutput = slope * time_mod + intercept;
 
-		waveformOutput = slope * time_mod + intercept;
+			break;
+		}
+		case Waveforms::TRIANGULAR:
+		{
+			waveformOutput = overrideOut_;
 
-		break;
-	}
-	case Waveforms::TRIANGULAR:
-	{
-		waveformOutput = overrideOut_;
+			break;
+		}
+		default:
+		{
+			waveformOutput = overrideOut_;
 
-		break;
-	}
-	default:
-	{
-		waveformOutput = overrideOut_;
-
-		break;
-	}
+			break;
+		}
 	}
 
 	return waveformOutput;
 }
 
-Integrator::Integrator(Element input, FloatingType initial) : in_(std::move(input)), val_(initial)
+Integrator::Integrator(Element input, Duration* timeDiff, FloatingType initial) : in_(std::move(input)), val_(initial),
+																				  timeDiff_(timeDiff)
 {
 }
 
@@ -212,7 +213,8 @@ Integrator::evaluate()
 {
 	if (in_)
 	{
-		val_ += in_->getValue();
+		val_ += in_->getValue()
+				* std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC;
 	}
 }
 
@@ -224,17 +226,17 @@ Integrator::getValue() const
 
 PID::PID(Element target, Element current, const PIDParameters& p, Duration* timeDiff) :
 		ConfigurableObject(p), target_(target), current_(current), timeDiff_(timeDiff), targetValue_(
-				0), currentError_(0), integrator_(0), lastError_(0), lastTarget_(0), output_(0), override_(
-				false), overrideTarget_(0)
+		0), currentError_(0), integrator_(0), lastError_(0), lastTarget_(0), output_(0), override_(
+		false), overrideTarget_(0)
 {
 
 }
 
 PID::PID(Element target, Element current, Element derivative, const PIDParameters& p,
-		Duration* timeDiff) :
+		 Duration* timeDiff) :
 		ConfigurableObject(p), target_(target), current_(current), derivative_(derivative), timeDiff_(
-				timeDiff), targetValue_(0), currentError_(0), integrator_(0), lastError_(0), lastTarget_(
-				0), output_(0), override_(false), overrideTarget_(0)
+		timeDiff), targetValue_(0), currentError_(0), integrator_(0), lastError_(0), lastTarget_(
+		0), output_(0), override_(false), overrideTarget_(0)
 {
 
 }
@@ -288,7 +290,7 @@ PID::addIntegralControl()
 		return;
 
 	integrator_ += currentError_
-			* std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC;
+				   * std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC;
 
 	if (integrator_ > 0)
 		integrator_ = std::min(integrator_, params.imax());
@@ -310,18 +312,18 @@ PID::addDifferentialControl()
 		FloatingType targetDer = 0;
 
 		if (!std::isnan(lastTarget_) && timeDiff_
-				&& std::chrono::duration_cast<Microseconds>(*timeDiff_).count() > 0.)
+			&& std::chrono::duration_cast<Microseconds>(*timeDiff_).count() > 0.)
 			targetDer = (targetValue_ - lastTarget_)
-					/ (std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC);
+						/ (std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC);
 
 		output_ += params.kd() * (targetDer - derivative_->getValue());
 
 	}
 	else if (!std::isnan(lastError_) && timeDiff_
-			&& std::chrono::duration_cast<Microseconds>(*timeDiff_).count() > 0.)
+			 && std::chrono::duration_cast<Microseconds>(*timeDiff_).count() > 0.)
 	{
 		FloatingType derivative = (currentError_ - lastError_)
-				/ (std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC);
+								  / (std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC);
 		output_ += params.kd() * derivative;
 	}
 }

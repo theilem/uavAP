@@ -1,19 +1,4 @@
 {
-	"signal_handler": {
-	},
-	"ipc": {
-	},
-	"idc": {
-	},
-	"scheduler": {
-		"thread": {
-			"priority": 20
-		}
-	},
-	"time_provider": {
-		"system_time": {
-		}
-	},
 	"data_presentation": {
 		"compress_double": true
 	},
@@ -22,16 +7,21 @@
 		}
 	},
 	"network": {
-		"serial": {
-			"ports": {
+		"redis":{
+			"sub":{
 				"ground_station": {
-					"serial_port": "/dev/tnt0",
-					"baud_rate": 115200,
-					"delimiter_string": "--*",
-					"use_crc": 1,
-					"flow_control": "none",
-					"direction": "both",
-					"send_blocking": 0
+					"host_ip":"127.0.0.1",
+					"auth":"",
+					"port":6379,
+					"channel":"to_uavap"
+				}
+			},
+			"pub":{
+				"ground_station": {
+					"host_ip":"127.0.0.1",
+					"auth":"",
+					"port":6379,
+					"channel":"to_uavgs"
 				}
 			}
 		}
