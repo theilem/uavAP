@@ -15,8 +15,10 @@
 #include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceControllerTarget.h"
 
 
+#include <uavAP/Core/DataHandling/Content.hpp>
 #include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceParams.h"
 #include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
+#include <uavAP/MissionControl/ManeuverPlanner/Override.h>
 
 class ControllerTarget;
 class ControllerOutput;
@@ -44,13 +46,20 @@ public:
 	bool
 	configure(const Configuration& config);
 
-	void printGains();
+	void
+	setManeuverOverride(const Override& override);
+
+	Optional<PIDParams>
+	getPIDParams(const DataRequest& request);
 
 private:
 
+	void
+	configure_(const Configuration& config);
+
 	std::shared_ptr<Control::Constraint<Angle<FloatingType>>> rollConstraint_;
 	std::shared_ptr<Control::Constraint<Angle<FloatingType>>> rollRateTargetConstraint_;
-	std::shared_ptr<Control::Constraint<Angle<FloatingType>>> pitchConstraint_;
+//	std::shared_ptr<Control::Constraint<Angle<FloatingType>>> pitchConstraint_;
 
 	Control::ControlEnvironment controlEnv_;
 //	Eigen::Matrix<FloatingType, 5, 5> a_;
@@ -63,6 +72,9 @@ private:
 
 	const SensorData& sd_ned_;
 	ControllerOutput& output_;
+	const ControllerTarget& target_;
+
+	FloatingType offset_;
 };
 
 

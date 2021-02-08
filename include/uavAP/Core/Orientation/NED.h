@@ -12,7 +12,7 @@ class NED// : public IOrientation
 {
 public:
 	static void
-	convert(SensorData& sd);
+	convert(SensorData& sd, Frame velocityFrame = Frame::INERTIAL, Frame accelerationFrame = Frame::BODY, Frame angularRateFrame = Frame::BODY);
 };
 
 

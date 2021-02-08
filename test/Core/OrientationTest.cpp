@@ -9,11 +9,49 @@
 
 
 
-TEST_CASE("NED conversion test")
+TEST_CASE("NED conversion test 1")
 {
 	SensorData sd;
 	sd.orientation = Orientation::ENU;
-	NED::convert(sd);
+	
+	sd.position = {1, 2, 3};
+	sd.attitude = degToRad({45, 45, 45});
+	sd.velocity = Vector3({0, 1, 0});
+	sd.velocity.frame = Frame::BODY;
+
+	sd.angleOfAttack = 1;
+	
+	NED::convert(sd, Frame::INERTIAL);
+	assert(sd.position == Vector3({2, 1, -3}));
+
+	assert(sd.velocity[0] == Approx(0.5).margin(1e-6));
+	assert(sd.velocity[1] == Approx(0.5).margin(1e-6));
+	assert(sd.velocity[2] == Approx(-1./sqrt(2)).margin(1e-6));
+
+	assert(sd.angleOfAttack == -1);
+	assert(sd.orientation == Orientation::NED);
+}
+
+TEST_CASE("NED conversion test 2")
+{
+	SensorData sd;
+	sd.orientation = Orientation::ENU;
+
+	sd.position = {1, 2, 3};
+	sd.attitude = degToRad({45, 45, 45});
+	sd.velocity = Vector3({0, 1, 0});
+	sd.velocity.frame = Frame::BODY;
+
+	sd.angleOfAttack = 1;
+
+	NED::convert(sd, Frame::BODY);
+	assert(sd.position == Vector3({2, 1, -3}));
+
+	assert(sd.velocity[0] == Approx(1).margin(1e-6));
+	assert(sd.velocity[1] == Approx(0).margin(1e-6));
+	assert(sd.velocity[2] == Approx(0).margin(1e-6));
+
+	assert(sd.angleOfAttack == -1);
 	assert(sd.orientation == Orientation::NED);
 }
 

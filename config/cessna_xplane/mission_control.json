@@ -9,7 +9,7 @@
 			4435393.06,
 			168
 		],
-		"yaw": 47
+		"yaw": 0
 	},
 	"global_planner": {
 		"spline": {
@@ -53,10 +53,10 @@
 					"infinite": true,
 					"offset": [0,0,2438],
 					"waypoints": [
-						{"location": [-6000,1000,0], "direction": [10000,0,0]},
-						{"location": [6000,1000,0], "direction": [10000,0,0]},
-						{"location": [6000,-1000,0], "direction": [-10000,0,0]},
-						{"location": [-6000,-1000,0], "direction": [-10000,0,0]}
+						{"location": [-5000,1000,0], "direction": [10000,0,0]},
+						{"location": [8000,1000,0], "direction": [10000,0,0]},
+						{"location": [8000,-1000,0], "direction": [-10000,0,0]},
+						{"location": [-5000,-1000,0], "direction": [-10000,0,0]}
 					]
 				}
 			}
