@@ -16,6 +16,7 @@ struct PitchStateSpaceParams
 	Parameter<FloatingType> tT = {0, "throttle_trim", true};
 	Parameter<Angle<FloatingType>> rP = {Angle<FloatingType>(0), "reference_pitch", true};
 	Parameter<FloatingType> rU = {0, "reference_U", true};
+	Parameter<FloatingType> rW = {0, "reference_W", true};
 
 	template<typename Config>
 	inline void
@@ -28,6 +29,7 @@ struct PitchStateSpaceParams
 		c & tT;
 		c & rP;
 		c & rU;
+		c & rW;
 	}
 };
 

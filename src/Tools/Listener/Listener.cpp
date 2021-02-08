@@ -18,6 +18,9 @@
 #include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 #include <cpsCore/Utilities/IPC/IPC.h>
 
+#include "uavAP/Core/Orientation/NED.h"
+#include "uavAP/Core/Orientation/ConversionUtils.h"
+
 bool showControl = false;
 bool showSensor = false;
 bool showOutput = false;
@@ -36,24 +39,29 @@ dispControl(const ControllerOutput& control)
 void
 dispSens(const SensorData& sd)
 {
+	SensorData tmp = sd;
+	NED::convert(tmp);
+
+	directionalConversion(tmp.velocity, tmp.attitude, Frame::BODY, Orientation::NED);
+
 	if (!showSensor)
 		return;
-	std::cout << "Position: 	[" << sd.position.x() << "; 	" << sd.position.y() << "; 	"
-			<< sd.position.z() << "]" << std::endl;
-	std::cout << "Velocity: 	[" << sd.velocity.x() << "; 	" << sd.velocity.y() << "; 	"
-			<< sd.velocity.z() << "]" << std::endl;
-	std::cout << "Acceleration: 	[" << sd.acceleration.x() << "; 	" << sd.acceleration.y()
-			<< "; 	" << sd.acceleration.z() << "]" << std::endl;
-	std::cout << "Attitude: 	[" << radToDeg(sd.attitude.x()) << "; 	" << radToDeg(sd.attitude.y()) << "; 	"
-			<< radToDeg(sd.attitude.z()) << "]" << std::endl;
-	std::cout << "AngularRate: 	[" << radToDeg(sd.angularRate.x()) << "; 	" << radToDeg(sd.angularRate.y()) << "; 	"
-			<< radToDeg(sd.angularRate.z()) << "]" << std::endl;
-	std::cout << "α, β, χ:	[" << radToDeg(sd.angleOfAttack) << "; 	" << radToDeg(sd.angleOfSideslip) << "; 	"
-								 << radToDeg(sd.courseAngle) << "]" << std::endl;
-	std::cout << "Airspeed: 	" << sd.airSpeed << std::endl;
-	std::cout << "Groundspeed: 	" << sd.groundSpeed << std::endl << std::endl;
-	std::cout << "Pressure: 	" << sd.pressure << std::endl << std::endl;
-	std::cout << "Temperature: 	" << sd.temperature << std::endl << std::endl;
+	std::cout << "Position: 	[" << tmp.position.x() << "; 	" << tmp.position.y() << "; 	"
+			<< tmp.position.z() << "]" << std::endl;
+	std::cout << "Velocity: 	[" << tmp.velocity.x() << "; 	" << tmp.velocity.y() << "; 	"
+			<< tmp.velocity.z() << "]" << std::endl;
+	std::cout << "Acceleration: 	[" << tmp.acceleration.x() << "; 	" << tmp.acceleration.y()
+			<< "; 	" << tmp.acceleration.z() << "]" << std::endl;
+	std::cout << "Attitude: 	[" << radToDeg(tmp.attitude.x()) << "; 	" << radToDeg(tmp.attitude.y()) << "; 	"
+			<< radToDeg(tmp.attitude.z()) << "]" << std::endl;
+	std::cout << "AngularRate: 	[" << radToDeg(tmp.angularRate.x()) << "; 	" << radToDeg(tmp.angularRate.y()) << "; 	"
+			<< radToDeg(tmp.angularRate.z()) << "]" << std::endl;
+	std::cout << "α, β, χ:	[" << radToDeg(tmp.angleOfAttack) << "; 	" << radToDeg(tmp.angleOfSideslip) << "; 	"
+								 << radToDeg(tmp.courseAngle) << "]" << std::endl;
+	std::cout << "Airspeed: 	" << tmp.airSpeed << std::endl;
+	std::cout << "Groundspeed: 	" << tmp.groundSpeed << std::endl << std::endl;
+	std::cout << "Pressure: 	" << tmp.pressure << std::endl << std::endl;
+	std::cout << "Temperature: 	" << tmp.temperature << std::endl << std::endl;
 
 }
 

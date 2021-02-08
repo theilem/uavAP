@@ -30,6 +30,7 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	rollConstraint_ = std::make_shared<Control::Constraint<Angle<FloatingType>>>(rollCalc);
 
 	auto rollInput = controlEnv_.addInput(&sd.attitude[0]);
+	// ENU - QPR
 	auto rollRateInput = controlEnv_.addInput(&sd.angularRate[1]);
 
 	Control::PIDParameters defaultParams;
