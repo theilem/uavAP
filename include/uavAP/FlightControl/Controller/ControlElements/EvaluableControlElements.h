@@ -95,7 +95,9 @@ private:
 class Integrator: public IEvaluableControlElement
 {
 public:
-	Integrator(Element input, Duration* timeDiff, FloatingType initial = 0);
+	Integrator(Element input, Duration* timeDiff, FloatingType initial = 0,
+			FloatingType min_ = std::numeric_limits<FloatingType>::has_infinity ? -std::numeric_limits<FloatingType>::infinity() : std::numeric_limits<FloatingType>::min(),
+			FloatingType max_ = std::numeric_limits<FloatingType>::has_infinity ? std::numeric_limits<FloatingType>::infinity() : std::numeric_limits<FloatingType>::max());
 
 	void
 	evaluate() override;
@@ -106,6 +108,8 @@ public:
 private:
 	Element in_;
 	FloatingType val_;
+	FloatingType min_;
+	FloatingType max_;
 	Duration* timeDiff_;
 };
 

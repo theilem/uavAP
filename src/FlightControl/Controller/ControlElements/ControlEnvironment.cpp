@@ -125,7 +125,7 @@ ControlEnvironment::addConstraint(Element in, FloatingType min, FloatingType max
 }
 
 std::shared_ptr<Constraint<>>
-ControlEnvironment::addConstraint(Element in, double min, double max, double hardMin, double hardMax)
+ControlEnvironment::addConstraint(Element in, FloatingType min, FloatingType max, FloatingType hardMin, FloatingType hardMax)
 {
 	return std::make_shared<Constraint<>>(in, min, max);
 }
@@ -148,9 +148,9 @@ ControlEnvironment::addPID(Element target, Element current, Element derivative,
 }
 
 std::shared_ptr<Integrator>
-ControlEnvironment::addIntegrator(Element input)
+ControlEnvironment::addIntegrator(Element input, FloatingType initial, FloatingType min, FloatingType max)
 {
-	auto integrator = std::make_shared<Integrator>(input, &timeDiff_);
+	auto integrator = std::make_shared<Integrator>(input, &timeDiff_, initial, min, max);
 	evaluableControlElements_.push_back(integrator);
 	return integrator;
 }

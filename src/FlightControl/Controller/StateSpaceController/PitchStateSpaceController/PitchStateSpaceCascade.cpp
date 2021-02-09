@@ -41,18 +41,19 @@ PitchStateSpaceCascade::PitchStateSpaceCascade(const SensorData& sd_enu, const S
 	pids_.insert(std::make_pair(PIDs::ROLL_RATE, rollRatePID));
 
 	/* State Space Error */
+	/* Pitch */
 	auto cmdPitch = controlEnv_.addInput(&target.climbAngle);
 	auto pitch = controlEnv_.addInput(&sd_enu.attitude[1]);
-
 	// command - target
 	auto ep = controlEnv_.addDifference(cmdPitch, pitch);
-	auto cEp = controlEnv_.addIntegrator(ep);
+	auto cEp = controlEnv_.addIntegrator(ep, 0, -1, 1);
 	controlEnv_.addOutput(cEp, &Ep_);
 
+	/* Velocity */
 	auto cmdVelocity = controlEnv_.addInput(&target.velocity);
 	auto velocity = controlEnv_.addInput(&sd_ned_.velocity[0]);
 	auto ev = controlEnv_.addDifference(cmdVelocity, velocity);
-	auto cEv = controlEnv_.addIntegrator(ev);
+	auto cEv = controlEnv_.addIntegrator(ev, 0, -1, 1);
 	controlEnv_.addOutput(cEv, &Ev_);
 
 	/* Throttle Input & Output */
@@ -109,8 +110,6 @@ PitchStateSpaceCascade::evaluate()
 	assert(sd_ned_.orientation == Orientation::NED);
 	assert(sd_ned_.velocity.frame == Frame::BODY);
 
-
-//	CPSLOG_WARN << "velocity pointer: " << (void*)&sd_ned_.velocity[0];
 	// Kind of optional when roll is 0
 //	assert(sd_ned_.angularRate.frame == Frame::BODY);
 	controlEnv_.evaluate();
@@ -118,19 +117,23 @@ PitchStateSpaceCascade::evaluate()
 	//TODO use initializer list when Eigen 3.4 is released
 	Vector<6> state;
 	state[0] = sd_ned_.velocity[0] - params.rU.value;
-	//TODO trim w?
 	state[1] = sd_ned_.velocity[1] - params.rW.value;
 	state[2] = sd_ned_.angularRate[1];
 	state[3] = sd_ned_.attitude[1] - params.rP.value;// - params.rP.value;
 	state[4] = Ep_;
 	state[5] = Ev_;
 
-	auto stateOut = -k_ * state;
+	Vector<2> stateOut = -k_ * state;
 
-	CPSLOG_WARN << "u:" << state[0] << "cmd" << stateOut[1] << "Integral:" << state[4];
-	CPSLOG_WARN << "theta:" << state[3] << "cmd" << stateOut[0] << "Integral:" << state[5];
+	// + delta E -> elevator down, right hand rule behind
+	stateOut[0] = stateOut[0] * -1;
 
-	output_.pitchOutput = std::clamp(-stateOut[0] + params.tE.value, (FloatingType) -1, (FloatingType) 1);
+//	std::cout << "du: " << state[0] << "cmd: " << -stateOut[1] << "Integral: " << state[5] << "Diff: " << target_.climbAngle - sd_ned_.attitude[1] << "\n";
+//	std::cout << "dtheta: " << state[3] << "cmd: " << stateOut[0] << "Integral: " << state[4] << "Diff: " << target_.velocity - sd_ned_.velocity[0] << "\n";
+	std::printf("du: %2.8lf cmd: %2.8lf int: %2.8lf diff: %2.8lf\n", state[0], stateOut[1], state[5], target_.velocity - sd_ned_.velocity[0]);
+	std::printf("dθ: %2.8lf cmd: %2.8lf int: %2.8lf diff: %2.8lf\n", state[3], stateOut[0], state[4], target_.climbAngle - sd_ned_.attitude[1]);
+
+	output_.pitchOutput = std::clamp(stateOut[0] + params.tE.value, (FloatingType) -1, (FloatingType) 1);
 	output_.throttleOutput = std::clamp(stateOut[1] + params.tT.value, (FloatingType) -1, (FloatingType) 1);
 //	output_.pitchOutput = params.tE.value;
 //	output_.throttleOutput = params.tT.value;
