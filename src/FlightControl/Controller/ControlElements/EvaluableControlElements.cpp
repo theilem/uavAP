@@ -203,8 +203,8 @@ Output::getWaveformOutput()
 	return waveformOutput;
 }
 
-Integrator::Integrator(Element input, Duration* timeDiff, FloatingType initial) : in_(std::move(input)), val_(initial),
-																				  timeDiff_(timeDiff)
+Integrator::Integrator(Element input, Duration* timeDiff, FloatingType initial, FloatingType min, FloatingType max)
+		: in_(std::move(input)), val_(initial), min_(min), max_(max), timeDiff_(timeDiff)
 {
 }
 
@@ -215,6 +215,7 @@ Integrator::evaluate()
 	{
 		val_ += in_->getValue()
 				* std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC;
+		val_ = std::clamp(val_, min_, max_);
 	}
 }
 
