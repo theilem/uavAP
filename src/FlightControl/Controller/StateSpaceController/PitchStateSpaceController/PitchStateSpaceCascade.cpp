@@ -46,7 +46,7 @@ PitchStateSpaceCascade::PitchStateSpaceCascade(const SensorData& sd_enu, const S
 	auto pitch = controlEnv_.addInput(&sd_enu.attitude[1]);
 	// command - target
 	auto ep = controlEnv_.addDifference(cmdPitch, pitch);
-	auto cEp = controlEnv_.addIntegrator(ep, 0, -1, 1);
+	auto cEp = controlEnv_.addIntegrator(ep, 0, -5, 5);
 	controlEnv_.addOutput(cEp, &Ep_);
 
 	/* Velocity */
@@ -131,7 +131,7 @@ PitchStateSpaceCascade::evaluate()
 //	std::cout << "du: " << state[0] << "cmd: " << -stateOut[1] << "Integral: " << state[5] << "Diff: " << target_.climbAngle - sd_ned_.attitude[1] << "\n";
 //	std::cout << "dtheta: " << state[3] << "cmd: " << stateOut[0] << "Integral: " << state[4] << "Diff: " << target_.velocity - sd_ned_.velocity[0] << "\n";
 	std::printf("du: %2.8lf cmd: %2.8lf int: %2.8lf diff: %2.8lf\n", state[0], stateOut[1], state[5], target_.velocity - sd_ned_.velocity[0]);
-	std::printf("dθ: %2.8lf cmd: %2.8lf int: %2.8lf diff: %2.8lf\n", state[3], stateOut[0], state[4], target_.climbAngle - sd_ned_.attitude[1]);
+	std::printf("dθ: %2.8lf cmd: %2.8lf int: %2.8lf diff: %2.8lf\n", radToDeg(state[3]), stateOut[0], state[4], radToDeg(target_.climbAngle - sd_ned_.attitude[1]));
 
 	output_.pitchOutput = std::clamp(stateOut[0] + params.tE.value, (FloatingType) -1, (FloatingType) 1);
 	output_.throttleOutput = std::clamp(stateOut[1] + params.tT.value, (FloatingType) -1, (FloatingType) 1);
