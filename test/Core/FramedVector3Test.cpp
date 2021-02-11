@@ -58,3 +58,12 @@ TEST_CASE("Infer Inertial Test")
 	FramedVector3 framedData = data;
 	CHECK(framedData.frame == Frame::INERTIAL);
 }
+
+TEST_CASE("Copy Test")
+{
+	FramedVector3 origin = Vector3({1.1, 2.2, 3.3});
+	origin.frame = Frame::BODY;
+
+	FramedVector3 copy = origin;
+	CHECK(copy.frame == Frame::BODY);
+}
