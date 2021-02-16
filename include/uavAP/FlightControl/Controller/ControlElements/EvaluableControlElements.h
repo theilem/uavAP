@@ -110,12 +110,28 @@ private:
 	FloatingType phase_;
 };
 
-class Integrator: public IEvaluableControlElement
+struct IntegratorParams
+{
+	Parameter<FloatingType> initial = {0, "initial", false};
+	Parameter<FloatingType> min = {std::numeric_limits<FloatingType>::has_infinity ? -std::numeric_limits<FloatingType>::infinity() : std::numeric_limits<FloatingType>::min(), "min", true};
+	Parameter<FloatingType> max = {std::numeric_limits<FloatingType>::has_infinity ? std::numeric_limits<FloatingType>::infinity() : std::numeric_limits<FloatingType>::max(), "max", true};
+
+	template<typename Config>
+	inline void
+	configure(Config& c)
+	{
+		c & initial;
+		c & min;
+		c & max;
+	}
+};
+
+class Integrator: public IEvaluableControlElement, public ConfigurableObject<IntegratorParams>
 {
 public:
-	Integrator(Element input, Duration* timeDiff, FloatingType initial = 0,
-			FloatingType min_ = std::numeric_limits<FloatingType>::has_infinity ? -std::numeric_limits<FloatingType>::infinity() : std::numeric_limits<FloatingType>::min(),
-			FloatingType max_ = std::numeric_limits<FloatingType>::has_infinity ? std::numeric_limits<FloatingType>::infinity() : std::numeric_limits<FloatingType>::max());
+	Integrator(Element input, Duration* timeDiff);
+
+	Integrator(Element input, Duration* timeDiff, const IntegratorParams &p);
 
 	void
 	evaluate() override;
@@ -123,11 +139,12 @@ public:
 	FloatingType
 	getValue() const override;
 
+	bool
+	configure(const Configuration& config);
+
 private:
-	Element in_;
 	FloatingType val_;
-	FloatingType min_;
-	FloatingType max_;
+	Element in_;
 	Duration* timeDiff_;
 };
 

@@ -1,17 +1,17 @@
 {
   "controller": {
     "statespace_pitch": {
-      "k" : [1.539106, 0.956036, 0.039160, 0.023004, -0.317411, -0.066377, -4.868804, -1.984599, 1.679765, -2.679252, -2.679252, -1.679765],
-      "elevator_trim" : 0.1528,
-      "throttle_trim" : 0.7385,
-      "reference_pitch" : 1.664,
-      "reference_U" : 55,
-      "reference_W" : 1.62,
+      "k" : [-1.565132, 1.715857, -0.234069, 0.115047, 1.314816, -0.353264, 7.949485, -3.059449, -6.414185, -7.503498, 2.281349, -2.061099],
+      "elevator_trim" : -0.1708,
+      "throttle_trim" : 0.5343,
+      "reference_pitch" : 0,
+      "reference_U" : 54.9986,
+      "reference_W" : 0.39,
       "cascade": {
         "roll": {
-          "kp": 0.3,
+          "kp": 0.4,
           "ki": 0,
-          "kd": 0.2,
+          "kd": 0,
           "imax": 0,
           "ff": 0
         },
@@ -33,6 +33,14 @@
         "pitch_constraint": {
           "min": -15,
           "max": 15
+        },
+        "pitch_integrator": {
+          "min": -5,
+          "max": 5
+        },
+        "velocity_integrator": {
+          "min": -1,
+          "max": 1
         }
       }
     }

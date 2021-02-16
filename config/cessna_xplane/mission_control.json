@@ -64,10 +64,10 @@
 					"infinite": true,
 					"offset": [0,0,2438],
 					"waypoints": [
-						{"location": [-10000,1000,0], "direction": [10000,0,0]},
+						{"location": [-15000,1000,0], "direction": [10000,0,0]},
 						{"location": [0,1000,0], "direction": [10000,0,0]},
 						{"location": [0,-1000,0], "direction": [-10000,0,0]},
-						{"location": [-10000,-1000,0], "direction": [-10000,0,0]}
+						{"location": [-15000,-1000,0], "direction": [-10000,0,0]}
 					]
 				},
 				"up": {
@@ -90,6 +90,33 @@
 					]
 				},
 				"up_down": {
+					"velocity": 55,
+					"infinite": true,
+					"offset": [0,0,2438],
+					"waypoints": [
+						{"location": [-7500,1000,0],"direction": [10000, 0, 0]},
+						{"location": [-2500,1000,0]},
+						{"location": [0,1000,300]},
+						{"location": [2500,1000,300]},
+						{"location": [5000,1000,0]},
+						{"location": [7500,1000,0]},
+						{"location": [10000,1000,-300]},
+						{"location": [12500,1000,-300]},
+						{"location": [15000,1000,0]},
+						{"location": [17500,1000,0], "direction": [10000, 0, 0]},
+						{"location": [17500,-1000,0],"direction": [-10000, 0, 0]},
+						{"location": [15000,-1000,0]},
+						{"location": [12500,-1000,-300]},
+						{"location": [10000,-1000,-300]},
+						{"location": [7500,-1000,0]},
+						{"location": [5000,-1000,0]},
+						{"location": [2500,-1000,300]},
+						{"location": [0,-1000,300]},
+						{"location": [-2500,-1000,0]},
+						{"location": [-7500,-1000,0],"direction": [-10000, 0, 0]}
+					]
+				},
+				"up_down_old_heavy": {
 					"velocity": 55,
 					"infinite": true,
 					"offset": [0,0,2438],

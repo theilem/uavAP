@@ -86,13 +86,10 @@ public:
 	FloatingType
 	getValue() const override
 	{
+		using type = decltype(in_->getValue());
 		if (override_)
-			return in_->getValue() > overrideMax_ ?
-				   overrideMax_ : (in_->getValue() < overrideMin_ ? overrideMin_ : in_->getValue());
-
-		return in_->getValue() > this->params.max() ?
-			   this->params.max() :
-			   (in_->getValue() < this->params.min() ? this->params.min() : in_->getValue());
+			return std::clamp(in_->getValue(), (type)(overrideMin_), (type)(overrideMax_));
+		return std::clamp(in_->getValue(), (type)(this->params.min()), (type)(this->params.max()));
 	}
 
 	void

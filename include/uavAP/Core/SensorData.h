@@ -131,7 +131,7 @@ struct SensorData
 	Vector3 attitude;								//!< [X: Roll, Y: Pitch, Z: Yaw]
 
 	/** Body->PQR, Inertial->dot Phi, dot Theta, dot Psi, even in ENU **/
-	/** In ENU frame, p-> wing axis rotation, q-> fusiladge axis rotation, r -> pxq axis plane rotation **/
+	/** In ENU frame, p-> wing axis rotation, q-> fuselage axis rotation, r -> pxq axis plane rotation **/
 	FramedVector3 angularRate;
 	bool hasGPSFix = false;							//!< Shows whether the GPS has a fix
 	bool autopilotActive = false;					//!< Shows if the autopilot is active

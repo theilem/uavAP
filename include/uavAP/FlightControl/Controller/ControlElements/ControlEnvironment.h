@@ -85,7 +85,7 @@ public:
 	addPID(Element target, Element current, Element derivative, const PIDParameters& params);
 
 	std::shared_ptr<Integrator>
-	addIntegrator(Element input, FloatingType initial, FloatingType min, FloatingType max);
+	addIntegrator(Element input, const IntegratorParams& params);
 
 	const Duration*
 	getTimeDiff() const;
