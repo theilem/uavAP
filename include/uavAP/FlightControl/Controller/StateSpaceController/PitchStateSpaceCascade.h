@@ -59,7 +59,10 @@ private:
 
 	std::shared_ptr<Control::Constraint<Angle<FloatingType>>> rollConstraint_;
 	std::shared_ptr<Control::Constraint<Angle<FloatingType>>> rollRateTargetConstraint_;
-//	std::shared_ptr<Control::Constraint<Angle<FloatingType>>> pitchConstraint_;
+	std::shared_ptr<Control::Constraint<Angle<FloatingType>>> pitchConstraint_;
+
+	std::shared_ptr<Control::Integrator> pitchIntegrator_;
+	std::shared_ptr<Control::Integrator> velocityIntegrator_;
 
 	Control::ControlEnvironment controlEnv_;
 //	Eigen::Matrix<FloatingType, 5, 5> a_;

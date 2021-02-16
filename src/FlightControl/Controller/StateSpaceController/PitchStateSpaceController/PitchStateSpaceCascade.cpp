@@ -41,20 +41,22 @@ PitchStateSpaceCascade::PitchStateSpaceCascade(const SensorData& sd_enu, const S
 	pids_.insert(std::make_pair(PIDs::ROLL_RATE, rollRatePID));
 
 	/* State Space Error */
+	Control::IntegratorParams defaultIParams;
 	/* Pitch */
 	auto cmdPitch = controlEnv_.addInput(&target.climbAngle);
+	pitchConstraint_ = std::make_shared<Control::Constraint<Angle<FloatingType>>>(cmdPitch);
 	auto pitch = controlEnv_.addInput(&sd_enu.attitude[1]);
 	// command - target
-	auto ep = controlEnv_.addDifference(cmdPitch, pitch);
-	auto cEp = controlEnv_.addIntegrator(ep, 0, -5, 5);
-	controlEnv_.addOutput(cEp, &Ep_);
+	auto ep = controlEnv_.addDifference(pitchConstraint_, pitch);
+	pitchIntegrator_ = controlEnv_.addIntegrator(ep, defaultIParams);
+	controlEnv_.addOutput(pitchIntegrator_, &Ep_);
 
 	/* Velocity */
 	auto cmdVelocity = controlEnv_.addInput(&target.velocity);
 	auto velocity = controlEnv_.addInput(&sd_ned_.velocity[0]);
 	auto ev = controlEnv_.addDifference(cmdVelocity, velocity);
-	auto cEv = controlEnv_.addIntegrator(ev, 0, -1, 1);
-	controlEnv_.addOutput(cEv, &Ev_);
+	velocityIntegrator_ = controlEnv_.addIntegrator(ev, defaultIParams);
+	controlEnv_.addOutput(velocityIntegrator_, &Ev_);
 
 	/* Throttle Input & Output */
 //	auto throttle = controlEnv_.addInput(&delta_T);
@@ -126,12 +128,11 @@ PitchStateSpaceCascade::evaluate()
 	Vector<2> stateOut = -k_ * state;
 
 	// + delta E -> elevator down, right hand rule behind
-	stateOut[0] = stateOut[0] * -1;
+//	stateOut[0] = stateOut[0] * -1;
+	// Using joystick command instead of elevator command ^
 
-//	std::cout << "du: " << state[0] << "cmd: " << -stateOut[1] << "Integral: " << state[5] << "Diff: " << target_.climbAngle - sd_ned_.attitude[1] << "\n";
-//	std::cout << "dtheta: " << state[3] << "cmd: " << stateOut[0] << "Integral: " << state[4] << "Diff: " << target_.velocity - sd_ned_.velocity[0] << "\n";
-	std::printf("du: %2.8lf cmd: %2.8lf int: %2.8lf diff: %2.8lf\n", state[0], stateOut[1], state[5], target_.velocity - sd_ned_.velocity[0]);
-	std::printf("dθ: %2.8lf cmd: %2.8lf int: %2.8lf diff: %2.8lf\n", radToDeg(state[3]), stateOut[0], state[4], radToDeg(target_.climbAngle - sd_ned_.attitude[1]));
+	std::printf("du: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", state[0], stateOut[1], state[5], target_.velocity, sd_ned_.velocity[0], target_.velocity - sd_ned_.velocity[0]);
+	std::printf("dθ: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", radToDeg(state[3]), stateOut[0], state[4], radToDeg(pitchConstraint_->getValue()), radToDeg(sd_ned_.attitude[1]), radToDeg(pitchConstraint_->getValue() - sd_ned_.attitude[1]));
 
 	output_.pitchOutput = std::clamp(stateOut[0] + params.tE.value, (FloatingType) -1, (FloatingType) 1);
 	output_.throttleOutput = std::clamp(stateOut[1] + params.tT.value, (FloatingType) -1, (FloatingType) 1);
@@ -168,11 +169,17 @@ PitchStateSpaceCascade::configure_(const Configuration& config)
 	ParameterRef<decltype(rollConstraint_.operator*())> rollConstraint(*rollConstraint_, "roll_constraint", true);
 	ParameterRef<decltype(rollRateTargetConstraint_.operator*())> rollRateConstraint(*rollRateTargetConstraint_,
 																					 "roll_rate_constraint", true);
-//	ParameterRef<decltype(pitchConstraint_.operator*())> pitchConstraint(*pitchConstraint_, "pitch_constraint", true);
+	ParameterRef<decltype(pitchConstraint_.operator*())> pitchConstraint(*pitchConstraint_, "pitch_constraint", true);
+
+	ParameterRef<decltype(pitchIntegrator_.operator*())> pitchIntegrator(*pitchIntegrator_, "pitch_integrator", true);
+	ParameterRef<decltype(velocityIntegrator_.operator*())> velocityIntegrator(*velocityIntegrator_, "velocity_integrator", true);
 
 	c & rollConstraint;
 	c & rollRateConstraint;
-//	c & pitchConstraint;
+	c & pitchConstraint;
+
+	c & pitchIntegrator;
+	c & velocityIntegrator;
 
 }
 

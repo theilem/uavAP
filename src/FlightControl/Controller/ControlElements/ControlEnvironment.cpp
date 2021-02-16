@@ -148,9 +148,9 @@ ControlEnvironment::addPID(Element target, Element current, Element derivative,
 }
 
 std::shared_ptr<Integrator>
-ControlEnvironment::addIntegrator(Element input, FloatingType initial, FloatingType min, FloatingType max)
+ControlEnvironment::addIntegrator(Element input, const IntegratorParams& params)
 {
-	auto integrator = std::make_shared<Integrator>(input, &timeDiff_, initial, min, max);
+	auto integrator = std::make_shared<Integrator>(input, &timeDiff_, params);
 	evaluableControlElements_.push_back(integrator);
 	return integrator;
 }
