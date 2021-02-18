@@ -89,7 +89,7 @@ public:
 
 private:
 
-	Type output_;
+	Type output_{};
 };
 
 
