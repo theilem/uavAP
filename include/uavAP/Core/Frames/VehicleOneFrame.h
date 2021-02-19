@@ -46,6 +46,9 @@ public:
 	Vector3
 	toInertialFrameRotation(const Vector3& rot) const override;
 
+	FloatingType
+	toInertialFrameCourse(FloatingType chi) const override;
+
 	Vector3
 	fromFramePosition(const IFrame& orig, const Vector3& pos) const override;
 
@@ -54,6 +57,9 @@ public:
 
 	Vector3
 	fromFrameRotation(const IFrame& orig, const Vector3& rot) const override;
+
+	FloatingType
+	fromFrameCourse(const IFrame &orig, FloatingType chi) const override;
 
 	Frame
 	getId() const override;

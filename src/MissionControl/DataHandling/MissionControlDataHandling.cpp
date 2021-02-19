@@ -108,7 +108,7 @@ MissionControlDataHandling::run(RunStage stage)
 
 		missionControlSubscription_ = ipc->subscribeOnPackets(
 				"comm_to_" + EnumMap<Target>::convert(Target::MISSION_CONTROL),
-				boost::bind(&MissionControlDataHandling::receiveAndDistribute, this, _1));
+				boost::bind(&MissionControlDataHandling::receiveAndDistribute, this, boost::placeholders::_1));
 
 		if (!missionControlSubscription_.connected())
 		{

@@ -23,7 +23,7 @@
 			"default_altitude": 150,
 			"missions": {
 				"simple": {
-					"velocity": 10,
+					"velocity": 15,
 					"infinite": true,
 					"offset": [0,0,150],
 					"waypoints": [
@@ -34,7 +34,7 @@
 					]
 				},
 				"validation": {
-					"velocity": 12,
+					"velocity": 15,
 					"infinite": true,
 					"offset": [0,0,100],
 					"waypoints": [
@@ -49,7 +49,7 @@
 					]
 				},
 				"race_track": {
-					"velocity": 10,
+					"velocity": 15,
 					"infinite": true,
 					"offset": [0,0,100],
 					"waypoints": [

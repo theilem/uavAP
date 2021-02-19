@@ -235,6 +235,8 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			sens.velocity[2] = gps->vert_velocity;
 			courseAngle = courseRad;
 
+			sens.courseAngle = courseAngle;
+
 			sens.groundSpeed = sqrt(pow(horSpeed, 2) + pow(gps->vert_velocity, 2));
 
 		}
@@ -294,6 +296,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 
 //			courseAngle = atan2(imu->imu_vel_y, imu->imu_vel_x);
 			courseAngle = atan2(sens.velocity[1], sens.velocity[0]);
+			sens.courseAngle = courseAngle;
 
 			sens.groundSpeed = sens.velocity.norm();
 
@@ -323,6 +326,8 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 		{
 			bool setGroundSpeed = false;
 			bool oldAirspeed = false;
+			sens.pressure = airspeed->press;
+			sens.temperature = airspeed->temp;
 			Duration timeDiff;
 			if (std::isnan(airspeed->cal_airs) || airspeed->cal_airs == -1)
 			{
