@@ -23,13 +23,11 @@
  *      Author: mircot
  */
 
-#include <boost/test/unit_test.hpp>
+#include <cpsCore/Utilities/Test/TestInfo.h>
 #include <uavAP/Core/Frames/BodyFrame.h>
 #include <uavAP/Core/Frames/InertialFrame.h>
 
-BOOST_AUTO_TEST_SUITE(FramesTest)
-
-BOOST_AUTO_TEST_CASE(test001)
+TEST_CASE("Body Frame Test 1")
 {
 	Vector3 bodyRot(90, 0, 0);
 	BodyFrame body(bodyRot * M_PI / 180.0);
@@ -38,20 +36,20 @@ BOOST_AUTO_TEST_CASE(test001)
 
 	Vector3 dirBody(1, 0, 0);
 
-	BOOST_CHECK_EQUAL(inert.fromFrameDirection(body, dirBody), body.toInertialFrameDirection(dirBody));
-	BOOST_CHECK_EQUAL(inert.fromFrameDirection(body, dirBody), dirBody);
+	CHECK(inert.fromFrameDirection(body, dirBody) == body.toInertialFrameDirection(dirBody));
+	CHECK(inert.fromFrameDirection(body, dirBody) == dirBody);
 
 
 	dirBody = Vector3(0, 1, 0);
 
-	BOOST_CHECK_EQUAL(inert.fromFrameDirection(body, dirBody), body.toInertialFrameDirection(dirBody));
-	BOOST_CHECK_SMALL(inert.fromFrameDirection(body, dirBody).x() - 0, 1e-6);
-	BOOST_CHECK_SMALL(inert.fromFrameDirection(body, dirBody).y() - 0, 1e-6);
-	BOOST_CHECK_SMALL(inert.fromFrameDirection(body, dirBody).z() - 1, 1e-6);
+	CHECK(inert.fromFrameDirection(body, dirBody) == body.toInertialFrameDirection(dirBody));
+	CHECK(inert.fromFrameDirection(body, dirBody).x() == Approx(0).margin(1e-6));
+	CHECK(inert.fromFrameDirection(body, dirBody).y() == Approx(0).margin(1e-6));
+	CHECK(inert.fromFrameDirection(body, dirBody).z() == Approx(1).margin(1e-6));
 
 }
 
-BOOST_AUTO_TEST_CASE(test002)
+TEST_CASE("Body Frame Test 2")
 {
 	Vector3 bodyRot(45, 30, 90);
 	BodyFrame body(bodyRot * M_PI / 180.0);
@@ -60,17 +58,15 @@ BOOST_AUTO_TEST_CASE(test002)
 
 	Vector3 dirBody(1, 0, 0);
 
-	BOOST_CHECK_EQUAL(inert.fromFrameDirection(body, dirBody), body.toInertialFrameDirection(dirBody));
-	BOOST_CHECK_EQUAL(inert.fromFrameDirection(body, dirBody), dirBody);
+	CHECK(inert.fromFrameDirection(body, dirBody) == body.toInertialFrameDirection(dirBody));
+	CHECK(inert.fromFrameDirection(body, dirBody) == dirBody);
 
 
 	dirBody = Vector3(0, 1, 0);
 
-	BOOST_CHECK_EQUAL(inert.fromFrameDirection(body, dirBody), body.toInertialFrameDirection(dirBody));
-	BOOST_CHECK_SMALL(inert.fromFrameDirection(body, dirBody).x() - 0, 1e-6);
-	BOOST_CHECK_SMALL(inert.fromFrameDirection(body, dirBody).y() - 0, 1e-6);
-	BOOST_CHECK_SMALL(inert.fromFrameDirection(body, dirBody).z() - 1, 1e-6);
+	CHECK(inert.fromFrameDirection(body, dirBody) == body.toInertialFrameDirection(dirBody));
+	CHECK(inert.fromFrameDirection(body, dirBody).x()  == Approx(0).margin(1e-6));
+	CHECK(inert.fromFrameDirection(body, dirBody).y() == Approx(0).margin(1e-6));
+	CHECK(inert.fromFrameDirection(body, dirBody).z() == Approx(1).margin(1e-6));
 
 }
-
-BOOST_AUTO_TEST_SUITE_END()

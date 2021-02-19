@@ -44,12 +44,16 @@ dispSens(const SensorData& sd)
 			<< sd.velocity.z() << "]" << std::endl;
 	std::cout << "Acceleration: 	[" << sd.acceleration.x() << "; 	" << sd.acceleration.y()
 			<< "; 	" << sd.acceleration.z() << "]" << std::endl;
-	std::cout << "Attitude: 	[" << sd.attitude.x() * 180 / M_PI << "; 	" << sd.attitude.y() * 180 / M_PI<< "; 	"
-			<< sd.attitude.z() * 180 / M_PI << "]" << std::endl;
+	std::cout << "Attitude: 	[" << radToDeg(sd.attitude.x()) << "; 	" << radToDeg(sd.attitude.y()) << "; 	"
+			<< radToDeg(sd.attitude.z()) << "]" << std::endl;
 	std::cout << "AngularRate: 	[" << sd.angularRate.x() << "; 	" << sd.angularRate.y() << "; 	"
 			<< sd.angularRate.z() << "]" << std::endl;
+	std::cout << "α, β, χ:	[" << radToDeg(sd.angleOfAttack) << "; 	" << radToDeg(sd.angleOfSideslip) << "; 	"
+								 << radToDeg(sd.courseAngle) << "]" << std::endl;
 	std::cout << "Airspeed: 	" << sd.airSpeed << std::endl;
 	std::cout << "Groundspeed: 	" << sd.groundSpeed << std::endl << std::endl;
+	std::cout << "Pressure: 	" << sd.pressure << std::endl << std::endl;
+	std::cout << "Temperature: 	" << sd.temperature << std::endl << std::endl;
 
 }
 

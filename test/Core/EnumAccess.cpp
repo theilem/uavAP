@@ -7,7 +7,7 @@
 #include <cpsCore/Utilities/Test/TestInfo.h>
 #include "uavAP/Core/SensorData.h"
 
-TEST_CASE("Enum Access")
+TEST_CASE("Sensor Data Enum Access")
 {
 	SensorData data;
 

@@ -40,6 +40,9 @@ enum class SensorEnum
 	GROUND_SPEED,
 	ANGLE_OF_ATTACK,
 	ANGLE_OF_SIDESLIP,
+	COURSE,
+	TEMPERATURE,
+	PRESSURE,
 	NUM_SENSOR_ENUM
 };
 
@@ -86,7 +89,11 @@ ENUMMAP_INIT(SensorEnum,
 				 { SensorEnum::AIR_SPEED, "air_speed" },
 				 { SensorEnum::GROUND_SPEED, "ground_speed" },
 				 { SensorEnum::ANGLE_OF_ATTACK, "angle_of_attack" },
-				 { SensorEnum::ANGLE_OF_SIDESLIP, "angle_of_sideslip" }
+				 { SensorEnum::ANGLE_OF_SIDESLIP, "angle_of_sideslip" },
+				 { SensorEnum::TEMPERATURE, "temperature" },
+				 { SensorEnum::COURSE, "course" },
+				 { SensorEnum::PRESSURE, "pressure" },
+				 { SensorEnum::GROUND_SPEED, "ground_speed" }
 			 }
 );
 
@@ -126,6 +133,10 @@ struct SensorData
 	FloatingType groundSpeed = 0.;        //!< total velocity w.r.t. ground
 	FloatingType angleOfAttack = 0.;        //!< current angle of attack
 	FloatingType angleOfSideslip = 0.;    //!< current angle of sideslip
+	FloatingType courseAngle = 0.;       //!< course angle obtained from GPS
+	FloatingType pressure = 0.;       //!< pressure obtained from airspeed sensor
+	FloatingType temperature = 0.;     //!< temperature obtained from airspeed sensor
+	Frame frame = Frame::INERTIAL;
 	TimePoint timestamp;            //!< Timestamp of SensorEnum data
 
 };
@@ -174,6 +185,12 @@ enumAccess(const SensorData& data, const SensorEnum& e)
 			return static_cast<RetType>(data.angleOfAttack);
 		case SensorEnum::ANGLE_OF_SIDESLIP:
 			return static_cast<RetType>(data.angleOfSideslip);
+		case SensorEnum::COURSE:
+			return static_cast<RetType>(data.courseAngle);
+		case SensorEnum::TEMPERATURE:
+			return static_cast<RetType>(data.temperature);
+		case SensorEnum::PRESSURE:
+			return static_cast<RetType>(data.pressure);
 		default:
 			return enumAccessUnknown<RetType>(e);
 	}
@@ -258,6 +275,10 @@ serialize(Archive& ar, SensorData& t)
 	ar & t.autopilotActive;
 	ar & t.angleOfAttack;
 	ar & t.angleOfSideslip;
+	ar & t.courseAngle;
+	ar & t.temperature;
+	ar & t.pressure;
+	ar & t.frame;
 	ar & t.timestamp;
 }
 

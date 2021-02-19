@@ -26,13 +26,12 @@
 
 
 
-#include <boost/test/unit_test.hpp>
+#include <cpsCore/Utilities/Test/TestInfo.h>
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/MissionControl/Geofencing/ConstRollRateModel.h>
 
-BOOST_AUTO_TEST_SUITE(GeofencingTests)
 
-BOOST_AUTO_TEST_CASE(ConstRollRateTest001_InitialConditions)
+TEST_CASE("Constant Roll Rate Test 001 Initial Conditions")
 {
 
 	ConstRollRateModel model;
@@ -42,7 +41,7 @@ BOOST_AUTO_TEST_CASE(ConstRollRateTest001_InitialConditions)
 	config.add("roll_max", 45);
 	config.add("precision", 8);
 
-	BOOST_REQUIRE(model.configure(config));
+	CHECK(model.configure(config));
 
 
 	SensorData data;
@@ -184,4 +183,3 @@ BOOST_AUTO_TEST_CASE(ConstRollRateTest003_CenterSymmetry_Right)
 	BOOST_CHECK_SMALL((att3 - att1).norm(), 1e-6);
 }
 
-BOOST_AUTO_TEST_SUITE_END()

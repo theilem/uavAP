@@ -72,7 +72,7 @@ ManeuverLocalPlanner::run(RunStage stage)
 			CPSLOG_DEBUG << "Calculate control on sensor data trigger";
 			auto sensing = get<ISensingActuationIO>();
 			sensing->subscribeOnSensorData(
-					boost::bind(&ManeuverLocalPlanner::onSensorData, this, _1));
+					boost::bind(&ManeuverLocalPlanner::onSensorData, this, boost::placeholders::_1));
 		}
 		else
 		{
