@@ -1,6 +1,6 @@
 {
 	"binary_path": "/usr/local/bin/uavAP/",
-	"config_path": "/usr/local/config/cessna_xplane/",
+	"config_path": "/usr/local/config/avistar_xplane/",
 	"processes": {
 		"flight_control": {
 			"binary": "FlightControl",

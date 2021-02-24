@@ -4,7 +4,7 @@
 	"processes": {
 		"flight_control": {
 			"binary": "FlightControl",
-			"config": "flight_control.json"
+			"config": "flight_control_pid.json"
 		},
 		"mission_control": {
 			"binary": "MissionControl",

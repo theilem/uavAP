@@ -46,6 +46,12 @@ public:
 	void
 	setThrottleLimit(FloatingType maxThrottle);
 
+	void
+	setThrottleOverride(FloatingType throttleOverride);
+
+	void
+	disableThrottleOverride();
+
 	std::map<PIDs, PIDStatus>
 	getPIDStatus() override;
 
@@ -78,6 +84,10 @@ private:
 	std::shared_ptr<AngleConstraint> pitchConstraint_;
 	std::shared_ptr<Control::Constraint<FloatingType>> throttleConstraint_;
 
+	std::shared_ptr<Control::ManualSwitch> throttleSwitch_;
+
+	std::optional<FloatingType> throttleOverride_;
+	FloatingType throttleOverrideValue_;
 };
 
 template<typename Config>
@@ -98,11 +108,12 @@ ManeuverRateCascade::configureParams(Config& c)
 	ParameterRef<AngleConstraint> rollRateConstraint(*rollRateTargetConstraint_,
 			"roll_rate_constraint", true);
 	ParameterRef<AngleConstraint> pitchConstraint(*pitchConstraint_, "pitch_constraint", true);
+	ParameterRef<std::optional<FloatingType>> throttleOverride(throttleOverride_, "throttle_override", false);
 
 	c & rollConstraint;
 	c & rollRateConstraint;
 	c & pitchConstraint;
-
+	c & throttleOverride;
 
 }
 
