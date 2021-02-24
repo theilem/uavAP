@@ -1,0 +1,130 @@
+{
+	"data_handling": {
+		"period": 200,
+		"target": "mission_control"
+	},
+	"local_frame": {
+		"origin": [
+			367826.57,
+			4435393.06,
+			0
+		],
+		"yaw": 0
+	},
+	"global_planner": {
+		"spline": {
+			"tau": 0.6
+		}
+	},
+	"mission_planner": {
+		"custom": {
+			"use_approach": false,
+			"default_velocity": 30,
+			"default_altitude": 318,
+			"missions": {
+				"simple": {
+					"infinite": true,
+					"velocity": 20,
+					"offset": [0,0,318],
+					"waypoints": [
+						{"location": [200,100,0]},
+						{"location": [200,-100,0]},
+						{"location": [-200,-100,0]},
+						{"location": [-200,100,0]}
+					]
+				},
+				"validation": {
+					"infinite": true,
+					"velocity": 20,
+					"offset": [0,0,318],
+					"waypoints": [
+						{"location": [300,150,0]},
+						{"location": [300,-150,0]},
+						{"location": [150,-150,0]},
+						{"location": [-150,-150,50]},
+						{"location": [-300,-150,50]},
+						{"location": [-300,150,50]},
+						{"location": [-150,150,50]},
+						{"location": [150,150,0]}
+					]
+				},
+				"race_track": {
+					"velocity": 30,
+					"infinite": true,
+					"offset": [0,0,318],
+					"waypoints": [
+						{"location": [-5000,1000,0], "direction": [10000,0,0]},
+						{"location": [5000,1000,0], "velocity": 35},
+						{"location": [20000,1000,0], "direction": [10000,0,0]},
+						{"location": [20000,-1000,0], "direction": [-10000,0,0]},
+						{"location": [-5000,-1000,0], "direction": [-10000,0,0]}
+					]
+				},
+				"race_track_staging": {
+					"velocity": 30,
+					"infinite": true,
+					"offset": [0,0,318],
+					"waypoints": [
+						{"location": [-15000,1000,0], "direction": [10000,0,0]},
+						{"location": [0,1000,0], "direction": [10000,0,0]},
+						{"location": [0,-1000,0], "direction": [-10000,0,0]},
+						{"location": [-15000,-1000,0], "direction": [-10000,0,0]}
+					]
+				},
+				"SI_val": {
+					"velocity": 33,
+					"infinite": true,
+					"offset": [0,0,318],
+					"waypoints": [
+						{"location": [-7500,1000,0],"direction": [10000, 0, 0]},
+						{"location": [-5000,1000,0]},
+						{"location": [-3500,1000,130]},
+						{"location": [-2000,1000,130]},
+						{"location": [-500,1000,0]},
+						{"location": [1000,1000,0]},
+						{"location": [2500,1000,-130]},
+						{"location": [4000,1000,-130]},
+						{"location": [5500,1000,0], "velocity": 30},
+						{"location": [7000,1000,0], "velocity": 30},
+						{"location": [8500,1000,130], "velocity": 30},
+						{"location": [10000,1000,130], "velocity": 30},
+						{"location": [11500,1000,0], "velocity": 30},
+						{"location": [13000,1000,0], "velocity": 30},
+						{"location": [14500,1000,-130], "velocity": 30},
+						{"location": [16000,1000,-130], "velocity": 30},
+						{"location": [17500,1000,0], "velocity": 27},
+						{"location": [19000,1000,0], "velocity": 27},
+						{"location": [20500,1000,130], "velocity": 27},
+						{"location": [22000,1000,130], "velocity": 27},
+						{"location": [23500,1000,0], "velocity": 27},
+						{"location": [25000,1000,0], "velocity": 27},
+						{"location": [26500,1000,-130], "velocity": 27},
+						{"location": [28000,1000,-130], "velocity": 27},
+						{"location": [29500,1000,0]},
+						{"location": [32000,1000,0],"direction": [10000, 0, 0]},
+						{"location": [32000,-1000,0],"direction": [-10000, 0, 0]},
+						{"location": [-7500,-1000,0],"direction": [-10000, 0, 0]}
+					]
+				},
+				"SI_short": {
+					"velocity": 30,
+					"infinite": true,
+					"offset": [0,0,318],
+					"waypoints": [
+						{"location": [-7500,1000,0],"direction": [10000, 0, 0]},
+						{"location": [-5000,1000,0]},
+						{"location": [-3500,1000,130]},
+						{"location": [-2000,1000,130]},
+						{"location": [-500,1000,0]},
+						{"location": [2000,1000,0],"direction": [10000, 0, 0]},
+						{"location": [2000,-1000,0],"direction": [-10000, 0, 0]},
+						{"location": [-7500,-1000,0],"direction": [-10000, 0, 0]}
+					]
+				}
+			}
+		}
+	},
+	"data_presentation": {
+		"compress_double": true
+	}
+}
