@@ -56,14 +56,14 @@ Polygon::configure(const Configuration& config)
 Polygon&
 Polygon::fromRectangle(const Rectanguloid& rect)
 {
-	Vector2 major = rotate2Drad(Vector2(rect.majorSideLength, 0.0),
-			rect.majorSideOrientation) / 2;
-	Vector2 minor = rotate2Drad(Vector2(0.0, rect.minorSideLength),
-			rect.majorSideOrientation) / 2;
+	Vector2 major = rotate2Drad(Vector2(rect.majorSideLength(), 0.0),
+			rect.majorSideOrientation()) / 2;
+	Vector2 minor = rotate2Drad(Vector2(0.0, rect.minorSideLength()),
+			rect.majorSideOrientation()) / 2;
 
 	Vector2 center(0, 0);
-	center[0] = rect.center[0];
-	center[1] = rect.center[1];
+	center[0] = rect.center()[0];
+	center[1] = rect.center()[1];
 
 	edges_.push_back(Edge::fromPoints(center + major + minor, center - major + minor));
 	edges_.push_back(Edge::fromPoints(center - major + minor, center - major - minor));

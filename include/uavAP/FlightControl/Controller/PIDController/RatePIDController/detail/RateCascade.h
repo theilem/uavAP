@@ -27,7 +27,6 @@
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_RATEPIDCONTROLLER_DETAIL_RATECASCADE_H_
 
 #include "uavAP/FlightControl/Controller/ControllerConstraint.h"
-#include "uavAP/MissionControl/ManeuverPlanner/Override.h"
 #include "uavAP/FlightControl/Controller/ControlElements/ControlEnvironment.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
@@ -68,9 +67,6 @@ public:
 
 	void
 	evaluate() override;
-
-	void
-	setManeuverOverride(const Override& state);
 
 private:
 

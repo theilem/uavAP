@@ -11,7 +11,7 @@
 
 #include "uavAP/Core/Frames/VehicleOneFrame.h"
 #include "uavAP/API/IAutopilotAPI.h"
-#include "uavAP/API/AggregatableAutopilotAPIParams.h"
+//#include "uavAP/API/AggregatableAutopilotAPIParams.h"
 
 class SensorData;
 

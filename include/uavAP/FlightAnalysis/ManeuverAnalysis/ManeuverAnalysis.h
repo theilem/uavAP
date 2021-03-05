@@ -30,15 +30,12 @@
 #include <iostream>
 #include <fstream>
 
-#include "uavAP/Core/LockTypes.h"
-#include "uavAP/Core/Object/AggregatableObject.hpp"
-#include "uavAP/Core/Object/ObjectHandle.h"
-#include "uavAP/Core/EnumMap.hpp"
-#include "uavAP/Core/IPC/Subscription.h"
+#include <cpsCore/cps_object>
+
 #include "uavAP/Core/SensorData.h"
-#include "uavAP/Core/Runner/IRunnableObject.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightAnalysis/ManeuverAnalysis/ManeuverAnalysisStatus.h"
+#include "uavAP/FlightAnalysis/ManeuverAnalysis/ManeuverAnalysisParams.h"
 
 enum class Maneuvers
 {
@@ -57,7 +54,7 @@ class IPC;
 class IScheduler;
 class DataPresentation;
 
-class ManeuverAnalysis: public AggregatableObject<IPC, IScheduler, DataPresentation>,
+class ManeuverAnalysis: public AggregatableObject<IPC, IScheduler, DataPresentation>, public ConfigurableObject<ManeuverAnalysisParams>,
 		public IRunnableObject
 {
 public:
@@ -67,12 +64,6 @@ public:
 	ManeuverAnalysis();
 
 	~ManeuverAnalysis();
-
-	static std::shared_ptr<ManeuverAnalysis>
-	create(const Configuration& config);
-
-	bool
-	configure(const Configuration& config);
 
 	bool
 	run(RunStage stage) override;

@@ -18,7 +18,7 @@
 namespace
 {
 
-using DataHandlingTestDefaultHelper = StaticHelper<SchedulerFactory,
+using DataHandlingTestDefaultHelper = StaticHelper<MicroSimulator,
 		DataHandling,
 		DataPresentation>;
 
@@ -63,7 +63,7 @@ onPacket(const Packet& packet, std::shared_ptr<DataPresentation> dp)
 
 TEST_CASE("Data Handling Test")
 {
-	Aggregator agg = DataHandlingTestHelper::createAggregation("Core/config/datahandling1.json");
+	Aggregator agg = DataHandlingTestHelper::createAggregation(test_info::test_dir() + "/Core/config/datahandling1.json");
 
 	auto dataHandling = agg.getOne<DataHandling>();
 	auto ipc = agg.getOne<IPC>();
@@ -89,8 +89,10 @@ TEST_CASE("Data Handling Test")
 	{	6,2,1};
 	Packet testPacket = dp->serialize(data);
 	dp->addHeader(testPacket, Content::SENSOR_DATA);
-	scheduler->schedule(std::bind(static_cast<void
-	(Publisher<Packet>::*)(const Packet&)>(&Publisher<Packet>::publish), &pub, testPacket), Milliseconds(50));
+//	scheduler->schedule(std::bind(static_cast<void
+//	(Publisher<Packet>::*)(const Packet&)>(&Publisher<Packet>::publish), &pub, testPacket), Milliseconds(50));
+
+	scheduler->schedule([&testPacket, &pub]{pub.publish(testPacket);}, Milliseconds(50));
 
 	scheduler->simulate(Seconds(10));
 

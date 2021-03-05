@@ -20,8 +20,8 @@
 struct SensorData;
 struct ControllerOutput;
 struct ControllerTarget;
-struct Override;
 struct PIDStatus;
+class OverrideHandler;
 
 
 class ManeuverRateCascade: public ConfigurableObject<ManeuverRateCascadeParams>, public IPIDCascade
@@ -57,11 +57,11 @@ public:
 	void
 	configureParams(Config& c);
 
-	void
-	setManeuverOverride(const Override& override);
-
 	Optional<PIDParams>
 	getPIDParams(const DataRequest& request);
+
+	void
+	registerOverrides(std::shared_ptr<OverrideHandler> overrideHandler);
 
 private:
 
@@ -71,6 +71,7 @@ private:
 	Control::ControlEnvironment controlEnv_;
 
 	std::map<PIDs, std::shared_ptr<Control::PID>> pids_;
+	std::map<ControllerOutputs, std::shared_ptr<Control::Output>> outputs_;
 
 	using AngleConstraint = Control::Constraint<Angle<FloatingType>>;
 

@@ -1,0 +1,29 @@
+{
+	"data_presentation": {
+		"compress_double": true
+	},
+	"comm": {
+		"idc": {
+		}
+	},
+	"network": {
+		"redis":{
+			"sub":{
+				"ground_station": {
+					"host_ip":"127.0.0.1",
+					"auth":"",
+					"port":6379,
+					"channel":"to_uavap"
+				}
+			},
+			"pub":{
+				"ground_station": {
+					"host_ip":"127.0.0.1",
+					"auth":"",
+					"port":6379,
+					"channel":"to_uavgs"
+				}
+			}
+		}
+	}
+}

@@ -1,21 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
 /*
  * EvaluableControlElement.cpp
  *
@@ -60,164 +42,213 @@ Filter::setAlpha(FloatingType alpha)
 }
 
 Output::Output(Element in, FloatingType* out) :
-		in_(in), start_(), waveform_(), out_(out), override_(false), overrideOut_(0), wavelength_(
-				0), phase_(0)
+		in_(in), out_(out)
+//		start_(), waveform_(),  override_(false), overrideOut_(0), wavelength_(
+//		0), phase_(0)
 {
+	saveTrimOverride_ = 0;
+	applyTrimOverride_ = 0;
 }
 
-void
-Output::overrideOutput(FloatingType newOutput)
-{
-	overrideOut_ = newOutput;
-	start_ = Clock::now();
-	override_ = true;
-}
-
-void
-Output::setWaveform(Waveforms waveform)
-{
-	waveform_ = waveform;
-}
-
-void
-Output::setWavelength(FloatingType wavelength)
-{
-	wavelength_ = wavelength;
-}
-
-void
-Output::setPhase(FloatingType phase)
-{
-	phase_ = phase;
-}
-
-void
-Output::disableOverride()
-{
-	override_ = false;
-	start_ = TimePoint();
-	waveform_ = Waveforms::NONE;
-	wavelength_ = 0;
-	phase_ = 0;
-}
+//void
+//Output::overrideOutput(FloatingType newOutput)
+//{
+//	overrideOut_ = newOutput;
+//	start_ = Clock::now();
+//	override_ = true;
+//}
+//
+//void
+//Output::setWaveform(Waveforms waveform)
+//{
+//	waveform_ = waveform;
+//}
+//
+//void
+//Output::setWavelength(FloatingType wavelength)
+//{
+//	wavelength_ = wavelength;
+//}
+//
+//void
+//Output::setPhase(FloatingType phase)
+//{
+//	phase_ = phase;
+//}
+//
+//void
+//Output::disableOverride()
+//{
+//	override_ = false;
+//	start_ = TimePoint();
+//	waveform_ = Waveforms::NONE;
+//	wavelength_ = 0;
+//	phase_ = 0;
+//}
 
 void
 Output::evaluate()
 {
-	*out_ = override_ ? getWaveformOutput() : in_->getValue();
+	outputOverride_ = in_->getValue();
+	if (applyTrimOverride_() != 0.0)
+		*out_ = outputOverride_ + trim_;
+	else
+		*out_ = outputOverride_;
+
+	if (saveTrimOverride_() != 0.0)
+	{
+		trim_ = outputOverride_; //< TODO should this be in_->getValue()?
+	}
 }
 
 FloatingType
 Output::getValue() const
 {
+
 	return in_->getValue();
 }
 
-FloatingType
-Output::getWaveformOutput()
+OverridableValue<FloatingType>&
+Output::getOutputOverridableValue()
 {
-	FloatingType waveformOutput = 0;
-
-	switch (waveform_)
-	{
-	case Waveforms::NONE:
-	{
-		waveformOutput = overrideOut_;
-
-		break;
-	}
-	case Waveforms::SINE:
-	{
-		TimePoint current = Clock::now();
-		FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
-				/ 1000.0;
-		FloatingType period = (2 * M_PI) / wavelength_;
-
-		waveformOutput = overrideOut_ * sin(period * (time + phase_));
-
-		break;
-	}
-	case Waveforms::SQUARE:
-	{
-		TimePoint current = Clock::now();
-		FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
-				/ 1000.0;
-		FloatingType period = (2 * M_PI) / wavelength_;
-		FloatingType sine = sin(period * (time + phase_));
-
-		if (sine > 0)
-		{
-			waveformOutput = overrideOut_;
-		}
-		else if (sine == 0)
-		{
-			waveformOutput = 0;
-		}
-		else if (sine < 0)
-		{
-			waveformOutput = -overrideOut_;
-		}
-
-		break;
-	}
-	case Waveforms::RAMP:
-	{
-		TimePoint current = Clock::now();
-		FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
-				/ 1000.0;
-		FloatingType time_mod = fmod(time + phase_, wavelength_);
-		FloatingType slope = (2 * overrideOut_) / wavelength_;
-		FloatingType intercept = -overrideOut_;
-
-		waveformOutput = slope * time_mod + intercept;
-
-		break;
-	}
-	case Waveforms::SAWTOOTH:
-	{
-		TimePoint current = Clock::now();
-		FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
-				/ 1000.0;
-		FloatingType time_mod = fmod(time + phase_, wavelength_);
-		FloatingType slope = -(2 * overrideOut_) / wavelength_;
-		FloatingType intercept = overrideOut_;
-
-		waveformOutput = slope * time_mod + intercept;
-
-		break;
-	}
-	case Waveforms::TRIANGULAR:
-	{
-		waveformOutput = overrideOut_;
-
-		break;
-	}
-	default:
-	{
-		waveformOutput = overrideOut_;
-
-		break;
-	}
-	}
-
-	return waveformOutput;
+	return outputOverride_;
 }
+
+OverridableValue<FloatingType>&
+Output::getSaveTrimOverridableValue()
+{
+	return saveTrimOverride_;
+}
+
+OverridableValue<FloatingType>&
+Output::getApplyTrimOverridableValue()
+{
+	return applyTrimOverride_;
+}
+//
+//FloatingType
+//Output::getWaveformOutput()
+//{
+//	FloatingType waveformOutput = 0;
+//
+//	switch (waveform_)
+//	{
+//	case Waveforms::NONE:
+//	{
+//		waveformOutput = overrideOut_;
+//
+//		break;
+//	}
+//	case Waveforms::SINE:
+//	{
+//		TimePoint current = Clock::now();
+//		FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
+//				/ 1000.0;
+//		FloatingType period = (2 * M_PI) / wavelength_;
+//
+//		waveformOutput = overrideOut_ * sin(period * (time + phase_));
+//
+//		break;
+//	}
+//	case Waveforms::SQUARE:
+//	{
+//		TimePoint current = Clock::now();
+//		FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
+//				/ 1000.0;
+//		FloatingType period = (2 * M_PI) / wavelength_;
+//		FloatingType sine = sin(period * (time + phase_));
+//
+//		if (sine > 0)
+//		{
+//			waveformOutput = overrideOut_;
+//		}
+//		else if (sine == 0)
+//		{
+//			waveformOutput = 0;
+//		}
+//		else if (sine < 0)
+//		{
+//			waveformOutput = -overrideOut_;
+//		}
+//
+//		break;
+//	}
+//	case Waveforms::RAMP:
+//	{
+//		TimePoint current = Clock::now();
+//		FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
+//				/ 1000.0;
+//		FloatingType time_mod = fmod(time + phase_, wavelength_);
+//		FloatingType slope = (2 * overrideOut_) / wavelength_;
+//		FloatingType intercept = -overrideOut_;
+//
+//		waveformOutput = slope * time_mod + intercept;
+//
+//		break;
+//	}
+//	case Waveforms::SAWTOOTH:
+//	{
+//		TimePoint current = Clock::now();
+//		FloatingType time = std::chrono::duration_cast<Microseconds>(current - start_).count()
+//				/ 1000.0;
+//		FloatingType time_mod = fmod(time + phase_, wavelength_);
+//		FloatingType slope = -(2 * overrideOut_) / wavelength_;
+//		FloatingType intercept = overrideOut_;
+//
+//		waveformOutput = slope * time_mod + intercept;
+//
+//		break;
+//	}
+//	case Waveforms::TRIANGULAR:
+//	{
+//		waveformOutput = overrideOut_;
+//
+//		break;
+//	}
+//	default:
+//	{
+//		waveformOutput = overrideOut_;
+//
+//		break;
+//	}
+//	}
+//
+//	return waveformOutput;
+//}
+//
+//void
+//Output::applyOverride(bool enable, FloatingType value)
+//{
+//	override_ = enable;
+//	overrideOut_ = value;
+//
+//}
 
 PID::PID(Element target, Element current, const PIDParameters& p, Duration* timeDiff) :
 		ConfigurableObject(p), target_(target), current_(current), timeDiff_(timeDiff), targetValue_(
-				0), currentError_(0), integrator_(0), lastError_(0), lastTarget_(0), output_(0), override_(
-				false), overrideTarget_(0)
+		0), currentError_(0), integrator_(0), lastError_(0), lastTarget_(0), output_(0), override_(
+		false), overrideTarget_(0)
 {
 
 }
 
 PID::PID(Element target, Element current, Element derivative, const PIDParameters& p,
-		Duration* timeDiff) :
+		 Duration* timeDiff) :
 		ConfigurableObject(p), target_(target), current_(current), derivative_(derivative), timeDiff_(
-				timeDiff), targetValue_(0), currentError_(0), integrator_(0), lastError_(0), lastTarget_(
-				0), output_(0), override_(false), overrideTarget_(0)
+		timeDiff), targetValue_(0), currentError_(0), integrator_(0), lastError_(0), lastTarget_(
+		0), output_(0), override_(false), overrideTarget_(0)
 {
 
+}
+
+void
+PID::applyOverride(bool enable, FloatingType value)
+{
+	override_ = enable;
+	if (params.isAngle())
+		overrideTarget_ = degToRad(value);
+	else
+		overrideTarget_ = value;
 }
 
 void
@@ -269,7 +300,7 @@ PID::addIntegralControl()
 		return;
 
 	integrator_ += currentError_
-			* std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC;
+				   * std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC;
 
 	if (integrator_ > 0)
 		integrator_ = std::min(integrator_, params.imax());
@@ -291,18 +322,18 @@ PID::addDifferentialControl()
 		FloatingType targetDer = 0;
 
 		if (!std::isnan(lastTarget_) && timeDiff_
-				&& std::chrono::duration_cast<Microseconds>(*timeDiff_).count() > 0.)
+			&& std::chrono::duration_cast<Microseconds>(*timeDiff_).count() > 0.)
 			targetDer = (targetValue_ - lastTarget_)
-					/ (std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC);
+						/ (std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC);
 
 		output_ += params.kd() * (targetDer - derivative_->getValue());
 
 	}
 	else if (!std::isnan(lastError_) && timeDiff_
-			&& std::chrono::duration_cast<Microseconds>(*timeDiff_).count() > 0.)
+			 && std::chrono::duration_cast<Microseconds>(*timeDiff_).count() > 0.)
 	{
 		FloatingType derivative = (currentError_ - lastError_)
-				/ (std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC);
+								  / (std::chrono::duration_cast<Microseconds>(*timeDiff_).count() * MUSEC_TO_SEC);
 		output_ += params.kd() * derivative;
 	}
 }

@@ -3,5 +3,6 @@
 	{
 		"target":"flight_control",
 		"period":100
-	}
+	},
+	"ipc":{}
 }

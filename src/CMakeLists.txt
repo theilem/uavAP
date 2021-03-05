@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
 add_subdirectory(FlightControl)
-#add_subdirectory(FlightAnalysis)
+add_subdirectory(FlightAnalysis)
 add_subdirectory(Core)
 add_subdirectory(MissionControl) 
 add_subdirectory(Communication) 

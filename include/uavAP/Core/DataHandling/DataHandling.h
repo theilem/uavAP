@@ -194,10 +194,8 @@ template<class Object>
 void
 DataHandling::addConfig(Object* obj, Content configContent)
 {
-	std::function<void
-			(const Content&)> func = std::bind(&DataHandling::getConfig<Object>, this,
-											   obj, configContent, std::placeholders::_1);
-	subscribeOnData(Content::REQUEST_CONFIG, func);
+	subscribeOnData<Content>(Content::REQUEST_CONFIG, [this, obj, configContent](const Content& content)
+	{ getConfig<Object>(obj, configContent, content); });
 	subscribeOnData<typename Object::ParamType>(configContent, [obj](const auto& p)
 	{ obj->setParams(p); });
 

@@ -28,7 +28,7 @@
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include "uavAP/FlightControl/Controller/IController.h"
-#include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
+#include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
 #include "cpsCore/Utilities/Scheduler/IScheduler.h"
 #include <memory>
 
@@ -50,7 +50,7 @@ LinearLocalPlanner::run(RunStage stage)
 
 			return true;
 		}
-		if (!isSet<ISensingActuationIO>())
+		if (!isSet<ISensingIO>())
 		{
 			CPSLOG_ERROR << "LinearLocalPlanner: FlightControlData missing";
 
@@ -74,7 +74,7 @@ LinearLocalPlanner::run(RunStage stage)
 		//Directly calculate local plan when sensor data comes in
 		if (params.period() == 0 || !isSet<IScheduler>())
 		{
-			auto sensing = get<ISensingActuationIO>();
+			auto sensing = get<ISensingIO>();
 			sensing->subscribeOnSensorData(std::bind(&LinearLocalPlanner::onSensorData, this, std::placeholders::_1));
 		}
 		else
@@ -227,7 +227,7 @@ LinearLocalPlanner::onSensorData(const SensorData& sd)
 void
 LinearLocalPlanner::update()
 {
-	auto sensing = get<ISensingActuationIO>();
+	auto sensing = get<ISensingIO>();
 
 	if (!sensing)
 	{

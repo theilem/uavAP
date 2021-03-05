@@ -25,7 +25,7 @@
 
 #ifndef UAVAP_MISSIONCONTROL_POLYGON_H_
 #define UAVAP_MISSIONCONTROL_POLYGON_H_
-#include <uavAP/MissionControl/Geofencing/Rectanguloid.h>
+#include <uavAP/Core/Rectanguloid.h>
 #include <cpsCore/Utilities/LinearAlgebra.h>
 #include <cpsCore/Configuration/Configuration.hpp>
 

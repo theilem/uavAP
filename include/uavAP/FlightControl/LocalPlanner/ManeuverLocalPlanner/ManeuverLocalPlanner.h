@@ -11,29 +11,46 @@
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_MANEUVERLOCALPLANNER_MANEUVERLOCALPLANNER_H_
 
 #include <cpsCore/cps_object>
+#include <cpsCore/Utilities/LockTypes.hpp>
 
 #include <uavAP/Core/DataHandling/Content.hpp>
+#include <uavAP/Core/OverrideHandler/OverridableValue.hpp>
 
 #include <uavAP/FlightControl/Controller/ControllerTarget.h>
 #include <uavAP/FlightControl/LocalPlanner/ILocalPlanner.h>
 #include <uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlannerParams.h>
 #include <uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlannerStatus.h>
 #include <uavAP/MissionControl/GlobalPlanner/Trajectory.h>
-#include <uavAP/MissionControl/ManeuverPlanner/Override.h>
 
 class Packet;
+
 struct SensorData;
 
-class ISensingActuationIO;
+class ISensingIO;
+
 class IController;
+
 class IScheduler;
+
 class IPC;
+
 class DataHandling;
+
 class DataPresentation;
 
-class ManeuverLocalPlanner: public ILocalPlanner, public IRunnableObject, public AggregatableObject<
-		ISensingActuationIO, IController, IScheduler, IPC, DataHandling, DataPresentation>, public ConfigurableObject<
-		ManeuverLocalPlannerParams>
+class OverrideHandler;
+
+class ManeuverLocalPlanner : public ILocalPlanner,
+							 public IRunnableObject,
+							 public AggregatableObject<
+									 ISensingIO,
+									 IController,
+									 IScheduler,
+									 IPC,
+									 DataHandling,
+									 DataPresentation,
+									 OverrideHandler>,
+							 public ConfigurableObject<ManeuverLocalPlannerParams>
 {
 public:
 
@@ -66,7 +83,7 @@ private:
 
 	ControllerTarget
 	calculateControllerTarget(const Vector3& position, double heading,
-			std::shared_ptr<IPathSection> section);
+							  std::shared_ptr<IPathSection> section);
 
 	Optional<Trajectory>
 	trajectoryRequest(const DataRequest& request);
@@ -76,9 +93,6 @@ private:
 
 	void
 	onSensorData(const SensorData& sd);
-
-	void
-	onOverridePacket(const Packet& packet);
 
 	void
 	update();
@@ -91,10 +105,18 @@ private:
 	Trajectory trajectory_;
 	PathSectionIterator currentSection_;
 
-	//Overrides
-	Override::LocalPlannerOverrides plannerOverrides_;
-	Override::ControllerTargetOverrides targetOverrides_;
-	Mutex overrideMutex_;
+	OverridableValue<FloatingType> velocityOverride_;
+	OverridableValue<FloatingType> positionXOverride_;
+	OverridableValue<FloatingType> positionYOverride_;
+	OverridableValue<FloatingType> positionZOverride_;
+	OverridableValue<FloatingType> directionXOverride_;
+	OverridableValue<FloatingType> directionYOverride_;
+	OverridableValue<FloatingType> curvatureOverride_;
+	OverridableValue<Angle<FloatingType>> headingOverride_;
+	OverridableValue<FloatingType> climbrateOverride_;
+	OverridableValue<FloatingType> controllerTargetVelocityOverride_;
+	OverridableValue<FloatingType> controllerTargetClimbAngleOverride_;
+	OverridableValue<FloatingType> controllerTargetYawRateOverride_;
 
 };
 

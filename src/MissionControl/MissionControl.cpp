@@ -13,7 +13,7 @@
 int
 main(int argc, char** argv)
 {
-	CPSLogger::instance()->setLogLevel(LogLevel::DEBUG);
+	CPSLogger::instance()->setLogLevel(LogLevel::WARN);
 	CPSLogger::instance()->setModuleName("MissionControl");
 	std::string configPath;
 	if (argc == 2)

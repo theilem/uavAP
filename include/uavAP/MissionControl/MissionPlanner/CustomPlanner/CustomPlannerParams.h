@@ -13,6 +13,7 @@ struct CustomPlannerParams
 {
 	Parameter<FloatingType> defaultVelocity = {{}, "default_velocity", true};
 	Parameter<FloatingType> defaultAltitude = {{}, "default_altitude", true};
+	Parameter<std::string> defaultMission = {"default_mission", "default_mission", false};
 	Parameter<bool> useApproach = {false, "use_approach", false};
 
 	Parameter<std::map<std::string, Mission>> missions = {{}, "missions", true};
@@ -23,6 +24,7 @@ struct CustomPlannerParams
 	{
 		c & defaultVelocity;
 		c & defaultAltitude;
+		c & defaultMission;
 		c & useApproach;
 		c & missions;
 	}

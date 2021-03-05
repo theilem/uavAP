@@ -6,10 +6,10 @@
  */
 
 #include "uavAP/FlightControl/Controller/IController.h"
-#include "uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h"
+#include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
 #include "uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlanner.h"
-#include "uavAP/MissionControl/ManeuverPlanner/Override.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
+#include "uavAP/Core/OverrideHandler/OverrideHandler.h"
 #include <cpsCore/Utilities/Scheduler/IScheduler.h>
 #include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 #include <cpsCore/Utilities/IPC/IPC.h>
@@ -49,68 +49,84 @@ ManeuverLocalPlanner::run(RunStage stage)
 {
 	switch (stage)
 	{
-	case RunStage::INIT:
-	{
-		if (!checkIsSet<IController, ISensingActuationIO, IScheduler, IPC, DataPresentation>())
+		case RunStage::INIT:
 		{
-			CPSLOG_ERROR << "LinearLocalPlanner: Dependency missing";
-			return true;
+			if (!checkIsSet<IController, ISensingIO, IScheduler, IPC, DataPresentation>())
+			{
+				CPSLOG_ERROR << "LinearLocalPlanner: Dependency missing";
+				return true;
+			}
+			if (!isSet<DataHandling>())
+			{
+				CPSLOG_DEBUG << "ManeuverLocalPlanner: DataHandling not set. Debugging disabled.";
+			}
+
+			if (auto oh = get<OverrideHandler>())
+			{
+				oh->registerOverride("local_planner/velocity", velocityOverride_);
+				oh->registerOverride("local_planner/position_x", positionXOverride_);
+				oh->registerOverride("local_planner/position_y", positionYOverride_);
+				oh->registerOverride("local_planner/position_z", positionZOverride_);
+				oh->registerOverride("local_planner/direction_x", directionXOverride_);
+				oh->registerOverride("local_planner/direction_y", directionYOverride_);
+				oh->registerOverride("local_planner/curvature", curvatureOverride_);
+				oh->registerOverride("local_planner/heading", headingOverride_);
+				oh->registerOverride("local_planner/climbrate", climbrateOverride_);
+				oh->registerOverride("controller_target/velocity", controllerTargetVelocityOverride_);
+				oh->registerOverride("controller_target/climb_angle", controllerTargetClimbAngleOverride_);
+				oh->registerOverride("controller_target/yaw_rate", controllerTargetYawRateOverride_);
+			}
+			else
+				CPSLOG_DEBUG << "ManeuverLocalPlanner: OverrideHandler not set. Override disabled.";
+
+
+			break;
 		}
-		if (!isSet<DataHandling>())
+		case RunStage::NORMAL:
 		{
-			CPSLOG_DEBUG << "ManeuverLocalPlanner: DataHandling not set. Debugging disabled.";
+
+			//Directly calculate local plan when sensor data comes in
+			if (params.period() == 0)
+			{
+				CPSLOG_DEBUG << "Calculate control on sensor data trigger";
+				auto sensing = get<ISensingIO>();
+				sensing->subscribeOnSensorData(
+						boost::bind(&ManeuverLocalPlanner::onSensorData, this, boost::placeholders::_1));
+			}
+			else
+			{
+				CPSLOG_DEBUG << "Calculate control with period " << params.period();
+				auto scheduler = get<IScheduler>();
+				scheduler->schedule(std::bind(&ManeuverLocalPlanner::update, this),
+									Milliseconds(params.period()), Milliseconds(params.period()));
+			}
+
+			auto ipc = get<IPC>();
+
+			ipc->subscribeOnPackets("trajectory",
+									std::bind(&ManeuverLocalPlanner::onTrajectoryPacket, this, std::placeholders::_1));
+
+			if (auto dh = get<DataHandling>())
+			{
+				dh->addStatusFunction<ManeuverLocalPlannerStatus>(
+						std::bind(&ManeuverLocalPlanner::getStatus, this),
+						Content::MANEUVER_LOCAL_PLANNER_STATUS);
+				dh->addConfig(this, Content::MANEUVER_LOCAL_PLANNER_PARAMS);
+				dh->addTriggeredStatusFunction<Trajectory, DataRequest>(
+						std::bind(&ManeuverLocalPlanner::trajectoryRequest, this,
+								  std::placeholders::_1), Content::TRAJECTORY, Content::REQUEST_DATA);
+			}
+
+			break;
 		}
-
-		break;
-	}
-	case RunStage::NORMAL:
-	{
-
-		//Directly calculate local plan when sensor data comes in
-		if (params.period() == 0)
+		case RunStage::FINAL:
 		{
-			CPSLOG_DEBUG << "Calculate control on sensor data trigger";
-			auto sensing = get<ISensingActuationIO>();
-			sensing->subscribeOnSensorData(
-					boost::bind(&ManeuverLocalPlanner::onSensorData, this, boost::placeholders::_1));
+			break;
 		}
-		else
+		default:
 		{
-			CPSLOG_DEBUG << "Calculate control with period " << params.period();
-			auto scheduler = get<IScheduler>();
-			scheduler->schedule(std::bind(&ManeuverLocalPlanner::update, this),
-					Milliseconds(params.period()), Milliseconds(params.period()));
+			break;
 		}
-
-		auto ipc = get<IPC>();
-
-		ipc->subscribeOnPackets("trajectory",
-				std::bind(&ManeuverLocalPlanner::onTrajectoryPacket, this, std::placeholders::_1));
-
-		ipc->subscribeOnPackets("override",
-				std::bind(&ManeuverLocalPlanner::onOverridePacket, this, std::placeholders::_1));
-
-		if (auto dh = get<DataHandling>())
-		{
-			dh->addStatusFunction<ManeuverLocalPlannerStatus>(
-					std::bind(&ManeuverLocalPlanner::getStatus, this),
-					Content::MANEUVER_LOCAL_PLANNER_STATUS);
-			dh->addConfig(this, Content::MANEUVER_LOCAL_PLANNER_PARAMS);
-			dh->addTriggeredStatusFunction<Trajectory, DataRequest>(
-					std::bind(&ManeuverLocalPlanner::trajectoryRequest, this,
-							std::placeholders::_1), Content::TRAJECTORY, Content::REQUEST_DATA);
-		}
-
-		break;
-	}
-	case RunStage::FINAL:
-	{
-		break;
-	}
-	default:
-	{
-		break;
-	}
 	}
 	return false;
 }
@@ -134,7 +150,7 @@ ManeuverLocalPlanner::createLocalPlan(const Vector3& position, double heading, b
 		safety = true;
 	}
 
-	Lock plannerLock(overrideMutex_);
+//	Lock plannerLock(overrideMutex_);
 
 	if (safety)
 	{
@@ -148,14 +164,14 @@ ManeuverLocalPlanner::createLocalPlan(const Vector3& position, double heading, b
 	}
 
 	//Do control overrides
-	if (auto it = findInMap(targetOverrides_, ControllerTargets::VELOCITY))
-		controllerTarget_.velocity = it->second;
-	if (auto it = findInMap(targetOverrides_, ControllerTargets::CLIMB_ANGLE))
-		controllerTarget_.climbAngle = it->second;
-	if (auto it = findInMap(targetOverrides_, ControllerTargets::YAW_RATE))
-		controllerTarget_.yawRate = it->second;
+	controllerTargetVelocityOverride_ = controllerTarget_.velocity;
+	controllerTargetClimbAngleOverride_ = controllerTarget_.climbAngle;
+	controllerTargetYawRateOverride_ = controllerTarget_.yawRate;
 
-	plannerLock.unlock();
+	controllerTarget_.velocity = controllerTargetVelocityOverride_;
+	controllerTarget_.climbAngle = controllerTargetClimbAngleOverride_;
+	controllerTarget_.yawRate = controllerTargetYawRateOverride_;
+
 
 //	controllerTarget_.sequenceNr = seqNum;
 	status_.climbAngleTarget = controllerTarget_.climbAngle;
@@ -254,70 +270,53 @@ ManeuverLocalPlanner::nextSection()
 
 ControllerTarget
 ManeuverLocalPlanner::calculateControllerTarget(const Vector3& position, double heading,
-		std::shared_ptr<IPathSection> section)
+												std::shared_ptr<IPathSection> section)
 {
 	ControllerTarget controllerTarget;
 
-	double vel = section->getVelocity();
+	velocityOverride_ = section->getVelocity();
 
-	if (auto it = findInMap(plannerOverrides_, LocalPlannerTargets::VELOCITY))
-		vel = it->second;
+	controllerTarget.velocity = velocityOverride_;
+	Vector3 positionTarget = section->getPositionDeviation() + position;
 
-	controllerTarget.velocity = vel;
-	auto positionDeviation = section->getPositionDeviation();
+	positionXOverride_ = positionTarget[0];
+	positionYOverride_ = positionTarget[1];
+	positionZOverride_ = positionTarget[2];
 
-	if (auto it = findInMap(plannerOverrides_, LocalPlannerTargets::POSITION_X))
-		positionDeviation[0] = it->second - position[0];
-	if (auto it = findInMap(plannerOverrides_, LocalPlannerTargets::POSITION_Y))
-		positionDeviation[1] = it->second - position[1];
-	if (auto it = findInMap(plannerOverrides_, LocalPlannerTargets::POSITION_Z))
-		positionDeviation[2] = it->second - position[2];
+	Vector3 positionDeviation = Vector3(positionXOverride_(), positionYOverride_(), positionZOverride_()) - position;
 
 	// Climb Rate
 	double slope = section->getSlope();
-	double climbRate = vel * slope * sqrt(1 / (1 + slope * slope))
-			+ params.kAltitude() * positionDeviation.z();
+	double climbRate = velocityOverride_ * slope * sqrt(1 / (1 + slope * slope))
+					   + params.kAltitude() * positionDeviation.z();
 
-	if (auto it = findInMap(plannerOverrides_, LocalPlannerTargets::SLOPE))
-	{
-		//Override climbrate, shall not approach altitude
-		double slope = it->second;
-		climbRate = vel * slope * sqrt(1 / (1 + slope * slope));
-	}
-
-	if (auto it = findInMap(plannerOverrides_, LocalPlannerTargets::CLIMB_RATE))
-		climbRate = it->second;
-
-	climbRate = climbRate > vel ? vel : climbRate < -vel ? -vel : climbRate;
+	climbrateOverride_ = std::clamp<FloatingType>(climbRate, -velocityOverride_, velocityOverride_);
 
 	//Climb angle
-	controllerTarget.climbAngle = asin(climbRate / vel);
+	controllerTarget.climbAngle = asin(climbrateOverride_() / velocityOverride_());
 
 	// Heading
 	Vector3 direction = section->getDirection();
-	if (auto it = findInMap(plannerOverrides_, LocalPlannerTargets::DIRECTION_X))
-		direction[0] = it->second;
-	if (auto it = findInMap(plannerOverrides_, LocalPlannerTargets::DIRECTION_Y))
-		direction[1] = it->second;
-	if (auto it = findInMap(plannerOverrides_, LocalPlannerTargets::DIRECTION_Z))
-		direction[2] = it->second;
 
 	Vector2 directionTarget = params.kConvergence() * positionDeviation.head(2)
-			+ direction.head(2).normalized();
-	double headingTarget = headingFromENU(directionTarget);
+							  + direction.head(2).normalized();
 
-	double curvature = section->getCurvature();
-	if (auto it = findInMap(plannerOverrides_, LocalPlannerTargets::HEADING))
-	{
-		headingTarget = it->second;
-		curvature = 0;
-	}
+	directionXOverride_ = directionTarget[0];
+	directionYOverride_ = directionTarget[1];
 
-	double headingError = boundAngleRad(headingTarget - heading);
+	directionTarget = Vector2(directionXOverride_(), directionYOverride_());
+
+
+	headingOverride_ = Angle<FloatingType>::fromRad(headingFromENU(directionTarget));
+
+	curvatureOverride_ = section->getCurvature();
+
+
+	double headingError = boundAngleRad(headingOverride_()() - heading);
 
 	// Yaw Rate
 
-	controllerTarget.yawRate = vel * curvature + params.kYawRate() * headingError;
+	controllerTarget.yawRate = velocityOverride_() * curvatureOverride_() + params.kYawRate() * headingError;
 
 	return controllerTarget;
 }
@@ -349,28 +348,28 @@ ManeuverLocalPlanner::onSensorData(const SensorData& sd)
 
 	createLocalPlan(position, heading, hasFix);
 }
-
-void
-ManeuverLocalPlanner::onOverridePacket(const Packet& packet)
-{
-	auto dp = get<DataPresentation>();
-	if (!dp)
-	{
-		CPSLOG_ERROR << "DataPresentation missing";
-		return;
-	}
-
-	auto override = dp->deserialize<Override>(packet);
-
-	std::unique_lock<std::mutex> plannerLock(overrideMutex_);
-	plannerOverrides_ = override.localPlanner;
-	targetOverrides_ = override.controllerTarget;
-}
+//
+//void
+//ManeuverLocalPlanner::onOverridePacket(const Packet& packet)
+//{
+//	auto dp = get<DataPresentation>();
+//	if (!dp)
+//	{
+//		CPSLOG_ERROR << "DataPresentation missing";
+//		return;
+//	}
+//
+//	auto override = dp->deserialize<Override>(packet);
+//
+//	std::unique_lock<std::mutex> plannerLock(overrideMutex_);
+//	plannerOverrides_ = override.localPlanner;
+//	targetOverrides_ = override.controllerTarget;
+//}
 
 void
 ManeuverLocalPlanner::update()
 {
-	auto sensing = get<ISensingActuationIO>();
+	auto sensing = get<ISensingIO>();
 
 	if (!sensing)
 	{

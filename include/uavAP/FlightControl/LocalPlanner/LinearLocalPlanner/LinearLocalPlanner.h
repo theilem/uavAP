@@ -40,14 +40,14 @@
 
 class IScheduler;
 class IController;
-class ISensingActuationIO;
+class ISensingIO;
 class Packet;
 
 struct SensorData;
 struct ControllerTarget;
 
 class LinearLocalPlanner : public ILocalPlanner, public IRunnableObject, public AggregatableObject<
-		ISensingActuationIO, IController, IScheduler>, public ConfigurableObject<
+		ISensingIO, IController, IScheduler>, public ConfigurableObject<
 		LinearLocalPlannerParams>
 {
 public:

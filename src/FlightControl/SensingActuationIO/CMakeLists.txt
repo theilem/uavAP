@@ -18,4 +18,5 @@
 #-------------------------------------------------------------------------------
 set(FLIGHT_CONTROL_SRC 	${FLIGHT_CONTROL_SRC}
 						${CMAKE_CURRENT_SOURCE_DIR}/SensingActuationIO.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/SensingIO.cpp
 						PARENT_SCOPE)

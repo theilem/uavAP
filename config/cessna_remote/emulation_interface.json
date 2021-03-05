@@ -24,5 +24,8 @@
 	"emulation_direct_interface":{
 		"sensor_data_target":"sensor_data",
 		"controller_output_target":"controller_output"
+	},
+	"data_presentation": {
+		"compress_double": true
 	}
 }

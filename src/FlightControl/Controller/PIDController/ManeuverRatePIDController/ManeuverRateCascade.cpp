@@ -5,12 +5,12 @@
  *      Author: mirco
  */
 #include <uavAP/Core/SensorData.h>
+#include <uavAP/Core/OverrideHandler/OverrideHandler.h>
 #include <uavAP/FlightControl/Controller/ControlElements/ControlElements.h>
 #include <uavAP/FlightControl/Controller/ControlElements/EvaluableControlElements.h>
 #include <uavAP/FlightControl/Controller/ControllerTarget.h>
 #include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
 #include <uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRateCascade.h>
-#include <uavAP/MissionControl/ManeuverPlanner/Override.h>
 #include <cmath>
 
 ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerTarget& target,
@@ -98,6 +98,10 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	pids_.insert(std::make_pair(PIDs::ROLL, rollPID));
 	pids_.insert(std::make_pair(PIDs::ROLL_RATE, rollRatePID));
 
+	outputs_.insert(std::make_pair(ControllerOutputs::PITCH, pitchOut));
+	outputs_.insert(std::make_pair(ControllerOutputs::ROLL, rollOut));
+	outputs_.insert(std::make_pair(ControllerOutputs::THROTTLE, throttleOut));
+
 }
 
 bool
@@ -162,18 +166,26 @@ ManeuverRateCascade::yawrateToRoll(FloatingType yawrate, FloatingType airspeed)
 	return -std::atan2(airspeed * yawrate, 9.81);
 }
 
+
 void
-ManeuverRateCascade::setManeuverOverride(const Override& override)
+ManeuverRateCascade::registerOverrides(std::shared_ptr<OverrideHandler> overrideHandler)
 {
-	for (auto& it : pids_)
-		it.second->disableOverride();
-
-	for (const auto& it : override.pid)
+	for (const auto& it:pids_)
 	{
-		if (auto pid = findInMap(pids_, it.first))
-			pid->second->overrideTarget(it.second);
+		overrideHandler->registerOverride("pid/" + EnumMap<PIDs>::convert(it.first), [it](bool enable, FloatingType val)
+		{ it.second->applyOverride(enable, val); });
 	}
-
+	for (const auto& it:outputs_)
+	{
+		overrideHandler->registerOverride("output/" + EnumMap<ControllerOutputs>::convert(it.first),
+										  it.second->getOutputOverridableValue());
+		overrideHandler->registerOverride("save_trim/" + EnumMap<ControllerOutputs>::convert(it.first),
+										  it.second->getSaveTrimOverridableValue());
+		overrideHandler->registerOverride("apply_trim/" + EnumMap<ControllerOutputs>::convert(it.first),
+										  it.second->getApplyTrimOverridableValue());
+//		overrideHandler->registerOverride("output/" + EnumMap<ControllerOutputs>::convert(it.first), [it](bool enable, FloatingType val)
+//		{ it.second->applyOverride(enable, val); });
+	}
 }
 
 Optional<PIDParams>

@@ -43,9 +43,14 @@ CustomPlanner::run(RunStage stage)
 			defaultMission.infinite = true;
 			defaultMission.waypoints = {centerWP};
 
-			auto it = params.missions().insert(std::make_pair("default_mission", defaultMission));
-			if (it.second)
-				currentMission_ = it.first;
+			auto defIt = params.missions().insert(std::make_pair("default_mission", defaultMission));
+
+			auto it = params.missions().find(params.defaultMission());
+
+			if (it == params.missions().end())
+				currentMission_ = defIt.first;
+			else
+				currentMission_ = it;
 
 			break;
 		}

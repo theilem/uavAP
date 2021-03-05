@@ -23,7 +23,8 @@
  *      Author: mircot
  */
 
-#include "uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h"
+#include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
+#include "uavAP/FlightControl/SensingActuationIO/IActuationIO.h"
 #include "uavAP/FlightControl/Controller/PIDController/RatePIDController/detail/RateCascade.h"
 #include "uavAP/FlightControl/Controller/PIDController/RatePIDController/RatePIDController.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
@@ -60,7 +61,7 @@ RatePIDController::run(RunStage stage)
 	{
 	case RunStage::INIT:
 	{
-		if (!checkIsSet<ISensingActuationIO, IScheduler, IPC>())
+		if (!checkIsSet<ISensingIO, IActuationIO, IScheduler, IPC>())
 		{
 			CPSLOG_ERROR << "RatePIDController: missing dependencies";
 			return true;
@@ -79,10 +80,6 @@ RatePIDController::run(RunStage stage)
 	}
 	case RunStage::NORMAL:
 	{
-		auto ipc = get<IPC>();
-		overrideSubscription_ = ipc->subscribeOnPackets("override",
-				std::bind(&RatePIDController::onOverridePacket, this, std::placeholders::_1));
-
 		if (!overrideSubscription_.connected())
 		{
 			CPSLOG_WARN << "RatePIDController: maneuver activation subscription failed";
@@ -97,10 +94,6 @@ RatePIDController::run(RunStage stage)
 					std::bind(&RatePIDController::tunePID, this, std::placeholders::_1));
 		}
 
-		break;
-	}
-	case RunStage::FINAL:
-	{
 		break;
 	}
 	default:
@@ -134,9 +127,10 @@ RatePIDController::getCascade()
 void
 RatePIDController::calculateControl()
 {
-	auto sensAct = get<ISensingActuationIO>();
+	auto sensAct = get<ISensingIO>();
+	auto actIo = get<IActuationIO>();
 
-	if (!sensAct)
+	if (!sensAct || !actIo)
 	{
 		CPSLOG_ERROR << "RatePIDController: Failed to Locate FlightControlData";
 		return;
@@ -163,27 +157,12 @@ RatePIDController::calculateControl()
 
 	targetLock.unlock();
 
-	sensAct->setControllerOutput(controllerOutput_);
+	actIo->setControllerOutput(controllerOutput_);
 	controllerOutputPublisher_.publish(controllerOutput_);
 
 	if (auto dp = get<DataPresentation>())
 	{
 		pidStatiPublisher_.publish(dp->serialize(pidCascade_->getPIDStatus()));
-	}
-	else
-	{
-		CPSLOG_ERROR << "RatePIDController: Data Presentation Missing.";
-	}
-}
-
-void
-RatePIDController::onOverridePacket(const Packet& packet)
-{
-	if (auto dp = get<DataPresentation>())
-	{
-		auto override = dp->deserialize<Override>(packet);
-		LockGuard lock(controllerTargetMutex_);
-		pidCascade_->setManeuverOverride(override);
 	}
 	else
 	{

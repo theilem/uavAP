@@ -1,0 +1,5 @@
+set(FLIGHT_ANALYSIS_SRC		${FLIGHT_ANALYSIS_SRC}
+		${CMAKE_CURRENT_SOURCE_DIR}/Maneuver.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/ManeuverPlanner.cpp
+						PARENT_SCOPE)
+						

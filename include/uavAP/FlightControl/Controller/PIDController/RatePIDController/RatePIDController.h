@@ -44,7 +44,9 @@ class IScheduler;
 
 class IPC;
 
-class ISensingActuationIO;
+class ISensingIO;
+
+class IActuationIO;
 
 class DataHandling;
 
@@ -55,7 +57,7 @@ class DataPresentation;
 
 class RatePIDController
 		: public IPIDController,
-		  public AggregatableObject<ISensingActuationIO, IScheduler, DataHandling, IPC, DataPresentation>,
+		  public AggregatableObject<ISensingIO, IActuationIO, IScheduler, DataHandling, IPC, DataPresentation>,
 		  public IRunnableObject
 {
 public:
@@ -86,9 +88,6 @@ private:
 
 	void
 	calculateControl();
-
-	void
-	onOverridePacket(const Packet& packet);
 
 	void
 	tunePID(const PIDTuning& params);

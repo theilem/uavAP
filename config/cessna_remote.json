@@ -13,6 +13,14 @@
 		"communication": {
 			"binary": "Communication",
 			"config": "communication.json"
+		},
+		"flight_analysis": {
+			"binary": "FlightAnalysis",
+			"config": "flight_analysis.json"
+		},
+		"emulation_interface": {
+			"binary": "EmulationInterfaceSync",
+			"config": "emulation_interface.json"
 		}
 	}
 }

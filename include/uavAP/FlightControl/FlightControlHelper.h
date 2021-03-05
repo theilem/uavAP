@@ -18,23 +18,27 @@
 #include "uavAP/FlightControl/ThrottleLimiter/ThrottleLimiter.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
 #include "uavAP/FlightControl/LocalPlanner/LocalPlannerFactory.h"
-#include "uavAP/FlightControl/SensingActuationIO/SensingActuationIOFactory.h"
+#include <uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h>
+#include "uavAP/FlightControl/Safety/OverrideSafety.h"
 
 #include <cpsCore/Framework/StaticHelper.h>
+#include "uavAP/Core/OverrideHandler/OverrideHandler.h"
 
 using FlightControlDefaults = StaticHelper<SchedulerFactory,
 		TimeProviderFactory,
 		IPC,
 		DataPresentation,
-		SignalHandler
+		SignalHandler,
+		SensingActuationIO
 		>;
 
 using FlightControlHelper = StaticHelper<FlightControlDefaults,
-		SensingActuationIOFactory,
 		DataHandling,
 		ControllerFactory,
 		LocalPlannerFactory,
-		ThrottleLimiter
+		ThrottleLimiter,
+		OverrideHandler,
+		OverrideSafety
 		>;
 
 #endif /* UAVAP_FLIGHTCONTROL_FLIGHTCONTROLHELPER_H_ */

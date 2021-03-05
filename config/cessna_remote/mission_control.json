@@ -14,7 +14,7 @@
 			4435393.06,
 			168
 		],
-		"yaw": 0
+		"yaw": 47
 	},
 	"global_planner": {
 		"spline": {
@@ -26,6 +26,7 @@
 			"use_approach": false,
 			"default_velocity": 60,
 			"default_altitude": 1500,
+			"default_mission": "simple",
 			"missions": {
 				"simple": {
 					"velocity": 60,

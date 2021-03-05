@@ -1,21 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
 /*
  * EvaluableControlElement.h
  *
@@ -34,6 +16,7 @@
 
 #include "uavAP/FlightControl/Controller/ControlElements/IEvaluableControlElement.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
+#include "uavAP/Core/OverrideHandler/OverridableValue.hpp"
 
 struct PIDStatus;
 
@@ -75,39 +58,29 @@ public:
 	Output(Element in, FloatingType* out);
 
 	void
-	overrideOutput(FloatingType newOutput);
-
-	void
-	setWaveform(Waveforms waveform);
-
-	void
-	setWavelength(FloatingType wavelength);
-
-	void
-	setPhase(FloatingType phase);
-
-	void
-	disableOverride();
-
-	void
 	evaluate() override;
 
 	FloatingType
 	getValue() const override;
 
+	OverridableValue<FloatingType>&
+	getOutputOverridableValue();
+
+	OverridableValue<FloatingType>&
+	getSaveTrimOverridableValue();
+
+	OverridableValue<FloatingType>&
+	getApplyTrimOverridableValue();
+
 private:
 
-	FloatingType
-	getWaveformOutput();
 
 	Element in_;
-	TimePoint start_;
-	Waveforms waveform_;
 	FloatingType* out_;
-	bool override_;
-	FloatingType overrideOut_;
-	FloatingType wavelength_;
-	FloatingType phase_;
+	OverridableValue<FloatingType> outputOverride_;
+	OverridableValue<FloatingType> saveTrimOverride_;
+	OverridableValue<FloatingType> applyTrimOverride_;
+	FloatingType trim_;
 };
 
 struct PIDParameters
@@ -117,6 +90,7 @@ struct PIDParameters
 	Parameter<FloatingType> kd = {0, "kd", false};
 	Parameter<FloatingType> imax = {std::numeric_limits<FloatingType>::max(), "imax", false};
 	Parameter<FloatingType> ff = {0, "ff", false};
+	Parameter<bool> isAngle = {false, "is_angle", false};
 
 	template <typename Config>
 	inline void
@@ -127,6 +101,7 @@ struct PIDParameters
 		c & kd;
 		c & imax;
 		c & ff;
+		c & isAngle;
 	}
 };
 
@@ -138,6 +113,9 @@ public:
 
 	PID(Element target, Element current, Element differential, const PIDParameters& params,
 			Duration* timeDiff);
+
+	void
+	applyOverride(bool enable, FloatingType value);
 
 	void
 	overrideTarget(FloatingType newTarget);

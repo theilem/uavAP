@@ -45,5 +45,7 @@ main(int argc, char** argv)
 	}
 
 	sched->startSchedule();
+
+	agg.cleanUp();
 	return 0;
 }

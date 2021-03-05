@@ -1,0 +1,161 @@
+{
+	"data_handling": {
+		"target": "flight_analysis",
+		"period": 200
+	},
+	"maneuver_planner": {
+		"period": 10,
+		"maneuver_sets": {
+			"roll_maneuver": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"pid/roll": 30.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					}
+				]
+			},
+			"get_trim": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"pid/roll": 0.0,
+							"pid/pitch": 0.0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 5000,
+								"sensor_values": {
+									"attitude_x": 0.01,
+									"attitude_y": 0.01
+								}
+							}
+						}
+					}
+				]
+			},
+			"stall_speed": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 1500.0,
+							"local_planner/velocity": 50.0,
+							"pid/roll": 0.0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 5000,
+								"sensor_values": {
+									"attitude_x": 0.01,
+									"attitude_y": 0.01,
+									"position_z": 5
+								}
+							}
+						}
+					},
+					{
+						"overrides": {
+							"local_planner/position_z": 1500.0,
+							"pid/roll": 0.0,
+							"output/throttle": -1.0
+						},
+						"transition": {
+							"sensor_data": {
+								"sensor": "ground_speed",
+								"use_tolerance": false,
+								"relational": "<",
+								"threshold": 40
+							}
+						}
+					},
+					{
+						"overrides": {
+							"local_planner/position_z": 1500.0,
+							"pid/roll": 0.0,
+							"output/throttle": -1.0
+						},
+						"transition": {
+							"sensor_data": {
+								"sensor": "angular_rate_y",
+								"use_tolerance": false,
+								"relational": "<",
+								"threshold": -10
+							}
+						}
+					},
+					{
+						"override": {
+							"output/roll": 0.0,
+							"output/pitch": 0.0,
+							"output/yaw": 0.0,
+							"output/throttle": -1.0
+						},
+						"transition": {
+							"sensor_data": {
+								"sensor": "position_z",
+								"use_tolerance": false,
+								"relational": "<",
+								"threshold": 1300
+							}
+						}
+					}
+				]
+			},
+			"singlet_roll_R_P500_A05": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 1500.0,
+							"local_planner/velocity": 60.0,
+							"pid/roll": 0.0,
+							"save_trim/pitch": 1
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 5000,
+								"sensor_values": {
+									"attitude_x": 0.01,
+									"attitude_y": 0.01,
+									"position_z": 5
+								}
+							}
+						}
+					},
+					{
+						"overrides": {
+							"local_planner/velocity": 60.0,
+							"output/roll": 0.5,
+							"output/pitch": 0.0,
+							"output/yaw": 0.0,
+							"apply_trim/pitch": 1
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					},
+					{
+						"overrides": {
+							"local_planner/velocity": 60.0,
+							"output/roll": 0.0,
+							"output/pitch": 0.0,
+							"output/yaw": 0.0,
+							"apply_trim/pitch": 1
+						},
+						"transition": {
+							"duration": {
+								"duration": 2000
+							}
+						}
+					}
+				]
+			}
+		}
+	}
+}

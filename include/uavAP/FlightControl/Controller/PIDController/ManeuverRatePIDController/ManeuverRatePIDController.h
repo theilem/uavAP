@@ -21,15 +21,15 @@
 #include <uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRatePIDControllerParams.h>
 
 class IScheduler;
-class ISensingActuationIO;
+class ISensingIO;
+class IActuationIO;
 class DataHandling;
-class IPC;
-class DataPresentation;
 class Packet;
+class OverrideHandler;
 struct PIDTuning;
 
-class ManeuverRatePIDController: public AggregatableObject<IScheduler, ISensingActuationIO,
-		DataHandling, IPC, DataPresentation>,
+class ManeuverRatePIDController: public AggregatableObject<IScheduler, ISensingIO, IActuationIO,
+		DataHandling, OverrideHandler>,
 		public ConfigurableObject<ManeuverRatePIDControllerParams>,
 		public IRunnableObject,
 		public IPIDController
@@ -62,9 +62,6 @@ public:
 private:
 
 	void
-	onOverridePacket(const Packet& packet);
-
-	void
 	tunePID(const PIDTuning& tune);
 
 	Mutex cascadeMutex_;
@@ -73,8 +70,6 @@ private:
 	SensorData sensorData_;
 	ControllerTarget target_;
 	ControllerOutput output_;
-
-	Subscription overrideSubscription_;
 
 };
 

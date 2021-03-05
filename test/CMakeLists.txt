@@ -3,6 +3,7 @@ set(TEST_SRCS Test.cpp
 
 add_subdirectory(API)
 add_subdirectory(Core)
+add_subdirectory(FlightAnalysis)
 #add_subdirectory(FlightControl)
 #add_subdirectory(Math)
 

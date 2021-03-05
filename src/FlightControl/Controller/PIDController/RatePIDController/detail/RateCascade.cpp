@@ -324,61 +324,61 @@ RateCascade::evaluate()
 
 	controlEnv_.evaluate();
 }
-
-void
-RateCascade::setManeuverOverride(const Override& override)
-{
-	for (auto& it : pids_)
-	{
-		it.second->disableOverride();
-	}
-
-	for (auto& it : outputs_)
-	{
-		it.second->disableOverride();
-	}
-
-	for (auto& it : constraints_)
-	{
-		it.second->disableOverride();
-	}
-
-	if (override.isEmpty())
-	{
-		return;
-	}
-
-	for (const auto& it : override.pid)
-	{
-		if (auto pid = findInMap(pids_, it.first))
-		{
-			pid->second->overrideTarget(it.second);
-		}
-	}
-
-	for (const auto& it : override.waveform)
-	{
-		if (auto out = findInMap(outputWaveforms_, it.first))
-		{
-			out->second->setWaveform(it.second);
-			out->second->setWavelength(override.wavelength);
-			out->second->setPhase(override.phase);
-		}
-	}
-
-	for (const auto& it : override.output)
-	{
-		if (auto out = findInMap(outputs_, it.first))
-		{
-			out->second->overrideOutput(it.second);
-		}
-	}
-
-	for (const auto& it : override.constraint)
-	{
-		if (auto constraint = findInMap(constraints_, it.first))
-		{
-			constraint->second->overrideConstraintValue(it.second);
-		}
-	}
-}
+//
+//void
+//RateCascade::setManeuverOverride(const Override& override)
+//{
+//	for (auto& it : pids_)
+//	{
+//		it.second->disableOverride();
+//	}
+//
+//	for (auto& it : outputs_)
+//	{
+//		it.second->disableOverride();
+//	}
+//
+//	for (auto& it : constraints_)
+//	{
+//		it.second->disableOverride();
+//	}
+//
+//	if (override.isEmpty())
+//	{
+//		return;
+//	}
+//
+//	for (const auto& it : override.pid)
+//	{
+//		if (auto pid = findInMap(pids_, it.first))
+//		{
+//			pid->second->overrideTarget(it.second);
+//		}
+//	}
+//
+//	for (const auto& it : override.waveform)
+//	{
+//		if (auto out = findInMap(outputWaveforms_, it.first))
+//		{
+//			out->second->setWaveform(it.second);
+//			out->second->setWavelength(override.wavelength);
+//			out->second->setPhase(override.phase);
+//		}
+//	}
+//
+//	for (const auto& it : override.output)
+//	{
+//		if (auto out = findInMap(outputs_, it.first))
+//		{
+//			out->second->overrideOutput(it.second);
+//		}
+//	}
+//
+//	for (const auto& it : override.constraint)
+//	{
+//		if (auto constraint = findInMap(constraints_, it.first))
+//		{
+//			constraint->second->overrideConstraintValue(it.second);
+//		}
+//	}
+//}
