@@ -8,19 +8,22 @@
 	},
 	"network": {
 		"redis":{
+			"hosts": {
+				"localhost": {
+					"ip": "127.0.0.1",
+					"auth": "",
+					"port": 6379
+				}
+			},
 			"sub":{
 				"ground_station": {
-					"host_ip":"127.0.0.1",
-					"auth":"",
-					"port":6379,
+					"host": "localhost",
 					"channel":"to_uavap"
 				}
 			},
 			"pub":{
 				"ground_station": {
-					"host_ip":"127.0.0.1",
-					"auth":"",
-					"port":6379,
+					"host": "localhost",
 					"channel":"to_uavgs"
 				}
 			}

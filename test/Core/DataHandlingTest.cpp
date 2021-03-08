@@ -9,6 +9,7 @@
 #include <uavAP/Core/DataHandling/Content.hpp>
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/Core/DataHandling/DataHandling.h>
+#include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 #include <functional>
 #include <cpsCore/Utilities/Scheduler/MicroSimulator.h>
 #include <cpsCore/Synchronization/SimpleRunner.h>

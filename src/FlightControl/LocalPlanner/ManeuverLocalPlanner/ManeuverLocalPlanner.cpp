@@ -284,6 +284,7 @@ ManeuverLocalPlanner::calculateControllerTarget(const Vector3& position, double 
 	positionZOverride_ = positionTarget[2];
 
 	Vector3 positionDeviation = Vector3(positionXOverride_(), positionYOverride_(), positionZOverride_()) - position;
+	double distance = positionDeviation.norm();
 
 	// Climb Rate
 	double slope = section->getSlope();
@@ -309,7 +310,10 @@ ManeuverLocalPlanner::calculateControllerTarget(const Vector3& position, double 
 
 	headingOverride_ = Angle<FloatingType>::fromRad(headingFromENU(directionTarget));
 
-	curvatureOverride_ = section->getCurvature();
+	if (distance > params.yawRateDistanceThreshold())
+		curvatureOverride_ = 0;
+	else
+		curvatureOverride_ = section->getCurvature();
 
 
 	double headingError = boundAngleRad(headingOverride_()() - heading);

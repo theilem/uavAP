@@ -22,12 +22,12 @@ TEST_CASE("General ApExtTest")
 	CHECK_FALSE(agg.empty());
 	CHECK(agg.getOne<IScheduler>());
 	CHECK(agg.getOne<ApExtManager>());
-	std::this_thread::sleep_for(Milliseconds(10));
+	std::this_thread::sleep_for(Milliseconds(1));
 	REQUIRE(ap_ext_teardown() == 0);
 
 	//Create and kill again
 	REQUIRE(ap_ext_setup() == 0);
-	std::this_thread::sleep_for(Milliseconds(10));
+	std::this_thread::sleep_for(Milliseconds(1));
 	REQUIRE(ap_ext_teardown() == 0);
 
 }
