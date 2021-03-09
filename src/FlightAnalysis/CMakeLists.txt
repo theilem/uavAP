@@ -7,6 +7,7 @@ set(FLIGHT_ANALYSIS_SRC)
 add_subdirectory (ManeuverPlanner)
 #add_subdirectory (WindAnalysis)
 add_subdirectory (Condition)
+add_subdirectory (SignalGenerator)
 
 add_library(uavap_flight_analysis SHARED ${FLIGHT_ANALYSIS_SRC})
 

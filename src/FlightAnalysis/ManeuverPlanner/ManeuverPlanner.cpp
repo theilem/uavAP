@@ -49,7 +49,8 @@ ManeuverPlanner::run(RunStage stage)
 
 
 			auto sched = get<IScheduler>();
-			sched->schedule([this](){checkManeuver();}, Milliseconds(params.period()), Milliseconds(params.period()));
+			sched->schedule([this]()
+							{ checkManeuver(); }, Milliseconds(params.period()), Milliseconds(params.period()));
 
 			break;
 		}
@@ -126,7 +127,11 @@ ManeuverPlanner::checkManeuver()
 		maneuver_ = createManeuver(*activeManeuver_);
 		activateManeuver();
 	}
-
+	else
+	{
+		if (maneuver_->isTimeVarying())
+			publisher_.publish(maneuver_->getOverrides());
+	}
 }
 
 void

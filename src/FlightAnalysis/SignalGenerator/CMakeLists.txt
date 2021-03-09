@@ -1,0 +1,3 @@
+set(FLIGHT_ANALYSIS_SRC ${FLIGHT_ANALYSIS_SRC}
+        ${CMAKE_CURRENT_SOURCE_DIR}/SineSignalGenerator.cpp
+        PARENT_SCOPE)

@@ -13,6 +13,7 @@
 #include <cpsCore/Utilities/Time.hpp>
 #include <cpsCore/Configuration/ConfigurableObject.hpp>
 #include <cpsCore/Configuration/Parameter.hpp>
+#include <cpsCore/Utilities/Filtering.hpp>
 
 #include "uavAP/FlightControl/Controller/ControlElements/IEvaluableControlElement.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
@@ -39,6 +40,9 @@ public:
 	void
 	setAlpha(FloatingType alpha);
 
+	void
+	reset();
+
 private:
 
 	Element in_;
@@ -57,6 +61,8 @@ public:
 
 	Output(Element in, FloatingType* out);
 
+	Output(Element in, FloatingType* out, FloatingType alpha);
+
 	void
 	evaluate() override;
 
@@ -72,6 +78,9 @@ public:
 	OverridableValue<FloatingType>&
 	getApplyTrimOverridableValue();
 
+	FloatingType&
+	getTrimAlpha();
+
 private:
 
 
@@ -80,7 +89,7 @@ private:
 	OverridableValue<FloatingType> outputOverride_;
 	OverridableValue<FloatingType> saveTrimOverride_;
 	OverridableValue<FloatingType> applyTrimOverride_;
-	FloatingType trim_;
+	MovingAverageValue<FloatingType> trim_;
 };
 
 struct PIDParameters

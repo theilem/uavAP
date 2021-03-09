@@ -41,10 +41,17 @@ Filter::setAlpha(FloatingType alpha)
 	alpha_ = alpha;
 }
 
-Output::Output(Element in, FloatingType* out) :
-		in_(in), out_(out)
-//		start_(), waveform_(),  override_(false), overrideOut_(0), wavelength_(
-//		0), phase_(0)
+void
+Filter::reset()
+{
+	init_ = true;
+}
+
+Output::Output(Element in, FloatingType* out) : Output(in, out, 1.0)
+{}
+
+Output::Output(Element in, FloatingType* out, FloatingType alpha):
+in_(in), out_(out),trim_(1.0, alpha)
 {
 	saveTrimOverride_ = 0;
 	applyTrimOverride_ = 0;
@@ -97,15 +104,14 @@ Output::evaluate()
 
 	if (saveTrimOverride_() != 0.0)
 	{
-		trim_ = outputOverride_; //< TODO should this be in_->getValue()?
+		trim_ = outputOverride_;
 	}
 }
 
 FloatingType
 Output::getValue() const
 {
-
-	return in_->getValue();
+	return outputOverride_;
 }
 
 OverridableValue<FloatingType>&
@@ -124,6 +130,12 @@ OverridableValue<FloatingType>&
 Output::getApplyTrimOverridableValue()
 {
 	return applyTrimOverride_;
+}
+
+FloatingType&
+Output::getTrimAlpha()
+{
+	return trim_.getAlpha();
 }
 //
 //FloatingType

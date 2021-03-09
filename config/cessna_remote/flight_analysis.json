@@ -10,11 +10,18 @@
 				"maneuvers": [
 					{
 						"overrides": {
-							"pid/roll": 30.0
+						},
+						"waveforms": {
+							"pid/roll": {
+								"sine": {
+									"amplitude": 30,
+									"frequency": 0.25
+								}
+							}
 						},
 						"transition": {
 							"duration": {
-								"duration": 5000
+								"duration": 10000
 							}
 						}
 					}
@@ -133,6 +140,14 @@
 							"output/pitch": 0.0,
 							"output/yaw": 0.0,
 							"apply_trim/pitch": 1
+						},
+						"waveforms":{
+							"output/roll": {
+								"sine": {
+									"amplitude": 0.5,
+									"frequency": 1
+								}
+							}
 						},
 						"transition": {
 							"duration": {

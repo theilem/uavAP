@@ -172,10 +172,10 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 	PathSections traj;
 
 	Eigen::Matrix<FloatingType, 4, 4> tauMat;
-	tauMat << 0, 1, 0, 0, -params.tau(), 0, params.tau(), 0, 2 * params.tau(), params.tau() - 3, 3 - 2 *
-																									 params.tau(), -params.tau(), -params.tau(),
-			2
-			- params.tau(), params.tau() - 2, params.tau();
+	tauMat << 0, 1, 0, 0,
+			-params.tau(), 0, params.tau(), 0,
+			2 * params.tau(), params.tau() - 3, 3 - 2 * params.tau(), -params.tau(),
+			-params.tau(), 2 - params.tau(), params.tau() - 2, params.tau();
 	Eigen::Matrix<FloatingType, 4, 3> pointMat;
 	Eigen::Matrix<FloatingType, 4, 3> approachMat;
 	if (wp.size() == 1)

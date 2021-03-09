@@ -21,16 +21,17 @@ struct SensorData;
 struct ControllerOutput;
 struct ControllerTarget;
 struct PIDStatus;
+
 class OverrideHandler;
 
 
-class ManeuverRateCascade: public ConfigurableObject<ManeuverRateCascadeParams>, public IPIDCascade
+class ManeuverRateCascade : public ConfigurableObject<ManeuverRateCascadeParams>, public IPIDCascade
 {
 public:
 	ManeuverRateCascade();
 
 	ManeuverRateCascade(const SensorData& sd, const ControllerTarget& target,
-			ControllerOutput& out);
+						ControllerOutput& out);
 
 	bool
 	configure(const Configuration& config);
@@ -91,14 +92,22 @@ ManeuverRateCascade::configureParams(Config& c)
 	for (auto& pid : pids_)
 	{
 		ParameterRef<Control::PIDParameters> param(pid.second->getParams(),
-				EnumMap<PIDs>::convert(pid.first), true);
+												   EnumMap<PIDs>::convert(pid.first), true);
+
+		c & param;
+	}
+
+	for (auto& output : outputs_)
+	{
+		ParameterRef<FloatingType> param(output.second->getTrimAlpha(),
+										 EnumMap<ControllerOutputs>::convert(output.first) + "_alpha", true);
 
 		c & param;
 	}
 
 	ParameterRef<AngleConstraint> rollConstraint(*rollConstraint_, "roll_constraint", true);
 	ParameterRef<AngleConstraint> rollRateConstraint(*rollRateTargetConstraint_,
-			"roll_rate_constraint", true);
+													 "roll_rate_constraint", true);
 	ParameterRef<AngleConstraint> pitchConstraint(*pitchConstraint_, "pitch_constraint", true);
 
 	c & rollConstraint;

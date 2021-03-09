@@ -183,8 +183,6 @@ ManeuverRateCascade::registerOverrides(std::shared_ptr<OverrideHandler> override
 										  it.second->getSaveTrimOverridableValue());
 		overrideHandler->registerOverride("apply_trim/" + EnumMap<ControllerOutputs>::convert(it.first),
 										  it.second->getApplyTrimOverridableValue());
-//		overrideHandler->registerOverride("output/" + EnumMap<ControllerOutputs>::convert(it.first), [it](bool enable, FloatingType val)
-//		{ it.second->applyOverride(enable, val); });
 	}
 }
 

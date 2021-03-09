@@ -12,6 +12,7 @@
 
 #include "cpsCore/cps_object"
 #include "uavAP/FlightAnalysis/Condition/ICondition.h"
+#include "uavAP/FlightAnalysis/SignalGenerator/ISignalGenerator.h"
 
 //struct Maneuver
 //{
@@ -84,6 +85,7 @@
 struct ManeuverParams
 {
 	Parameter<std::map<std::string, FloatingType>> overrides = {{}, "overrides", true};
+	Parameter<std::map<std::string, Configuration>> waveforms = {{}, "waveforms", false};
 	Parameter<Configuration> transition = {{}, "transition", true};
 
 	template<typename Config>
@@ -91,6 +93,7 @@ struct ManeuverParams
 	configure(Config& c)
 	{
 		c & overrides;
+		c & waveforms;
 		c & transition;
 	}
 };
@@ -104,7 +107,7 @@ public:
 	bool
 	initialize(const Aggregator& aggregator);
 
-	const Overrides&
+	Overrides
 	getOverrides() const;
 
 	bool
@@ -113,9 +116,13 @@ public:
 	void
 	printInfo();
 
+	bool
+	isTimeVarying() const;
+
 private:
 
 	std::shared_ptr<ICondition> transition_;
+	std::map<std::string, std::shared_ptr<ISignalGenerator>> waveforms_;
 
 };
 

@@ -53,7 +53,10 @@
 				"pitch_constraint": {
 					"min": -15,
 					"max": 15
-				}
+				},
+				"roll_alpha": 0.1,
+				"throttle_alpha": 0.1,
+				"pitch_alpha": 0.1
 			}
 		}
 	},
