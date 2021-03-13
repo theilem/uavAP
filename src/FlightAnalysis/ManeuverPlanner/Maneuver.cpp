@@ -39,7 +39,7 @@ Maneuver::initialize(const Aggregator& aggregator)
 	return true;
 }
 
-std::map<std::string, FloatingType>
+ManeuverOverride
 Maneuver::getOverrides() const
 {
 	auto overrides = params.overrides();

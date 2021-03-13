@@ -82,9 +82,11 @@
 //	}
 //};
 
+using ManeuverOverride = std::map<std::string, FloatingType>;
+
 struct ManeuverParams
 {
-	Parameter<std::map<std::string, FloatingType>> overrides = {{}, "overrides", true};
+	Parameter<ManeuverOverride> overrides = {{}, "overrides", true};
 	Parameter<std::map<std::string, Configuration>> waveforms = {{}, "waveforms", false};
 	Parameter<Configuration> transition = {{}, "transition", true};
 
@@ -102,12 +104,10 @@ class Maneuver : public ConfigurableObject<ManeuverParams>
 {
 public:
 
-	using Overrides = std::map<std::string, FloatingType>;
-
 	bool
 	initialize(const Aggregator& aggregator);
 
-	Overrides
+	ManeuverOverride
 	getOverrides() const;
 
 	bool

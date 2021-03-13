@@ -23,7 +23,7 @@ ManeuverPlanner::run(RunStage stage)
 			auto ipc = get<IPC>();
 			IPCOptions opts;
 			opts.variableSize = true;
-			publisher_ = ipc->publish<Maneuver::Overrides>("overrides", opts);
+			publisher_ = ipc->publish<ManeuverOverride>("overrides", opts);
 			break;
 		}
 		case RunStage::NORMAL:
@@ -41,6 +41,28 @@ ManeuverPlanner::run(RunStage stage)
 						}
 						return std::nullopt;
 					}, Content::MANEUVER_LIST, Content::REQUEST_DATA);
+
+			dh->addTriggeredStatusFunction<std::vector<ManeuverOverride>, DataRequest>(
+					[this](const DataRequest& req) -> Optional<std::vector<ManeuverOverride>>
+					{
+						if (req == DataRequest::MANEUVER_SET)
+						{
+							if (activeManeuverSet_)
+							{
+								std::vector<ManeuverOverride> ids;
+								for (const auto& it : activeManeuverSet_->second.maneuvers.value)
+								{
+									ids.push_back(it.overrides.value);
+								}
+								return ids;
+							} else
+							{
+								// Empty vector signifies no active maneuver set
+								return std::vector<ManeuverOverride>();
+							}
+						}
+						return std::nullopt;
+					}, Content::MANEUVER, Content::REQUEST_DATA);
 
 			dh->subscribeOnData<std::string>(Content::SELECT_MANEUVER_SET, [this](const auto& id)
 			{ maneuverSelection(id); });
@@ -117,7 +139,7 @@ ManeuverPlanner::checkManeuver()
 		activeManeuver_++;
 		if (activeManeuver_ == activeManeuverSet_->second.maneuvers().end())
 		{
-			publisher_.publish(Maneuver::Overrides());
+			publisher_.publish(ManeuverOverride());
 			maneuver_.reset();
 
 			CPSLOG_DEBUG << "ManeuverSet done";
@@ -138,6 +160,6 @@ void
 ManeuverPlanner::stopManeuver()
 {
 	maneuver_.reset();
-	publisher_.publish(Maneuver::Overrides());
+	publisher_.publish(ManeuverOverride());
 	activeManeuverSet_ = nullptr;
 }
