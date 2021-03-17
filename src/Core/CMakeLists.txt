@@ -29,7 +29,9 @@ set(CORE_SRC 	${CORE_SRC}
 				
 add_library(uavap_core SHARED ${CORE_SRC})
 
-target_link_libraries(uavap_core 	${BOOST}
+target_link_libraries(uavap_core
+		Eigen3::Eigen
+		${Boost_LIBRARIES}
 									${REDIS}
 									pthread
 									rt

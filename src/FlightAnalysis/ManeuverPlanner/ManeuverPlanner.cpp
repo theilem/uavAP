@@ -4,6 +4,7 @@
 
 #include "uavAP/FlightAnalysis/ManeuverPlanner/ManeuverPlanner.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
+#include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
 #include <cpsCore/Utilities/Scheduler/IScheduler.h>
 #include <cpsCore/Utilities/IPC/IPC.h>
 
@@ -80,6 +81,13 @@ ManeuverPlanner::maneuverSelection(const std::string& maneuverId)
 void
 ManeuverPlanner::startManeuverSet()
 {
+	if (activeManeuverSet_->second.saveAs())
+	{
+		auto io = get<ISensingIO>();
+		maneuverLogFile_.open(params.logPath() + humanReadableTimeOfDay(io->getSensorData().timestamp) +
+							  "_" + *activeManeuverSet_->second.saveAs());
+		CPSLOG_DEBUG << "opening " << params.logPath() + *activeManeuverSet_->second.saveAs();
+	}
 	activeManeuver_ = activeManeuverSet_->second.maneuvers().begin();
 
 	maneuver_ = createManeuver(*activeManeuver_);
@@ -102,6 +110,12 @@ ManeuverPlanner::activateManeuver()
 
 	publisher_.publish(maneuver_->getOverrides());
 	maneuver_->printInfo();
+	if (maneuverLogFile_.is_open())
+	{
+		auto io = get<ISensingIO>();
+		maneuverLogFile_ << io->getSensorData().sequenceNumber << ",";
+		CPSLOG_DEBUG << "Logging maneuver sequence number: " << io->getSensorData().sequenceNumber;
+	}
 
 }
 
@@ -119,6 +133,12 @@ ManeuverPlanner::checkManeuver()
 		{
 			publisher_.publish(Maneuver::Overrides());
 			maneuver_.reset();
+			if (maneuverLogFile_.is_open())
+			{
+				auto io = get<ISensingIO>();
+				maneuverLogFile_ << io->getSensorData().sequenceNumber;
+				maneuverLogFile_.close();
+			}
 
 			CPSLOG_DEBUG << "ManeuverSet done";
 			return;

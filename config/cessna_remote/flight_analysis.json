@@ -5,9 +5,26 @@
 	},
 	"maneuver_planner": {
 		"period": 10,
+		"log_path": "/home/mirco/logs_cessna/",
 		"maneuver_sets": {
 			"roll_maneuver": {
 				"maneuvers": [
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"pid/pitch": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 2000,
+								"sensor_values":{
+									"roll": 0.1,
+									"pitch": 0.1,
+									"airspeed": 1
+								}
+							}
+						}
+					},
 					{
 						"overrides": {
 						},
@@ -25,7 +42,8 @@
 							}
 						}
 					}
-				]
+				],
+				"save_as": "roll_maneuver"
 			},
 			"get_trim": {
 				"maneuvers": [

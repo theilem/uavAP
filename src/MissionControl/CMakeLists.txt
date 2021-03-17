@@ -36,7 +36,8 @@ add_library(uavap_mission_control SHARED ${MISSION_CONTROL_SRC}
 
 
 target_link_libraries(uavap_mission_control 	uavap_core
-												control)
+												control
+		Eigen3::Eigen)
 
 #add_library(uavap_mission_control_geo SHARED ${MISSION_CONTROL_GEO_SRC})
 

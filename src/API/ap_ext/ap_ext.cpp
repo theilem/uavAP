@@ -26,6 +26,12 @@ ap_ext_setup()
 
 	aggregator = ApExtHelper::createAggregation(configPath);
 
+	if (!aggregator.getOne<ApExtManager>())
+	{
+		CPSLOG_ERROR << "APManager missing in aggregator.";
+		return -1;
+	}
+
 	SimpleRunner runner(aggregator);
 	if (runner.runAllStages())
 	{

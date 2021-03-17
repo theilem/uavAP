@@ -10,12 +10,17 @@ if(NO_DL)
 endif(NO_DL)
 
 #Set Variable inputs
-set(EIGEN_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/eigen3/"
-		"${LIBRARY_ROOT_DIR}/usr/include/eigen3/")
-set(Boost_LIBRARY_DIRS "${LIBRARY_ROOT_DIR}/usr/local/lib/"
-		"${LIBRARY_ROOT_DIR}/usr/lib/")
-set(Boost_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/"
-		"${LIBRARY_ROOT_DIR}/usr/include/")
+#set(EIGEN_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/eigen3/"
+#		"${LIBRARY_ROOT_DIR}/usr/include/eigen3/")
+#set(Boost_LIBRARY_DIRS "${LIBRARY_ROOT_DIR}/usr/local/lib/"
+#		"${LIBRARY_ROOT_DIR}/usr/lib/")
+#set(Boost_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/"
+#		"${LIBRARY_ROOT_DIR}/usr/include/")
+find_package(Eigen3 REQUIRED NO_MODULE)
+find_package(Boost REQUIRED COMPONENTS system)
+
+#message(INFO ${Boost_INCLUDE_DIR})
+#message(INFO ${Eigen3_DIR})
 
 if(CMAKE_COMPILER_IS_GNUCC)
 
@@ -34,16 +39,16 @@ endif(CMAKE_COMPILER_IS_GNUCC)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -fPIC -Wall -Wno-int-in-bool-context -Wno-parentheses")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
-include_directories(	${CMAKE_SOURCE_DIR}/include
-						${Boost_INCLUDE_DIRS}
-						${EIGEN_INCLUDE_DIRS})
+include_directories(	${CMAKE_SOURCE_DIR}/include)
+#						${Boost_INCLUDE_DIRS}
+#						${EIGEN_INCLUDE_DIRS})
 			
 
 link_directories(	${Boost_LIBRARY_DIRS}
 					)
 					
 if(LINK_STATIC)
-	set(BOOST 	libboost_filesystem.a
+	set(BOOST 	#libboost_filesystem.a
 				libboost_system.a
 				)
 	set(ARB 	libarb.a
@@ -51,7 +56,7 @@ if(LINK_STATIC)
 				libgmp.a
 				libflint.a)
 else(LINK_STATIC)
-	set(BOOST 	boost_filesystem
+	set(BOOST 	#boost_filesystem
 				boost_system
 				)
 	set(ARB 	arb

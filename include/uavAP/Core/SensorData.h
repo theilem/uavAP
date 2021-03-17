@@ -138,6 +138,7 @@ struct SensorData
 	FloatingType temperature = 0.;     //!< temperature obtained from airspeed sensor
 	Frame frame = Frame::INERTIAL;
 	TimePoint timestamp;            //!< Timestamp of SensorEnum data
+	uint32_t sequenceNumber;
 
 };
 
@@ -191,6 +192,10 @@ enumAccess(const SensorData& data, const SensorEnum& e)
 			return static_cast<RetType>(data.temperature);
 		case SensorEnum::PRESSURE:
 			return static_cast<RetType>(data.pressure);
+		case SensorEnum::SEQUENCE_NR:
+			return static_cast<RetType>(data.sequenceNumber);
+		case SensorEnum::HAS_GPS_FIX:
+			return static_cast<RetType>(data.hasGPSFix);
 		default:
 			return enumAccessUnknown<RetType>(e);
 	}
@@ -280,6 +285,7 @@ serialize(Archive& ar, SensorData& t)
 	ar & t.pressure;
 	ar & t.frame;
 	ar & t.timestamp;
+	ar & t.sequenceNumber;
 }
 
 template<class Archive, typename Type>

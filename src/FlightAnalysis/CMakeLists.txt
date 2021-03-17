@@ -14,6 +14,7 @@ add_library(uavap_flight_analysis SHARED ${FLIGHT_ANALYSIS_SRC})
 target_link_libraries(uavap_flight_analysis uavap_core
 		uavap_mission_control
 		uavap_flight_control
+		Eigen3::Eigen
 											)
 
 add_executable(FlightAnalysis	FlightAnalysis.cpp

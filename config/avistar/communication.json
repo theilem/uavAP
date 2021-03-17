@@ -1,22 +1,24 @@
 {
-	"comm": {
-		"type": "idc"
-	},
-	"network": {
-		"type": "serial",
-		"ports": {
-			"ground_station": {
-				"serial_port": "/dev/ttyUSB0",
-				"delimiter_string": "*\n",
-				"use_crc": true
-			}
-		}
-	},
-	"scheduler": {
-		"type": "thread",
-		"priority": "99"
-	},
 	"data_presentation": {
 		"compress_double": true
+	},
+	"comm": {
+		"idc": {
+		}
+	},
+	"network": {
+		"serial": {
+			"ports": {
+				"ground_station": {
+					"serial_port": "/dev/ttyUSB0",
+					"baud_rate": 115200,
+					"delimiter_string": "--*",
+					"use_crc": true,
+					"flow_control": "none",
+					"direction": "both",
+					"send_blocking": false
+				}
+			}
+		}
 	}
 }

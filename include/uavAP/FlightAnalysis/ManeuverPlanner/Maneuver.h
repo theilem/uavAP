@@ -132,12 +132,14 @@ struct ManeuverSet
 	using const_iterator = std::vector<ManeuverParams>::const_iterator;
 
 	Parameter<std::vector<ManeuverParams>> maneuvers = {{}, "maneuvers", true};
+	Parameter<Optional<std::string>> saveAs = {std::nullopt, "save_as", false};
 
 	template<typename Config>
 	void
 	configure(Config& c)
 	{
 		c & maneuvers;
+		c & saveAs;
 	}
 };
 

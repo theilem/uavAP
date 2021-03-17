@@ -8,14 +8,16 @@
 #include <cpsCore/cps_object>
 #include <cpsCore/Aggregation/AggregatableObjectMaster.hpp>
 #include <cpsCore/Utilities/IPC/Publisher.h>
+#include <fstream>
 #include "uavAP/FlightAnalysis/ManeuverPlanner/ManeuverPlannerParams.h"
 
 class DataHandling;
 class IScheduler;
 class IPC;
+class ISensingIO;
 
 class ManeuverPlanner
-		: public AggregatableObjectMaster<DataHandling, IScheduler, IPC>,
+		: public AggregatableObjectMaster<DataHandling, IScheduler, IPC, ISensingIO>,
 		  public ConfigurableObject<ManeuverPlannerParams>,
 		  public IRunnableObject
 {
@@ -51,6 +53,7 @@ private:
 	ManeuverSet::iterator activeManeuver_;
 
 	std::shared_ptr<Maneuver> maneuver_;
+	std::ofstream maneuverLogFile_;
 };
 
 

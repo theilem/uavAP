@@ -83,6 +83,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	Vector3 angularRate;
 	Vector3 euler;
 	Eigen::Quaterniond attitude;
+	uint32_t packetNumber = 0;
 	imu_sample_t* imuSample = nullptr;
 
 	angularRate << 0.0, 0.0, 0.0;
@@ -127,6 +128,8 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 		angularRate[1] = imuSample->imu_rot_y;
 		angularRate[2] = imuSample->imu_rot_z;
 
+		packetNumber = imuSample->imu_pkt;
+
 		if (params.internalImu())
 		{
 			sens.timestamp = Clock::now();
@@ -150,8 +153,8 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 				sens.timestamp = TimePoint(duration) + Nanoseconds(dur.total_nanoseconds());
 			} catch (std::out_of_range& err)
 			{
-				CPSLOG_ERROR << "Time is not valid. " << err.what();
-				sens.timestamp = TimePoint();
+				CPSLOG_DEBUG << "Time is not valid. " << err.what();
+				sens.timestamp = Clock::now();
 			}
 		}
 	}
@@ -174,6 +177,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 //		angularRate = (*rotationOffset_ * angRate * rotationInverse).vec();
 //	}
 
+	sens.sequenceNumber = packetNumber;
 	sens.angularRate = angularRate;
 
 	if (params.useEuler())
