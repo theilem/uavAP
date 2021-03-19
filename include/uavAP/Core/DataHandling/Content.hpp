@@ -74,6 +74,7 @@ enum class Content
 	MISSION_LIST,
 	MANEUVER_LIST,
 	MANEUVER,
+	MANEUVER_STATUS,
 	CRITICAL_POINTS,				//!< Critical points from geofencing
 	MISC_VALUES,
 	OVERRIDE_LIST,
@@ -116,7 +117,8 @@ enum class DataRequest
 	LOCAL_FRAME,					//!< LOCAL_FRAME
 	OVERRIDE_LIST,					//!< OVERRIDE_LIST
 	MANEUVERS_LIST,					//!< All the Maneuver Sets
-	MANEUVER_SET,					//!< List of Maneuvers to execute
+	MANEUVER_SET,					//!< A single list of Maneuvers to execute
+	MANEUVER_STATUS,				//!< Current maneuver in active override
 	START_LOGGING,					//!< START_LOGGING
 	STOP_LOGGING					//!< STOP_LOGGING
 };
