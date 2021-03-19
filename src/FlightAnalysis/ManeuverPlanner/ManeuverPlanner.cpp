@@ -24,7 +24,8 @@ ManeuverPlanner::run(RunStage stage)
 			auto ipc = get<IPC>();
 			IPCOptions opts;
 			opts.variableSize = true;
-			publisher_ = ipc->publish<Maneuver::Overrides>("overrides", opts);
+			overridePublisher_ = ipc->publish<Maneuver::Overrides>("overrides", opts);
+			maintainsPublisher_ = ipc->publish<Maneuver::Maintains>("maintains", opts);
 			break;
 		}
 		case RunStage::NORMAL:
@@ -108,7 +109,8 @@ void
 ManeuverPlanner::activateManeuver()
 {
 
-	publisher_.publish(maneuver_->getOverrides());
+	overridePublisher_.publish(maneuver_->getOverrides());
+	maintainsPublisher_.publish(maneuver_->getMaintains());
 	maneuver_->printInfo();
 	if (maneuverLogFile_.is_open())
 	{
@@ -131,7 +133,8 @@ ManeuverPlanner::checkManeuver()
 		activeManeuver_++;
 		if (activeManeuver_ == activeManeuverSet_->second.maneuvers().end())
 		{
-			publisher_.publish(Maneuver::Overrides());
+			overridePublisher_.publish(Maneuver::Overrides());
+			maintainsPublisher_.publish(Maneuver::Maintains());
 			maneuver_.reset();
 			if (maneuverLogFile_.is_open())
 			{
@@ -150,7 +153,10 @@ ManeuverPlanner::checkManeuver()
 	else
 	{
 		if (maneuver_->isTimeVarying())
-			publisher_.publish(maneuver_->getOverrides());
+		{
+			overridePublisher_.publish(maneuver_->getOverrides());
+			maintainsPublisher_.publish(maneuver_->getMaintains());
+		}
 	}
 }
 
@@ -158,6 +164,7 @@ void
 ManeuverPlanner::stopManeuver()
 {
 	maneuver_.reset();
-	publisher_.publish(Maneuver::Overrides());
+	overridePublisher_.publish(Maneuver::Overrides());
+	maintainsPublisher_.publish(Maneuver::Maintains());
 	activeManeuverSet_ = nullptr;
 }

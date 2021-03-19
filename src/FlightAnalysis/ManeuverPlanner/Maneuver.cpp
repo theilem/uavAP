@@ -62,10 +62,16 @@ Maneuver::inTransition()
 void
 Maneuver::printInfo()
 {
+	std::cout << std::endl;
 	std::cout << "Overrides: " << std::endl;
 	for (const auto& it : params.overrides())
 	{
 		std::cout << it.first << ": " << it.second << std::endl;
+	}
+	std::cout << "Maintains: " << std::endl;
+	for (const auto& it : params.maintains())
+	{
+		std::cout << it << std::endl;
 	}
 
 	std::cout << std::endl;
@@ -79,4 +85,10 @@ bool
 Maneuver::isTimeVarying() const
 {
 	return !waveforms_.empty();
+}
+
+Maneuver::Maintains
+Maneuver::getMaintains() const
+{
+	return params.maintains();
 }

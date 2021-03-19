@@ -84,7 +84,8 @@
 
 struct ManeuverParams
 {
-	Parameter<std::map<std::string, FloatingType>> overrides = {{}, "overrides", true};
+	Parameter<std::map<std::string, FloatingType>> overrides = {{}, "overrides", false};
+	Parameter<std::vector<std::string>> maintains = {{}, "maintains", false};
 	Parameter<std::map<std::string, Configuration>> waveforms = {{}, "waveforms", false};
 	Parameter<Configuration> transition = {{}, "transition", true};
 
@@ -93,6 +94,7 @@ struct ManeuverParams
 	configure(Config& c)
 	{
 		c & overrides;
+		c & maintains;
 		c & waveforms;
 		c & transition;
 	}
@@ -103,12 +105,16 @@ class Maneuver : public ConfigurableObject<ManeuverParams>
 public:
 
 	using Overrides = std::map<std::string, FloatingType>;
+	using Maintains = std::vector<std::string>;
 
 	bool
 	initialize(const Aggregator& aggregator);
 
 	Overrides
 	getOverrides() const;
+
+	Maintains
+	getMaintains() const;
 
 	bool
 	inTransition();

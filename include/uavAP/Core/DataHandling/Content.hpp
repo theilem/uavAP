@@ -90,6 +90,7 @@ enum class Content
 
 	//GS to MissionControl
 	OVERRIDE,       			//!< OVERRIDE
+	MAINTAIN,       			//!< MAINTAIN
 	SELECT_MANEUVER_SET,    	//!< SELECT_MANEUVER_SET
 	SELECT_MISSION,         	//!< SELECT_MISSION
 	WIND_ANALYSIS_STATUS,		//!< WIND_ANALYSIS_STATUS

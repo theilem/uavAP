@@ -18,21 +18,34 @@ public:
 	static constexpr TypeId typeId = "override_handler";
 
 	using OverrideHandle = std::function<void(bool, FloatingType)>;
+	using MaintainHandle = std::function<void(bool)>;
 
 	void
 	registerOverride(const std::string& overrideId, const OverrideHandle& overrideHandle);
 
 	void
+	registerMaintain(const std::string& overrideId, const MaintainHandle& maintainHandle);
+
+	void
 	registerOverride(const std::string& overrideId, OverridableValue<FloatingType>& overridableValue);
 
 	void
+	registerOverride(const std::string& overrideId, MaintainableValue<FloatingType>& trimmableValue);
+
+	void
 	registerOverride(const std::string& overrideId, OverridableValue<Angle<FloatingType>>& overridableValue);
+
+	void
+	registerOverride(const std::string& overrideId, MaintainableValue<Angle<FloatingType>>& trimmableValue);
 
 	bool
 	applyOverride(const std::string& overrideId, bool enable, FloatingType value);
 
 	void
 	applyOverrides(const std::map<std::string, FloatingType>& overrides);
+
+	void
+	applyMaintains(const std::vector<std::string>& maintains);
 
 	void
 	disableAllOverrides();
@@ -52,6 +65,7 @@ public:
 private:
 
 	std::map<std::string, OverrideHandle> overrideHandles_;
+	std::map<std::string, MaintainHandle> maintainHandles_;
 	bool enabled_{true};
 };
 

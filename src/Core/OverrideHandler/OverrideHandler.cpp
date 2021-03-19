@@ -42,6 +42,19 @@ OverrideHandler::registerOverride(const std::string& overrideId, const OverrideH
 }
 
 void
+OverrideHandler::registerMaintain(const std::string& overrideId, const OverrideHandler::MaintainHandle& maintainHandle)
+{
+	if (maintainHandles_.find(overrideId) != maintainHandles_.end())
+	{
+		CPSLOG_ERROR << "Maintain with ID " << overrideId << " already registered";
+		return;
+	}
+	maintainHandles_.insert(std::make_pair(overrideId, maintainHandle));
+
+}
+
+
+void
 OverrideHandler::registerOverride(const std::string& overrideId, OverridableValue<FloatingType>& overridableValue)
 {
 	if (overrideHandles_.find(overrideId) != overrideHandles_.end())
@@ -51,6 +64,26 @@ OverrideHandler::registerOverride(const std::string& overrideId, OverridableValu
 	}
 	overrideHandles_.insert(std::make_pair(overrideId, [&overridableValue](bool enable, FloatingType value)
 	{ overridableValue.applyOverride(enable, value); }));
+}
+
+void
+OverrideHandler::registerOverride(const std::string& overrideId, MaintainableValue<FloatingType>& trimmableValue)
+{
+	if (overrideHandles_.find(overrideId) != overrideHandles_.end())
+	{
+		CPSLOG_ERROR << "Override with ID " << overrideId << " already registered";
+		return;
+	}
+	overrideHandles_.insert(std::make_pair(overrideId, [&trimmableValue](bool enable, FloatingType value)
+	{ trimmableValue.applyOverride(enable, value); }));
+
+	if (maintainHandles_.find(overrideId) != maintainHandles_.end())
+	{
+		CPSLOG_ERROR << "Trim with ID " << overrideId << " already registered";
+		return;
+	}
+	maintainHandles_.insert(std::make_pair(overrideId, [&trimmableValue](bool enable)
+	{ trimmableValue.maintainValue(enable); }));
 }
 
 void
@@ -65,6 +98,28 @@ OverrideHandler::registerOverride(const std::string& overrideId,
 	overrideHandles_.insert(std::make_pair(overrideId, [&overridableValue](bool enable, FloatingType value)
 	{ overridableValue.applyOverride(enable, Angle<FloatingType>(value)); }));
 }
+
+void
+OverrideHandler::registerOverride(const std::string& overrideId, MaintainableValue<Angle<FloatingType>>& trimmableValue)
+{
+
+	if (overrideHandles_.find(overrideId) != overrideHandles_.end())
+	{
+		CPSLOG_ERROR << "Override with ID " << overrideId << " already registered";
+		return;
+	}
+	overrideHandles_.insert(std::make_pair(overrideId, [&trimmableValue](bool enable, FloatingType value)
+	{ trimmableValue.applyOverride(enable, Angle<FloatingType>(value)); }));
+
+	if (maintainHandles_.find(overrideId) != maintainHandles_.end())
+	{
+		CPSLOG_ERROR << "Trim with ID " << overrideId << " already registered";
+		return;
+	}
+	maintainHandles_.insert(std::make_pair(overrideId, [&trimmableValue](bool enable)
+	{ trimmableValue.maintainValue(enable); }));
+}
+
 
 bool
 OverrideHandler::run(RunStage stage)
@@ -93,6 +148,12 @@ OverrideHandler::run(RunStage stage)
 																		 applyOverrides(overrides);
 																	 });
 
+			dh->subscribeOnData<std::vector<std::string>>(Content::MAINTAIN,
+														  [this](const std::vector<std::string>& maintains)
+														  {
+															  applyMaintains(maintains);
+														  });
+
 			break;
 		}
 		case RunStage::NORMAL:
@@ -100,6 +161,8 @@ OverrideHandler::run(RunStage stage)
 			auto ipc = get<IPC>();
 			ipc->subscribe<std::map<std::string, FloatingType>>("overrides", [this](const auto& overrides)
 			{ applyOverrides(overrides); });
+			ipc->subscribe<std::vector<std::string>>("maintains", [this](const auto& maintains)
+			{ applyMaintains(maintains); });
 			break;
 		}
 		default:
@@ -132,6 +195,25 @@ OverrideHandler::applyOverrides(const std::map<std::string, FloatingType>& overr
 			handle(false, 0);
 		else
 			handle(true, it->second);
+	}
+}
+
+void
+OverrideHandler::applyMaintains(const std::vector<std::string>& maintains)
+{
+	if (!enabled_)
+		return;
+	for (const auto&[id, handle]:maintainHandles_)
+	{
+		auto it = std::find(maintains.begin(), maintains.end(), id);
+		// If override not found, disable override
+		if (it == maintains.end())
+			handle(false);
+		else
+		{
+			std::cout << "Applying maintain to " << id << std::endl;
+			handle(true);
+		}
 	}
 }
 

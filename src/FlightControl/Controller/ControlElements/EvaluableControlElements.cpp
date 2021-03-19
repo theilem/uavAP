@@ -237,9 +237,8 @@ Output::getTrimAlpha()
 //}
 
 PID::PID(Element target, Element current, const PIDParameters& p, Duration* timeDiff) :
-		ConfigurableObject(p), target_(target), current_(current), timeDiff_(timeDiff), targetValue_(
-		0), currentError_(0), integrator_(0), lastError_(0), lastTarget_(0), output_(0), override_(
-		false), overrideTarget_(0)
+		ConfigurableObject(p), target_(target), current_(current), timeDiff_(timeDiff), targetValue_(0.05,
+		0), currentError_(0), integrator_(0), lastError_(0), lastTarget_(0), output_(0)
 {
 
 }
@@ -247,8 +246,8 @@ PID::PID(Element target, Element current, const PIDParameters& p, Duration* time
 PID::PID(Element target, Element current, Element derivative, const PIDParameters& p,
 		 Duration* timeDiff) :
 		ConfigurableObject(p), target_(target), current_(current), derivative_(derivative), timeDiff_(
-		timeDiff), targetValue_(0), currentError_(0), integrator_(0), lastError_(0), lastTarget_(
-		0), output_(0), override_(false), overrideTarget_(0)
+		timeDiff), targetValue_(0.05,0), currentError_(0), integrator_(0), lastError_(0), lastTarget_(
+		0), output_(0)
 {
 
 }
@@ -256,24 +255,15 @@ PID::PID(Element target, Element current, Element derivative, const PIDParameter
 void
 PID::applyOverride(bool enable, FloatingType value)
 {
-	override_ = enable;
-	if (params.isAngle())
-		overrideTarget_ = degToRad(value);
-	else
-		overrideTarget_ = value;
+	float target = params.isAngle() ? degToRad(value) : value;
+
+	targetValue_.applyOverride(enable, target);
 }
 
 void
-PID::overrideTarget(FloatingType newTarget)
+PID::applyMaintain(bool enable)
 {
-	override_ = true;
-	overrideTarget_ = newTarget;
-}
-
-void
-PID::disableOverride()
-{
-	override_ = false;
+	targetValue_.maintainValue(enable);
 }
 
 void
@@ -283,7 +273,7 @@ PID::evaluate()
 		return;
 
 	output_ = 0.0;
-	targetValue_ = override_ ? overrideTarget_ : target_->getValue();
+	targetValue_ = target_->getValue();
 	currentError_ = targetValue_ - current_->getValue();
 	addProportionalControl();
 	addIntegralControl();
@@ -366,6 +356,12 @@ PID::addFeedForwardControl()
 	{
 		output_ += params.ff() * targetValue_;
 	}
+}
+
+MaintainableValue<FloatingType>
+PID::getMaintainableTarget()
+{
+	return targetValue_;
 }
 
 }

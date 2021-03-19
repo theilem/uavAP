@@ -12,15 +12,15 @@
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"pid/pitch": 0
+							"pid/climb_angle": 0
 						},
 						"transition": {
 							"steady_state": {
 								"duration": 2000,
 								"sensor_values":{
-									"roll": 0.1,
-									"pitch": 0.1,
-									"airspeed": 1
+									"attitude_x": 0.1,
+									"attitude_y": 0.1,
+									"air_speed": 1
 								}
 							}
 						}
@@ -28,6 +28,9 @@
 					{
 						"overrides": {
 						},
+						"maintains": [
+							"pid/pitch"
+						],
 						"waveforms": {
 							"pid/roll": {
 								"sine": {
@@ -154,7 +157,6 @@
 					{
 						"overrides": {
 							"local_planner/velocity": 60.0,
-							"output/roll": 0.5,
 							"output/pitch": 0.0,
 							"output/yaw": 0.0,
 							"apply_trim/pitch": 1

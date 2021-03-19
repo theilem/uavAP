@@ -127,10 +127,7 @@ public:
 	applyOverride(bool enable, FloatingType value);
 
 	void
-	overrideTarget(FloatingType newTarget);
-
-	void
-	disableOverride();
+	applyMaintain(bool enable);
 
 	void
 	evaluate() override;
@@ -140,6 +137,9 @@ public:
 
 	PIDStatus
 	getStatus();
+
+	MaintainableValue<FloatingType>
+	getMaintainableTarget();
 
 private:
 
@@ -165,7 +165,7 @@ private:
 	Duration* timeDiff_;
 
 	//Internal PID state
-	FloatingType targetValue_;
+	MaintainableValue<FloatingType> targetValue_;
 
 	FloatingType currentError_;
 
@@ -177,9 +177,6 @@ private:
 
 	//Latest calculated output value
 	FloatingType output_;
-
-	bool override_;
-	FloatingType overrideTarget_;
 };
 
 }

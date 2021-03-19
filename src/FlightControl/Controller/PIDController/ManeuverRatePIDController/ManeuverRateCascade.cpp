@@ -174,6 +174,8 @@ ManeuverRateCascade::registerOverrides(std::shared_ptr<OverrideHandler> override
 	{
 		overrideHandler->registerOverride("pid/" + EnumMap<PIDs>::convert(it.first), [it](bool enable, FloatingType val)
 		{ it.second->applyOverride(enable, val); });
+		overrideHandler->registerMaintain("pid/" + EnumMap<PIDs>::convert(it.first), [it](bool enable)
+		{ it.second->applyMaintain(enable); });
 	}
 	for (const auto& it:outputs_)
 	{
