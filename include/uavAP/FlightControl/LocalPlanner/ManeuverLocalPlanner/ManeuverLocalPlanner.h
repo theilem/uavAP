@@ -85,9 +85,6 @@ private:
 	calculateControllerTarget(const Vector3& position, double heading,
 							  std::shared_ptr<IPathSection> section);
 
-	Optional<Trajectory>
-	trajectoryRequest(const DataRequest& request);
-
 	void
 	onTrajectoryPacket(const Packet& packet);
 

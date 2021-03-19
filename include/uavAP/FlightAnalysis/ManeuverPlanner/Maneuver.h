@@ -82,7 +82,7 @@
 //	}
 //};
 
-using ManeuverOverride = std::map<std::string, FloatingType>;
+using ManeuverOverride = std::unordered_map<std::string, FloatingType>;
 
 struct ManeuverParams
 {
@@ -138,6 +138,25 @@ struct ManeuverSet
 	configure(Config& c)
 	{
 		c & maneuvers;
+	}
+};
+
+/**
+ * Describes the current active maneuver for the ground station
+ */
+struct ManeuverDescriptor
+{
+	std::string maneuverName;
+	std::vector<ManeuverOverride> overrides;
+	std::vector<std::string> conditions;
+
+	template<typename Config>
+	void
+	configure(Config& c)
+	{
+		c & maneuverName;
+		c & overrides;
+		c & conditions;
 	}
 };
 

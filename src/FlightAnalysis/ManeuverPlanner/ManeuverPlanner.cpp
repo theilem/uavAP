@@ -2,6 +2,8 @@
 // Created by mirco on 26.02.21.
 //
 
+#include <boost/property_tree/json_parser.hpp>
+
 #include "uavAP/FlightAnalysis/ManeuverPlanner/ManeuverPlanner.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
 #include <cpsCore/Utilities/Scheduler/IScheduler.h>
@@ -29,6 +31,7 @@ ManeuverPlanner::run(RunStage stage)
 		case RunStage::NORMAL:
 		{
 			auto dh = get<DataHandling>();
+			/** Gets the list of all possible maneuver sets **/
 			dh->addTriggeredStatusFunction<std::vector<std::string>, DataRequest>(
 					[this](const DataRequest& req) -> Optional<std::vector<std::string>>
 					{
@@ -42,27 +45,40 @@ ManeuverPlanner::run(RunStage stage)
 						return std::nullopt;
 					}, Content::MANEUVER_LIST, Content::REQUEST_DATA);
 
-			dh->addTriggeredStatusFunction<std::vector<ManeuverOverride>, DataRequest>(
-					[this](const DataRequest& req) -> Optional<std::vector<ManeuverOverride>>
+			/** Sends the current active maneuver set, or an empty descriptor if no active set **/
+			dh->addTriggeredStatusFunction<ManeuverDescriptor, DataRequest>(
+					[this](const DataRequest& req) -> Optional<ManeuverDescriptor>
 					{
 						if (req == DataRequest::MANEUVER_SET)
 						{
+							ManeuverDescriptor ans;
 							if (activeManeuverSet_)
 							{
-								std::vector<ManeuverOverride> ids;
+								ans.maneuverName = activeManeuverSet_->first;
 								for (const auto& it : activeManeuverSet_->second.maneuvers.value)
 								{
-									ids.push_back(it.overrides.value);
+									ans.overrides.push_back(it.overrides.value);
+									std::ostringstream oss;
+									boost::property_tree::write_json(oss, it.transition.value);
+									ans.conditions.push_back(oss.str());
 								}
-								return ids;
-							} else
-							{
-								// Empty vector signifies no active maneuver set
-								return std::vector<ManeuverOverride>();
 							}
+							// Empty vector signifies no active maneuver set
+							return ans;
 						}
 						return std::nullopt;
 					}, Content::MANEUVER, Content::REQUEST_DATA);
+
+
+			/** Sends current maneuver info **/
+			dh->addTriggeredStatusFunction<unsigned int, DataRequest>(
+					[this](const DataRequest& req) -> Optional<unsigned int>
+					{
+						if (req == DataRequest::MANEUVER_STATUS && activeManeuverSet_) {
+							return activeManeuver_ - activeManeuverSet_->second.maneuvers().begin();
+						}
+						return std::nullopt;
+					}, Content::MANEUVER_STATUS, Content::REQUEST_DATA);
 
 			dh->subscribeOnData<std::string>(Content::SELECT_MANEUVER_SET, [this](const auto& id)
 			{ maneuverSelection(id); });
