@@ -9,7 +9,15 @@
 
 #include "uavAP/FlightAnalysis/SignalGenerator/ISignalGenerator.h"
 #include "uavAP/FlightAnalysis/SignalGenerator/SineSignalGenerator.h"
+#include "uavAP/FlightAnalysis/SignalGenerator/SquareSignalGenerator.h"
+#include "uavAP/FlightAnalysis/SignalGenerator/CustomSignalGenerator.h"
+#include "uavAP/FlightAnalysis/SignalGenerator/MultiSineSignalGenerator.h"
 
-using SignalGeneratorFactory = StaticFactory<ISignalGenerator, false, SineSignalGenerator>;
+using SignalGeneratorFactory = StaticFactory<ISignalGenerator, false,
+		SineSignalGenerator,
+		SquareSignalGenerator,
+		CustomSignalGenerator,
+		MultiSineSignalGenerator
+>;
 
 #endif //UAVAP_SIGNALGENERATORFACTORY_H

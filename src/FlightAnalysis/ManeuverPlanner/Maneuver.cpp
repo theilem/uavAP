@@ -15,12 +15,14 @@ Maneuver::initialize(const Aggregator& aggregator)
 	transition_ = ConditionFactory::create(params.transition());
 	if (!transition_)
 	{
-		CPSLOG_ERROR << "Transition cannot be created from configuration";
-		return false;
+		CPSLOG_WARN << "Transition cannot be created from configuration. Let's hope this is intentional.";
 	}
-	if (auto aggregatable = std::dynamic_pointer_cast<IAggregatableObject>(transition_))
-		aggregatable->notifyAggregationOnUpdate(aggregator);
-	transition_->initialize();
+	else
+	{
+		if (auto aggregatable = std::dynamic_pointer_cast<IAggregatableObject>(transition_))
+			aggregatable->notifyAggregationOnUpdate(aggregator);
+		transition_->initialize();
+	}
 
 	for (const auto& p : params.waveforms())
 	{
@@ -56,6 +58,8 @@ Maneuver::getOverrides() const
 bool
 Maneuver::inTransition()
 {
+	if (!transition_)
+		return false;
 	return transition_->evaluate();
 }
 
@@ -75,8 +79,13 @@ Maneuver::printInfo()
 	}
 
 	std::cout << std::endl;
-	std::cout << "Transition:" << std::endl;
-	transition_->printInfo();
+	if (!transition_)
+		std::cout << "No transition" << std::endl;
+	else
+	{
+		std::cout << "Transition:" << std::endl;
+		transition_->printInfo();
+	}
 	std::cout << std::endl;
 
 }
