@@ -4,7 +4,7 @@
 	"processes": {
 		"flight_control": {
 			"binary": "FlightControl",
-			"config": "flight_control_pid.json"
+			"config": "flight_control_ss.json"
 		},
 		"mission_control": {
 			"binary": "MissionControl",
@@ -13,6 +13,10 @@
 		"communication": {
 			"binary": "Communication",
 			"config": "communication.json"
+		},
+		"emulation_interface": {
+			"binary": "EmulationInterfaceSync",
+			"config": "emulation_interface.json"
 		}
 	}
 }

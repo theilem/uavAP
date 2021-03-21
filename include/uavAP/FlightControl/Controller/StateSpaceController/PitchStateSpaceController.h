@@ -9,17 +9,19 @@
 #include <cpsCore/Aggregation/IAggregatableObject.h>
 #include <uavAP/FlightControl/Controller/PIDController/IPIDController.h>
 #include <cpsCore/Utilities/IPC/IPC.h>
-#include <uavAP/FlightControl/SensingActuationIO/ISensingActuationIO.h>
 #include <uavAP/FlightControl/Controller/ControllerTarget.h>
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceCascade.h"
 
 
 class DataHandling;
+class ISensingIO;
+class IActuationIO;
 
-class PitchStateSpaceController	: public AggregatableObject<IScheduler, ISensingActuationIO, DataHandling,
-		IPC, DataPresentation>, public IPIDController,
-		public ConfigurableObject<PlaceholderParams>, public IRunnableObject
+class PitchStateSpaceController	: public AggregatableObject<IScheduler, ISensingIO, IActuationIO, DataHandling>,
+		public IPIDController,
+		public ConfigurableObject<PlaceholderParams>,
+		public IRunnableObject
 {
 public:
 	PitchStateSpaceController();
@@ -42,9 +44,6 @@ public:
 private:
 
 	void
-	onOverridePacket(const Packet& packet);
-
-	void
 	tunePID(const PIDTuning& tune);
 
 	PitchStateSpaceCascade cascade_;
@@ -52,9 +51,6 @@ private:
 	SensorData sensorDataNED_;
 	ControllerTarget target_;
 	ControllerOutput output_;
-
-
-	Subscription overrideSubscription_;
 
 	Mutex cascadeMutex_;
 };

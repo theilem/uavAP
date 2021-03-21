@@ -7,7 +7,7 @@
 #include <uavAP/FlightControl/Controller/ControllerTarget.h>
 
 PitchStateSpaceCascade::PitchStateSpaceCascade(const SensorData& sd_enu, const SensorData& sd_ned, const ControllerTarget & target, ControllerOutput& output):
-		controlEnv_(&sd_enu.timestamp), sd_ned_(sd_ned), output_(output), target_(target)//, a_(a.data()), b_(b.data()), k_(k.data())
+		controlEnv_(&sd_enu.timestamp), sd_ned_(sd_ned), output_(output), target_(target)
 {
 	/* Roll Control */
 	auto yawrateTarget = controlEnv_.addInput(&target.yawRate);

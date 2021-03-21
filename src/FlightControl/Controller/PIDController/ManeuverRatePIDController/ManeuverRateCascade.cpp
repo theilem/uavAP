@@ -13,9 +13,8 @@
 #include <uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRateCascade.h>
 #include <cmath>
 
-ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerTarget& target,
-										 ControllerOutput& out) :
-		controlEnv_(&sd.timestamp), throttleOverrideValue_(0)
+ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerTarget& target, ControllerOutput& out)
+		: controlEnv_(&sd.timestamp)
 {
 
 	/* Roll Control */
@@ -79,14 +78,8 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	auto velocityDifference = controlEnv_.addDifference(velocityPID, velocityOffset);
 
 	throttleConstraint_ = controlEnv_.addConstraint(velocityDifference, -1, 1);
-	auto throttleOverride = controlEnv_.addInput(&throttleOverrideValue_);
-	throttleSwitch_ = controlEnv_.addManualSwitch(throttleOverride, throttleConstraint_);
-	throttleSwitch_->switchTo(0);
 
-	auto throttleOut = controlEnv_.addOutput(throttleSwitch_, &out.throttleOutput);
-
-
-
+	auto throttleOut = controlEnv_.addOutput(throttleConstraint_, &out.throttleOutput);
 
 	/* Rudder Output */
 //	auto rudderBeta = controlEnv_.addInput(&beta_);
@@ -118,10 +111,6 @@ ManeuverRateCascade::configure(const Configuration& config)
 	PropertyMapper<Configuration> pm(config);
 
 	configureParams(pm);
-	if (throttleOverride_.has_value())
-	{
-		setThrottleOverride(throttleOverride_.value());
-	}
 
 	return pm.map();
 }
@@ -225,18 +214,4 @@ void
 ManeuverRateCascade::setThrottleLimit(FloatingType maxThrottle)
 {
 	throttleConstraint_->setConstraintValue(-1, maxThrottle);
-}
-
-void
-ManeuverRateCascade::setThrottleOverride(FloatingType throttleOverride)
-{
-	throttleOverrideValue_ = throttleOverride;
-	throttleSwitch_->switchTo(1);
-}
-
-void
-ManeuverRateCascade::disableThrottleOverride()
-{
-	throttleSwitch_->switchTo(0);
-	throttleOverride_.reset();
 }

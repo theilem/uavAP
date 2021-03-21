@@ -19,6 +19,11 @@ public:
 	template<typename OtherDerived>
 	FramedVector3(const Eigen::MatrixBase<OtherDerived>& other) : Vector3(other) {}
 
+	// Eigen developer told me not to use template arguments, but it doesn't compile according to his
+	// suggestion using Eigen 3.3.9
+	// https://gitlab.com/libeigen/eigen/-/issues/2192
+//	FramedVector3(const std::initializer_list<double>& other) : Vector3({other}) {}
+
 	template<typename OtherDerived>
 	FramedVector3& operator=(const Eigen::MatrixBase<OtherDerived>& other){
 		this->Vector3::operator=(other);

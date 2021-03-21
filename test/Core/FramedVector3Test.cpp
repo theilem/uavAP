@@ -5,7 +5,7 @@
 #include <cpsCore/Utilities/Test/TestInfo.h>
 #include "uavAP/Core/FramedVector3.h"
 
-TEST_CASE("Constructor Test")
+TEST_CASE("Constructor from Vector3 Test")
 {
 	Vector3 data = {1.1, 2.2, 3.3};
 	FramedVector3 framedData = data;
@@ -16,6 +16,18 @@ TEST_CASE("Constructor Test")
 
 	CHECK((Vector3) framedData == data);
 }
+
+// Commenting this test out because of eigen version differences
+// https://gitlab.com/libeigen/eigen/-/issues/2192
+// See comments in FramedVector3.h
+//TEST_CASE("Initializer List Test")
+//{
+//	FramedVector3 framedData({1.1, 2.2, 3.3});
+//	CHECK(framedData.x() == 1.1);
+//	CHECK(framedData.y() == 2.2);
+//	CHECK(framedData.z() == 3.3);
+//	CHECK(framedData.frame == Frame::INERTIAL);
+//}
 
 TEST_CASE("Reference Test")
 {

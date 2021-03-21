@@ -125,14 +125,14 @@ ENUMMAP_INIT(ServoEnum,
 struct SensorData
 {
 	Vector3 position = {0., 0., 0.};                //!< UTM Frame, [X: East, Y: North, Z: Up]
-	FramedVector3 velocity;                            //!< Earth Frame
-	FramedVector3 acceleration;                        //!< Body Frame
+	FramedVector3 velocity;// = {0., 0., 0.};                            //!< Earth Frame
+	FramedVector3 acceleration;// = {0., 0., 0.};                        //!< Body Frame
 	/** uavAP defines rotation order as roll, pitch then yaw **/
 	Vector3 attitude = {0., 0., 0.};                //!< [X: Roll, Y: Pitch, Z: Yaw]
 
 	/** Body->PQR, Inertial->dot Phi, dot Theta, dot Psi, even in ENU **/
 	/** In ENU frame, p-> wing axis rotation, q-> fusiladge axis rotation, r -> pxq axis plane rotation **/
-	FramedVector3 angularRate;            //!< [X: Roll, Y: Pitch, Z: Yaw]
+	FramedVector3 angularRate;// = {0., 0., 0.};            //!< [X: Roll, Y: Pitch, Z: Yaw]
 	//!< Body->PQR, Inertial->dot Phi, dot Theta, dot Psi
 	bool hasGPSFix = false;                    //!< Shows whether the GPS has a fix
 	bool autopilotActive = false;            //!< Shows if the autopilot is active

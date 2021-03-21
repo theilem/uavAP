@@ -12,7 +12,6 @@
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/FlightControl/Controller/ControlElements/ControlEnvironment.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDCascade.h"
-#include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceControllerTarget.h"
 
 
 #include <uavAP/Core/DataHandling/Content.hpp>

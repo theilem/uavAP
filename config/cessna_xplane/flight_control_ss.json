@@ -1,68 +1,66 @@
 {
-  "controller": {
-    "statespace_pitch": {
-      "k" : [-1.396389, 5.030448, -0.172078, 0.078457, 6.358809, 3.732165, 31.332021, 20.221687, -80.660899, -52.009727, 4.920291, -8.291295],
-      "elevator_trim" : -0.1708,
-      "throttle_trim" : 0.5343,
-      "reference_pitch" : 0,
-      "reference_U" : 54.9986,
-      "reference_W" : 0.39,
-      "cascade": {
-        "roll": {
-          "kp": 0.4,
-          "ki": 0,
-          "kd": 0,
-          "imax": 0,
-          "ff": 0
-        },
-        "roll_rate": {
-          "kp": 0,
-          "ki": 0,
-          "kd": 0,
-          "imax": 1.79769e+308,
-          "ff": 3
-        },
-        "roll_constraint": {
-          "min": -30,
-          "max": 30
-        },
-        "roll_rate_constraint": {
-          "min": -20,
-          "max": 20
-        },
-        "pitch_constraint": {
-          "min": -15,
-          "max": 15
-        },
-        "pitch_integrator": {
-          "min": -0.5,
-          "max": 0.5
-        },
-        "velocity_integrator": {
-          "min": -3,
-          "max": 3
-        }
-      }
-    }
-  },
-  "local_planner": {
-    "maneuver": {
-      "period": 0,
-      "safety_velocity": 10,
-      "k_altitude": 0.8,
-      "k_convergence": 0.004,
-      "k_yaw_rate": 0.4
-    }
-  },
-  "data_handling": {
-    "period": 200,
-    "target": "flight_control"
-  },
-  "data_presentation": {
-    "compress_double": true
-  },
-  "sens_act_io": {
-    "shared_memory": {
-    }
-  }
+	"controller": {
+		"statespace_pitch": {
+			"k" : [-1.396389, 5.030448, -0.172078, 0.078457, 6.358809, 3.732165, 31.332021, 20.221687, -80.660899, -52.009727, 4.920291, -8.291295],
+			"elevator_trim" : -0.1708,
+			"throttle_trim" : 0.5343,
+			"reference_pitch" : 0,
+			"reference_U" : 54.9986,
+			"reference_W" : 0.39,
+			"cascade": {
+				"roll": {
+					"kp": 0.4,
+					"ki": 0,
+					"kd": 0,
+					"imax": 0,
+					"ff": 0
+				},
+				"roll_rate": {
+					"kp": 0,
+					"ki": 0,
+					"kd": 0,
+					"imax": 1.79769e+308,
+					"ff": 3
+				},
+				"roll_constraint": {
+					"min": -30,
+					"max": 30
+				},
+				"roll_rate_constraint": {
+					"min": -20,
+					"max": 20
+				},
+				"pitch_constraint": {
+					"min": -15,
+					"max": 15
+				},
+				"pitch_integrator": {
+					"min": -0.5,
+					"max": 0.5
+				},
+				"velocity_integrator": {
+					"min": -3,
+					"max": 3
+				}
+			}
+		}
+	},
+	"local_planner": {
+		"maneuver": {
+			"period": 0,
+			"safety_velocity": 10,
+			"k_altitude": 0.8,
+			"k_convergence": 0.005,
+			"k_yaw_rate": 0.3,
+			"yaw_rate_distance_threshold": 50.0
+		}
+	},
+	"data_handling": {
+		"period": 200,
+		"target": "flight_control"
+	},
+	"data_presentation": {
+		"compress_double": true
+	},
+	"override_handler": {}
 }

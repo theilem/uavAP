@@ -7,6 +7,8 @@
 #include "uavAP/Core/Orientation/NED.h"
 #include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
 #include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController.h"
+#include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
+#include "uavAP/FlightControl/SensingActuationIO/IActuationIO.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
 
 PitchStateSpaceController::PitchStateSpaceController() : cascade_(sensorDataENU_, sensorDataNED_, target_, output_)
@@ -16,9 +18,9 @@ PitchStateSpaceController::PitchStateSpaceController() : cascade_(sensorDataENU_
 void
 PitchStateSpaceController::setControllerTarget(const ControllerTarget& target)
 {
-
-	auto io = get<ISensingActuationIO>();
-	if (!io)
+	auto io = get<ISensingIO>();
+	auto actIo = get<IActuationIO>();
+	if (!io || !actIo)
 	{
 		CPSLOG_ERROR << "Cannot calculate control, IO missing";
 		return;
@@ -27,10 +29,9 @@ PitchStateSpaceController::setControllerTarget(const ControllerTarget& target)
 
 	sensorDataENU_ = io->getSensorData();
 	sensorDataNED_ = sensorDataENU_;
-	NED::convert(sensorDataNED_);
-	directionalConversion(sensorDataNED_.velocity, sensorDataNED_.attitude, Frame::BODY, Orientation::NED);
+	NED::convert(sensorDataNED_, Frame::BODY);
 
-	io->setControllerOutput(getControllerOutput());
+	actIo->setControllerOutput(getControllerOutput());
 }
 
 ControllerOutput
@@ -48,7 +49,7 @@ PitchStateSpaceController::run(RunStage stage)
 	{
 		case RunStage::INIT:
 		{
-			if (!checkIsSet<ISensingActuationIO, IScheduler, IPC, DataPresentation>())
+			if (!checkIsSet<IScheduler, ISensingIO, IActuationIO>())
 			{
 				CPSLOG_ERROR << "Missing Dependencies";
 				return true;
@@ -61,16 +62,6 @@ PitchStateSpaceController::run(RunStage stage)
 		}
 		case RunStage::NORMAL:
 		{
-			auto ipc = get<IPC>();
-			overrideSubscription_ = ipc->subscribeOnPackets("override",
-															std::bind(&PitchStateSpaceController::onOverridePacket,
-																	  this,
-																	  std::placeholders::_1));
-
-			if (!overrideSubscription_.connected())
-			{
-				CPSLOG_DEBUG << "Override not present.";
-			}
 
 			if (auto dh = get<DataHandling>())
 			{
@@ -106,15 +97,6 @@ PitchStateSpaceController::configure(const Configuration& config)
 //	ParameterRef<PitchStateSpaceCascade> cascade(cascade_, "cascade", true);
 
 	return ConfigurableObject::configure(config);
-}
-
-void
-PitchStateSpaceController::onOverridePacket(const Packet& packet)
-{
-	auto dp = get<DataPresentation>();
-	auto override = dp->deserialize<Override>(packet);
-	Lock l(cascadeMutex_);
-	cascade_.setManeuverOverride(override);
 }
 
 void
