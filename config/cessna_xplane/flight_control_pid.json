@@ -77,5 +77,6 @@
 	"data_presentation": {
 		"compress_double": true
 	},
-	"override_handler": {}
+	"override_handler": {},
+	"override_safety": {}
 }

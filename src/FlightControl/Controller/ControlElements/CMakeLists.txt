@@ -16,14 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-add_library(control SHARED 	ControlEnvironment.cpp
-							ControlElements.cpp
-							EvaluableControlElements.cpp
-							# I would need to rewrite all of control environment for this :(
-#							VectoredControlElements.cpp
+add_library(control SHARED
+		ControlEnvironment.cpp
+		ControlElements.cpp
+		EvaluableControlElements.cpp
 		Filter/LowPassFilter.cpp
 		Filter/LowPassFilterAngle.cpp)
-					
+
 target_link_libraries(control
 		Eigen3::Eigen)
 

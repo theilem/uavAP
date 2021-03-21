@@ -15,7 +15,7 @@ struct ManeuverPlannerParams
 {
 	Parameter<std::map<std::string, ManeuverSet>> maneuverSets = {{{}}, "maneuver_sets", true};
 	Parameter<int> period = {10, "period", true};
-	Parameter<std::string> logPath = {"/tmp/log/", "log_path", true};
+	Parameter<std::string> logPath = {"/tmp/log/", "log_path", false};
 
 	template<typename Config>
 	void
