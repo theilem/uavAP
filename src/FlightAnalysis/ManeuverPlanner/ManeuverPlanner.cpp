@@ -73,14 +73,15 @@ ManeuverPlanner::run(RunStage stage)
 
 
 			/** Sends current maneuver info **/
-			dh->addTriggeredStatusFunction<unsigned int, DataRequest>(
-					[this](const DataRequest& req) -> Optional<unsigned int>
+			dh->addStatusFunction<int>(
+					[this]() -> int
 					{
-						if (req == DataRequest::MANEUVER_STATUS && activeManeuverSet_) {
+						if (activeManeuverSet_)
+						{
 							return activeManeuver_ - activeManeuverSet_->second.maneuvers().begin();
 						}
-						return std::nullopt;
-					}, Content::MANEUVER_STATUS, Content::REQUEST_DATA);
+						return -1;
+					}, Content::MANEUVER_STATUS);
 
 			dh->subscribeOnData<std::string>(Content::SELECT_MANEUVER_SET, [this](const auto& id)
 			{ maneuverSelection(id); });
