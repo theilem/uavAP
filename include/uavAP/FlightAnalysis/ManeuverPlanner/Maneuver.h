@@ -157,7 +157,9 @@ struct ManeuverDescriptor
 {
 	std::string maneuverName;
 	std::vector<ManeuverOverride> overrides;
-	std::vector<std::string> conditions;
+	std::vector<std::vector<std::string>> maintains;
+	std::vector<std::unordered_map<std::string, std::string>> waveforms;
+	std::vector<std::string> transitions;
 
 	template<typename Config>
 	void
@@ -165,7 +167,9 @@ struct ManeuverDescriptor
 	{
 		c & maneuverName;
 		c & overrides;
-		c & conditions;
+		c & maintains;
+		c & waveforms;
+		c & transitions;
 	}
 };
 
