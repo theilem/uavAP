@@ -78,5 +78,14 @@
 		"compress_double": true
 	},
 	"override_handler": {},
-	"override_safety": {}
+	"override_safety": {
+		"period": 10,
+		"rectanguloid": {
+			"major_side_length": 150000,
+			"minor_side_length": 60000,
+			"major_side_orientation": 0,
+			"height": 10000,
+			"center": [0,0,1500]
+		}
+	}
 }

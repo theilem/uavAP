@@ -6,336 +6,141 @@
 	"maneuver_planner": {
 		"period": 10,
 		"maneuver_sets": {
-			"roll_maneuver": {
+			"0SI_pitch": {
 				"maneuvers": [
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"pid/climb_angle": 0
+							"output/pitch": -0.170525,
+							"output/throttle": 0.534835,
+							"output/yaw": 0
 						},
 						"transition": {
 							"steady_state": {
-								"duration": 2000,
-								"sensor_values": {
-									"attitude_x": 0.1,
-									"attitude_y": 0.1,
-									"air_speed": 1
-								}
+								"duration": 27000
 							}
 						}
 					},
 					{
 						"overrides": {
+							"pid/roll": 0,
+							"output/pitch": -0.170525,
+							"output/throttle": 0.534835,
+							"output/yaw": 0
 						},
-						"maintains": [
-							"pid/pitch"
-						],
+						"transition": {
+							"steady_state": {
+								"duration": 3000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"output/throttle": 0,
+							"output/yaw": 0
+						},
 						"waveforms": {
-							"pid/roll": {
-								"sine": {
-									"amplitude": 30,
-									"frequency": 0.25
+							"pid/pitch": {
+								"square": {
+									"amplitude": 10,
+									"frequency": 0.05
 								}
 							}
 						},
 						"transition": {
-							"duration": {
-								"duration": 10000
+							"steady_state": {
+								"duration": 25000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"output/pitch": -0.170525,
+							"output/throttle": 0.534835,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 5000
 							}
 						}
 					}
 				],
-				"save_as": "roll_maneuver.txt"
+				"save_as": "0SI_pitch.txt"
 			},
-			"get_trim": {
+			"0SI_system": {
 				"maneuvers": [
 					{
 						"overrides": {
-							"pid/roll": 0.0,
-							"pid/pitch": 0.0
+							"pid/roll": 0,
+							"output/pitch": -0.170525,
+							"output/throttle": 0.534835,
+							"output/yaw": 0
 						},
 						"transition": {
 							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"attitude_x": 0.01,
-									"attitude_y": 0.01
-								}
+								"duration": 20000
 							}
 						}
-					}
-				]
-			},
-			"stall_speed": {
-				"maneuvers": [
+					},
 					{
 						"overrides": {
-							"local_planner/position_z": 1500.0,
-							"local_planner/velocity": 50.0,
-							"pid/roll": 0.0
+							"pid/roll": 0,
+							"pid/pitch": 10,
+							"output/yaw": 0
 						},
 						"transition": {
 							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"attitude_x": 0.01,
-									"attitude_y": 0.01,
-									"position_z": 5
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"local_planner/position_z": 1500.0,
-							"pid/roll": 0.0,
-							"output/throttle": -1.0
-						},
-						"transition": {
-							"sensor_data": {
-								"sensor": "ground_speed",
-								"use_tolerance": false,
-								"relational": "<",
-								"threshold": 40
-							}
-						}
-					},
-					{
-						"overrides": {
-							"local_planner/position_z": 1500.0,
-							"pid/roll": 0.0,
-							"output/throttle": -1.0
-						},
-						"transition": {
-							"sensor_data": {
-								"sensor": "angular_rate_y",
-								"use_tolerance": false,
-								"relational": "<",
-								"threshold": -10
-							}
-						}
-					},
-					{
-						"override": {
-							"output/roll": 0.0,
-							"output/pitch": 0.0,
-							"output/yaw": 0.0,
-							"output/throttle": -1.0
-						},
-						"transition": {
-							"sensor_data": {
-								"sensor": "position_z",
-								"use_tolerance": false,
-								"relational": "<",
-								"threshold": 1300
-							}
-						}
-					}
-				]
-			},
-			"singlet_roll_R_P500_A05": {
-				"maneuvers": [
-					{
-						"overrides": {
-							"local_planner/position_z": 1500.0,
-							"local_planner/velocity": 60.0,
-							"pid/roll": 0.0,
-							"save_trim/pitch": 1
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"attitude_x": 0.01,
-									"attitude_y": 0.01,
-									"position_z": 5
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"local_planner/velocity": 60.0,
-							"output/pitch": 0.0,
-							"output/yaw": 0.0,
-							"apply_trim/pitch": 1
-						},
-						"waveforms": {
-							"output/roll": {
-								"sine": {
-									"amplitude": 0.5,
-									"frequency": 1
-								}
-							}
-						},
-						"transition": {
-							"duration": {
-								"duration": 500
-							}
-						}
-					},
-					{
-						"overrides": {
-							"local_planner/velocity": 60.0,
-							"output/roll": 0.0,
-							"output/pitch": 0.0,
-							"output/yaw": 0.0,
-							"apply_trim/pitch": 1
-						},
-						"transition": {
-							"duration": {
-								"duration": 2000
-							}
-						}
-					}
-				]
-			},
-			"SQ_singlet_roll_R_P500_A05": {
-				"save_as": "square.txt",
-				"maneuvers": [
-					{
-						"overrides": {
-							"local_planner/position_z": 1500.0,
-							"local_planner/velocity": 40.0,
-							"pid/roll": 0.0,
-							"save_trim/pitch": 1
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 2000,
-								"sensor_values": {
-									"attitude_x": 0.01,
-									"attitude_y": 0.01,
-									"air_speed": 0.1,
-									"position_z": 5
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"local_planner/velocity": 40.0,
-							"output/pitch": 0.0,
-							"apply_trim/pitch": 1
-						},
-						"waveforms": {
-							"output/roll": {
-								"square": {
-									"amplitude": -0.5,
-									"frequency": 1
-								}
-							}
-						},
-						"transition": {
-							"duration": {
-								"duration": 500
-							}
-						}
-					},
-					{
-						"overrides": {
-							"local_planner/velocity": 40.0,
-							"output/roll": 0.0,
-							"output/pitch": 0.0,
-							"output/yaw": 0.0,
-							"apply_trim/pitch": 1
-						},
-						"transition": {
-							"duration": {
-								"duration": 1000
-							}
-						}
-					}
-				]
-			},
-			"multi_sine_roll": {
-				"save_as": "multi_sine_roll.txt",
-				"maneuvers": [
-					{
-						"overrides": {
-							"local_planner/position_z": 1500.0,
-							"local_planner/velocity": 40.0,
-							"pid/roll": 0.0,
-							"save_trim/pitch": 1
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"attitude_x": 0.01,
-									"attitude_y": 0.01,
-									"air_speed": 0.1,
-									"position_z": 5
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"local_planner/velocity": 40.0,
-							"output/pitch": 0.0,
-							"apply_trim/pitch": 1
-						},
-						"waveforms": {
-							"output/roll": {
-								"multi_sine": {
-									"sines": [
-										{
-											"amplitude": 0.5,
-											"frequency": 1
-										},
-										{
-											"amplitude": 0.5,
-											"frequency": 2
-										}
-									]
-								}
-							}
-						},
-						"transition": {
-							"duration": {
 								"duration": 10000
 							}
 						}
-					}
-				]
-			},
-			"custom_wave_pitch": {
-				"save_as": "custom_wave_pitch.txt",
-				"maneuvers": [
+					},
 					{
 						"overrides": {
-							"pid/roll": 0
-						},
-						"waveforms": {
-							"pid/pitch": {
-								"custom": {
-									"timepoints": [
-										0,
-										1000,
-										1500,
-										2500,
-										5000,
-										7000
-									],
-									"values": [
-										0.0,
-										30.0,
-										-10.0,
-										20.0,
-										-30.0,
-										0.0
-									]
-								}
-							}
+							"pid/roll": 0,
+							"output/pitch": -0.170525,
+							"output/throttle": 0.534835,
+							"output/yaw": 0
 						},
 						"transition": {
-							"duration": {
-								"duration": 10000
+							"steady_state": {
+								"duration": 20000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"output/pitch": -0.170525,
+							"output/throttle": 0.534835,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 5000
 							}
 						}
 					}
-				]
+				],
+				"save_as": "0SI_system.txt"
+			},
+			"0SI_trim": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"output/throttle": 0,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 9999000
+							}
+						}
+					}
+				],
+				"save_as": "0SI_trim.txt"
 			}
 		}
 	}
