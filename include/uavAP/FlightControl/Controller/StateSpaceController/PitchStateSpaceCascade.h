@@ -19,8 +19,10 @@
 #include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
 #include <uavAP/MissionControl/ManeuverPlanner/Override.h>
 
-class ControllerTarget;
-class ControllerOutput;
+struct ControllerOutput;
+struct ControllerTarget;
+
+class OverrideHandler;
 
 class PitchStateSpaceCascade : public ConfigurableObject<PitchStateSpaceParams>, public IPIDCascade
 {
@@ -45,8 +47,9 @@ public:
 	bool
 	configure(const Configuration& config);
 
+
 	void
-	setManeuverOverride(const Override& override);
+	registerOverrides(std::shared_ptr<OverrideHandler> overrideHandler);
 
 	Optional<PIDParams>
 	getPIDParams(const DataRequest& request);
@@ -64,11 +67,10 @@ private:
 	std::shared_ptr<Control::Integrator> velocityIntegrator_;
 
 	Control::ControlEnvironment controlEnv_;
-//	Eigen::Matrix<FloatingType, 5, 5> a_;
-//	Eigen::Matrix<FloatingType, 5, 2> b_;
 	Eigen::Matrix<FloatingType, 2, 6> k_;
 
 	std::map<PIDs, std::shared_ptr<Control::PID>> pids_;
+	std::map<ControllerOutputs, std::shared_ptr<Control::Output>> ctrlEnvOutputs_;
 	FloatingType Ep_;
 	FloatingType Ev_;
 
@@ -76,7 +78,15 @@ private:
 	ControllerOutput& output_;
 	const ControllerTarget& target_;
 
-	FloatingType offset_;
+
+	Angle<FloatingType> pitchOverrideTarget_;
+	FloatingType velocityOverrideTarget_;
+
+	std::shared_ptr<Control::ManualSwitch> pitchTarget_;
+	std::shared_ptr<Control::ManualSwitch> velocityTarget_;
+
+	OverridableValue<FloatingType> pitchOut_;
+	OverridableValue<FloatingType> throttleOut_;
 };
 
 

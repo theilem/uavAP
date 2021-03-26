@@ -5,6 +5,7 @@
 
 #include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceCascade.h"
 #include <uavAP/FlightControl/Controller/ControllerTarget.h>
+#include <uavAP/Core/OverrideHandler/OverrideHandler.h>
 
 PitchStateSpaceCascade::PitchStateSpaceCascade(const SensorData& sd_enu, const SensorData& sd_ned, const ControllerTarget & target, ControllerOutput& output):
 		controlEnv_(&sd_enu.timestamp), sd_ned_(sd_ned), output_(output), target_(target)
@@ -40,21 +41,30 @@ PitchStateSpaceCascade::PitchStateSpaceCascade(const SensorData& sd_enu, const S
 	pids_.insert(std::make_pair(PIDs::ROLL, rollPID));
 	pids_.insert(std::make_pair(PIDs::ROLL_RATE, rollRatePID));
 
+	ctrlEnvOutputs_.insert(std::make_pair(ControllerOutputs::ROLL, rollOut));
+
 	/* State Space Error */
 	Control::IntegratorParams defaultIParams;
 	/* Pitch */
 	auto cmdPitch = controlEnv_.addInput(&target.climbAngle);
 	pitchConstraint_ = std::make_shared<Control::Constraint<Angle<FloatingType>>>(cmdPitch);
+	auto overridePitch = controlEnv_.addInput(&pitchOverrideTarget_());
+	pitchTarget_ = controlEnv_.addManualSwitch(overridePitch, pitchConstraint_);
+	pitchTarget_->switchTo(0);
 	auto pitch = controlEnv_.addInput(&sd_enu.attitude[1]);
+
 	// command - target
-	auto ep = controlEnv_.addDifference(pitchConstraint_, pitch);
+	auto ep = controlEnv_.addDifference(pitchTarget_, pitch);
 	pitchIntegrator_ = controlEnv_.addIntegrator(ep, defaultIParams);
 	controlEnv_.addOutput(pitchIntegrator_, &Ep_);
 
 	/* Velocity */
 	auto cmdVelocity = controlEnv_.addInput(&target.velocity);
+	auto overrideVelocity = controlEnv_.addInput(&velocityOverrideTarget_);
+	velocityTarget_ = controlEnv_.addManualSwitch(overrideVelocity, cmdVelocity);
+	velocityTarget_->switchTo(0);
 	auto velocity = controlEnv_.addInput(&sd_ned_.velocity[0]);
-	auto ev = controlEnv_.addDifference(cmdVelocity, velocity);
+	auto ev = controlEnv_.addDifference(velocityTarget_, velocity);
 	velocityIntegrator_ = controlEnv_.addIntegrator(ev, defaultIParams);
 	controlEnv_.addOutput(velocityIntegrator_, &Ev_);
 
@@ -111,7 +121,6 @@ PitchStateSpaceCascade::evaluate()
 {
 	assert(sd_ned_.orientation == Orientation::NED);
 	assert(sd_ned_.velocity.frame == Frame::BODY);
-
 	// Kind of optional when roll is 0
 //	assert(sd_ned_.angularRate.frame == Frame::BODY);
 	controlEnv_.evaluate();
@@ -125,31 +134,28 @@ PitchStateSpaceCascade::evaluate()
 	state[4] = Ep_;
 	state[5] = Ev_;
 
-	Vector<2> stateOut = -k_ * state;
+	auto stateOut = -k_ * state;
 
 	// + delta E -> elevator down, right hand rule behind
 //	stateOut[0] = stateOut[0] * -1;
 	// Using joystick command instead of elevator command ^
 
-	std::printf("du: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", state[0], stateOut[1], state[5], target_.velocity, sd_ned_.velocity[0], target_.velocity - sd_ned_.velocity[0]);
-	std::printf("dθ: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", radToDeg(state[3]), stateOut[0], state[4], radToDeg(pitchConstraint_->getValue()), radToDeg(sd_ned_.attitude[1]), radToDeg(pitchConstraint_->getValue() - sd_ned_.attitude[1]));
+	std::printf("du: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", state[0], stateOut[1], state[5], velocityTarget_->getValue(), sd_ned_.velocity[0], velocityTarget_->getValue() - sd_ned_.velocity[0]);
+	std::printf("dθ: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", radToDeg(state[3]), stateOut[0], state[4], radToDeg(pitchTarget_->getValue()), radToDeg(sd_ned_.attitude[1]), radToDeg(pitchTarget_->getValue() - sd_ned_.attitude[1]));
 
-	output_.pitchOutput = std::clamp(stateOut[0] + params.tE.value, (FloatingType) -1, (FloatingType) 1);
-	output_.throttleOutput = std::clamp(stateOut[1] + params.tT.value, (FloatingType) -1, (FloatingType) 1);
-//	output_.pitchOutput = params.tE.value;
-//	output_.throttleOutput = params.tT.value;
+	pitchOut_ = std::clamp(stateOut[0] + params.tE.value, (FloatingType) -1, (FloatingType) 1);
+	throttleOut_ = std::clamp(stateOut[1] + params.tT.value, (FloatingType) -1, (FloatingType) 1);
+
+	output_.pitchOutput = pitchOut_;
+	output_.throttleOutput = throttleOut_;
 }
 
 bool
 PitchStateSpaceCascade::configure(const Configuration& config)
 {
 	configure_(config.get_child("cascade"));
-
 	auto retVal = ConfigurableObject::configure(config);
 
-
-//	a_ = decltype(a_)(params.a.value.data());
-//	b_ = decltype(b_)(params.b.value.data());
 	k_ = decltype(k_)(params.k.value.data());
 	return retVal;
 }
@@ -184,9 +190,36 @@ PitchStateSpaceCascade::configure_(const Configuration& config)
 }
 
 void
-PitchStateSpaceCascade::setManeuverOverride(const Override& override)
+PitchStateSpaceCascade::registerOverrides(std::shared_ptr<OverrideHandler> overrideHandler)
 {
-	CPSLOG_WARN << "Not implemented";
+	overrideHandler->registerOverride("ss/theta", [this](bool enable, FloatingType val){
+		pitchOverrideTarget_ = val;
+		pitchTarget_->switchTo(enable);
+	});
+	overrideHandler->registerOverride("ss/u", [this](bool enable, FloatingType val){
+		velocityOverrideTarget_ = val;
+		velocityTarget_->switchTo(enable);
+	});
+
+
+	for (const auto& it:pids_)
+	{
+		overrideHandler->registerOverride("pid/" + EnumMap<PIDs>::convert(it.first), [it](bool enable, FloatingType val)
+		{ it.second->applyOverride(enable, val); });
+		overrideHandler->registerMaintain("pid/" + EnumMap<PIDs>::convert(it.first), [it](bool enable)
+		{ it.second->applyMaintain(enable); });
+	}
+	for (const auto& it:ctrlEnvOutputs_)
+	{
+		overrideHandler->registerOverride("output/" + EnumMap<ControllerOutputs>::convert(it.first),
+										  it.second->getOutputOverridableValue());
+		overrideHandler->registerOverride("save_trim/" + EnumMap<ControllerOutputs>::convert(it.first),
+										  it.second->getSaveTrimOverridableValue());
+		overrideHandler->registerOverride("apply_trim/" + EnumMap<ControllerOutputs>::convert(it.first),
+										  it.second->getApplyTrimOverridableValue());
+	}
+	overrideHandler->registerOverride("output/pitch", pitchOut_);
+	overrideHandler->registerOverride("output/throttle", throttleOut_);
 }
 
 Optional<PIDParams>

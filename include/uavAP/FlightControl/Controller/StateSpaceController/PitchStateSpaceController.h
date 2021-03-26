@@ -17,8 +17,10 @@
 class DataHandling;
 class ISensingIO;
 class IActuationIO;
+class OverrideHandler;
 
-class PitchStateSpaceController	: public AggregatableObject<IScheduler, ISensingIO, IActuationIO, DataHandling>,
+class PitchStateSpaceController	: public AggregatableObject<IScheduler, ISensingIO, IActuationIO, DataHandling,
+		OverrideHandler>,
 		public IPIDController,
 		public ConfigurableObject<PlaceholderParams>,
 		public IRunnableObject

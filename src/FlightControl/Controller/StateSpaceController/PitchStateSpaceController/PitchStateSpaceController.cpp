@@ -58,6 +58,10 @@ PitchStateSpaceController::run(RunStage stage)
 			{
 				CPSLOG_DEBUG << "DataHandling not set. Debugging disabled.";
 			}
+			if (auto oh = get<OverrideHandler>())
+				cascade_.registerOverrides(oh);
+			else
+				CPSLOG_DEBUG << "OverrideHandler not set. Overrides disabled.\n";
 			break;
 		}
 		case RunStage::NORMAL:
