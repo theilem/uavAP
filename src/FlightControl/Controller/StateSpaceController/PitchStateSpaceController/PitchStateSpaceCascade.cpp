@@ -8,7 +8,7 @@
 #include <uavAP/Core/OverrideHandler/OverrideHandler.h>
 
 PitchStateSpaceCascade::PitchStateSpaceCascade(const SensorData& sd_enu, const SensorData& sd_ned, const ControllerTarget & target, ControllerOutput& output):
-		controlEnv_(&sd_enu.timestamp), sd_ned_(sd_ned), output_(output), target_(target)
+		controlEnv_(&sd_enu.timestamp), sd_ned_(sd_ned), output_(output)
 {
 	/* Roll Control */
 	auto yawrateTarget = controlEnv_.addInput(&target.yawRate);

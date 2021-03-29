@@ -6,6 +6,97 @@
 	"maneuver_planner": {
 		"period": 10,
 		"maneuver_sets": {
+			"0SI_throttle": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"pid/climb_angle": 0,
+							"pid/velocity": 55,
+							"ss/u": 55,
+							"controller_target/climb_rate": 0,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 27000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"pid/climb_angle": 0,
+							"pid/velocity": 55,
+							"ss/u": 55,
+							"controller_target/climb_rate": 0,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 3000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"output/pitch": -0.1706,
+							"pid/velocity": 60,
+							"ss/u": 60,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 10000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"output/pitch": -0.1706,
+							"pid/velocity": 55,
+							"ss/u": 55,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 10000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"output/pitch": -0.1706,
+							"pid/velocity": 50,
+							"ss/u": 50,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 10000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"output/pitch": -0.1706,
+							"pid/velocity": 50,
+							"ss/u": 50,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 3000
+							}
+						}
+					}
+				],
+				"save_as": "0SI_throttle.txt"
+			},
 			"0SI_pitch": {
 				"maneuvers": [
 					{
@@ -41,66 +132,9 @@
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"output/throttle": 0,
-							"output/yaw": 0
-						},
-						"waveforms": {
-							"pid/pitch": {
-								"square": {
-									"amplitude": 8,
-									"frequency": 0.05
-								}
-							},
-							"ss/theta": {
-								"square": {
-									"amplitude": 8,
-									"frequency": 0.05
-								}
-							}
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 25000
-							}
-						}
-					},
-					{
-						"overrides": {
-							"pid/roll": 0,
-							"pid/climb_angle": 0,
-							"pid/velocity": 55,
-							"ss/u": 55,
-							"controller_target/climb_rate": 0,
-							"output/yaw": 0
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 3000
-							}
-						}
-					}
-				],
-				"save_as": "0SI_pitch.txt"
-			},
-			"0SI_system_pitch_up": {
-				"maneuvers": [
-					{
-						"overrides": {
-							"pid/roll": 0,
-							"output/pitch": -0.170525,
-							"output/throttle": 0.534835,
-							"output/yaw": 0
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 20000
-							}
-						}
-					},
-					{
-						"overrides": {
-							"pid/roll": 0,
-							"pid/pitch": 5,
+							"output/throttle": 0.5348,
+							"pid/pitch": 5.406,
+							"ss/theta": 5.406,
 							"output/yaw": 0
 						},
 						"transition": {
@@ -112,8 +146,57 @@
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"output/pitch": -0.170525,
-							"output/throttle": 0.534835,
+							"output/throttle": 0.5348,
+							"pid/pitch": 0.406,
+							"ss/theta": 0.406,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 10000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"output/throttle": 0.5348,
+							"pid/pitch": -4.594,
+							"ss/theta": -4.594,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 10000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"output/throttle": 0.5348,
+							"pid/pitch": -5,
+							"ss/theta": -0.0872665,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 30000
+							}
+						}
+					}
+				],
+				"save_as": "0SI_pitch.txt"
+			},
+			"0SI_system_pitch_up": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"pid/climb_angle": 0,
+							"pid/velocity": 55,
+							"ss/u": 55,
+							"controller_target/climb_rate": 0,
 							"output/yaw": 0
 						},
 						"transition": {
@@ -125,13 +208,52 @@
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"output/pitch": -0.170525,
-							"output/throttle": 0.534835,
+							"pid/pitch": 8,
+							"ss/theta": 8,
 							"output/yaw": 0
 						},
 						"transition": {
 							"steady_state": {
-								"duration": 5000
+								"duration": 9000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"pid/pitch": 8,
+							"ss/theta": 8,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"output/pitch": -0.1706,
+							"output/throttle": 0.5348,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 40000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"output/pitch": -0.1706,
+							"output/throttle": 0.5348,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 3000
 							}
 						}
 					}
@@ -143,8 +265,10 @@
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"output/pitch": -0.170525,
-							"output/throttle": 0.534835,
+							"pid/climb_angle": 0,
+							"pid/velocity": 55,
+							"ss/u": 55,
+							"controller_target/climb_rate": 0,
 							"output/yaw": 0
 						},
 						"transition": {
@@ -157,37 +281,51 @@
 						"overrides": {
 							"pid/roll": 0,
 							"pid/pitch": -5,
+							"ss/theta": -5,
 							"output/yaw": 0
 						},
 						"transition": {
 							"steady_state": {
-								"duration": 10000
+								"duration": 9000
 							}
 						}
 					},
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"output/pitch": -0.170525,
-							"output/throttle": 0.534835,
+							"pid/pitch": -5,
+							"ss/theta": -5,
 							"output/yaw": 0
 						},
 						"transition": {
 							"steady_state": {
-								"duration": 20000
+								"duration": 1000
 							}
 						}
 					},
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"output/pitch": -0.170525,
-							"output/throttle": 0.534835,
+							"output/pitch": -0.1706,
+							"output/throttle": 0.5348,
 							"output/yaw": 0
 						},
 						"transition": {
 							"steady_state": {
-								"duration": 5000
+								"duration": 27000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"pid/roll": 0,
+							"output/pitch": -0.1706,
+							"output/throttle": 0.5348,
+							"output/yaw": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 3000
 							}
 						}
 					}
@@ -199,8 +337,10 @@
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"output/pitch": -0.170525,
-							"output/throttle": 0.534835,
+							"pid/climb_angle": 0,
+							"pid/velocity": 60,
+							"ss/u": 60,
+							"controller_target/climb_rate": 0,
 							"output/yaw": 0
 						},
 						"transition": {
@@ -212,8 +352,10 @@
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"output/pitch": -0.170525,
-							"output/throttle": 0.534835,
+							"pid/climb_angle": 0,
+							"pid/velocity": 60,
+							"ss/u": 60,
+							"controller_target/climb_rate": 0,
 							"output/yaw": 0
 						},
 						"transition": {
@@ -225,25 +367,26 @@
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"output/throttle": 1,
+							"output/pitch": -0.1706,
+							"output/throttle": 0.5348,
 							"output/yaw": 0
 						},
 						"transition": {
 							"steady_state": {
-								"duration": 25000
+								"duration": 27000
 							}
 						}
 					},
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"output/pitch": -0.170525,
-							"output/throttle": 0.534835,
+							"output/pitch": -0.1706,
+							"output/throttle": 0.5348,
 							"output/yaw": 0
 						},
 						"transition": {
 							"steady_state": {
-								"duration": 25000
+								"duration": 3000
 							}
 						}
 					}
@@ -255,8 +398,10 @@
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"output/pitch": -0.170525,
-							"output/throttle": 0.534835,
+							"pid/climb_angle": 0,
+							"pid/velocity": 45,
+							"ss/u": 45,
+							"controller_target/climb_rate": 0,
 							"output/yaw": 0
 						},
 						"transition": {
@@ -268,8 +413,10 @@
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"output/pitch": -0.170525,
-							"output/throttle": 0.534835,
+							"pid/climb_angle": 0,
+							"pid/velocity": 45,
+							"ss/u": 45,
+							"controller_target/climb_rate": 0,
 							"output/yaw": 0
 						},
 						"transition": {
@@ -281,38 +428,41 @@
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"output/throttle": 0,
+							"output/pitch": -0.1706,
+							"output/throttle": 0.5348,
 							"output/yaw": 0
 						},
 						"transition": {
 							"steady_state": {
-								"duration": 25000
+								"duration": 40000
 							}
 						}
 					},
 					{
 						"overrides": {
 							"pid/roll": 0,
-							"output/pitch": -0.170525,
-							"output/throttle": 0.534835,
+							"output/pitch": -0.1706,
+							"output/throttle": 0.5348,
 							"output/yaw": 0
 						},
 						"transition": {
 							"steady_state": {
-								"duration": 25000
+								"duration": 3000
 							}
 						}
 					}
 				],
-				"save_as": "0SI_system_speed_up.txt"
+				"save_as": "0SI_system_speed_down.txt"
 			},
 			"0SI_trim": {
 				"maneuvers": [
 					{
 						"overrides": {
-							"pid/velocity": 55,
 							"pid/roll": 0,
 							"pid/climb_angle": 0,
+							"pid/velocity": 55,
+							"ss/u": 55,
+							"controller_target/climb_rate": 0,
 							"output/yaw": 0
 						},
 						"transition": {

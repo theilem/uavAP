@@ -76,7 +76,6 @@ private:
 
 	const SensorData& sd_ned_;
 	ControllerOutput& output_;
-	const ControllerTarget& target_;
 
 
 	Angle<FloatingType> pitchOverrideTarget_;
