@@ -53,6 +53,9 @@ public:
 	std::vector<std::string>
 	getPossibleOverrideIds() const;
 
+	std::vector<std::string>
+	getPossibleMaintainIds() const;
+
 	bool
 	run(RunStage stage) override;
 

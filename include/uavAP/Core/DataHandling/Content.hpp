@@ -78,6 +78,7 @@ enum class Content
 	CRITICAL_POINTS,				//!< Critical points from geofencing
 	MISC_VALUES,
 	OVERRIDE_LIST,
+	MAINTAIN_LIST,
 
 	//GS to FlightControl in UAVAP
 	TUNE_PID,						//!< TUNE_PID
@@ -116,9 +117,9 @@ enum class DataRequest
 	SAFETY_BOUNDS,					//!< SAFETY_BOUNDS
 	LOCAL_FRAME,					//!< LOCAL_FRAME
 	OVERRIDE_LIST,					//!< OVERRIDE_LIST
+	MAINTAIN_LIST,					//!< OVERRIDE_LIST
 	MANEUVERS_LIST,					//!< All the Maneuver Sets
 	MANEUVER_SET,					//!< A single list of Maneuvers to execute
-	MANEUVER_STATUS,				//!< Current maneuver in active override
 	START_LOGGING,					//!< START_LOGGING
 	STOP_LOGGING					//!< STOP_LOGGING
 };
