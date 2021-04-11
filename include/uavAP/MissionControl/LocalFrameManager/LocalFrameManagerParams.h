@@ -6,6 +6,7 @@
 #define UAVAP_LOCALFRAMEMANAGERPARAMS_H
 
 #include "uavAP/Core/Frames/VehicleOneFrame.h"
+#include <cpsCore/Utilities/Angle.hpp>
 
 struct LocalFrameManagerParams
 {
