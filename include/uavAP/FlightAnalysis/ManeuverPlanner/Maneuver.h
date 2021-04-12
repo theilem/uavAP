@@ -153,25 +153,7 @@ struct ManeuverSet
 /**
  * Describes the current active maneuver for the ground station
  */
-struct ManeuverDescriptor
-{
-	std::string maneuverName;
-	std::vector<ManeuverOverride> overrides;
-	std::vector<std::vector<std::string>> maintains;
-	std::vector<std::unordered_map<std::string, std::string>> waveforms;
-	std::vector<std::string> transitions;
-
-	template<typename Config>
-	void
-	configure(Config& c)
-	{
-		c & maneuverName;
-		c & overrides;
-		c & maintains;
-		c & waveforms;
-		c & transitions;
-	}
-};
+ using ManeuverDescriptor = std::pair<std::string, std::vector<ManeuverParams>>;
 
 //using ManeuverSet = std::vector<Maneuver>;
 

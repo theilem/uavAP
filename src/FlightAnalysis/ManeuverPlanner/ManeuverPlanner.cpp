@@ -56,26 +56,8 @@ ManeuverPlanner::run(RunStage stage)
 							ManeuverDescriptor ans;
 							if (activeManeuverSet_)
 							{
-								ans.maneuverName = activeManeuverSet_->first;
-								for (const auto& it : activeManeuverSet_->second.maneuvers.value)
-								{
-									ans.overrides.push_back(it.overrides.value);
-
-									ans.maintains.push_back(it.maintains.value);
-
-									decltype(ans.waveforms)::value_type curWaveform;
-									for (const auto& waveIt: it.waveforms.value)
-									{
-										std::ostringstream oss;
-										boost::property_tree::write_json(oss, waveIt.second);
-										curWaveform[waveIt.first] = oss.str();
-									}
-									ans.waveforms.push_back(curWaveform);
-
-									std::ostringstream oss;
-									boost::property_tree::write_json(oss, it.transition.value);
-									ans.transitions.push_back(oss.str());
-								}
+								ans.first = activeManeuverSet_->first;
+								ans.second = activeManeuverSet_->second.maneuvers.value;
 							}
 							// Empty vector signifies no active maneuver set
 							return ans;
