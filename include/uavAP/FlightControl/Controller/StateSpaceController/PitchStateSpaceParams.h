@@ -9,8 +9,6 @@
 
 struct PitchStateSpaceParams
 {
-//	Parameter<std::vector<FloatingType>> a = {{}, "a", true};
-//	Parameter<std::vector<FloatingType>> b = {{}, "b", true};
 	Parameter<std::vector<FloatingType>> k = {{}, "k", true};
 	Parameter<FloatingType> tE = {0, "elevator_trim", true};
 	Parameter<FloatingType> tT = {0, "throttle_trim", true};
@@ -22,8 +20,6 @@ struct PitchStateSpaceParams
 	inline void
 	configure(Config& c)
 	{
-//		c & a;
-//		c & b;
 		c & k;
 		c & tE;
 		c & tT;

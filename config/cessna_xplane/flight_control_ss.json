@@ -33,8 +33,8 @@
 					"max": 20
 				},
 				"pitch_constraint": {
-					"min": -10,
-					"max": 10
+					"min": -15,
+					"max": 15
 				},
 				"pitch_integrator": {
 					"min": -0.5,
@@ -51,7 +51,7 @@
 		"maneuver": {
 			"period": 0,
 			"safety_velocity": 10,
-			"k_altitude": 0.8,
+			"k_altitude": 1.8,
 			"k_convergence": 0.005,
 			"k_yaw_rate": 0.3,
 			"yaw_rate_distance_threshold": 50.0

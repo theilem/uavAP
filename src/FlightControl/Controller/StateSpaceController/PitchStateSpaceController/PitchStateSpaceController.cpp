@@ -2,7 +2,6 @@
 // Created by seedship on 1/30/21.
 //
 
-#include "uavAP/MissionControl/ManeuverPlanner/Override.h"
 #include "uavAP/Core/Orientation/ConversionUtils.h"
 #include "uavAP/Core/Orientation/NED.h"
 #include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"

@@ -17,7 +17,6 @@
 #include <uavAP/Core/DataHandling/Content.hpp>
 #include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceParams.h"
 #include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
-#include <uavAP/MissionControl/ManeuverPlanner/Override.h>
 
 struct ControllerOutput;
 struct ControllerTarget;

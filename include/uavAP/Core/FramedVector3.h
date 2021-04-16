@@ -19,13 +19,12 @@ public:
 	template<typename OtherDerived>
 	FramedVector3(const Eigen::MatrixBase<OtherDerived>& other) : Vector3(other) {}
 
-	// Eigen developer told me not to use template arguments, but it doesn't compile according to his
-	// suggestion using Eigen 3.3.9
+	// We need Eigen 3.4 to be able to initialize from initializer lists
 	// https://gitlab.com/libeigen/eigen/-/issues/2192
 //	FramedVector3(const std::initializer_list<double>& other) : Vector3({other}) {}
 
-	template<typename OtherDerived>
-	FramedVector3& operator=(const Eigen::MatrixBase<OtherDerived>& other){
+	template<typename Derived>
+	FramedVector3& operator=(const Eigen::MatrixBase<Derived>& other){
 		this->Vector3::operator=(other);
 		return *this;
 	}
@@ -45,44 +44,6 @@ serialize(Archive& ar, FramedVector3& t)
 	ar & t.frame;
 }
 }
-
-//	Vector3 data = {0., 0., 0.};
-
-//	const FloatingType&
-//	x() const
-//	{
-//		return data.x();
-//	}
-//
-//	const FloatingType&
-//	y() const
-//	{
-//		return data.y();
-//	}
-//
-//	const FloatingType&
-//	z() const
-//	{
-//		return data.z();
-//	}
-//
-//	FloatingType&
-//	x()
-//	{
-//		return data.x();
-//	}
-//
-//	FloatingType&
-//	y()
-//	{
-//		return data.y();
-//	}
-//
-//	FloatingType&
-//	z()
-//	{
-//		return data.z();
-//	}
 
 
 #endif //UAVAP_FRAMEDVECTOR3_H

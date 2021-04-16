@@ -15,7 +15,6 @@ PitchStateSpaceCascade::PitchStateSpaceCascade(const SensorData& sd_enu, const S
 	auto airspeed = controlEnv_.addInput(&sd_enu.airSpeed);
 
 	auto rollCalc = std::make_shared<Control::CustomFunction2>(yawrateTarget, airspeed, [](FloatingType yawrate, FloatingType airspeed) {
-//		CPSLOG_WARN << airspeed << " " << yawrate;
 		return -std::atan2(airspeed * yawrate, 9.81);
 	});
 
@@ -121,24 +120,18 @@ PitchStateSpaceCascade::evaluate()
 {
 	assert(sd_ned_.orientation == Orientation::NED);
 	assert(sd_ned_.velocity.frame == Frame::BODY);
-	// Kind of optional when roll is 0
-//	assert(sd_ned_.angularRate.frame == Frame::BODY);
 	controlEnv_.evaluate();
 
 	//TODO use initializer list when Eigen 3.4 is released
-	Vector<6> state;
+	VectorN<6> state;
 	state[0] = sd_ned_.velocity[0] - params.rU.value;
 	state[1] = sd_ned_.velocity[1] - params.rW.value;
 	state[2] = sd_ned_.angularRate[1];
-	state[3] = sd_ned_.attitude[1] - params.rP.value;// - params.rP.value;
+	state[3] = sd_ned_.attitude[1] - params.rP.value;
 	state[4] = Ep_;
 	state[5] = Ev_;
 
 	auto stateOut = -k_ * state;
-
-	// + delta E -> elevator down, right hand rule behind
-//	stateOut[0] = stateOut[0] * -1;
-	// Using joystick command instead of elevator command ^
 
 	std::printf("du: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", state[0], stateOut[1], state[5], velocityTarget_->getValue(), sd_ned_.velocity[0], velocityTarget_->getValue() - sd_ned_.velocity[0]);
 	std::printf("dθ: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", radToDeg(state[3]), stateOut[0], state[4], radToDeg(pitchTarget_->getValue()), radToDeg(sd_ned_.attitude[1]), radToDeg(pitchTarget_->getValue() - sd_ned_.attitude[1]));
