@@ -195,6 +195,64 @@
 					}
 				],
 				"save_as": "pitch_doublet_1hz_50amp.txt"
+			},
+			"roll_doublet_1hz_50amp": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 100,
+							"local_planner/velocity": 20,
+							"pid/pitch": 0
+						},
+						"transition": {
+							"steady_state": {
+								"duration": 5000,
+								"sensor_values": {
+									"air_speed": 1,
+									"attitude_y": 0.2,
+									"position_z": 3
+								}
+							}
+						}
+					},
+					{
+						"overrides": {
+							"apply_trim/pitch": 1,
+							"local_planner/velocity": 20,
+							"output/pitch": 0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						},
+						"waveforms": {
+							"output/roll": {
+								"square": {
+									"amplitude": 0.5,
+									"frequency": 1,
+									"offset": 0,
+									"phase": 0
+								}
+							}
+						}
+					},
+					{
+						"overrides": {
+							"apply_trim/pitch": 1,
+							"apply_trim/roll": 1,
+							"local_planner/velocity": 20,
+							"output/pitch": 0,
+							"output/roll": 0
+						},
+						"transition": {
+							"duration": {
+								"duration": 2000
+							}
+						}
+					}
+				],
+				"save_as": "roll_doublet_1hz_50amp.txt"
 			}
 		}
 	},
