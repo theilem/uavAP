@@ -20,7 +20,7 @@
 		"custom": {
 			"use_approach": false,
 			"default_velocity": 20,
-			"default_altitude": 150,
+			"default_altitude": 100,
 			"missions": {
 				"simple": {
 					"velocity": 20,
