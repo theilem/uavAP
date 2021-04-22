@@ -122,19 +122,13 @@ PitchStateSpaceCascade::evaluate()
 	assert(sd_ned_.velocity.frame == Frame::BODY);
 	controlEnv_.evaluate();
 
-	//TODO use initializer list when Eigen 3.4 is released
-	VectorN<6> state;
-	state[0] = sd_ned_.velocity[0] - params.rU.value;
-	state[1] = sd_ned_.velocity[1] - params.rW.value;
-	state[2] = sd_ned_.angularRate[1];
-	state[3] = sd_ned_.attitude[1] - params.rP.value;
-	state[4] = Ep_;
-	state[5] = Ev_;
+	auto state = getState();
 
-	auto stateOut = -k_ * state;
+	auto stateOut = -params.k.value * state;
 
-	std::printf("du: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", state[0], stateOut[1], state[5], velocityTarget_->getValue(), sd_ned_.velocity[0], velocityTarget_->getValue() - sd_ned_.velocity[0]);
-	std::printf("dθ: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", radToDeg(state[3]), stateOut[0], state[4], radToDeg(pitchTarget_->getValue()), radToDeg(sd_ned_.attitude[1]), radToDeg(pitchTarget_->getValue() - sd_ned_.attitude[1]));
+//	std::printf("du: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", state[0], stateOut[1], state[5], velocityTarget_->getValue(), sd_ned_.velocity[0], velocityTarget_->getValue() - sd_ned_.velocity[0]);
+//	std::printf("dθ: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", radToDeg(state[3]), stateOut[0], state[4], radToDeg(pitchTarget_->getValue()), radToDeg(sd_ned_.attitude[1]), radToDeg(pitchTarget_->getValue() - sd_ned_.attitude[1]));
+//		std::cout << "Matrix K\n:" << params.k.value << "\n";
 
 	pitchOut_ = std::clamp(stateOut[0] + params.tE.value, (FloatingType) -1, (FloatingType) 1);
 	throttleOut_ = std::clamp(stateOut[1] + params.tT.value, (FloatingType) -1, (FloatingType) 1);
@@ -149,7 +143,6 @@ PitchStateSpaceCascade::configure(const Configuration& config)
 	configure_(config.get_child("cascade"));
 	auto retVal = ConfigurableObject::configure(config);
 
-	k_ = decltype(k_)(params.k.value.data());
 	return retVal;
 }
 
@@ -229,4 +222,30 @@ PitchStateSpaceCascade::getPIDParams(const DataRequest& request)
 	}
 
 	return pidParams;
+}
+
+VectorN<6>
+PitchStateSpaceCascade::getState() const
+{
+	//TODO use initializer list when Eigen 3.4 is released
+	VectorN<6> state;
+	state[0] = sd_ned_.velocity[0] - params.rU.value;
+	state[1] = sd_ned_.velocity[1] - params.rW.value;
+	state[2] = sd_ned_.angularRate[1];
+	state[3] = sd_ned_.attitude[1] - params.rP.value;
+	state[4] = Ep_;
+	state[5] = Ev_;
+	return state;
+}
+
+FloatingType
+PitchStateSpaceCascade::getUTrim() const
+{
+	return params.rU.value;
+}
+
+FloatingType
+PitchStateSpaceCascade::getThetaTrim() const
+{
+	return params.rP.value;
 }

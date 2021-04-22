@@ -53,6 +53,15 @@ public:
 	Optional<PIDParams>
 	getPIDParams(const DataRequest& request);
 
+	VectorN<6>
+	getState() const;
+
+	FloatingType
+	getUTrim() const;
+
+	FloatingType
+	getThetaTrim() const;
+
 private:
 
 	void
@@ -66,7 +75,6 @@ private:
 	std::shared_ptr<Control::Integrator> velocityIntegrator_;
 
 	Control::ControlEnvironment controlEnv_;
-	Eigen::Matrix<FloatingType, 2, 6> k_;
 
 	std::map<PIDs, std::shared_ptr<Control::PID>> pids_;
 	std::map<ControllerOutputs, std::shared_ptr<Control::Output>> ctrlEnvOutputs_;

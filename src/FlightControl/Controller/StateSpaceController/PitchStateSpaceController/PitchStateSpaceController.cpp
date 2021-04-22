@@ -108,3 +108,24 @@ PitchStateSpaceController::tunePID(const PIDTuning& tune)
 	Lock l(cascadeMutex_);
 	cascade_.tunePID(static_cast<PIDs>(tune.pid), tune.params);
 }
+
+VectorN<6>
+PitchStateSpaceController::getState() const
+{
+	Lock l(cascadeMutex_);
+	return cascade_.getState();
+}
+
+FloatingType
+PitchStateSpaceController::getUTrim() const
+{
+	Lock l(cascadeMutex_);
+	return cascade_.getUTrim();
+}
+
+FloatingType
+PitchStateSpaceController::getThetaTrim() const
+{
+	Lock l(cascadeMutex_);
+	return cascade_.getThetaTrim();
+}

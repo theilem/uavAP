@@ -14,7 +14,7 @@
 int
 main(int argc, char** argv)
 {
-	CPSLogger::instance()->setLogLevel(LogLevel::WARN);
+	CPSLogger::instance()->setLogLevel(LogLevel::DEBUG);
 	CPSLogger::instance()->setModuleName("FlightControl");
 	std::string configPath;
 	if (argc == 2)

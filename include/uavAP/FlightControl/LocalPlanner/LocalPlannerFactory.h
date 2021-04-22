@@ -30,6 +30,7 @@
 #include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"
 #include "uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlanner.h"
+#include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/StateSpaceAltitudePlanner.h"
 
 //class LocalPlannerFactory: public Factory<ILocalPlanner>
 //{
@@ -43,6 +44,6 @@
 //
 //};
 
-using LocalPlannerFactory = StaticFactory<ILocalPlanner, false, LinearLocalPlanner, ManeuverLocalPlanner>;
+using LocalPlannerFactory = StaticFactory<ILocalPlanner, false, LinearLocalPlanner, ManeuverLocalPlanner, StateSpaceAltitudePlanner>;
 
 #endif /* UAVAP_FLIGHTCONTROL_LOCALPLANNER_LOCALPLANNERFACTORY_H_ */

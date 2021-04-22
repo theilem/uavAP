@@ -9,7 +9,7 @@
 
 struct PitchStateSpaceParams
 {
-	Parameter<std::vector<FloatingType>> k = {{}, "k", true};
+	Parameter<Eigen::Matrix<FloatingType, 2, 6, Eigen::DontAlign>> k = {{}, "k", true};
 	Parameter<FloatingType> tE = {0, "elevator_trim", true};
 	Parameter<FloatingType> tT = {0, "throttle_trim", true};
 	Parameter<Angle<FloatingType>> rP = {Angle<FloatingType>(0), "reference_pitch", true};

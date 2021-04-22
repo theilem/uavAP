@@ -1,0 +1,79 @@
+{
+	"controller": {
+		"statespace_pitch": {
+			"k" : [-0.327166, 2.670956, -0.104117, 0.058871, 3.828460, -0.209897, 30.587626, -1.770336, -93.675710, -17.501929, 0.527395, -3.078546],
+			"elevator_trim" : -0.1706,
+			"throttle_trim" : 0.5348,
+			"reference_pitch" : 0.406,
+			"reference_U" : 55,
+			"reference_W" : 0.39,
+			"cascade": {
+				"roll": {
+					"kp": 0.4,
+					"ki": 0,
+					"kd": 0,
+					"imax": 0,
+					"ff": 0,
+					"is_angle": true
+				},
+				"roll_rate": {
+					"kp": 0,
+					"ki": 0,
+					"kd": 0,
+					"imax": 1.79769e+308,
+					"ff": 3,
+					"is_angle": true
+				},
+				"roll_constraint": {
+					"min": -30,
+					"max": 30
+				},
+				"roll_rate_constraint": {
+					"min": -20,
+					"max": 20
+				},
+				"pitch_constraint": {
+					"min": -15,
+					"max": 15
+				},
+				"pitch_integrator": {
+					"min": -0.5,
+					"max": 0.5
+				},
+				"velocity_integrator": {
+					"min": -5,
+					"max": 5
+				}
+			}
+		}
+	},
+	"local_planner": {
+		"statespace_altitude": {
+			"k": [0.001126, -0.005579, 0.025781, 0.096607, 1.002045, 0.000349, 0.019149],
+			"k_convergence": 0.005,
+			"k_yaw_rate": 0.3,
+			"yaw_rate_distance_threshold": 50.0,
+			"safety_velocity": 55,
+			"safety_altitude": 2438,
+			"period": 0
+		}
+	},
+	"data_handling": {
+		"period": 200,
+		"target": "flight_control"
+	},
+	"data_presentation": {
+		"compress_double": true
+	},
+	"override_handler": {},
+	"override_safety": {
+		"period": 10,
+		"rectanguloid": {
+			"major_side_length": 150000,
+			"minor_side_length": 60000,
+			"major_side_orientation": 0,
+			"height": 10000,
+			"center": [0,0,1500]
+		}
+	}
+}

@@ -288,6 +288,7 @@ ManeuverLocalPlanner::calculateControllerTarget(const Vector3& position, double 
 	positionZOverride_ = positionTarget[2];
 
 	Vector3 positionDeviation = Vector3(positionXOverride_(), positionYOverride_(), positionZOverride_()) - position;
+	std::cout << position.z() << "," << positionDeviation.z() << "\n";
 	double distance = positionDeviation.norm();
 
 	// Climb Rate

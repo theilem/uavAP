@@ -26,6 +26,9 @@ class PitchStateSpaceController	: public AggregatableObject<IScheduler, ISensing
 		public IRunnableObject
 {
 public:
+
+	static constexpr TypeId typeId = "statespace_pitch";
+
 	PitchStateSpaceController();
 
 	void
@@ -37,11 +40,17 @@ public:
 	ControllerOutput
 	getControllerOutput() override;
 
+	VectorN<6>
+	getState() const;
+
+	FloatingType
+	getUTrim() const;
+
+	FloatingType
+	getThetaTrim() const;
+
 	bool
 	configure(const Configuration& config) override;
-
-	static constexpr TypeId typeId = "statespace_pitch";
-
 
 private:
 
@@ -54,7 +63,7 @@ private:
 	ControllerTarget target_;
 	ControllerOutput output_;
 
-	Mutex cascadeMutex_;
+	mutable Mutex cascadeMutex_;
 };
 
 
