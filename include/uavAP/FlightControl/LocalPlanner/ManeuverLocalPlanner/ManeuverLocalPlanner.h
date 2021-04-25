@@ -112,7 +112,7 @@ private:
 	OverridableValue<FloatingType> directionXOverride_;
 	OverridableValue<FloatingType> directionYOverride_;
 	OverridableValue<FloatingType> curvatureOverride_;
-	OverridableValue<Angle<FloatingType>> headingOverride_;
+	MaintainableValue<Angle<FloatingType>> headingOverride_{Angle<FloatingType>(0.95), Angle<FloatingType>(0)};
 	OverridableValue<FloatingType> climbrateOverride_;
 	OverridableValue<FloatingType> controllerTargetVelocityOverride_;
 	OverridableValue<FloatingType> controllerTargetClimbAngleOverride_;
