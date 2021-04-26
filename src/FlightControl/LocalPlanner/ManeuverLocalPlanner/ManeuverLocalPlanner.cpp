@@ -113,8 +113,12 @@ ManeuverLocalPlanner::run(RunStage stage)
 						Content::MANEUVER_LOCAL_PLANNER_STATUS);
 				dh->addConfig(this, Content::MANEUVER_LOCAL_PLANNER_PARAMS);
 				dh->addTriggeredStatusFunction<Trajectory, DataRequest>(
-						std::bind(&ManeuverLocalPlanner::trajectoryRequest, this,
-								  std::placeholders::_1), Content::TRAJECTORY, Content::REQUEST_DATA);
+						[this](const DataRequest& request) -> Optional<Trajectory>
+						{
+							if (request == DataRequest::TRAJECTORY)
+								return getTrajectory();
+							return std::nullopt;
+						}, Content::TRAJECTORY, Content::REQUEST_DATA);
 			}
 
 			break;
@@ -383,12 +387,4 @@ ManeuverLocalPlanner::update()
 
 	SensorData data = sensing->getSensorData();
 	createLocalPlan(data.position, data.attitude.z(), data.hasGPSFix);
-}
-
-Optional<Trajectory>
-ManeuverLocalPlanner::trajectoryRequest(const DataRequest& request)
-{
-	if (request == DataRequest::TRAJECTORY)
-		return getTrajectory();
-	return std::nullopt;
 }

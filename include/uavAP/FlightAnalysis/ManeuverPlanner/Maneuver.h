@@ -82,9 +82,11 @@
 //	}
 //};
 
+using ManeuverOverride = std::unordered_map<std::string, FloatingType>;
+
 struct ManeuverParams
 {
-	Parameter<std::map<std::string, FloatingType>> overrides = {{}, "overrides", false};
+	Parameter<ManeuverOverride> overrides = {{}, "overrides", true};
 	Parameter<std::vector<std::string>> maintains = {{}, "maintains", false};
 	Parameter<std::map<std::string, Configuration>> waveforms = {{}, "waveforms", false};
 	Parameter<Configuration> transition = {{}, "transition", true};
@@ -104,13 +106,12 @@ class Maneuver : public ConfigurableObject<ManeuverParams>
 {
 public:
 
-	using Overrides = std::map<std::string, FloatingType>;
 	using Maintains = std::vector<std::string>;
 
 	bool
 	initialize(const Aggregator& aggregator);
 
-	Overrides
+	ManeuverOverride
 	getOverrides() const;
 
 	Maintains
@@ -148,6 +149,11 @@ struct ManeuverSet
 		c & saveAs;
 	}
 };
+
+/**
+ * Describes the current active maneuver for the ground station
+ */
+ using ManeuverDescriptor = std::pair<std::string, std::vector<ManeuverParams>>;
 
 //using ManeuverSet = std::vector<Maneuver>;
 

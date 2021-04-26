@@ -48,7 +48,7 @@ private:
 	void
 	stopManeuver();
 
-	Publisher<Maneuver::Overrides> overridePublisher_;
+	Publisher<ManeuverOverride> overridePublisher_;
 	Publisher<Maneuver::Maintains> maintainsPublisher_;
 	std::pair<const std::string, ManeuverSet>* activeManeuverSet_;
 	ManeuverSet::iterator activeManeuver_;

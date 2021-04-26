@@ -142,6 +142,13 @@ OverrideHandler::run(RunStage stage)
 						return std::nullopt;
 					}, Content::OVERRIDE_LIST, Content::REQUEST_DATA);
 
+			dh->addTriggeredStatusFunction<std::vector<std::string>, DataRequest>(
+					[this](const DataRequest& req) -> Optional<std::vector<std::string>>
+					{
+						if (req == DataRequest::MAINTAIN_LIST) return getPossibleMaintainIds();
+						return std::nullopt;
+					}, Content::MAINTAIN_LIST, Content::REQUEST_DATA);
+
 			dh->subscribeOnData<std::map<std::string, FloatingType>>(Content::OVERRIDE,
 																	 [this](const std::map<std::string, FloatingType>& overrides)
 																	 {
@@ -176,6 +183,17 @@ OverrideHandler::getPossibleOverrideIds() const
 {
 	std::vector<std::string> ids;
 	for (const auto&[id, handle]:overrideHandles_)
+	{
+		ids.push_back(id);
+	}
+	return ids;
+}
+
+std::vector<std::string>
+OverrideHandler::getPossibleMaintainIds() const
+{
+	std::vector<std::string> ids;
+	for (const auto&[id, handle]:maintainHandles_)
 	{
 		ids.push_back(id);
 	}

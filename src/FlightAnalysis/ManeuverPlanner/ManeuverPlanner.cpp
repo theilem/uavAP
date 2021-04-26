@@ -2,6 +2,8 @@
 // Created by mirco on 26.02.21.
 //
 
+#include <boost/property_tree/json_parser.hpp>
+
 #include "uavAP/FlightAnalysis/ManeuverPlanner/ManeuverPlanner.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
 #include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
@@ -24,13 +26,14 @@ ManeuverPlanner::run(RunStage stage)
 			auto ipc = get<IPC>();
 			IPCOptions opts;
 			opts.variableSize = true;
-			overridePublisher_ = ipc->publish<Maneuver::Overrides>("overrides", opts);
+			overridePublisher_ = ipc->publish<ManeuverOverride>("overrides", opts);
 			maintainsPublisher_ = ipc->publish<Maneuver::Maintains>("maintains", opts);
 			break;
 		}
 		case RunStage::NORMAL:
 		{
 			auto dh = get<DataHandling>();
+			/** Gets the list of all possible maneuver sets **/
 			dh->addTriggeredStatusFunction<std::vector<std::string>, DataRequest>(
 					[this](const DataRequest& req) -> Optional<std::vector<std::string>>
 					{
@@ -43,6 +46,36 @@ ManeuverPlanner::run(RunStage stage)
 						}
 						return std::nullopt;
 					}, Content::MANEUVER_LIST, Content::REQUEST_DATA);
+
+			/** Sends the current active maneuver set, or an empty descriptor if no active set **/
+			dh->addTriggeredStatusFunction<ManeuverDescriptor, DataRequest>(
+					[this](const DataRequest& req) -> Optional<ManeuverDescriptor>
+					{
+						if (req == DataRequest::MANEUVER_SET)
+						{
+							ManeuverDescriptor ans;
+							if (activeManeuverSet_)
+							{
+								ans.first = activeManeuverSet_->first;
+								ans.second = activeManeuverSet_->second.maneuvers.value;
+							}
+							// Empty vector signifies no active maneuver set
+							return ans;
+						}
+						return std::nullopt;
+					}, Content::MANEUVER, Content::REQUEST_DATA);
+
+
+			/** Sends current maneuver info **/
+			dh->addStatusFunction<int>(
+					[this]() -> int
+					{
+						if (activeManeuverSet_)
+						{
+							return activeManeuver_ - activeManeuverSet_->second.maneuvers().begin();
+						}
+						return -1;
+					}, Content::MANEUVER_STATUS);
 
 			dh->subscribeOnData<std::string>(Content::SELECT_MANEUVER_SET, [this](const auto& id)
 			{ maneuverSelection(id); });
@@ -133,7 +166,7 @@ ManeuverPlanner::checkManeuver()
 		activeManeuver_++;
 		if (activeManeuver_ == activeManeuverSet_->second.maneuvers().end())
 		{
-			overridePublisher_.publish(Maneuver::Overrides());
+			overridePublisher_.publish(ManeuverOverride());
 			maintainsPublisher_.publish(Maneuver::Maintains());
 			maneuver_.reset();
 			if (maneuverLogFile_.is_open())
@@ -164,7 +197,7 @@ void
 ManeuverPlanner::stopManeuver()
 {
 	maneuver_.reset();
-	overridePublisher_.publish(Maneuver::Overrides());
+	overridePublisher_.publish(ManeuverOverride());
 	maintainsPublisher_.publish(Maneuver::Maintains());
 	activeManeuverSet_ = nullptr;
 }
