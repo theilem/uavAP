@@ -307,7 +307,7 @@ StateSpaceAltitudePlanner::calculateControllerTarget(const Vector3& position, do
 		std::cout << "State[1]: (w) " << state[1] << "\n";
 		std::cout << "State[2]: (q) " << radToDeg(state[2]) << "\n";
 		std::cout << "State[3]: (θ) " << radToDeg(state[3]) << "\n";
-		std::cout << "State[4]: (Ep) " << radToDeg(state[4]) << "\n";
+		std::cout << "State[4]: (Ep) " << state[4] << "\n";
 		std::cout << "State[5]: (Ev) " << state[5] << "\n";
 		std::cout << "State[6]: (dh) " << state[6] << "\n";
 		std::cout << "Pitch Target (degrees): " << radToDeg(controllerTarget.climbAngle) << "\n";
@@ -357,9 +357,7 @@ StateSpaceAltitudePlanner::onTrajectoryPacket(const Packet& packet)
 
 	try
 	{
-		CPSLOG_DEBUG << "REACHED HERE\n";
 		setTrajectory(dp->deserialize<Trajectory>(packet));
-		CPSLOG_DEBUG << "REACHED HERE\n";
 	} catch (ArchiveError& err)
 	{
 		CPSLOG_ERROR << "Invalid Trajectory packet: " << err.what();

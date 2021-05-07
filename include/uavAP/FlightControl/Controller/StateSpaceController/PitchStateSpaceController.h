@@ -6,7 +6,6 @@
 #define UAVAP_PITCHSTATESPACECONTROLLER_H
 
 #include <cpsCore/cps_object>
-#include <cpsCore/Aggregation/IAggregatableObject.h>
 #include <uavAP/FlightControl/Controller/PIDController/IPIDController.h>
 #include <cpsCore/Utilities/IPC/IPC.h>
 #include <uavAP/FlightControl/Controller/ControllerTarget.h>
