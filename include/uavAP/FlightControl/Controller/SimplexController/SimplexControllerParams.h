@@ -6,9 +6,13 @@
 #define UAVAP_SIMPLEXCONTROLLERPARAMS_H
 
 #include <cpsCore/Configuration/Parameter.hpp>
+#include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceParams.h"
 
 struct SimplexControllerParams
 {
+	// Pitch State Space Params
+	Parameter<PitchStateSpaceParams> controllerParams = {{}, "controller_params", true};
+
 	// Simplex Params
 	Parameter<Eigen::Matrix<FloatingType, 7, 7, Eigen::DontAlign>> p = {{}, "p", true};
 	Parameter<Eigen::Matrix<FloatingType, 7, 7, Eigen::DontAlign>> a = {{}, "a", true};
@@ -20,29 +24,19 @@ struct SimplexControllerParams
 
 	Parameter<FloatingType> controllerPeriodMS = {100, "controller_period_ms", true};
 
-	// Pitch State Space Params
-	Parameter<Eigen::Matrix<FloatingType, 2, 6, Eigen::DontAlign>> k = {{}, "k", true};
-	Parameter<FloatingType> tE = {0, "elevator_trim", true};
-	Parameter<FloatingType> tT = {0, "throttle_trim", true};
-	Parameter<Angle<FloatingType>> rP = {Angle<FloatingType>(0), "reference_pitch", true};
-	Parameter<FloatingType> rU = {0, "reference_U", true};
-	Parameter<FloatingType> rW = {0, "reference_W", true};
-
 	template<typename Config>
 	inline void
 	configure(Config& c)
 	{
+		c & controllerParams;
 		c & p;
 		c & a;
 		c & b;
 		c & kPitch;
 		c & safetyAlt;
-		c & k;
-		c & tE;
-		c & tT;
-		c & rP;
-		c & rU;
-		c & rW;
+		c & maxPitchTarget;
+		c & minPitchTarget;
+		c & controllerPeriodMS;
 	}
 };
 

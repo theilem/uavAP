@@ -44,9 +44,18 @@ PitchStateSpaceCascade::PitchStateSpaceCascade(const SensorData& sd_enu, const S
 
 	/* State Space Error */
 	Control::IntegratorParams defaultIParams;
+
 	/* Pitch */
-	auto cmdPitch = controlEnv_.addInput(&target.climbAngle);
-	pitchConstraint_ = std::make_shared<Control::Constraint<Angle<FloatingType>>>(cmdPitch);
+	auto directTargetVal = controlEnv_.addInput(&target.climbAngle);
+	/* Adding Angle of Attack */
+	auto aoa = controlEnv_.addInput(&sd_ned.angleOfAttack);
+	auto correctedPitch = controlEnv_.addSum(aoa, directTargetVal);
+
+	pitchOrClimbAngle_ = controlEnv_.addManualSwitch(correctedPitch, directTargetVal);
+	pitchOrClimbAngle_->switchTo(params.inputClimbAngle.value);
+
+
+	pitchConstraint_ = std::make_shared<Control::Constraint<Angle<FloatingType>>>(pitchOrClimbAngle_);
 	auto overridePitch = controlEnv_.addInput(&pitchOverrideTarget_());
 	pitchTarget_ = controlEnv_.addManualSwitch(overridePitch, pitchConstraint_);
 	pitchTarget_->switchTo(0);
@@ -126,9 +135,8 @@ PitchStateSpaceCascade::evaluate()
 
 	auto stateOut = -params.k.value * state;
 
-//	std::printf("du: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", state[0], stateOut[1], state[5], velocityTarget_->getValue(), sd_ned_.velocity[0], velocityTarget_->getValue() - sd_ned_.velocity[0]);
-//	std::printf("dθ: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", radToDeg(state[3]), stateOut[0], state[4], radToDeg(pitchTarget_->getValue()), radToDeg(sd_ned_.attitude[1]), radToDeg(pitchTarget_->getValue() - sd_ned_.attitude[1]));
-//		std::cout << "Matrix K\n:" << params.k.value << "\n";
+	std::printf("du: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", state[0], stateOut[1], state[5], velocityTarget_->getValue(), sd_ned_.velocity[0], velocityTarget_->getValue() - sd_ned_.velocity[0]);
+	std::printf("dθ: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", radToDeg(state[3]), stateOut[0], state[4], radToDeg(pitchTarget_->getValue()), radToDeg(sd_ned_.attitude[1]), radToDeg(pitchTarget_->getValue() - sd_ned_.attitude[1]));
 
 	pitchOut_ = std::clamp(stateOut[0] + params.tE.value, (FloatingType) -1, (FloatingType) 1);
 	throttleOut_ = std::clamp(stateOut[1] + params.tT.value, (FloatingType) -1, (FloatingType) 1);
@@ -140,10 +148,35 @@ PitchStateSpaceCascade::evaluate()
 bool
 PitchStateSpaceCascade::configure(const Configuration& config)
 {
-	configure_(config.get_child("cascade"));
 	auto retVal = ConfigurableObject::configure(config);
-
+	configure_(params.cascade.value);
+	if (params.inputClimbAngle())
+	{
+		CPSLOG_WARN << "PitchStateSpaceCascade cannot yet properly convert climb angle targets to pitch targets. Setting pitch target equal to climb angle target!";
+		params.inputClimbAngle.value = false;
+	}
+	pitchOrClimbAngle_->switchTo(params.inputClimbAngle.value);
 	return retVal;
+}
+
+void
+PitchStateSpaceCascade::setParams(const PitchStateSpaceParams& set)
+{
+	ConfigurableObject::setParams(set);
+	configure_(params.cascade.value);
+	if (params.inputClimbAngle())
+	{
+		CPSLOG_WARN << "PitchStateSpaceCascade cannot yet properly convert climb angle targets to pitch targets. Setting pitch target equal to climb angle target!";
+		params.inputClimbAngle.value = false;
+	}
+	pitchOrClimbAngle_->switchTo(params.inputClimbAngle());
+}
+
+void
+PitchStateSpaceCascade::setPitchTargetIsClimbAngle(bool isClimbAngle)
+{
+	params.inputClimbAngle.value = isClimbAngle;
+	pitchOrClimbAngle_->switchTo(isClimbAngle);
 }
 
 void

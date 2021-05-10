@@ -46,6 +46,11 @@ public:
 	bool
 	configure(const Configuration& config);
 
+	void
+	setParams(const PitchStateSpaceParams& set);
+
+	void
+	setPitchTargetIsClimbAngle(bool isClimbAngle);
 
 	void
 	registerOverrides(std::shared_ptr<OverrideHandler> overrideHandler);
@@ -74,6 +79,9 @@ private:
 	std::shared_ptr<Control::Integrator> pitchIntegrator_;
 	std::shared_ptr<Control::Integrator> velocityIntegrator_;
 
+	// Used to decode if input pitch target is climb angle or pitch
+	std::shared_ptr<Control::ManualSwitch> pitchOrClimbAngle_;
+
 	Control::ControlEnvironment controlEnv_;
 
 	std::map<PIDs, std::shared_ptr<Control::PID>> pids_;
@@ -84,11 +92,11 @@ private:
 	const SensorData& sd_ned_;
 	ControllerOutput& output_;
 
-
+	// Used for overriding pitch
 	Angle<FloatingType> pitchOverrideTarget_;
-	FloatingType velocityOverrideTarget_;
-
 	std::shared_ptr<Control::ManualSwitch> pitchTarget_;
+	// Used for overriding u
+	FloatingType velocityOverrideTarget_;
 	std::shared_ptr<Control::ManualSwitch> velocityTarget_;
 
 	OverridableValue<FloatingType> pitchOut_;

@@ -7,6 +7,7 @@
 			"reference_pitch" : 0.406,
 			"reference_U" : 55,
 			"reference_W" : 0.39,
+			"input_is_climb_angle" : true,
 			"cascade": {
 				"roll": {
 					"kp": 0.4,
@@ -53,7 +54,7 @@
 			"safety_velocity": 10,
 			"k_altitude": 1.8,
 			"k_convergence": 0.005,
-			"k_yaw_rate": 0.3,
+			"k_yaw_rate": 0.2,
 			"yaw_rate_distance_threshold": 50.0
 		}
 	},

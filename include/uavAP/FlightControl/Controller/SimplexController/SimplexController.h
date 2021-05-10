@@ -32,11 +32,11 @@ public:
 	void
 	setControllerTarget(const ControllerTarget& target) override;
 
-	bool
-	configure(const Configuration& config) override;
-
 	ControllerOutput
 	getControllerOutput() override;
+
+	bool
+	configure(const Configuration& config) override;
 
 	bool
 	run(RunStage stage) override;

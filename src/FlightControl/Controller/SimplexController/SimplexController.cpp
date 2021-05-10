@@ -32,15 +32,15 @@ SimplexController::setControllerTarget(const ControllerTarget& target)
 
 	auto xt = _generateState();
 	// TODO calculate simplex here
-	auto dtau = params.a.value * xt + params.b.value * _generateU(lastTarget_);
-	auto xt_tau = xt + params.controllerPeriodMS.value / 1E3 * dtau;
+	auto dtau = params.a() * xt + params.b() * _generateU(target_);
+	auto xt_tau = xt + params.controllerPeriodMS() / 1E3 * dtau;
 
-	double simplexTerm = xt_tau.transpose() * params.p.value * xt_tau;
+	double simplexTerm = xt_tau.transpose() * params.p() * xt_tau;
 
 	if (simplexTerm > 1)
 	{ // Safety Controller
-		target_.velocity = params.rU.value;
-		target_.climbAngle = std::clamp<FloatingType>(params.kPitch.value.dot(xt), params.maxPitchTarget.value, params.minPitchTarget.value);
+		target_.velocity = params.controllerParams().rU();
+		target_.climbAngle = std::clamp<FloatingType>(params.kPitch().dot(xt), params.maxPitchTarget(), params.minPitchTarget());
 		std::cout << "Using Safety Controller\n";
 	}
 	std::cout << "State[0]: (u) " << xt[0] << "\n";
@@ -59,19 +59,18 @@ SimplexController::setControllerTarget(const ControllerTarget& target)
 	actIo->setControllerOutput(getControllerOutput());
 }
 
-bool
-SimplexController::configure(const Configuration& config)
-{
-	cascade_.configure(config);
-	return ConfigurableObject::configure(config);
-}
-
 ControllerOutput
 SimplexController::getControllerOutput()
 {
 	Lock l(cascadeMutex_);
 	cascade_.evaluate();
 	return output_;
+}
+
+bool
+SimplexController::configure(const Configuration& config)
+{
+	return ConfigurableObject::configure(config);
 }
 
 bool
@@ -94,6 +93,9 @@ SimplexController::run(RunStage stage)
 				cascade_.registerOverrides(oh);
 			else
 				CPSLOG_DEBUG << "OverrideHandler not set. Overrides disabled.\n";
+
+			cascade_.setParams(params.controllerParams());
+
 			break;
 		}
 		case RunStage::NORMAL:
@@ -154,12 +156,12 @@ SimplexController::_generateState() const
 	state[3] = val[3];
 	state[4] = val[4];
 	state[5] = val[5];
-	state[6] = sensorDataENU_.position.z() - params.safetyAlt.value;
+	state[6] = sensorDataENU_.position.z() - params.safetyAlt();
 	return state;
 }
 
 Vector2
 SimplexController::_generateU(const ControllerTarget& t) const
 {
-	return {t.climbAngle - params.rP.value, t.velocity - params.rU.value};
+	return {t.climbAngle - params.controllerParams().rP(), t.velocity - params.controllerParams().rU()};
 }

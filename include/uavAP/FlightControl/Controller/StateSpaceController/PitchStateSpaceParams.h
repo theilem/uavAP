@@ -15,6 +15,8 @@ struct PitchStateSpaceParams
 	Parameter<Angle<FloatingType>> rP = {Angle<FloatingType>(0), "reference_pitch", true};
 	Parameter<FloatingType> rU = {0, "reference_U", true};
 	Parameter<FloatingType> rW = {0, "reference_W", true};
+	Parameter<bool> inputClimbAngle = {false, "input_is_climb_angle", true};
+	Parameter<Configuration> cascade = {{}, "cascade", true};
 
 	template<typename Config>
 	inline void
@@ -26,6 +28,8 @@ struct PitchStateSpaceParams
 		c & rP;
 		c & rU;
 		c & rW;
+		c & inputClimbAngle;
+		c & cascade;
 	}
 };
 
