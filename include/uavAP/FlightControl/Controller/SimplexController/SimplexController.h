@@ -55,12 +55,17 @@ private:
 	Vector2
 	_generateU(const ControllerTarget& t) const;
 
+	void
+	executeSafetyControl(const VectorN<7>& state);
+
 	PitchStateSpaceCascade cascade_;
 	SensorData sensorDataENU_;
 	SensorData sensorDataNED_;
 	ControllerTarget target_;
-	ControllerTarget lastTarget_;
 	ControllerOutput output_;
+
+	TimePoint switchTime_;
+	bool safetyController;
 
 	mutable Mutex cascadeMutex_;
 };

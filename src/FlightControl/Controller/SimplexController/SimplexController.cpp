@@ -8,7 +8,7 @@
 #include "uavAP/FlightControl/SensingActuationIO/IActuationIO.h"
 #include <uavAP/Core/DataHandling/DataHandling.h>
 
-SimplexController::SimplexController() : cascade_(sensorDataENU_, sensorDataNED_, target_, output_)
+SimplexController::SimplexController() : cascade_(sensorDataENU_, sensorDataNED_, target_, output_), safetyController(false)
 {
 
 }
@@ -23,7 +23,6 @@ SimplexController::setControllerTarget(const ControllerTarget& target)
 		CPSLOG_ERROR << "Cannot calculate control, IO missing";
 		return;
 	}
-	lastTarget_ = target_;
 	target_ = target;
 
 	sensorDataENU_ = io->getSensorData();
@@ -31,17 +30,21 @@ SimplexController::setControllerTarget(const ControllerTarget& target)
 	NED::convert(sensorDataNED_, Frame::BODY);
 
 	auto xt = _generateState();
-	// TODO calculate simplex here
 	auto dtau = params.a() * xt + params.b() * _generateU(target_);
 	auto xt_tau = xt + params.controllerPeriodMS() / 1E3 * dtau;
-
 	double simplexTerm = xt_tau.transpose() * params.p() * xt_tau;
 
-	if (simplexTerm > 1)
+	if (safetyController)
 	{ // Safety Controller
-		target_.velocity = params.controllerParams().rU();
-		target_.climbAngle = std::clamp<FloatingType>(params.kPitch().dot(xt), params.maxPitchTarget(), params.minPitchTarget());
-		std::cout << "Using Safety Controller\n";
+		executeSafetyControl(xt);
+		std::cout << "Using safety controller!\n";
+		if (std::chrono::system_clock::now() > switchTime_)
+		{
+			safetyController = false;
+		}
+	} else if (simplexTerm > 1) {
+		executeSafetyControl(xt);
+		switchTime_ = std::chrono::system_clock::now() + std::chrono::seconds(5);
 	}
 	std::cout << "State[0]: (u) " << xt[0] << "\n";
 	std::cout << "State[1]: (w) " << xt[1] << "\n";
@@ -164,4 +167,11 @@ Vector2
 SimplexController::_generateU(const ControllerTarget& t) const
 {
 	return {t.climbAngle - params.controllerParams().rP(), t.velocity - params.controllerParams().rU()};
+}
+
+void
+SimplexController::executeSafetyControl(const VectorN<7>& state)
+{
+	target_.velocity = params.controllerParams().rU();
+	target_.climbAngle = std::clamp<FloatingType>(params.kPitch().dot(state), params.maxPitchTarget(), params.minPitchTarget());
 }
