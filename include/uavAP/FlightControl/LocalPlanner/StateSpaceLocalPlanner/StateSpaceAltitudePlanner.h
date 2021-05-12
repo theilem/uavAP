@@ -10,7 +10,7 @@
 #include <uavAP/FlightControl/LocalPlanner/ILocalPlanner.h>
 #include <uavAP/FlightControl/Controller/ControllerTarget.h>
 #include <cpsCore/Utilities/LockTypes.hpp>
-#include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/StateSpaceAltitudePlannerParams.h"
+#include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/StateSpaceCombinedParams.h"
 #include "StateSpaceAltitudePlannerStatus.h"
 #include <uavAP/Core/OverrideHandler/OverridableValue.hpp>
 #include <uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController.h>
@@ -35,7 +35,7 @@ class StateSpaceAltitudePlanner: public ILocalPlanner,
 										 DataPresentation,
 										 OverrideHandler,
 										 PitchStateSpaceController>,
-								 public ConfigurableObject<StateSpaceAltitudePlannerParams>
+								 public ConfigurableObject<StateSpaceCombinedParams>
 {
 
 public:

@@ -50,12 +50,16 @@
 	},
 	"local_planner": {
 		"statespace_altitude": {
-			"k": [0.001126, -0.005579, 0.025781, 0.096607, 1.002045, 0.000349, 0.019149],
+			"state_space_altitude_params": {
+				"k": [0.001126, -0.005579, 0.025781, 0.096607, 1.002045, 0.000349, 0.019149],
+				"safety_velocity": 55,
+				"safety_altitude": 2438,
+				"max_pitch_target": 15,
+				"min_pitch_target": -15
+			},
 			"k_convergence": 0.005,
 			"k_yaw_rate": 0.2,
 			"yaw_rate_distance_threshold": 50.0,
-			"safety_velocity": 55,
-			"safety_altitude": 2438,
 			"period": 0
 		}
 	},

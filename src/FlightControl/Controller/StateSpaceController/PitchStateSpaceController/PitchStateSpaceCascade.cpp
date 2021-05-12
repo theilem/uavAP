@@ -263,7 +263,7 @@ PitchStateSpaceCascade::getState() const
 	//TODO use initializer list when Eigen 3.4 is released
 	VectorN<6> state;
 	state[0] = sd_ned_.velocity[0] - params.rU.value;
-	state[1] = sd_ned_.velocity[1] - params.rW.value;
+	state[1] = sd_ned_.velocity[2] - params.rW.value;
 	state[2] = sd_ned_.angularRate[1];
 	state[3] = sd_ned_.attitude[1] - params.rP.value;
 	state[4] = Ep_;

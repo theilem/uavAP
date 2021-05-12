@@ -10,26 +10,20 @@
 struct StateSpaceAltitudePlannerParams
 {
 	Parameter<VectorN<7>> k = {{}, "k", true};
-	Parameter<FloatingType> kConvergence = {1.0, "k_convergence", true};
-	Parameter<FloatingType> kYawRate = {1.0, "k_yaw_rate", true};
-	Parameter<FloatingType> yawRateDistanceThreshold = {50.0, "yaw_rate_distance_threshold", true};
 	Parameter<FloatingType> safetyVelocity = {55.0, "safety_velocity", true};
-	Parameter<FloatingType> safetyYawRate = {0.0, "safety_yaw_rate", false};
 	Parameter<FloatingType> safetyAltitude = {2500.0, "safety_altitude", true};
-	Parameter<int> period = {0, "period", false};
+	Parameter<Angle<FloatingType>> maxPitchTarget = {Angle<FloatingType>(15), "max_pitch_target", true};
+	Parameter<Angle<FloatingType>> minPitchTarget = {Angle<FloatingType>(-15), "min_pitch_target", true};
 
 	template<typename Config>
 	inline void
 	configure(Config& c)
 	{
 		c & k;
-		c & kConvergence;
-		c & kYawRate;
-		c & yawRateDistanceThreshold;
 		c & safetyVelocity;
-		c & safetyYawRate;
 		c & safetyAltitude;
-		c & period;
+		c & maxPitchTarget;
+		c & minPitchTarget;
 	}
 };
 

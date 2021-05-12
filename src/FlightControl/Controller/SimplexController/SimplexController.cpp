@@ -8,7 +8,7 @@
 #include "uavAP/FlightControl/SensingActuationIO/IActuationIO.h"
 #include <uavAP/Core/DataHandling/DataHandling.h>
 
-SimplexController::SimplexController() : cascade_(sensorDataENU_, sensorDataNED_, target_, output_), safetyController(false)
+SimplexController::SimplexController() : cascade_(sensorDataENU_, sensorDataNED_, target_, output_), safetyController_(true)
 {
 
 }
@@ -34,18 +34,19 @@ SimplexController::setControllerTarget(const ControllerTarget& target)
 	auto xt_tau = xt + params.controllerPeriodMS() / 1E3 * dtau;
 	double simplexTerm = xt_tau.transpose() * params.p() * xt_tau;
 
-	if (safetyController)
+	if (safetyController_)
 	{ // Safety Controller
 		executeSafetyControl(xt);
-		std::cout << "Using safety controller!\n";
 		if (std::chrono::system_clock::now() > switchTime_)
 		{
-			safetyController = false;
+			safetyController_ = false;
 		}
 	} else if (simplexTerm > 1) {
 		executeSafetyControl(xt);
 		switchTime_ = std::chrono::system_clock::now() + std::chrono::seconds(5);
+		safetyController_ = true;
 	}
+	std::cout << "Safety Active: " << safetyController_ << "\n";
 	std::cout << "State[0]: (u) " << xt[0] << "\n";
 	std::cout << "State[1]: (w) " << xt[1] << "\n";
 	std::cout << "State[2]: (q) " << radToDeg(xt[2]) << "\n";
@@ -56,7 +57,8 @@ SimplexController::setControllerTarget(const ControllerTarget& target)
 	std::cout << "Pitch Target (degrees): " << radToDeg(target_.climbAngle) << "\n";
 	std::cout << "U Target: " << target_.velocity << "\n";
 	std::cout << "θ Target: " << radToDeg(target_.climbAngle) << "\n";
-	std::printf("Simplex Term: %lf\n", simplexTerm);
+	std::cout << "Next Simplex Term: " << simplexTerm <<"\n";
+	std::cout << "Current Simplex Term: " << xt.transpose() * params.p() * xt <<"\n";
 
 
 	actIo->setControllerOutput(getControllerOutput());
@@ -159,7 +161,7 @@ SimplexController::_generateState() const
 	state[3] = val[3];
 	state[4] = val[4];
 	state[5] = val[5];
-	state[6] = sensorDataENU_.position.z() - params.safetyAlt();
+	state[6] = params.stateSpaceAltitudeParams().safetyAltitude() - sensorDataENU_.position.z();
 	return state;
 }
 
@@ -173,5 +175,7 @@ void
 SimplexController::executeSafetyControl(const VectorN<7>& state)
 {
 	target_.velocity = params.controllerParams().rU();
-	target_.climbAngle = std::clamp<FloatingType>(params.kPitch().dot(state), params.maxPitchTarget(), params.minPitchTarget());
+	target_.climbAngle = std::clamp<FloatingType>(params.stateSpaceAltitudeParams().k().dot(state) + params.controllerParams().rP(),
+											   params.stateSpaceAltitudeParams().minPitchTarget(),
+											   params.stateSpaceAltitudeParams().maxPitchTarget());
 }

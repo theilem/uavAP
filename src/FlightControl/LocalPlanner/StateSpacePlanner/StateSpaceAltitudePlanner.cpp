@@ -168,8 +168,8 @@ StateSpaceAltitudePlanner::createLocalPlan(const SensorData& sd)
 
 	if (safety)
 	{
-		controllerTarget_.velocity = params.safetyVelocity();
-		controllerTarget_.yawRate = params.safetyYawRate();
+		controllerTarget_.velocity = params.stateSpaceAltitudeParams().safetyVelocity();
+		controllerTarget_.yawRate = 0;
 		controllerTarget_.climbAngle = 0;
 	}
 	else
@@ -301,8 +301,8 @@ StateSpaceAltitudePlanner::calculateControllerTarget(const Vector3& position, do
 		state[5] = val[5];
 		state[6] = positionDeviation.z();
 //		std::cout << position.z() << "," << positionDeviation.z() << "\n";
-		auto out = params.k().dot(state);
-		controllerTarget.climbAngle = (pitch_ = out + controllerThetaRef_);
+		auto out = params.stateSpaceAltitudeParams().k().dot(state);
+		controllerTarget.climbAngle = (pitch_ = std::clamp<FloatingType>(out + controllerThetaRef_, params.stateSpaceAltitudeParams().minPitchTarget(), params.stateSpaceAltitudeParams().maxPitchTarget()));
 		std::cout << "State[0]: (u) " << state[0] << "\n";
 		std::cout << "State[1]: (w) " << state[1] << "\n";
 		std::cout << "State[2]: (q) " << radToDeg(state[2]) << "\n";
@@ -381,8 +381,6 @@ StateSpaceAltitudePlanner::update()
 bool
 StateSpaceAltitudePlanner::configure(const Configuration & c)
 {
-	std::cout << "Matrix K\n:" << params.k.value << "\n";
 	auto retval = ConfigurableObject::configure(c);
-	std::cout << "Matrix K\n:" << params.k.value << "\n";
 	return retval;
 }

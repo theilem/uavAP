@@ -65,7 +65,7 @@ private:
 	ControllerOutput output_;
 
 	TimePoint switchTime_;
-	bool safetyController;
+	bool safetyController_;
 
 	mutable Mutex cascadeMutex_;
 };
