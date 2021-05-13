@@ -27,7 +27,7 @@
 			"use_approach": false,
 			"default_velocity": 60,
 			"default_altitude": 1500,
-			"default_mission": "SI_short",
+			"default_mission": "race_track",
 			"missions": {
 				"simple": {
 					"velocity": 60,

@@ -11,6 +11,10 @@
 
 struct SimplexControllerParams
 {
+
+	static constexpr const char* SIMPLEX_RECOVERYMODE_TIME = "time";
+	static constexpr const char* SIMPLEX_RECOVERYMODE_VALUE = "value";
+
 	// Pitch State Space Params
 	Parameter<PitchStateSpaceParams> controllerParams = {{}, "controller_params", true};
 
@@ -22,7 +26,13 @@ struct SimplexControllerParams
 	Parameter<Eigen::Matrix<FloatingType, 7, 7, Eigen::DontAlign>> a = {{}, "a", true};
 	Parameter<Eigen::Matrix<FloatingType, 7, 2, Eigen::DontAlign>> b = {{}, "b", true};
 
-	Parameter<FloatingType> controllerPeriodMS = {100, "controller_period_ms", true};
+	Parameter<FloatingType> controllerFrequency = {100, "controller_frequency", true};
+
+	Parameter<std::string> recoveryMode = {SIMPLEX_RECOVERYMODE_VALUE, "recovery_mode", true};
+	// If recovery mode set to "time"
+	Parameter<int> recoveryTime = {20, "recovery_time", false};
+	// If recovery mode set to "value"
+	Parameter<FloatingType> recoveryValue = {0.1, "recovery_value", false};
 
 	template<typename Config>
 	inline void
@@ -33,7 +43,10 @@ struct SimplexControllerParams
 		c & p;
 		c & a;
 		c & b;
-		c & controllerPeriodMS;
+		c & controllerFrequency;
+		c & recoveryMode;
+		c & recoveryTime;
+		c & recoveryValue;
 	}
 };
 

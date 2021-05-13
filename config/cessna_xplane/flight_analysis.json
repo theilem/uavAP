@@ -373,7 +373,7 @@
 						},
 						"transition": {
 							"steady_state": {
-								"duration": 27000
+								"duration": 57000
 							}
 						}
 					},

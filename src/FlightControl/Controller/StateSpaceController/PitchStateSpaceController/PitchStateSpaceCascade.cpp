@@ -135,8 +135,8 @@ PitchStateSpaceCascade::evaluate()
 
 	auto stateOut = -params.k.value * state;
 
-	std::printf("du: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", state[0], stateOut[1], state[5], velocityTarget_->getValue(), sd_ned_.velocity[0], velocityTarget_->getValue() - sd_ned_.velocity[0]);
-	std::printf("dθ: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", radToDeg(state[3]), stateOut[0], state[4], radToDeg(pitchTarget_->getValue()), radToDeg(sd_ned_.attitude[1]), radToDeg(pitchTarget_->getValue() - sd_ned_.attitude[1]));
+//	std::printf("du: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", state[0], stateOut[1], state[5], velocityTarget_->getValue(), sd_ned_.velocity[0], velocityTarget_->getValue() - sd_ned_.velocity[0]);
+//	std::printf("dθ: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", radToDeg(state[3]), stateOut[0], state[4], radToDeg(pitchTarget_->getValue()), radToDeg(sd_ned_.attitude[1]), radToDeg(pitchTarget_->getValue() - sd_ned_.attitude[1]));
 
 	pitchOut_ = std::clamp(stateOut[0] + params.tE.value, (FloatingType) -1, (FloatingType) 1);
 	throttleOut_ = std::clamp(stateOut[1] + params.tT.value, (FloatingType) -1, (FloatingType) 1);
