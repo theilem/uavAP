@@ -41,7 +41,7 @@ public:
 	bool
 	run(RunStage stage) override;
 
-	VectorN<7>
+	VectorN<5>
 	generateState() const;
 
 private:
@@ -49,14 +49,11 @@ private:
 	void
 	tunePID(const PIDTuning& tune);
 
-	VectorN<7>
-	_generateState() const;
-
 	Vector2
-	_generateU(const ControllerTarget& t) const;
+	_generateU(const ControllerOutput& t) const;
 
 	void
-	executeSafetyControl(const VectorN<7>& state);
+	executeSafetyControl(const VectorN<5>& state);
 
 	PitchStateSpaceCascade cascade_;
 	SensorData sensorDataENU_;
