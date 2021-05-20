@@ -77,6 +77,11 @@ PitchStateSpaceController::run(RunStage stage)
 						std::bind(&PitchStateSpaceCascade::getPIDParams, &cascade_, std::placeholders::_1),
 						Content::PID_PARAMS, Content::REQUEST_DATA);
 
+				dh->subscribeOnData<bool>(Content::CLEAR_LQR_INTEGRATOR, [this](const auto&)
+				{
+					Lock l(cascadeMutex_);
+					cascade_.clearIntegrators();
+				});
 			}
 			break;
 		}

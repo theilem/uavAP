@@ -25,8 +25,6 @@ struct SimplexControllerParams
 	Parameter<Eigen::Matrix<FloatingType, 2, 5, Eigen::DontAlign>> k = {{}, "k", true};
 
 	Parameter<FloatingType> safetyAlt = {2438, "safety_altitude", true};
-	Parameter<Angle<FloatingType>> safetyMaxPitchTarget = {Angle<FloatingType>(15), "max_pitch_target", true};
-	Parameter<Angle<FloatingType>> safetyMinPitchTarget = {Angle<FloatingType>(-15), "min_pitch_target", true};
 	Parameter<FloatingType> controllerFrequency = {100, "controller_frequency", true};
 
 	Parameter<std::string> recoveryMode = {SIMPLEX_RECOVERYMODE_VALUE, "recovery_mode", true};
@@ -45,8 +43,6 @@ struct SimplexControllerParams
 		c & p;
 		c & k;
 		c & safetyAlt;
-		c & safetyMaxPitchTarget;
-		c & safetyMinPitchTarget;
 		c & controllerFrequency;
 		c & recoveryMode;
 		c & recoveryTime;

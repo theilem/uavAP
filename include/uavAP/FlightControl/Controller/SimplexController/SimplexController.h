@@ -18,7 +18,7 @@ class IActuationIO;
 class DataHandling;
 class OverrideHandler;
 
-class SimplexController :  public AggregatableObject<IScheduler, ISensingIO, IActuationIO, DataHandling,
+class SimplexController :  public AggregatableObject<IScheduler, ISensingIO, IActuationIO, OverrideHandler, DataHandling,
 		OverrideHandler>,
 						   public IPIDController,
 						   public ConfigurableObject<SimplexControllerParams>,
@@ -45,6 +45,13 @@ public:
 	generateState() const;
 
 private:
+
+	OverridableValue<FloatingType> safetyAlt_;
+	OverridableValue<FloatingType> recoveryTime_;
+	OverridableValue<FloatingType> recoveryValue_;
+
+	void
+	_turnOffSafetyController();
 
 	void
 	tunePID(const PIDTuning& tune);

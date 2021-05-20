@@ -67,6 +67,9 @@ public:
 	FloatingType
 	getThetaTrim() const;
 
+	void
+	clearIntegrators();
+
 private:
 
 	void

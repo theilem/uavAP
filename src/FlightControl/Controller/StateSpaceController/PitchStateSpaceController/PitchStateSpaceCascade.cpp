@@ -4,8 +4,8 @@
 
 
 #include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceCascade.h"
-#include <uavAP/FlightControl/Controller/ControllerTarget.h>
-#include <uavAP/Core/OverrideHandler/OverrideHandler.h>
+#include "uavAP/FlightControl/Controller/ControllerTarget.h"
+#include "uavAP/Core/OverrideHandler/OverrideHandler.h"
 
 PitchStateSpaceCascade::PitchStateSpaceCascade(const SensorData& sd_enu, const SensorData& sd_ned, const ControllerTarget & target, ControllerOutput& output):
 		controlEnv_(&sd_enu.timestamp), sd_ned_(sd_ned), output_(output)
@@ -281,4 +281,11 @@ FloatingType
 PitchStateSpaceCascade::getThetaTrim() const
 {
 	return params.rP.value;
+}
+
+void
+PitchStateSpaceCascade::clearIntegrators()
+{
+	pitchIntegrator_->clear();
+	velocityIntegrator_->clear();
 }

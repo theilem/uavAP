@@ -257,11 +257,23 @@ Integrator::evaluate()
 	}
 }
 
+void
+Integrator::clear()
+{
+	val_ = 0;
+}
+
+void
+Integrator::reset()
+{
+	val_ = params.initial();
+}
+
 bool
 Integrator::configure(const Configuration& config)
 {
 	auto retVal = ConfigurableObject::configure(config);
-	val_ = this->params.initial.value;
+	val_ = params.initial();
 	return retVal;
 }
 

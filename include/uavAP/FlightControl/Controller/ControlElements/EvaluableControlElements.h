@@ -121,6 +121,12 @@ public:
 	FloatingType
 	getValue() const override;
 
+	void
+	clear();
+
+	void
+	reset();
+
 	bool
 	configure(const Configuration& config);
 

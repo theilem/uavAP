@@ -3,9 +3,10 @@
 //
 
 #include <uavAP/Core/Orientation/NED.h>
-#include "uavAP/FlightControl/Controller/SimplexController/SimplexController.h"
-#include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
-#include "uavAP/FlightControl/SensingActuationIO/IActuationIO.h"
+#include <uavAP/Core/OverrideHandler/OverrideHandler.h>
+#include <uavAP/FlightControl/Controller/SimplexController/SimplexController.h>
+#include <uavAP/FlightControl/SensingActuationIO/ISensingIO.h>
+#include <uavAP/FlightControl/SensingActuationIO/IActuationIO.h>
 #include <uavAP/Core/DataHandling/DataHandling.h>
 
 SimplexController::SimplexController() : cascade_(sensorDataENU_, sensorDataNED_, target_, output_), safetyController_(true)
@@ -50,7 +51,7 @@ SimplexController::getControllerOutput()
 	{
 		if (params.recoveryMode() == SimplexControllerParams::SIMPLEX_RECOVERYMODE_TIME)
 		{
-			switchTime_ = std::chrono::system_clock::now() + std::chrono::seconds(params.recoveryTime());
+			switchTime_ = std::chrono::system_clock::now() + std::chrono::seconds(recoveryTime_);
 		}
 			// SIMPLEX_RECOVERYMODE_VALUE does not need to be handled
 		else if (params.recoveryMode() != SimplexControllerParams::SIMPLEX_RECOVERYMODE_VALUE)
@@ -67,14 +68,14 @@ SimplexController::getControllerOutput()
 		{
 			if (std::chrono::system_clock::now() > switchTime_)
 			{
-				safetyController_ = false;
+				_turnOffSafetyController();
 			}
 		}
 		else // SIMPLEX_RECOVERYMODE_VALUE
 		{
-			if (currentSimplexTerm < params.recoveryValue())
+			if (currentSimplexTerm < recoveryValue_)
 			{
-				safetyController_ = false;
+				_turnOffSafetyController();
 			}
 		}
 	}
@@ -112,7 +113,11 @@ SimplexController::getControllerOutput()
 bool
 SimplexController::configure(const Configuration& config)
 {
-	return ConfigurableObject::configure(config);
+	auto retval = ConfigurableObject::configure(config);
+	safetyAlt_ = params.safetyAlt();
+	recoveryTime_ = params.recoveryTime();
+	recoveryValue_ = params.recoveryValue();
+	return retval;
 }
 
 bool
@@ -132,7 +137,12 @@ SimplexController::run(RunStage stage)
 				CPSLOG_DEBUG << "DataHandling not set. Debugging disabled.";
 			}
 			if (auto oh = get<OverrideHandler>())
+			{
 				cascade_.registerOverrides(oh);
+				oh->registerOverride("simplex/safety_altitude", safetyAlt_);
+				oh->registerOverride("simplex/recovery_time", recoveryTime_);
+				oh->registerOverride("simplex/recovery_value", recoveryValue_);
+			}
 			else
 				CPSLOG_DEBUG << "OverrideHandler not set. Overrides disabled.\n";
 
@@ -154,6 +164,16 @@ SimplexController::run(RunStage stage)
 				dh->addTriggeredStatusFunction<PIDParams, DataRequest>([this](const DataRequest& request)
 																	   { return cascade_.getPIDParams(request); },
 																	   Content::PID_PARAMS, Content::REQUEST_DATA);
+
+				dh->subscribeOnData<bool>(Content::DISABLE_SAFETY_CONTROLLER, [this](const auto&)
+				{
+					_turnOffSafetyController();
+				});
+				dh->subscribeOnData<bool>(Content::CLEAR_LQR_INTEGRATOR, [this](const auto&)
+				{
+					Lock l(cascadeMutex_);
+					cascade_.clearIntegrators();
+				});
 
 			}
 			break;
@@ -183,8 +203,16 @@ SimplexController::generateState() const
 	state[1] = val[1];
 	state[2] = val[2];
 	state[3] = val[3];
-	state[4] = sensorDataENU_.position.z() - params.safetyAlt();
+	state[4] = sensorDataENU_.position.z() - safetyAlt_;
 	return state;
+}
+
+void
+SimplexController::_turnOffSafetyController()
+{
+	safetyController_ = false;
+	Lock l(cascadeMutex_);
+	cascade_.clearIntegrators();
 }
 
 void
