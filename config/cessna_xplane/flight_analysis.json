@@ -473,6 +473,29 @@
 					}
 				],
 				"save_as": "0SI_trim.txt"
+			},
+			"servo_lag": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"output/throttle": -1
+						},
+						"transition": {
+							"duration": {
+								"duration": 60000
+							}
+						},
+						"waveforms": {
+							"output/pitch": {
+								"square": {
+									"amplitude": 1,
+									"frequency": 10
+								}
+							}
+						}
+					}
+				],
+				"save_as": "servo_lag.txt"
 			}
 		}
 	}

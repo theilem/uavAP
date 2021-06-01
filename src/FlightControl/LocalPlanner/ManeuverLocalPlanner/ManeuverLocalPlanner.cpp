@@ -28,7 +28,7 @@ ManeuverLocalPlanner::setTrajectory(const Trajectory& traj)
 	status_.isInApproach = trajectory_.approachSection != nullptr;
 	lockStatus.unlock();
 
-//	CPSLOG_DEBUG << "Trajectory set.";
+	CPSLOG_DEBUG << "Trajectory set.";
 }
 
 Trajectory
@@ -53,12 +53,12 @@ ManeuverLocalPlanner::run(RunStage stage)
 		{
 			if (!checkIsSet<IController, ISensingIO, IScheduler, IPC, DataPresentation>())
 			{
-//				CPSLOG_ERROR << "LinearLocalPlanner: Dependency missing";
+				CPSLOG_ERROR << "LinearLocalPlanner: Dependency missing";
 				return true;
 			}
 			if (!isSet<DataHandling>())
 			{
-//				CPSLOG_DEBUG << "ManeuverLocalPlanner: DataHandling not set. Debugging disabled.";
+				CPSLOG_DEBUG << "ManeuverLocalPlanner: DataHandling not set. Debugging disabled.";
 			}
 
 			if (auto oh = get<OverrideHandler>())
@@ -77,7 +77,7 @@ ManeuverLocalPlanner::run(RunStage stage)
 				oh->registerOverride("controller_target/yaw_rate", controllerTargetYawRateOverride_);
 			}
 			else
-//				CPSLOG_DEBUG << "ManeuverLocalPlanner: OverrideHandler not set. Override disabled.";
+				CPSLOG_DEBUG << "ManeuverLocalPlanner: OverrideHandler not set. Override disabled.";
 
 
 			break;
@@ -88,14 +88,14 @@ ManeuverLocalPlanner::run(RunStage stage)
 			//Directly calculate local plan when sensor data comes in
 			if (params.period() == 0)
 			{
-//				CPSLOG_DEBUG << "Calculate control on sensor data trigger";
+				CPSLOG_DEBUG << "Calculate control on sensor data trigger";
 				auto sensing = get<ISensingIO>();
 				sensing->subscribeOnSensorData(
 						boost::bind(&ManeuverLocalPlanner::onSensorData, this, boost::placeholders::_1));
 			}
 			else
 			{
-//				CPSLOG_DEBUG << "Calculate control with period " << params.period();
+				CPSLOG_DEBUG << "Calculate control with period " << params.period();
 				auto scheduler = get<IScheduler>();
 				scheduler->schedule(std::bind(&ManeuverLocalPlanner::update, this),
 									Milliseconds(params.period()), Milliseconds(params.period()));
@@ -144,13 +144,13 @@ ManeuverLocalPlanner::createLocalPlan(const Vector3& position, double heading, b
 	auto currentSection = updatePathSection(position);
 	if (!currentSection)
 	{
-//		CPSLOG_ERROR << "No current pathsection. Fly safety procedure.";
+		CPSLOG_ERROR << "No current pathsection. Fly safety procedure.";
 		safety = true;
 	}
 
 	if (!hasGPSFix)
 	{
-//		CPSLOG_ERROR << "Lost GPS fix. LocalPlanner safety procedure.";
+		CPSLOG_ERROR << "Lost GPS fix. LocalPlanner safety procedure.";
 		safety = true;
 	}
 
@@ -185,7 +185,7 @@ ManeuverLocalPlanner::createLocalPlan(const Vector3& position, double heading, b
 	auto controller = get<IController>();
 	if (!controller)
 	{
-//		CPSLOG_ERROR << "LinearLocalPlanner: Controller missing";
+		CPSLOG_ERROR << "LinearLocalPlanner: Controller missing";
 		return;
 	}
 
@@ -206,7 +206,7 @@ ManeuverLocalPlanner::updatePathSection(const Vector3& position)
 	{
 		if (currentSection_ == trajectory_.pathSections.end())
 		{
-//			CPSLOG_ERROR << "Trajectory at the end.";
+			CPSLOG_ERROR << "Trajectory at the end.";
 			return nullptr;
 		}
 		currentSection = *currentSection_;
@@ -218,7 +218,7 @@ ManeuverLocalPlanner::updatePathSection(const Vector3& position)
 
 	if (!currentSection)
 	{
-//		CPSLOG_ERROR << "Current Section is nullptr. Abort.";
+		CPSLOG_ERROR << "Current Section is nullptr. Abort.";
 		return nullptr;
 	}
 	currentSection->updatePosition(position);
@@ -229,14 +229,14 @@ ManeuverLocalPlanner::updatePathSection(const Vector3& position)
 
 		if (currentSection_ == trajectory_.pathSections.end())
 		{
-//			CPSLOG_ERROR << "Trajectory at the end.";
+			CPSLOG_ERROR << "Trajectory at the end.";
 			return nullptr;
 		}
 
 		currentSection = *currentSection_;
 		if (!currentSection)
 		{
-//			CPSLOG_ERROR << "Current Section is nullptr. Abort.";
+			CPSLOG_ERROR << "Current Section is nullptr. Abort.";
 			return nullptr;
 		}
 		currentSection->updatePosition(position);
@@ -332,7 +332,7 @@ ManeuverLocalPlanner::calculateControllerTarget(const Vector3& position, double 
 void
 ManeuverLocalPlanner::onTrajectoryPacket(const Packet& packet)
 {
-//	CPSLOG_DEBUG << "On Trajectory packet";
+	CPSLOG_DEBUG << "On Trajectory packet";
 	auto dp = get<DataPresentation>();
 
 	try
@@ -381,7 +381,7 @@ ManeuverLocalPlanner::update()
 
 	if (!sensing)
 	{
-//		CPSLOG_ERROR << "ManeuverLocalPlanner: sensing missing";
+		CPSLOG_ERROR << "ManeuverLocalPlanner: sensing missing";
 		return;
 	}
 

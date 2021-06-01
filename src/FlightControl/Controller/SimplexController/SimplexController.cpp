@@ -43,8 +43,7 @@ SimplexController::getControllerOutput()
 
 	auto xt = generateState();
 	auto currentSimplexTerm = xt.transpose() * params.p() * xt;
-	auto dtau = params.a() * xt + params.b() * _generateU(output_);
-	auto xt_tau = xt + dtau / params.controllerFrequency();
+	auto xt_tau = params.a() * xt + params.b() * _generateU(output_);
 	auto nextSimplexTerm = xt_tau.transpose() * params.p() * xt_tau;
 
 	if (nextSimplexTerm > 1)
@@ -103,9 +102,9 @@ SimplexController::getControllerOutput()
 //	std::cout << "Next Simplex Term: " << nextSimplexTerm <<"\n";
 //	std::cout << "Current Simplex Term: " << currentSimplexTerm <<"\n";
 
-#define SEP << "," <<
-	std::cout << safetyController_ SEP xt[0] SEP xt[1] SEP xt[2] SEP xt[3] SEP xt[4] SEP target_.climbAngle SEP target_.velocity SEP nextSimplexTerm SEP currentSimplexTerm << "\n";
-#undef SEP
+//#define SEP << "," <<
+//	std::cout << safetyController_ SEP xt[0] SEP xt[1] SEP xt[2] SEP xt[3] SEP xt[4] SEP target_.climbAngle SEP target_.velocity SEP nextSimplexTerm SEP currentSimplexTerm << "\n";
+//#undef SEP
 
 	return output_;
 }
