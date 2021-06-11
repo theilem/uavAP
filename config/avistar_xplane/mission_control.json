@@ -7,7 +7,7 @@
 		"origin": [
 			367826.57,
 			4435393.06,
-			0
+			168
 		],
 		"yaw": 0
 	},
@@ -20,13 +20,13 @@
 		"custom": {
 			"use_approach": false,
 			"default_velocity": 20,
-			"default_altitude": 200,
-			"default_mission": "race_track",
+			"default_altitude": 150,
+			"default_mission": "race_track_1000",
 			"missions": {
 				"origin": {
 					"infinite": true,
 					"velocity": 20,
-					"offset": [0,0,500],
+					"offset": [0,0,150],
 					"waypoints": [
 						{"location": [0,0,0]}
 					]
@@ -34,7 +34,7 @@
 				"simple": {
 					"velocity": 20,
 					"infinite": true,
-					"offset": [0,0,500],
+					"offset": [0,0,150],
 					"waypoints": [
 						{"location": [150,80,0]},
 						{"location": [150,-80,0]},
@@ -45,7 +45,7 @@
 				"validation": {
 					"velocity": 20,
 					"infinite": true,
-					"offset": [0,0,500],
+					"offset": [0,0,150],
 					"waypoints": [
 						{"location": [300,150,0]},
 						{"location": [300,-150,0]},
@@ -60,7 +60,29 @@
 				"race_track": {
 					"velocity": 20,
 					"infinite": true,
-					"offset": [0,0,500],
+					"offset": [0,0,150],
+					"waypoints": [
+						{"location": [-5000,0,0], "direction": [1000,0,0]},
+						{"location": [20000,0,0], "direction": [1000,0,0]},
+						{"location": [20000,-100,0], "direction": [-1000,0,0]},
+						{"location": [-5000,-100,0], "direction": [-1000,0,0]}
+					]
+				},
+				"race_track100": {
+					"velocity": 20,
+					"infinite": true,
+					"offset": [0,0,100],
+					"waypoints": [
+						{"location": [-5000,0,0], "direction": [1000,0,0]},
+						{"location": [20000,0,0], "direction": [1000,0,0]},
+						{"location": [20000,-100,0], "direction": [-1000,0,0]},
+						{"location": [-5000,-100,0], "direction": [-1000,0,0]}
+					]
+				},
+				"race_track_1000": {
+					"velocity": 20,
+					"infinite": true,
+					"offset": [0,0,1000],
 					"waypoints": [
 						{"location": [-5000,0,0], "direction": [1000,0,0]},
 						{"location": [20000,0,0], "direction": [1000,0,0]},
@@ -71,7 +93,7 @@
 				"race_track_staging": {
 					"velocity": 20,
 					"infinite": true,
-					"offset": [0,0,500],
+					"offset": [0,0,150],
 					"waypoints": [
 						{"location": [-10000,100,0], "direction": [1000,0,0]},
 						{"location": [0,100,0], "direction": [1000,0,0]},
@@ -82,7 +104,7 @@
 				"SI": {
 					"velocity": 20,
 					"infinite": true,
-					"offset": [0,0,500],
+					"offset": [0,0,150],
 					"waypoints": [
 						{"location": [-7000,100,0],"direction": [1000, 0, 0]},
 						{"location": [-6500,100,0]},
@@ -102,7 +124,7 @@
 				"SI_short": {
 					"velocity": 20,
 					"infinite": true,
-					"offset": [0,0,500],
+					"offset": [0,0,150],
 					"waypoints": [
 						{"location": [-7500,1000,0],"direction": [10000, 0, 0]},
 						{"location": [-5000,1000,0]},

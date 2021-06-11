@@ -120,7 +120,7 @@ ManeuverPlanner::startManeuverSet()
 		auto io = get<ISensingIO>();
 		maneuverLogFile_.open(params.logPath() + humanReadableTimeOfDay(io->getSensorData().timestamp) +
 							  "_" + *activeManeuverSet_->second.saveAs());
-		CPSLOG_DEBUG << "opening " << params.logPath() + *activeManeuverSet_->second.saveAs();
+		CPSLOG_DEBUG << "Opening: " << params.logPath() + *activeManeuverSet_->second.saveAs();
 	}
 	activeManeuver_ = activeManeuverSet_->second.maneuvers().begin();
 
@@ -144,7 +144,7 @@ ManeuverPlanner::activateManeuver()
 
 	overridePublisher_.publish(maneuver_->getOverrides());
 	maintainsPublisher_.publish(maneuver_->getMaintains());
-	maneuver_->printInfo();
+//	maneuver_->printInfo();
 	if (maneuverLogFile_.is_open())
 	{
 		auto io = get<ISensingIO>();
@@ -174,6 +174,7 @@ ManeuverPlanner::checkManeuver()
 				auto io = get<ISensingIO>();
 				maneuverLogFile_ << io->getSensorData().sequenceNumber;
 				maneuverLogFile_.close();
+				CPSLOG_DEBUG << "Closing Maneuver Log file.";
 			}
 
 			CPSLOG_DEBUG << "ManeuverSet done";

@@ -5,7 +5,7 @@
 			"cascade": {
 				"velocity": {
 					"ff": 0.04,
-					"imax": 1.0,
+					"imax": 10.0,
 					"kd": 0,
 					"ki": 0.4,
 					"kp": 0.4
