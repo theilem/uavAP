@@ -8,7 +8,7 @@
 #include "uavAP/Core/OverrideHandler/OverrideHandler.h"
 
 PitchStateSpaceCascade::PitchStateSpaceCascade(const SensorData& sd_enu, const SensorData& sd_ned, const ControllerTarget & target, ControllerOutput& output):
-		controlEnv_(&sd_enu.timestamp), sd_ned_(sd_ned), output_(output)
+		controlEnv_(&sd_enu.timestamp), sd_ned_(sd_ned), pitchCmd_(0), throttleCmd_(0), yawCmd_(0)
 {
 	/* Roll Control */
 	auto yawrateTarget = controlEnv_.addInput(&target.yawRate);
@@ -54,12 +54,15 @@ PitchStateSpaceCascade::PitchStateSpaceCascade(const SensorData& sd_enu, const S
 	pitchOrClimbAngle_ = controlEnv_.addManualSwitch(correctedPitch, directTargetVal);
 	pitchOrClimbAngle_->switchTo(params.inputClimbAngle.value);
 
-
 	pitchConstraint_ = std::make_shared<Control::Constraint<Angle<FloatingType>>>(pitchOrClimbAngle_);
 	auto overridePitch = controlEnv_.addInput(&pitchOverrideTarget_());
 	pitchTarget_ = controlEnv_.addManualSwitch(overridePitch, pitchConstraint_);
 	pitchTarget_->switchTo(0);
 	auto pitch = controlEnv_.addInput(&sd_enu.attitude[1]);
+
+	auto inPitchCmd = controlEnv_.addInput(&pitchCmd_);
+	auto outPitchCmd = controlEnv_.addOutput(inPitchCmd, &output.pitchOutput);
+	ctrlEnvOutputs_.insert(std::make_pair(ControllerOutputs::PITCH, outPitchCmd));
 
 	// command - target
 	auto ep = controlEnv_.addDifference(pitchTarget_, pitch);
@@ -75,6 +78,14 @@ PitchStateSpaceCascade::PitchStateSpaceCascade(const SensorData& sd_enu, const S
 	auto ev = controlEnv_.addDifference(velocityTarget_, velocity);
 	velocityIntegrator_ = controlEnv_.addIntegrator(ev, defaultIParams);
 	controlEnv_.addOutput(velocityIntegrator_, &Ev_);
+
+	auto inThrottleCmd = controlEnv_.addInput(&throttleCmd_);
+	auto outThrottleCmd = controlEnv_.addOutput(inThrottleCmd, &output.throttleOutput);
+	ctrlEnvOutputs_.insert(std::make_pair(ControllerOutputs::THROTTLE, outThrottleCmd));
+
+	auto inYawCmd = controlEnv_.addInput(&yawCmd_);
+	auto outYawCmd = controlEnv_.addOutput(inYawCmd, &output.yawOutput);
+	ctrlEnvOutputs_.insert(std::make_pair(ControllerOutputs::YAW, outYawCmd));
 
 	/* Throttle Input & Output */
 //	auto throttle = controlEnv_.addInput(&delta_T);
@@ -138,11 +149,8 @@ PitchStateSpaceCascade::evaluate()
 	std::printf("du: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", state[0], stateOut[1], state[5], velocityTarget_->getValue(), sd_ned_.velocity[0], velocityTarget_->getValue() - sd_ned_.velocity[0]);
 	std::printf("dθ: %2.8lf actCmd: %2.8lf int: %2.8lf target: %2.8lf current: %2.8lf diff: %2.8lf\n", radToDeg(state[3]), stateOut[0], state[4], radToDeg(pitchTarget_->getValue()), radToDeg(sd_ned_.attitude[1]), radToDeg(pitchTarget_->getValue() - sd_ned_.attitude[1]));
 
-	pitchOut_ = std::clamp(stateOut[0] + params.tE.value, (FloatingType) -1, (FloatingType) 1);
-	throttleOut_ = std::clamp(stateOut[1] + params.tT.value, (FloatingType) -1, (FloatingType) 1);
-
-	output_.pitchOutput = pitchOut_;
-	output_.throttleOutput = throttleOut_;
+	pitchCmd_ = std::clamp(stateOut[0] + params.tE.value, (FloatingType) -1, (FloatingType) 1);
+	throttleCmd_ = std::clamp(stateOut[1] + params.tT.value, (FloatingType) -1, (FloatingType) 1);
 }
 
 bool
@@ -237,8 +245,6 @@ PitchStateSpaceCascade::registerOverrides(std::shared_ptr<OverrideHandler> overr
 		overrideHandler->registerOverride("apply_trim/" + EnumMap<ControllerOutputs>::convert(it.first),
 										  it.second->getApplyTrimOverridableValue());
 	}
-	overrideHandler->registerOverride("output/pitch", pitchOut_);
-	overrideHandler->registerOverride("output/throttle", throttleOut_);
 }
 
 Optional<PIDParams>

@@ -11,18 +11,18 @@
 			"cascade": {
 				"roll": {
 					"ff": 0,
-					"imax": 0,
+					"imax": 0.3,
 					"kd": 0,
-					"ki": 0,
+					"ki": 0.1,
 					"kp": 3,
 					"is_angle": true
 				},
 				"roll_rate": {
-					"ff": 0.4,
+					"ff": 0.3,
 					"imax": 0.2,
 					"kd": 0,
-					"ki": 0,
-					"kp": 0,
+					"ki": 0.1,
+					"kp": 0.1,
 					"is_angle": true
 				},
 				"roll_constraint": {

@@ -93,7 +93,6 @@ private:
 	FloatingType Ev_;
 
 	const SensorData& sd_ned_;
-	ControllerOutput& output_;
 
 	// Used for overriding pitch
 	Angle<FloatingType> pitchOverrideTarget_;
@@ -102,8 +101,12 @@ private:
 	FloatingType velocityOverrideTarget_;
 	std::shared_ptr<Control::ManualSwitch> velocityTarget_;
 
-	OverridableValue<FloatingType> pitchOut_;
-	OverridableValue<FloatingType> throttleOut_;
+	FloatingType pitchCmd_;
+	FloatingType throttleCmd_;
+	FloatingType yawCmd_;
+
+//	OverridableValue<FloatingType> pitchOut_;
+//	OverridableValue<FloatingType> throttleOut_;
 };
 
 

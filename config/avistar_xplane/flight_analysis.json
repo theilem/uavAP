@@ -457,31 +457,12 @@
 					}
 				]
 			},
-			"phugoid": {
-				"save_as": "phugoid.txt",
+			"elevator_singlet_500ms_50p": {
 				"maneuvers": [
 					{
 						"overrides": {
-							"local_planner/position_z": 150.0,
-							"local_planner/velocity": 20.0,
-							"pid/roll": 0.0
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"attitude_x": 0.1,
-									"attitude_y": 0.1,
-									"position_z": 5
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"local_planner/position_z": 150.0,
-							"pid/roll": 0.0,
-							"output/throttle": -1.0
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 20
 						},
 						"transition": {
 							"duration": {
@@ -491,82 +472,38 @@
 					},
 					{
 						"overrides": {
-							"pid/roll": 0.0,
-							"pid/pitch": -30,
-							"output/throttle": -1.0
+							"output/pitch": 0.5,
+							"output/roll": 0.00777,
+							"output/throttle": -0.58556
 						},
 						"transition": {
-							"sensor_data": {
-								"sensor": "position_z",
-								"use_tolerance": false,
-								"relational": "<",
-								"threshold": 120
+							"duration": {
+								"duration": 500
 							}
 						}
 					},
 					{
 						"overrides": {
-							"pid/roll": 0.0,
-							"pid/pitch": 22,
-							"output/throttle": -1.0
+							"output/pitch": 0.3884,
+							"output/roll": 0.00777,
+							"output/throttle": -0.58556
 						},
 						"transition": {
-							"sensor_data": {
-								"sensor": "attitude_y",
-								"use_tolerance": false,
-								"relational": ">=",
-								"threshold": 20
-							}
-						}
-					},
-					{
-						"override": {
-							"output/roll": 0.0,
-							"output/pitch": 0.0,
-							"output/yaw": 0.0,
-							"output/throttle": -1.0
-						},
-						"transition": {
-							"sensor_data": {
-								"sensor": "position_z",
-								"use_tolerance": false,
-								"relational": "<",
-								"threshold": 100
+							"duration": {
+								"duration": 10000
 							}
 						}
 					}
-				]
+				],
+				"save_as": "elevator_singlet_500ms_50p.txt"
 			},
-			"phugoid_roll": {
-				"save_as": "phugoid_roll.txt",
+			"aileron_singlet_300ms_50p": {
 				"maneuvers": [
 					{
 						"overrides": {
-							"local_planner/position_z": 150.0,
-							"local_planner/velocity": 20.0
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 20
 						},
-						"maintains": [
-							"local_planner/heading"
-						],
-						"transition": {
-							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"attitude_x": 0.1,
-									"attitude_y": 0.1,
-									"position_z": 5
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"local_planner/position_z": 150.0,
-							"output/throttle": -1.0
-						},
-						"maintains": [
-							"local_planner/heading"
-						],
 						"transition": {
 							"duration": {
 								"duration": 5000
@@ -575,147 +512,59 @@
 					},
 					{
 						"overrides": {
-							"pid/pitch": -30,
-							"output/throttle": -1.0
-						},
-						"maintains": [
-							"local_planner/heading"
-						],
-						"transition": {
-							"sensor_data": {
-								"sensor": "position_z",
-								"use_tolerance": false,
-								"relational": "<",
-								"threshold": 120
-							}
-						}
-					},
-					{
-						"overrides": {
-							"pid/pitch": 22,
-							"output/throttle": -1.0
-						},
-						"maintains": [
-							"local_planner/heading"
-						],
-						"transition": {
-							"sensor_data": {
-								"sensor": "attitude_y",
-								"use_tolerance": false,
-								"relational": ">=",
-								"threshold": 20
-							}
-						}
-					},
-					{
-						"override": {
-							"output/roll": 0.0,
-							"output/pitch": 0.0,
-							"output/yaw": 0.0,
-							"output/throttle": -1.0
-						},
-						"transition": {
-							"sensor_data": {
-								"sensor": "position_z",
-								"use_tolerance": false,
-								"relational": "<",
-								"threshold": 100
-							}
-						}
-					}
-				]
-			},
-			"pitch_doublet_1hz_50amp": {
-				"maneuvers": [
-					{
-						"overrides": {
-							"local_planner/position_z": 100,
-							"local_planner/velocity": 20,
-							"pid/roll": 0
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"air_speed": 1,
-									"attitude_x": 0.2,
-									"position_z": 3
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/roll": 1,
-							"local_planner/velocity": 20,
-							"output/roll": 0
+							"output/pitch": 0.3884,
+							"output/roll": 0.5,
+							"output/throttle": -0.58556
 						},
 						"transition": {
 							"duration": {
-								"duration": 1000
-							}
-						},
-						"waveforms": {
-							"output/pitch": {
-								"square": {
-									"amplitude": 0.5,
-									"frequency": 1,
-									"offset": 0,
-									"phase": 0
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/pitch": 1,
-							"apply_trim/roll": 1,
-							"local_planner/velocity": 20,
-							"output/pitch": 0,
-							"output/roll": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 2000
-							}
-						}
-					}
-				],
-				"save_as": "pitch_doublet_1hz_50amp.txt"
-			},
-			"roll_doublet_1hz_50amp": {
-				"maneuvers": [
-					{
-						"overrides": {
-							"local_planner/position_z": 100,
-							"local_planner/velocity": 20
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"air_speed": 1,
-									"attitude_y": 0.2,
-									"position_z": 3
-								}
+								"duration": 300
 							}
 						}
 					},
 					{
 						"overrides": {
 							"output/pitch": 0.3884,
+							"output/roll": 0.00777,
+							"output/throttle": -0.58556
+						},
+						"transition": {
+							"duration": {
+								"duration": 10000
+							}
+						}
+					}
+				],
+				"save_as": "elevator_singlet_300ms_50p.txt"
+			},
+			"aileron_doublet_500ms_50p": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
 							"local_planner/velocity": 20
 						},
 						"transition": {
 							"duration": {
-								"duration": 1000
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0.3884,
+							"output/throttle": -0.58556
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
 							}
 						},
 						"waveforms": {
 							"output/roll": {
 								"square": {
 									"amplitude": 0.5,
-									"frequency": 1,
+									"frequency": 2,
 									"offset": 0,
 									"phase": 0
 								}
@@ -725,158 +574,36 @@
 					{
 						"overrides": {
 							"output/pitch": 0.3884,
-							"output/roll": 0,
+							"output/roll": 0.00777,
+							"output/throttle": -0.58556
+						},
+						"transition": {
+							"duration": {
+								"duration": 10000
+							}
+						}
+					}
+				],
+				"save_as": "aileron_doublet_500ms_50p.txt"
+			},
+			"rudder_doublet_500ms_50p": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
 							"local_planner/velocity": 20
 						},
 						"transition": {
 							"duration": {
-								"duration": 2000
-							}
-						}
-					}
-				],
-				"save_as": "roll_doublet_1hz_50amp.txt"
-			},
-			"pitch_doublet_500ms_50amp": {
-				"maneuvers": [
-					{
-						"overrides": {
-							"local_planner/velocity": 20,
-							"pid/pitch": 0,
-							"pid/roll": 0
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"air_speed": 1,
-									"attitude_x": 0.2,
-									"position_z": 3
-								}
+								"duration": 5000
 							}
 						}
 					},
 					{
 						"overrides": {
-							"apply_trim/roll": 1,
-							"local_planner/velocity": 20,
-							"output/roll": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 1000
-							}
-						},
-						"waveforms": {
-							"output/pitch": {
-								"square": {
-									"amplitude": 0.5,
-									"frequency": 1,
-									"offset": 0,
-									"phase": 0
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/pitch": 1,
-							"apply_trim/roll": 1,
-							"local_planner/velocity": 20,
-							"output/pitch": 0,
-							"output/roll": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 2000
-							}
-						}
-					}
-				],
-				"save_as": "pitch_doublet_500ms_50amp.txt"
-			},
-			"pitch_doublet_500ms_D50amp": {
-				"maneuvers": [
-					{
-						"overrides": {
-							"local_planner/velocity": 20,
-							"pid/pitch": 0,
-							"pid/roll": 0
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"air_speed": 1,
-									"attitude_x": 0.2,
-									"position_z": 3
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/roll": 1,
-							"local_planner/velocity": 20,
-							"output/roll": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 1000
-							}
-						},
-						"waveforms": {
-							"output/pitch": {
-								"square": {
-									"amplitude": -0.5,
-									"frequency": 1,
-									"offset": 0,
-									"phase": 0
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/pitch": 1,
-							"apply_trim/roll": 1,
-							"local_planner/velocity": 20,
-							"output/pitch": 0,
-							"output/roll": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 2000
-							}
-						}
-					}
-				],
-				"save_as": "pitch_doublet_500ms_D50amp.txt"
-			},
-			"pitch_doublet_250ms_50amp": {
-				"maneuvers": [
-					{
-						"overrides": {
-							"local_planner/velocity": 20,
-							"pid/pitch": 0,
-							"pid/roll": 0
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"air_speed": 1,
-									"attitude_x": 0.2,
-									"position_z": 3
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/roll": 1,
-							"local_planner/velocity": 20,
-							"output/roll": 0
+							"output/pitch": 0.3884,
+							"output/roll": 0.00777,
+							"output/throttle": -0.58556
 						},
 						"transition": {
 							"duration": {
@@ -884,7 +611,7 @@
 							}
 						},
 						"waveforms": {
-							"output/pitch": {
+							"output/yaw": {
 								"square": {
 									"amplitude": 0.5,
 									"frequency": 2,
@@ -896,310 +623,18 @@
 					},
 					{
 						"overrides": {
-							"apply_trim/pitch": 1,
-							"apply_trim/roll": 1,
-							"local_planner/velocity": 20,
-							"output/pitch": 0,
-							"output/roll": 0
+							"output/pitch": 0.3884,
+							"output/roll": 0.00777,
+							"output/throttle": -0.58556
 						},
 						"transition": {
 							"duration": {
-								"duration": 2000
+								"duration": 10000
 							}
 						}
 					}
 				],
-				"save_as": "pitch_doublet_250ms_50amp.txt"
-			},
-			"pitch_doublet_250ms_D50amp": {
-				"maneuvers": [
-					{
-						"overrides": {
-							"local_planner/velocity": 20,
-							"pid/pitch": 0,
-							"pid/roll": 0
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"air_speed": 1,
-									"attitude_x": 0.2,
-									"position_z": 3
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/roll": 1,
-							"local_planner/velocity": 20,
-							"output/roll": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 1000
-							}
-						},
-						"waveforms": {
-							"output/pitch": {
-								"square": {
-									"amplitude": -0.5,
-									"frequency": 2,
-									"offset": 0,
-									"phase": 0
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/pitch": 1,
-							"apply_trim/roll": 1,
-							"local_planner/velocity": 20,
-							"output/pitch": 0,
-							"output/roll": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 2000
-							}
-						}
-					}
-				],
-				"save_as": "pitch_doublet_250ms_D50amp.txt"
-			},
-			"roll_doublet_500ms_50amp": {
-				"maneuvers": [
-					{
-						"overrides": {
-							"local_planner/velocity": 20,
-							"pid/pitch": 0,
-							"pid/roll": 0
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"air_speed": 1,
-									"attitude_y": 0.2,
-									"position_z": 3
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/pitch": 1,
-							"local_planner/velocity": 20,
-							"output/pitch": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 1000
-							}
-						},
-						"waveforms": {
-							"output/roll": {
-								"square": {
-									"amplitude": 0.5,
-									"frequency": 1,
-									"offset": 0,
-									"phase": 0
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/pitch": 1,
-							"apply_trim/roll": 1,
-							"local_planner/velocity": 20,
-							"output/pitch": 0,
-							"output/roll": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 2000
-							}
-						}
-					}
-				],
-				"save_as": "roll_doublet_500ms_50amp.txt"
-			},
-			"roll_doublet_500ms_L50amp": {
-				"maneuvers": [
-					{
-						"overrides": {
-							"local_planner/velocity": 20,
-							"pid/pitch": 0,
-							"pid/roll": 0
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"air_speed": 1,
-									"attitude_y": 0.2,
-									"position_z": 3
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/pitch": 1,
-							"local_planner/velocity": 20,
-							"output/pitch": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 1000
-							}
-						},
-						"waveforms": {
-							"output/roll": {
-								"square": {
-									"amplitude": -0.5,
-									"frequency": 1,
-									"offset": 0,
-									"phase": 0
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/pitch": 1,
-							"apply_trim/roll": 1,
-							"local_planner/velocity": 20,
-							"output/pitch": 0,
-							"output/roll": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 2000
-							}
-						}
-					}
-				],
-				"save_as": "roll_doublet_500ms_L50amp.txt"
-			},
-			"roll_doublet_250ms_50amp": {
-				"maneuvers": [
-					{
-						"overrides": {
-							"local_planner/velocity": 20,
-							"pid/pitch": 0,
-							"pid/roll": 0
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"air_speed": 1,
-									"attitude_y": 0.2,
-									"position_z": 3
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/pitch": 1,
-							"local_planner/velocity": 20,
-							"output/pitch": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 500
-							}
-						},
-						"waveforms": {
-							"output/roll": {
-								"square": {
-									"amplitude": 0.5,
-									"frequency": 2,
-									"offset": 0,
-									"phase": 0
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/pitch": 1,
-							"apply_trim/roll": 1,
-							"local_planner/velocity": 20,
-							"output/pitch": 0,
-							"output/roll": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 2000
-							}
-						}
-					}
-				],
-				"save_as": "roll_doublet_250ms_50amp.txt"
-			},
-			"roll_doublet_250ms_L50amp": {
-				"maneuvers": [
-					{
-						"overrides": {
-							"local_planner/velocity": 20,
-							"pid/pitch": 0,
-							"pid/roll": 0
-						},
-						"transition": {
-							"steady_state": {
-								"duration": 5000,
-								"sensor_values": {
-									"air_speed": 1,
-									"attitude_y": 0.2,
-									"position_z": 3
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/pitch": 1,
-							"local_planner/velocity": 20,
-							"output/pitch": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 500
-							}
-						},
-						"waveforms": {
-							"output/roll": {
-								"square": {
-									"amplitude": -0.5,
-									"frequency": 2,
-									"offset": 0,
-									"phase": 0
-								}
-							}
-						}
-					},
-					{
-						"overrides": {
-							"apply_trim/pitch": 1,
-							"apply_trim/roll": 1,
-							"local_planner/velocity": 20,
-							"output/pitch": 0,
-							"output/roll": 0
-						},
-						"transition": {
-							"duration": {
-								"duration": 2000
-							}
-						}
-					}
-				],
-				"save_as": "roll_doublet_250ms_L50amp.txt"
+				"save_as": "aileron_doublet_500ms_50p.txt"
 			}
 		}
 	},

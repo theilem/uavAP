@@ -21,7 +21,7 @@
 			"use_approach": false,
 			"default_velocity": 20,
 			"default_altitude": 150,
-			"default_mission": "race_track_1000",
+			"default_mission": "race_track",
 			"missions": {
 				"origin": {
 					"infinite": true,

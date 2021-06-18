@@ -28,9 +28,9 @@
 				},
 				"roll": {
 					"ff": 0,
-					"imax": 0,
+					"imax": 0.3,
 					"kd": 0,
-					"ki": 0,
+					"ki": 0.1,
 					"kp": 3,
 					"is_angle": true
 				},
