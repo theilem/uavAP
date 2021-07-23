@@ -10,7 +10,7 @@
 #include <cpsCore/Utilities/IPC/IPC.h>
 #include <uavAP/FlightControl/Controller/ControllerTarget.h>
 #include "uavAP/Core/SensorData.h"
-#include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceCascade.h"
+#include "PitchStateSpaceCascade.h"
 
 
 class DataHandling;

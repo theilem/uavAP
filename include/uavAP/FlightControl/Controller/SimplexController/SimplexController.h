@@ -9,7 +9,7 @@
 #include <cpsCore/cps_object>
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDController.h"
-#include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceCascade.h"
+#include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController/PitchStateSpaceCascade.h"
 #include "uavAP/FlightControl/Controller/SimplexController/SimplexControllerParams.h"
 
 class IScheduler;

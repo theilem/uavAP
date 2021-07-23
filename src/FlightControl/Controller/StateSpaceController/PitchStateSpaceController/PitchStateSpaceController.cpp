@@ -5,7 +5,7 @@
 #include "uavAP/Core/Orientation/ConversionUtils.h"
 #include "uavAP/Core/Orientation/NED.h"
 #include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
-#include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController.h"
+#include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController/PitchStateSpaceController.h"
 #include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
 #include "uavAP/FlightControl/SensingActuationIO/IActuationIO.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"

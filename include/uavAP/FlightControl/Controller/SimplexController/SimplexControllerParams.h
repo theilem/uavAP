@@ -7,7 +7,7 @@
 
 #include <cpsCore/Configuration/Parameter.hpp>
 #include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/StateSpaceAltitudePlannerParams.h"
-#include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceParams.h"
+#include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController/PitchStateSpaceParams.h"
 
 struct SimplexControllerParams
 {

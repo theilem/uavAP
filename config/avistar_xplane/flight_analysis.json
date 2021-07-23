@@ -5,7 +5,7 @@
 	},
 	"maneuver_planner": {
 		"period": 10,
-		"log_path": "/tmp/uavap-maneuvers/",
+		"log_path": "/tmp/",
 		"maneuver_sets": {
 			"roll_maneuver": {
 				"maneuvers": [
@@ -457,12 +457,15 @@
 					}
 				]
 			},
-			"elevator_singlet_500ms_50p": {
+			"elevator_singlet_500ms_50u": {
 				"maneuvers": [
 					{
 						"overrides": {
 							"local_planner/position_z": 150,
-							"local_planner/velocity": 20
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
 						},
 						"transition": {
 							"duration": {
@@ -473,8 +476,10 @@
 					{
 						"overrides": {
 							"output/pitch": 0.5,
-							"output/roll": 0.00777,
-							"output/throttle": -0.58556
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
 						},
 						"transition": {
 							"duration": {
@@ -484,25 +489,46 @@
 					},
 					{
 						"overrides": {
-							"output/pitch": 0.3884,
-							"output/roll": 0.00777,
-							"output/throttle": -0.58556
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
 						},
 						"transition": {
 							"duration": {
-								"duration": 10000
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
 							}
 						}
 					}
 				],
-				"save_as": "elevator_singlet_500ms_50p.txt"
+				"save_as": "elevator_singlet_500ms_50u.txt"
 			},
-			"aileron_singlet_300ms_50p": {
+			"elevator_doublet_500ms_50ud": {
 				"maneuvers": [
 					{
 						"overrides": {
 							"local_planner/position_z": 150,
-							"local_planner/velocity": 20
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
 						},
 						"transition": {
 							"duration": {
@@ -512,9 +538,866 @@
 					},
 					{
 						"overrides": {
-							"output/pitch": 0.3884,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"waveforms": {
+							"output/pitch": {
+								"square": {
+									"amplitude": 0.5,
+									"frequency": 1,
+									"offset": 0,
+									"phase": 0
+								}
+							}
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "elevator_doublet_500ms_50ud.txt"
+			},
+			"elevator_singlet_500ms_75u": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0.75,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "elevator_singlet_500ms_75u.txt"
+			},
+			"elevator_doublet_500ms_75ud": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"waveforms": {
+							"output/pitch": {
+								"square": {
+									"amplitude": 0.75,
+									"frequency": 1,
+									"offset": 0,
+									"phase": 0
+								}
+							}
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "elevator_doublet_500ms_75ud.txt"
+			},
+			"elevator_singlet_750ms_50u": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0.50,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 750
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "elevator_singlet_750ms_50u.txt"
+			},
+			"elevator_doublet_750ms_50ud": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"waveforms": {
+							"output/pitch": {
+								"square": {
+									"amplitude": 0.5,
+									"frequency": 0.6666666666666666,
+									"offset": 0,
+									"phase": 0
+								}
+							}
+						},
+						"transition": {
+							"duration": {
+								"duration": 1500
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "elevator_doublet_750ms_50ud.txt"
+			},
+			"elevator_singlet_1000ms_50u": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0.50,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "elevator_singlet_1000ms_50u.txt"
+			},
+			"elevator_doublet_1000ms_50ud": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"waveforms": {
+							"output/pitch": {
+								"square": {
+									"amplitude": 0.5,
+									"frequency": 0.5,
+									"offset": 0,
+									"phase": 0
+								}
+							}
+						},
+						"transition": {
+							"duration": {
+								"duration": 2000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "elevator_doublet_1000ms_50ud.txt"
+			},
+			"aileron_singlet_500ms_50l": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": -0.5,
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "aileron_singlet_500ms_50l.txt"
+			},
+			"aileron_singlet_500ms_50r": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
 							"output/roll": 0.5,
-							"output/throttle": -0.58556
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "aileron_singlet_500ms_50r.txt"
+			},
+			"aileron_singlet_500ms_25l": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": -0.25,
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "aileron_singlet_500ms_25l.txt"
+			},
+			"aileron_singlet_500ms_25r": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0.25,
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "aileron_singlet_500ms_25r.txt"
+			},
+			"aileron_singlet_500ms_20l": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": -0.2,
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "aileron_singlet_500ms_20l.txt"
+			},
+			"aileron_singlet_500ms_20r": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0.2,
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "aileron_singlet_500ms_20r.txt"
+			},
+			"aileron_singlet_300ms_50l": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": -0.5,
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
 						},
 						"transition": {
 							"duration": {
@@ -524,25 +1407,46 @@
 					},
 					{
 						"overrides": {
-							"output/pitch": 0.3884,
-							"output/roll": 0.00777,
-							"output/throttle": -0.58556
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
 						},
 						"transition": {
 							"duration": {
-								"duration": 10000
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
 							}
 						}
 					}
 				],
-				"save_as": "elevator_singlet_300ms_50p.txt"
+				"save_as": "aileron_singlet_300ms_50l.txt"
 			},
-			"aileron_doublet_500ms_50p": {
+			"aileron_singlet_300ms_50r": {
 				"maneuvers": [
 					{
 						"overrides": {
 							"local_planner/position_z": 150,
-							"local_planner/velocity": 20
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
 						},
 						"transition": {
 							"duration": {
@@ -552,19 +1456,156 @@
 					},
 					{
 						"overrides": {
-							"output/pitch": 0.3884,
-							"output/throttle": -0.58556
+							"output/roll": 0.5,
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
 						},
 						"transition": {
 							"duration": {
-								"duration": 500
+								"duration": 300
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "aileron_singlet_300ms_50r.txt"
+			},
+			"aileron_doublet_500ms_50lr": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						},
+						"waveforms": {
+							"output/roll": {
+								"square": {
+									"amplitude": -0.5,
+									"frequency": 1,
+									"offset": 0,
+									"phase": 0
+								}
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "aileron_doublet_500ms_50lr.txt"
+			},
+			"aileron_doublet_500ms_50rl": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
 							}
 						},
 						"waveforms": {
 							"output/roll": {
 								"square": {
 									"amplitude": 0.5,
-									"frequency": 2,
+									"frequency": 1,
 									"offset": 0,
 									"phase": 0
 								}
@@ -573,25 +1614,46 @@
 					},
 					{
 						"overrides": {
-							"output/pitch": 0.3884,
-							"output/roll": 0.00777,
-							"output/throttle": -0.58556
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
 						},
 						"transition": {
 							"duration": {
-								"duration": 10000
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
 							}
 						}
 					}
 				],
-				"save_as": "aileron_doublet_500ms_50p.txt"
+				"save_as": "aileron_doublet_500ms_50rl.txt"
 			},
-			"rudder_doublet_500ms_50p": {
+			"aileron_doublet_300ms_50lr": {
 				"maneuvers": [
 					{
 						"overrides": {
 							"local_planner/position_z": 150,
-							"local_planner/velocity": 20
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
 						},
 						"transition": {
 							"duration": {
@@ -601,20 +1663,21 @@
 					},
 					{
 						"overrides": {
-							"output/pitch": 0.3884,
-							"output/roll": 0.00777,
-							"output/throttle": -0.58556
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/throttle": 1.0
 						},
 						"transition": {
 							"duration": {
-								"duration": 500
+								"duration": 600
 							}
 						},
 						"waveforms": {
-							"output/yaw": {
+							"output/roll": {
 								"square": {
-									"amplitude": 0.5,
-									"frequency": 2,
+									"amplitude": -0.5,
+									"frequency": 1.66666667,
 									"offset": 0,
 									"phase": 0
 								}
@@ -623,18 +1686,328 @@
 					},
 					{
 						"overrides": {
-							"output/pitch": 0.3884,
-							"output/roll": 0.00777,
-							"output/throttle": -0.58556
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
 						},
 						"transition": {
 							"duration": {
-								"duration": 10000
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
 							}
 						}
 					}
 				],
-				"save_as": "aileron_doublet_500ms_50p.txt"
+				"save_as": "aileron_doublet_300ms_50lr.txt"
+			},
+			"aileron_doublet_300ms_50rl": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 600
+							}
+						},
+						"waveforms": {
+							"output/roll": {
+								"square": {
+									"amplitude": 0.5,
+									"frequency": 1.66666667,
+									"offset": 0,
+									"phase": 0
+								}
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "aileron_doublet_300ms_50rl.txt"
+			},
+			"aileron_doublet_500ms_25lr": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						},
+						"waveforms": {
+							"output/roll": {
+								"square": {
+									"amplitude": -0.25,
+									"frequency": 1,
+									"offset": 0,
+									"phase": 0
+								}
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "aileron_doublet_500ms_25lr.txt"
+			},
+			"aileron_doublet_500ms_25rl": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 22.606176887770953,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						},
+						"waveforms": {
+							"output/roll": {
+								"square": {
+									"amplitude": 0.25,
+									"frequency": 1,
+									"offset": 0,
+									"phase": 0
+								}
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "aileron_doublet_500ms_25rl.txt"
+			},
+			"rudder_doublet_500ms_50lr": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"local_planner/position_z": 150,
+
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						},
+						"waveforms": {
+							"output/yaw": {
+								"square": {
+									"amplitude": -0.5,
+									"frequency": 1,
+									"offset": 0,
+									"phase": 0
+								}
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"output/yaw": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/roll": 0,
+							"output/throttle": 0,
+							"output/yaw": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 9000
+							}
+						}
+					}
+				],
+				"save_as": "rudder_doublet_500ms_50lr.txt"
 			}
 		}
 	},

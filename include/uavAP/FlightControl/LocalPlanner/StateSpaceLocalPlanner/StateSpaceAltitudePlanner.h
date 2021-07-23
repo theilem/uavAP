@@ -13,7 +13,7 @@
 #include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/StateSpaceCombinedParams.h"
 #include "StateSpaceAltitudePlannerStatus.h"
 #include <uavAP/Core/OverrideHandler/OverridableValue.hpp>
-#include <uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController.h>
+#include <uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController/PitchStateSpaceController.h>
 
 class ISensingIO;
 class IController;

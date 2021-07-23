@@ -12,7 +12,7 @@
 #include "uavAP/FlightControl/Controller/SimplexController/SimplexController.h"
 #include "uavAP/FlightControl/Controller/PIDController/RatePIDController/RatePIDController.h"
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRatePIDController.h"
-#include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController.h"
+#include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController/PitchStateSpaceController.h"
 
 using ControllerFactory = StaticFactory<IController, false,
 		RatePIDController,

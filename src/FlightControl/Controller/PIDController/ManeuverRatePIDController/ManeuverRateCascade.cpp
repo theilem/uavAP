@@ -82,6 +82,8 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	auto throttleOut = controlEnv_.addOutput(throttleConstraint_, &out.throttleOutput);
 
 	/* Rudder Output */
+	auto rudderIn = controlEnv_.addConstant(0);
+	auto rudderOut = controlEnv_.addOutput(rudderIn, &out.yawOutput);
 //	auto rudderBeta = controlEnv_.addInput(&beta_);
 //	auto rudderTarget = controlEnv_.addConstant(0);
 //
@@ -102,7 +104,7 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	outputs_.insert(std::make_pair(ControllerOutputs::PITCH, pitchOut));
 	outputs_.insert(std::make_pair(ControllerOutputs::ROLL, rollOut));
 	outputs_.insert(std::make_pair(ControllerOutputs::THROTTLE, throttleOut));
-
+	outputs_.insert(std::make_pair(ControllerOutputs::YAW, rudderOut));
 }
 
 bool

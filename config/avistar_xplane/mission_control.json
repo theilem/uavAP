@@ -58,7 +58,7 @@
 					]
 				},
 				"race_track": {
-					"velocity": 20,
+					"velocity": 22.606176887770953,
 					"infinite": true,
 					"offset": [0,0,150],
 					"waypoints": [
