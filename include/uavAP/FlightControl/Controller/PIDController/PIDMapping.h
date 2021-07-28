@@ -44,6 +44,8 @@ enum class PIDs
 	YAW_RATE,
 	ROLL,
 	ROLL_RATE,
+	ALTITUDE,
+	HEADING,
 	NUM_PID
 };
 
@@ -61,7 +63,9 @@ ENUMMAP_INIT(PIDs,
 				 { PIDs::PITCH_RATE, "pitch_rate" },
 				 { PIDs::YAW_RATE, "yaw_rate" },
 				 { PIDs::ROLL, "roll" },
-				 { PIDs::ROLL_RATE, "roll_rate" }
+				 { PIDs::ROLL_RATE, "roll_rate" },
+				 { PIDs::ALTITUDE, "altitude" },
+				 { PIDs::HEADING, "heading" }
 			 });
 
 #endif /* UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_PIDMAPPING_H_ */

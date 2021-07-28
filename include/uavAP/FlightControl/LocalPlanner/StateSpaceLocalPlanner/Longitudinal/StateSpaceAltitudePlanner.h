@@ -10,20 +10,19 @@
 #include <uavAP/FlightControl/LocalPlanner/ILocalPlanner.h>
 #include <uavAP/FlightControl/Controller/ControllerTarget.h>
 #include <cpsCore/Utilities/LockTypes.hpp>
-#include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/StateSpaceCombinedParams.h"
-#include "StateSpaceAltitudePlannerStatus.h"
+#include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/Longitudinal/StateSpaceCombinedParams.h"
 #include <uavAP/Core/OverrideHandler/OverridableValue.hpp>
-#include <uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController/PitchStateSpaceController.h>
+#include <uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlannerStatus.h>
 
 class ISensingIO;
-class IController;
 class IScheduler;
 class IPC;
 class DataHandling;
 class DataPresentation;
 class OverrideHandler;
 class Packet;
-class SensorData;
+class PitchStateSpaceController;
+struct SensorData;
 
 class StateSpaceAltitudePlanner: public ILocalPlanner,
 								 public IRunnableObject,
@@ -41,22 +40,17 @@ class StateSpaceAltitudePlanner: public ILocalPlanner,
 public:
 	static constexpr TypeId typeId = "statespace_altitude";
 
-	StateSpaceAltitudePlanner();
-
 	void
 	setTrajectory(const Trajectory& traj) override;
 
 	Trajectory
 	getTrajectory() const override;
 
-	StateSpaceAltitudePlannerStatus
+	ManeuverLocalPlannerStatus
 	getStatus() const;
 
 	bool
 	run(RunStage stage) override;
-
-	bool
-	configure(const Configuration &c);
 
 private:
 
@@ -80,7 +74,7 @@ private:
 	update();
 
 	mutable Mutex statusMutex_;
-	StateSpaceAltitudePlannerStatus status_;
+	ManeuverLocalPlannerStatus status_;
 	ControllerTarget controllerTarget_;
 
 	mutable Mutex trajectoryMutex_;
@@ -100,7 +94,6 @@ private:
 	OverridableValue<FloatingType> controllerTargetPitch_;
 	OverridableValue<FloatingType> controllerTargetYawRate_;
 
-	FloatingType controllerURef_;
 	FloatingType controllerThetaRef_;
 };
 

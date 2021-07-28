@@ -13,11 +13,13 @@
 #include "uavAP/FlightControl/Controller/PIDController/RatePIDController/RatePIDController.h"
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRatePIDController.h"
 #include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController/PitchStateSpaceController.h"
+#include "uavAP/FlightControl/Controller/StateSpaceController/RSLQRController/RSLQRController.h"
 
 using ControllerFactory = StaticFactory<IController, false,
 		RatePIDController,
 		ManeuverRatePIDController,
 		PitchStateSpaceController,
-		SimplexController>;
+		SimplexController,
+		RSLQRController>;
 
 #endif /* FLIGHTCONTROLLER_FLIGHTCONTROLLERFACTORY_H_ */

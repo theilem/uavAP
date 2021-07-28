@@ -19,6 +19,7 @@
 set(FLIGHT_CONTROL_SRC 	${FLIGHT_CONTROL_SRC}
 						${CMAKE_CURRENT_SOURCE_DIR}/LinearLocalPlanner/LinearLocalPlanner.cpp
 						${CMAKE_CURRENT_SOURCE_DIR}/ManeuverLocalPlanner/ManeuverLocalPlanner.cpp
-						${CMAKE_CURRENT_SOURCE_DIR}/StateSpacePlanner/StateSpaceAltitudePlanner.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/StateSpacePlanner/Longitudinal/StateSpaceAltitudePlanner.cpp
+						${CMAKE_CURRENT_SOURCE_DIR}/StateSpacePlanner/RSLQRPlanner/RSLQRPlanner.cpp
 						PARENT_SCOPE)
 

@@ -4,13 +4,10 @@
 
 #include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
 #include "uavAP/Core/OverrideHandler/OverrideHandler.h"
-#include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/StateSpaceAltitudePlanner.h"
+#include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/Longitudinal/StateSpaceAltitudePlanner.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
+#include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController/PitchStateSpaceController.h"
 #include <cpsCore/Utilities/IPC/IPC.h>
-
-StateSpaceAltitudePlanner::StateSpaceAltitudePlanner()
-{
-}
 
 void
 StateSpaceAltitudePlanner::setTrajectory(const Trajectory& traj)
@@ -35,7 +32,7 @@ StateSpaceAltitudePlanner::getTrajectory() const
 	return trajectory_;
 }
 
-StateSpaceAltitudePlannerStatus
+ManeuverLocalPlannerStatus
 StateSpaceAltitudePlanner::getStatus() const
 {
 	return status_;
@@ -78,7 +75,6 @@ StateSpaceAltitudePlanner::run(RunStage stage)
 
 			if (auto pssc = get<PitchStateSpaceController>())
 			{
-				controllerURef_ = pssc->getUTrim();
 				controllerThetaRef_ = pssc->getThetaTrim();
 			}
 			else
@@ -117,9 +113,9 @@ StateSpaceAltitudePlanner::run(RunStage stage)
 
 			if (auto dh = get<DataHandling>())
 			{
-//				dh->addStatusFunction<StateSpaceAltitudePlannerStatus>([this]()
-//																	   { return getStatus(); },
-//																	   Content::STATE_SPACE_PLANNER_STATUS);
+				dh->addStatusFunction<ManeuverLocalPlannerStatus>([this]()
+																	   { return getStatus(); },
+																	   Content::MANEUVER_LOCAL_PLANNER_STATUS);
 //				dh->addConfig(this, Content::MANEUVER_LOCAL_PLANNER_PARAMS);
 				dh->addTriggeredStatusFunction<Trajectory, DataRequest>(
 						[this](const DataRequest& request) -> Optional<Trajectory>
@@ -183,7 +179,7 @@ StateSpaceAltitudePlanner::createLocalPlan(const SensorData& sd)
 	controllerTarget_.yawRate = (controllerTargetYawRate_ = controllerTarget_.yawRate);
 
 
-	status_.pitchTarget = controllerTarget_.climbAngle;
+	status_.climbAngleTarget = controllerTarget_.climbAngle;
 	status_.velocityTarget = controllerTarget_.velocity;
 	status_.yawRateTarget = controllerTarget_.yawRate;
 
@@ -197,6 +193,7 @@ StateSpaceAltitudePlanner::createLocalPlan(const SensorData& sd)
 	controller->setControllerTarget(controllerTarget_);
 }
 
+// Copied from ManeuverLocalPlanner
 std::shared_ptr<IPathSection>
 StateSpaceAltitudePlanner::updatePathSection(const Vector3& position)
 {
@@ -245,6 +242,8 @@ StateSpaceAltitudePlanner::updatePathSection(const Vector3& position)
 	return currentSection;
 }
 
+
+// Copied from ManeuverLocalPlanner
 void
 StateSpaceAltitudePlanner::nextSection()
 {
@@ -376,11 +375,4 @@ StateSpaceAltitudePlanner::update()
 	{
 		CPSLOG_ERROR << "Missing Sensing";
 	}
-}
-
-bool
-StateSpaceAltitudePlanner::configure(const Configuration & c)
-{
-	auto retval = ConfigurableObject::configure(c);
-	return retval;
 }

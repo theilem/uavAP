@@ -40,6 +40,8 @@ enum class LocalPlannerTargets
 	VELOCITY,
 	HEADING,
 	CLIMB_RATE,
+	PITCH,
+	ROLL,
 	SLOPE,
 	NUM_TARGETS
 };
@@ -54,6 +56,8 @@ ENUMMAP_INIT(LocalPlannerTargets, {
 		{LocalPlannerTargets::VELOCITY, "velocity"},
 		{LocalPlannerTargets::HEADING, "heading"},
 		{LocalPlannerTargets::CLIMB_RATE, "climb_rate"},
+		{LocalPlannerTargets::PITCH, "pitch"},
+		{LocalPlannerTargets::ROLL, "roll"},
 		{LocalPlannerTargets::SLOPE, "slope"}
 });
 

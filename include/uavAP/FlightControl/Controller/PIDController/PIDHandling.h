@@ -44,6 +44,10 @@ struct ConstraintParams
 
 struct PIDStatus
 {
+	PIDStatus() = default;
+	PIDStatus(double target, double value) : target(target), value(value)
+	{}
+
 	double target;
 	double value;
 };

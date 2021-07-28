@@ -6,7 +6,7 @@
 #define UAVAP_STATESPACECOMBINEDPARAMS_H
 
 #include <cpsCore/Configuration/Parameter.hpp>
-#include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/StateSpaceAltitudePlannerParams.h"
+#include "StateSpaceAltitudePlannerParams.h"
 
 struct StateSpaceCombinedParams
 {

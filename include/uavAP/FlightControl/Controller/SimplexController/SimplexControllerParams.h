@@ -6,7 +6,7 @@
 #define UAVAP_SIMPLEXCONTROLLERPARAMS_H
 
 #include <cpsCore/Configuration/Parameter.hpp>
-#include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/StateSpaceAltitudePlannerParams.h"
+#include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/Longitudinal/StateSpaceAltitudePlannerParams.h"
 #include "uavAP/FlightControl/Controller/StateSpaceController/PitchStateSpaceController/PitchStateSpaceParams.h"
 
 struct SimplexControllerParams

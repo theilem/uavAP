@@ -27,10 +27,11 @@
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_LOCALPLANNERFACTORY_H_
 
 #include <cpsCore/Framework/StaticFactory.h>
+#include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/RSLQRPlanner/RSLQRPlanner.h"
 #include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"
 #include "uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlanner.h"
-#include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/StateSpaceAltitudePlanner.h"
+#include "uavAP/FlightControl/LocalPlanner/StateSpaceLocalPlanner/Longitudinal/StateSpaceAltitudePlanner.h"
 
 //class LocalPlannerFactory: public Factory<ILocalPlanner>
 //{
@@ -44,6 +45,10 @@
 //
 //};
 
-using LocalPlannerFactory = StaticFactory<ILocalPlanner, false, LinearLocalPlanner, ManeuverLocalPlanner, StateSpaceAltitudePlanner>;
+using LocalPlannerFactory = StaticFactory<ILocalPlanner, false,
+		RSLQRPlanner,
+		LinearLocalPlanner,
+		ManeuverLocalPlanner,
+		StateSpaceAltitudePlanner>;
 
 #endif /* UAVAP_FLIGHTCONTROL_LOCALPLANNER_LOCALPLANNERFACTORY_H_ */
