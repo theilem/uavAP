@@ -202,7 +202,7 @@ Qc = zeros(12);
 Rc = eye(4);
 Qc(1,1) = 0.1; % Speed tracking
 Qc(2,2) = 50; % Pitch tracking
-Qc(3,3) = 0.00001; % Side slip tracking
+Qc(3,3) = 0.01; % Side slip tracking
 Qc(4,4) = 50; % Roll tracking
 Kc = lqrd(Ac, Bc, Qc, Rc, 1/F);
 
@@ -213,7 +213,7 @@ Bp = [zeros(3, 2); -1, 0; 0, 0; 0, -1; zeros(10, 2)];
 %% Planner Generation
 Qp = zeros(16);
 Qp(1,1) = 0.1; % Altitude tracking
-Qp(2,2) = 0.1; % Heading tracking
+Qp(2,2) = 0.3; % Heading tracking
 Rp = eye(2);
 Kp = lqrd(Ap, Bp, Qp, Rp, 1/F);
 

@@ -159,14 +159,10 @@ std::map<PIDs, PIDStatus>
 RSLQRController::getStatus() const
 {
 	std::map<PIDs, PIDStatus> ans;
-	ans[PIDs::PITCH] = PIDStatus(ct_.climbAngle, sd_ned_.attitude.y());
+	ans[PIDs::PITCH] = PIDStatus(radToDeg(ct_.climbAngle), radToDeg(sd_ned_.attitude.y()));
 	ans[PIDs::VELOCITY_X] = PIDStatus(ct_.velocity, sd_ned_.velocity.x());
-	ans[PIDs::ROLL] = PIDStatus(ct_.yawRate, sd_ned_.attitude.x());
+	ans[PIDs::ROLL] = PIDStatus(radToDeg(ct_.yawRate), radToDeg(sd_ned_.attitude.x()));
 	ans[PIDs::VELOCITY_Y] = PIDStatus(0, sd_ned_.velocity.y());
-//	std::cout << "Pitch: " << ct_.climbAngle << "," << sd_ned_.attitude.y() << "\n";
-//	std::cout << "Velocity_x: " << ct_.velocity << "," << sd_ned_.velocity.x() << "\n";
-//	std::cout << "Roll: " << ct_.yawRate << "," << sd_ned_.attitude.x() << "\n";
-//	std::cout << "Velocity_y: " << 0 << "," << sd_ned_.velocity.y() << "\n";
 	return ans;
 }
 

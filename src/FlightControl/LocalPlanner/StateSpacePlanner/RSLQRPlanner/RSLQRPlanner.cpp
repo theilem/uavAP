@@ -270,7 +270,7 @@ RSLQRPlanner::calculateControllerTarget(const Vector3& position_enu, double head
 	directionE_ = directionTarget[0];
 	directionN_ = directionTarget[1];
 
-	directionTarget = Vector2(directionN_, directionE_());
+	directionTarget = Vector2(directionE_, directionN_());
 
 	//ENU Heading
 	auto enuHeadingTarget = headingFromENU(directionTarget);
@@ -286,9 +286,9 @@ RSLQRPlanner::calculateControllerTarget(const Vector3& position_enu, double head
 		// TODO fix with initializer lists when eigen 3.4 comes out
 		state[0] = -positionDeviation.z(); // error defined as current - target
 		state[1] = boundAngleRad(heading_ned - headingTarget_()());
-		std::cout << "Heading:" << heading_ned << "\n";
-		std::cout << "Heading Target:" << headingTarget_()() << "\n";
-		std::cout << "Heading Error:" << state[1] << "\n";
+//		std::cout << "Heading:" << heading_ned << "\n";
+//		std::cout << "Heading Target:" << headingTarget_()() << "\n";
+//		std::cout << "Heading Error:" << state[1] << "\n";
 		state[2] = controllerState[0];
 		state[3] = controllerState[1];
 		state[4] = controllerState[2];
@@ -344,10 +344,7 @@ RSLQRPlanner::getStatus() const
 		Lock sdm(sensorDataMutex_);
 		Lock t(targetMutex_);
 		ans[PIDs::ALTITUDE] = PIDStatus(positionTargetU_, -sensorData_.position.z());
-		ans[PIDs::HEADING] = PIDStatus(headingTarget_(), sensorData_.attitude[2]);
-//		std::cout << "Status size: " << ans.size() << "\n";
-//		std::cout << "Altitude: " << positionTargetZ_ << "," << -sensorData_.position.z() << "\n";
-//		std::cout << "Heading: " << headingTarget_() << "," << sensorData_.attitude.z() << "\n";
+		ans[PIDs::HEADING] = PIDStatus(headingTarget_().degrees(), radToDeg(sensorData_.attitude[2]));
 		return ans;
 	}
 	return decltype(getStatus())();
