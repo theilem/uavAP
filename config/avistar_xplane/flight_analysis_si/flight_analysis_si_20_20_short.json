@@ -1,0 +1,403 @@
+{
+	"data_handling": {
+		"target": "flight_analysis",
+		"period": 200
+	},
+	"maneuver_planner": {
+		"period": 10,
+		"log_path": "/tmp/",
+		"maneuver_sets": {
+			"SI_20_20_throttle_short": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"pid/roll": 20,
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 20,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0,
+							"save_trim/yaw": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/pitch": 0,
+							"output/yaw": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/yaw": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 2000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/pitch": 0,
+							"output/yaw": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/yaw": 1.0
+						},
+						"waveforms": {
+							"output/throttle": {
+								"square": {
+									"amplitude": 0.3,
+									"frequency": 0.25,
+									"offset": -0.5785871412690975,
+									"phase": 0
+								}
+							}
+						},
+						"transition": {
+							"duration": {
+								"duration": 4000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/pitch": 0,
+							"output/yaw": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/yaw": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 4000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/pitch": 0,
+							"output/yaw": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/yaw": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					}
+				],
+				"save_as": "SI_20_20_throttle_short.txt"
+			},
+			"SI_20_20_pitch_short": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"pid/roll": 20,
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 20,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0,
+							"save_trim/yaw": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/pitch": 0,
+							"output/yaw": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/yaw": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/yaw": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/yaw": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"waveforms": {
+							"output/pitch": {
+								"square": {
+									"amplitude": 0.5,
+									"frequency": 1,
+									"offset": 0,
+									"phase": 0
+								}
+							}
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/pitch": 0,
+							"output/yaw": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/yaw": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/pitch": 0,
+							"output/yaw": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/yaw": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					}
+				],
+				"save_as": "SI_20_20_pitch_short.txt"
+			},
+			"SI_20_20_roll_short": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"pid/roll": 20,
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 20,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0,
+							"save_trim/yaw": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/pitch": 0,
+							"output/yaw": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/yaw": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/pitch": 0,
+							"output/yaw": 0,
+							"output/throttle": 0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/yaw": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"waveforms": {
+							"output/roll": {
+								"square": {
+									"amplitude": 0.5,
+									"frequency": 1,
+									"offset": 0,
+									"phase": 0
+								}
+							}
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/pitch": 0,
+							"output/yaw": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/yaw": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/pitch": 0,
+							"output/yaw": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/yaw": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					}
+				],
+				"save_as": "SI_20_20_roll_short.txt"
+			},
+			"SI_20_20_yaw_short": {
+				"maneuvers": [
+					{
+						"overrides": {
+							"pid/roll": 20,
+							"local_planner/position_z": 150,
+							"local_planner/velocity": 20,
+							"save_trim/pitch": 1.0,
+							"save_trim/roll": 1.0,
+							"save_trim/throttle": 1.0,
+							"save_trim/yaw": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 5000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/pitch": 0,
+							"output/yaw": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/yaw": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/pitch": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"waveforms": {
+							"output/yaw": {
+								"square": {
+									"amplitude": 0.5,
+									"frequency": 1,
+									"offset": 0,
+									"phase": 0
+								}
+							}
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/pitch": 0,
+							"output/yaw": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/yaw": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 1000
+							}
+						}
+					},
+					{
+						"overrides": {
+							"output/roll": 0,
+							"output/pitch": 0,
+							"output/yaw": 0,
+							"output/throttle": 0,
+							"apply_trim/roll": 1.0,
+							"apply_trim/pitch": 1.0,
+							"apply_trim/yaw": 1.0,
+							"apply_trim/throttle": 1.0
+						},
+						"transition": {
+							"duration": {
+								"duration": 500
+							}
+						}
+					}
+				],
+				"save_as": "SI_20_20_yaw_short.txt"
+			}
+		}
+	},
+	"data_presentation": {
+		"compress_double": true
+	}
+}

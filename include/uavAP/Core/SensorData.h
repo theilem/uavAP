@@ -127,6 +127,7 @@ struct SensorData
 	Vector3 position = {0., 0., 0.};                //!< UTM Frame, [X: East, Y: North, Z: Up]
 	FramedVector3 velocity;// = {0., 0., 0.};                            //!< Earth Frame
 	FramedVector3 acceleration;// = {0., 0., 0.};                        //!< Body Frame
+	Vector3 uvw_dot;// = {0., 0., 0.};                                   //!< acceleration in body frame, not in an inertial reference frame!
 	/** uavAP defines rotation order as roll, pitch then yaw **/
 	Vector3 attitude = {0., 0., 0.};                //!< [X: Roll, Y: Pitch, Z: Yaw]
 

@@ -3,10 +3,11 @@
 //
 
 #include "uavAP/Core/Orientation/ENU.h"
+#include "uavAP/Core/Orientation/NED.h"
 #include "uavAP/Core/Orientation/ConversionUtils.h"
 
 void
-ENU::convert(SensorData& sd)
+ENU::convert(SensorData& sd, Frame velocityFrame, Frame accelerationFrame, Frame angularRateFrame)
 {
 	switch(sd.orientation){
 		case Orientation::ENU:
@@ -14,6 +15,8 @@ ENU::convert(SensorData& sd)
 		case Orientation::NED:
 			// Position is unframed, simple flip
 			simpleFlipInertial(sd.position);
+			// I think this can also be simply flipped
+			simpleFlipInertial(sd.uvw_dot);
 
 			// Change velocity to inertial and flip
 			directionalConversion(sd.velocity, sd.attitude, Frame::INERTIAL, Orientation::NED);
@@ -33,8 +36,9 @@ ENU::convert(SensorData& sd)
 				std::swap(sd.angularRate[0], sd.angularRate[1]);
 			}
 
-			directionalConversion(sd.velocity, sd.attitude, Frame::BODY, Orientation::ENU);
-			angularConversion(sd.angularRate, sd.attitude, Frame::BODY, Orientation::ENU);
+			directionalConversion(sd.velocity, sd.attitude, velocityFrame, Orientation::ENU);
+			directionalConversion(sd.acceleration, sd.attitude, accelerationFrame, Orientation::ENU);
+			angularConversion(sd.angularRate, sd.attitude, angularRateFrame, Orientation::ENU);
 
 			// AoA is negated
 			sd.angleOfAttack = -sd.angleOfAttack;
@@ -45,3 +49,14 @@ ENU::convert(SensorData& sd)
 			CPSLOG_ERROR << "Unknown sensor data orientation";
 	}
 }
+
+void
+ENU::setUVWDot(SensorData& sd)
+{
+	SensorData sd_ned = sd;
+	NED::convert(sd_ned, Frame::INERTIAL, Frame::INERTIAL, Frame::INERTIAL);
+	NED::setUVWDot(sd_ned);
+	sd.uvw_dot = sd_ned.uvw_dot;
+	simpleFlipInertial(sd.uvw_dot);
+}
+

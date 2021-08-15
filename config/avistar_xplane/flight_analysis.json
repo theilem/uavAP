@@ -71,32 +71,6 @@
 				],
 				"save_as": "get_trim.txt"
 			},
-			"dummy": {
-				"maneuvers": [
-					{
-						"transition": {
-							"duration": {
-								"duration": 2000
-							}
-						}
-					},
-					{
-						"transition": {
-							"duration": {
-								"duration": 3000
-							}
-						}
-					},
-					{
-						"transition": {
-							"duration": {
-								"duration": 4000
-							}
-						}
-					}
-				],
-				"save_as": "dummy.txt"
-			},
 			"idle_descent15": {
 				"maneuvers": [
 					{

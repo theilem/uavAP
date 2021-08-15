@@ -10,6 +10,13 @@
 					"ki": 0.4,
 					"kp": 0.4
 				},
+				"rudder": {
+					"ff": 0,
+					"imax": 5,
+					"kd": 0,
+					"ki": 1,
+					"kp": 3
+				},
 				"climb_angle": {
 					"ff": 1,
 					"imax": 2.0,

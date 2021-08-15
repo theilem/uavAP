@@ -82,19 +82,17 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	auto throttleOut = controlEnv_.addOutput(throttleConstraint_, &out.throttleOutput);
 
 	/* Rudder Output */
-	auto rudderIn = controlEnv_.addConstant(0);
-	auto rudderOut = controlEnv_.addOutput(rudderIn, &out.yawOutput);
-//	auto rudderBeta = controlEnv_.addInput(&beta_);
-//	auto rudderTarget = controlEnv_.addConstant(0);
-//
-//	auto rudderPID = controlEnv_.addPID(rudderTarget, rudderBeta, defaultParams);
-//
+//	auto rudderIn = controlEnv_.addConstant(0);
+//	auto rudderOut = controlEnv_.addOutput(rudderIn, &out.yawOutput);
+
+	auto rudderBeta = controlEnv_.addInput(&sd.angleOfSideslip);
+	auto rudderTarget = controlEnv_.addConstant(0);
+
+	auto rudderPID = controlEnv_.addPID(rudderTarget, rudderBeta, defaultParams);
 //	auto invertedRudder = controlEnv_.addGain(rudderPID, -1);
-//
-//	auto constraintYawOut = controlEnv_.addConstraint(invertedRudder, -1, 1);
-//
-//	auto yawOut = controlEnv_.addOutput(constraintYawOut, &output->yawOutput);
-//	pids_.insert(std::make_pair(PIDs::RUDDER, rudderPID));
+	auto constraintYawOut = controlEnv_.addConstraint(rudderPID, -1, 1);
+	auto yawOut = controlEnv_.addOutput(constraintYawOut, &out.yawOutput);
+	pids_.insert(std::make_pair(PIDs::RUDDER, rudderPID));
 	pids_.insert(std::make_pair(PIDs::VELOCITY, velocityPID));
 	pids_.insert(std::make_pair(PIDs::PITCH, pitchPID));
 	pids_.insert(std::make_pair(PIDs::CLIMB_ANGLE, climbAnglePID));
@@ -104,7 +102,7 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	outputs_.insert(std::make_pair(ControllerOutputs::PITCH, pitchOut));
 	outputs_.insert(std::make_pair(ControllerOutputs::ROLL, rollOut));
 	outputs_.insert(std::make_pair(ControllerOutputs::THROTTLE, throttleOut));
-	outputs_.insert(std::make_pair(ControllerOutputs::YAW, rudderOut));
+	outputs_.insert(std::make_pair(ControllerOutputs::YAW, yawOut));
 }
 
 bool

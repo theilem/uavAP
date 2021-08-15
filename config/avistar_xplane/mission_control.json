@@ -21,7 +21,7 @@
 			"use_approach": false,
 			"default_velocity": 20,
 			"default_altitude": 150,
-			"default_mission": "race_track",
+			"default_mission": "race_track20",
 			"missions": {
 				"origin": {
 					"infinite": true,
@@ -68,10 +68,10 @@
 						{"location": [-5000,-100,0], "direction": [-1000,0,0]}
 					]
 				},
-				"race_track100": {
+				"race_track20": {
 					"velocity": 20,
 					"infinite": true,
-					"offset": [0,0,100],
+					"offset": [0,0,150],
 					"waypoints": [
 						{"location": [-5000,0,0], "direction": [1000,0,0]},
 						{"location": [20000,0,0], "direction": [1000,0,0]},

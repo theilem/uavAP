@@ -94,7 +94,9 @@ RSLQRController::setControllerTarget(const ControllerTarget& target)
 VectorN<12>
 RSLQRController::getState()
 {
-	assert(sd_ned_.orientation == Orientation::NED);
+	if(sd_ned_.orientation != Orientation::NED) {
+		NED::convert(sd_ned_, Frame::BODY);
+	}
 
 	VectorN<12> state;
 

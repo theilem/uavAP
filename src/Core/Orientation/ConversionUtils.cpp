@@ -124,7 +124,7 @@ upConversionENU(FramedVector3& input, const Vector3& attitude, Frame target)
 	switch (input.frame)
 	{
 		case Frame::INERTIAL:
-			input = Eigen::AngleAxisd(-attitude[2], Vector3::UnitZ()) * input;
+			input = Eigen::AngleAxisd(-attitude[2]+degToRad(90), Vector3::UnitZ()) * input;
 			input.frame = Frame::VEHICLE_1;
 		case Frame::VEHICLE_1:
 			if (target == Frame::VEHICLE_1)
@@ -160,7 +160,7 @@ downConversionENU(FramedVector3& input, const Vector3& attitude, Frame target)
 		case Frame::VEHICLE_1:
 			if (target == Frame::VEHICLE_1)
 				break;
-			input = Eigen::AngleAxisd(attitude[2], Vector3::UnitZ()) * input;
+			input = Eigen::AngleAxisd(attitude[2]-degToRad(90), Vector3::UnitZ()) * input;
 			input.frame = Frame::INERTIAL;
 		case Frame::INERTIAL:
 			if (target == Frame::INERTIAL)
