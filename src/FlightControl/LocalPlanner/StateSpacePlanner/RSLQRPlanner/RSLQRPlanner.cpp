@@ -303,7 +303,15 @@ RSLQRPlanner::calculateControllerTarget(const Vector3& position_enu, double head
 		state[13] = controllerState[11];
 		state[14] = -vz;
 		state[15] = psi_dot;
-		stateOut_ = -params.k() * state;
+
+		//TODO maybe fix double locking sensordata to get velocity (controller->getState gets velocity)
+		Lock sdl(sensorDataMutex_);
+		auto u = sensorData_.velocity.x();
+		auto phi = sensorData_.attitude.x();
+		sdl.unlock();
+
+		auto k = params.k_sched().calculateGains(u, phi);
+		stateOut_ = -k * state;
 		controlEnv_.evaluate();
 		controllerTarget.climbAngle = (controllerTargetPitch_ = outputPitch_);
 		controllerTarget.yawRate = (controllerTargetRoll_ = outputRoll_);

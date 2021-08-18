@@ -16,7 +16,7 @@
 		},
 		"flight_analysis": {
 			"binary": "FlightAnalysis",
-			"config": "flight_analysis_si/flight_analysis_si_20_20_short.json"
+			"config": "flight_analysis_si/flight_analysis_si_20_0_short.json"
 		},
 		"emulation_interface": {
 			"binary": "EmulationInterfaceSync",

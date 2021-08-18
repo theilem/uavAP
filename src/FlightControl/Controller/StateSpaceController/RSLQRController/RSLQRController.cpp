@@ -81,10 +81,14 @@ RSLQRController::setControllerTarget(const ControllerTarget& target)
 	sd_ned_ = io->getSensorData();
 	NED::convert(sd_ned_, Frame::BODY);
 	ct_ = target;
+	FloatingType u = sd_ned_.velocity.x();
+	FloatingType phi = sd_ned_.attitude.x();
 	sdl.unlock();
 
+	auto k = params.k_sched().calculateGains(u, phi);
+
 	auto state = getState();
-	stateOut_ = -params.k() * state;
+	stateOut_ = -k * state;
 
 	controlEnv_.evaluate();
 
