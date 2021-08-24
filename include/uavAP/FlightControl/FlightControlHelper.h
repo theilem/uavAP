@@ -18,6 +18,7 @@
 #include "uavAP/FlightControl/ThrottleLimiter/ThrottleLimiter.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
 #include "uavAP/FlightControl/LocalPlanner/LocalPlannerFactory.h"
+#include "uavAP/FlightControl/SimplexSupervisor/SimplexFactory.h"
 #include <uavAP/FlightControl/SensingActuationIO/SensingActuationIO.h>
 #include "uavAP/FlightControl/Safety/OverrideSafety.h"
 
@@ -36,6 +37,7 @@ using FlightControlHelper = StaticHelper<FlightControlDefaults,
 		DataHandling,
 		ControllerFactory,
 		LocalPlannerFactory,
+		SimplexFactory,
 		ThrottleLimiter,
 		OverrideHandler,
 		OverrideSafety

@@ -117,15 +117,15 @@ RSLQRController::getState()
 	// e_psi
 	state[3] = sd_ned_.attitude.x() - ct_.yawRate;
 	// u_dot
-	state[4] = sd_ned_.acceleration.x();
+	state[4] = sd_ned_.uvw_dot.x();
 	// w_dot
-	state[5] = sd_ned_.acceleration.z();
+	state[5] = sd_ned_.uvw_dot.z();
 	// q_dot
 	state[6] = sd_ned_.angularRate.y();
 	// theta_dot
 	state[7] = inertialAngularRate.y();
 	// v_dot
-	state[8] = sd_ned_.acceleration.y();
+	state[8] = sd_ned_.uvw_dot.y();
 	// p_dot
 	state[9] = sd_ned_.angularRate.x();
 	// r_dot

@@ -4,6 +4,7 @@ add_subdirectory(Controller)
 add_subdirectory(Safety)
 add_subdirectory(LocalPlanner)
 add_subdirectory(SensingActuationIO)
+add_subdirectory(SimplexSupervisor)
 add_subdirectory(ThrottleLimiter)
 
 add_library(uavap_flight_control SHARED ${FLIGHT_CONTROL_SRC})

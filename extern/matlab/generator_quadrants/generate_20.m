@@ -1,114 +1,81 @@
-%% Setup
-clear
-clc
-format longg
+function [Kc, Kp, u_1, phi_1] = generate_20(u_1, v_1, w_1, phi_1, theta_1, p_1, q_1, r_1)
 
 %% Constants
 g=9.80665;
-ELEVATOR_LIMIT = -16; % sign flip for elevator due to X-plane conventions
-RUDDER_LIMIT = 22; % no sign flip for rudder due to X-plane conventions
-AILERON_LIMIT = -17; % sign flip for aileron due to X-plane conventions
 F = 100; % AlVolo/uavEE update interval
 
-%% Trim
-u_1 = 22.5794785457791;
-w_1 = 1.094520935399559;
-theta_1 = 0.04183938913580468;
-pitch_ctrl = 0.36749821440099206;
-throttle_ctrl = -0.48589201718311287;
-
-v_1 = 0;
-phi_1 = 0;
-roll_ctrl = 0.006927637640779975;
-yaw_ctrl = 0;
-
-p_1 = 0;
-q_1 = 0;
-r_1 = 0;
-
-%% Longitudinal System coefficients
-Xu	=	-0.2749084918	;
-Xw	=	1.000327001	;
-Xq	=	-0.2383107127	;
-Xde	=	0.01692767261	* ELEVATOR_LIMIT;
-X0	=	0.09153453309	;
+%% Regressed coefficients
+Xu	=	-0.2627559489	;
+Xw	=	0.7636313034	;
+Xq	=	-0.3503224288	;
+Xv	=	0	;
+Xp	=	0	;
+Xr	=	0	;
+Xct	=	3.493111091	;
+Xce	=	0	;
+Xca	=	0	;
+Xcr	=	0	;
+X0	=	-0.07302515229	;
 			
-Zu	=	-0.4523404264	;
-Zw	=	-10.04600056	;
-Zq	=	0.02164371184	;
-Zde	=	-0.4829286784	* ELEVATOR_LIMIT;
-Z0	=	-0.1898993745	;
+Zu	=	-0.6128803927	;
+Zw	=	-8.144346001	;
+Zq	=	17.50574527	;
+Zv	=	0	;
+Zp	=	0	;
+Zr	=	0	;
+Zct	=	0	;
+Zce	=	5.221055423	;
+Zca	=	0	;
+Zcr	=	0	;
+Z0	=	-0.04941860757	;
 			
-Mu 	=	0.7498375749	;
-Mw 	=	-17.17353139	;
-Mq 	=	-10.87913215	;
-Mde	=	-3.726347663	* ELEVATOR_LIMIT;
-M0	=	-0.09673854488	;
-
-%% Lateral System Coefficients
-Yv	=	-1.27811652	;
-Yp	=	0.123347866	;
-Yr	=	-1.379598873	;
-Yda	=	-0.06887207651	*AILERON_LIMIT;
-Ydr	=	-0.06224916973	*RUDDER_LIMIT;
-Y0	=	-0.1436961795	;
+Mu	=	0.7864886217	;
+Mw	=	-13.86457528	;
+Mq	=	-24.96965758	;
+Mv	=	0	;
+Mp	=	0	;
+Mr	=	0	;
+Mct	=	0.1145797833	;
+Mce	=	46.16773474	;
+Mca	=	0	;
+Mcr	=	0	;
+M0	=	-0.02798689117	;
 			
-Lv	=	-1.562993756	;
-Lp	=	-29.71722958	;
-Lr	=	5.430432741	;
-Lda	=	-8.818825339	*AILERON_LIMIT;
-Ldr	=	-0.09978910137	*RUDDER_LIMIT;
-L0	=	0.3607901975	;
+Yu	=	0	;
+Yw	=	0	;
+Yq	=	0	;
+Yv	=	-1.246266327	;
+Yp	=	1.123655383	;
+Yr	=	-20.06950683	;
+Yct	=	0	;
+Yce	=	0	;
+Yca	=	0	;
+Ycr	=	-1.55684152	;
+Y0	=	-0.08225395555	;
 			
-Nv	=	3.110896148	;
-Np	=	-1.053825321	;
-Nr	=	-2.920187745	;
-Nda	=	0.04744663703	*AILERON_LIMIT;
-Ndr	=	0.4456565752	*RUDDER_LIMIT;
-N0	=	-0.5810910582	;
-
-%% Longitudinal Correlated Terms
-Xv = 0;
-Xp = 0;
-Xr = 0;
-Xda = 0;
-Xdr = 0;
-
-Zv = 0;
-Zp = 0;
-Zr = 0;
-Zda = 0;
-Zdr = 0;
-
-Mv = 0;
-Mp = 0;
-Mr = 0;
-Mda = 0;
-Mdr = 0;
-
-%% Lateral Correlated Terms
-Yu = 0;
-Yw = 0;
-Yq = 0;
-Yde = 0;
-
-Lu = 0;
-Lw = 0;
-Lq = 0;
-Lde = 0;
-
-Nu = 0;
-Nw = 0;
-Nq = 0;
-Nde = 0;
-
-%Throttle Terms
-Xdt = 5.28285098996209;
-Zdt = 0;
-Mdt = 0;
-Ydt = 0;
-Ldt = 0;
-Ndt = 0;
+Lu	=	0	;
+Lw	=	0	;
+Lq	=	0	;
+Lv	=	0	;
+Lp	=	-32.19717634	;
+Lr	=	0	;
+Lct	=	0	;
+Lce	=	0	;
+Lca	=	104.5968301	;
+Lcr	=	0	;
+L0	=	0.4368770043	;
+			
+Nu	=	0	;
+Nw	=	0	;
+Nq	=	0.2933180683	;
+Nv	=	2.499595746	;
+Np	=	-0.5105706621	;
+Nr	=	-2.567884351	;
+Nct	=	-0.03034984249	;
+Nce	=	0	;
+Nca	=	-0.5149368263	;
+Ncr	=	8.370640962	;
+N0	=	-0.02227796081	;
 
 %% Attitude Coefficients
 Xtheta = -g * cos(theta_1);
@@ -153,10 +120,10 @@ Alat_corr = [Yv, Yp, Yr, Yphi; Lv, Lp, Lr, 0; Nv, Np, Nr, 0; 0, Phi_p, Phi_r, Ph
 long0 = [X0; Z0; M0; Theta_0];
 lat0 = [Y0; L0; N0; Psi_0];
 
-Blong = [Xde, Xdt; Zde, Zdt; Mde, Mdt; zeros(1,2)];
-Blong_corr = [Xda, Xdr; Zda, Zdr; Mda, Mdr; zeros(1,2)];
-Blat = [Yde, Ydt; Lde, Ldt; Nde, Ndt; zeros(1,2)];
-Blat_corr = [Yda, Ydr; Lda, Ldr; Nda, Ndr; zeros(1,2)];
+Blong = [Xce, Xct; Zce, Zct; Mce, Mct; zeros(1,2)];
+Blong_corr = [Xca, Xcr; Zca, Zcr; Mca, Mcr; zeros(1,2)];
+Blat = [Yce, Yct; Lce, Lct; Nce, Nct; zeros(1,2)];
+Blat_corr = [Yca, Ycr; Lca, Lcr; Nca, Ncr; zeros(1,2)];
 
 Hlong = [Hu, Hw, 0, Htheta];
 Hlat = [Hv, 0, 0, Hphi];
@@ -200,9 +167,9 @@ Bc = [zeros(4, 4);
 
 Qc = zeros(12);
 Rc = eye(4);
-Qc(1,1) = 0.1; % Speed tracking
+Qc(1,1) = 0.01; % Speed tracking
 Qc(2,2) = 50; % Pitch tracking
-Qc(3,3) = 0.01; % Side slip tracking
+Qc(3,3) = 0.1; % Side slip tracking
 Qc(4,4) = 50; % Roll tracking
 Kc = lqrd(Ac, Bc, Qc, Rc, 1/F);
 
@@ -212,13 +179,9 @@ Bp = [zeros(3, 2); -1, 0; 0, 0; 0, -1; zeros(10, 2)];
 
 %% Planner Generation
 Qp = zeros(16);
-Qp(1,1) = 0.1; % Altitude tracking
-Qp(2,2) = 0.3; % Heading tracking
+Qp(1,1) = 10; % Altitude tracking
+Qp(2,2) = 10; % Heading tracking
 Rp = eye(2);
 Kp = lqrd(Ap, Bp, Qp, Rp, 1/F);
 
-%% Printing
-
-fprintf('\"k (controller)\": [');fprintf('%.17f, ', Kc);fprintf('],\n')
-fprintf('\"k (planner)\": [');fprintf('%.17f, ', Kp);fprintf('],\n')
-
+return
