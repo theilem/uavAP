@@ -1,3 +1,3 @@
 set(FLIGHT_CONTROL_SRC 	${FLIGHT_CONTROL_SRC}
-		${CMAKE_CURRENT_SOURCE_DIR}/FullStateSimplex.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/MultiSimplexSupervisor.cpp
 		PARENT_SCOPE)

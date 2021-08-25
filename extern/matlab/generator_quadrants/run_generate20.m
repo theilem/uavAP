@@ -42,8 +42,10 @@ function printAsJsonEntry(u, phi, k, comma)
     end
     format longg
     fprintf('{\n')
-    fprintf('\t\"u\": %e,\n', u)
-    fprintf('\t\"phi_rad\": %e,\n', phi)
+    fprintf('\t\"setpoint\": {\n')
+    fprintf('\t\t\"u\": %e,\n', u)
+    fprintf('\t\t\"phi_rad\": %e\n', phi)
+    fprintf('\t},\n')
     numbstr = sprintf('%e, ', k);
     numbstr(end-1:end) = [];
     fprintf('\t\"k\": [%s]\n', numbstr)

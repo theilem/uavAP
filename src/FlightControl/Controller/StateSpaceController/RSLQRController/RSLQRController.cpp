@@ -85,7 +85,7 @@ RSLQRController::setControllerTarget(const ControllerTarget& target)
 	FloatingType phi = sd_ned_.attitude.x();
 	sdl.unlock();
 
-	auto k = params.k_sched().calculateGains(u, phi);
+	auto k = params.k_sched().calculateGains({std::make_pair("u", u), std::make_pair("phi_rad", phi)});
 
 	auto state = getState();
 	stateOut_ = -k * state;

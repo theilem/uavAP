@@ -78,10 +78,18 @@ NED::setUVWDot(SensorData& sd)
 	auto vx = velocity.x();
 	auto vy = velocity.y();
 	auto vz = velocity.z();
+	
+	auto cos_phi = cos(phi);
+	auto cos_theta = cos(theta);
+	auto cos_psi = cos(psi);
+
+	auto sin_phi = sin(phi);
+	auto sin_theta = sin(theta);
+	auto sin_psi = sin(psi);
 
 	sd.uvw_dot = {
-		cos(psi)*cos(theta)*Ax - cos(theta)*vz*theta_dot - sin(theta)*Az + cos(theta)*sin(psi)*Ay + cos(psi)*cos(theta)*vy*psi_dot - cos(theta)*sin(psi)*vx*psi_dot - cos(psi)*sin(theta)*vx*theta_dot - sin(psi)*sin(theta)*vy*theta_dot,
-		vx*(sin(phi)*sin(psi)*phi_dot - cos(phi)*cos(psi)*psi_dot + cos(phi)*cos(psi)*sin(theta)*phi_dot + cos(psi)*cos(theta)*sin(phi)*theta_dot - sin(phi)*sin(psi)*sin(theta)*psi_dot) + vy*(cos(phi)*sin(psi)*sin(theta)*phi_dot - cos(phi)*sin(psi)*psi_dot - cos(psi)*sin(phi)*phi_dot + cos(psi)*sin(phi)*sin(theta)*psi_dot + cos(theta)*sin(phi)*sin(psi)*theta_dot) - (cos(phi)*sin(psi) - cos(psi)*sin(phi)*sin(theta))*Ax + (cos(phi)*cos(psi) + sin(phi)*sin(psi)*sin(theta))*Ay + cos(theta)*sin(phi)*Az + cos(phi)*cos(theta)*vz*phi_dot - sin(phi)*sin(theta)*vz*theta_dot,
-		vx*(cos(phi)*sin(psi)*phi_dot + cos(psi)*sin(phi)*psi_dot - cos(psi)*sin(phi)*sin(theta)*phi_dot - cos(phi)*sin(psi)*sin(theta)*psi_dot + cos(phi)*cos(psi)*cos(theta)*theta_dot) + vy*(sin(phi)*sin(psi)*psi_dot - cos(phi)*cos(psi)*phi_dot + cos(phi)*cos(psi)*sin(theta)*psi_dot + cos(phi)*cos(theta)*sin(psi)*theta_dot - sin(phi)*sin(psi)*sin(theta)*phi_dot) + (sin(phi)*sin(psi) + cos(phi)*cos(psi)*sin(theta))*Ax - (cos(psi)*sin(phi) - cos(phi)*sin(psi)*sin(theta))*Ay + cos(phi)*cos(theta)*Az - cos(theta)*sin(phi)*vz*phi_dot - cos(phi)*sin(theta)*vz*theta_dot
+			cos_psi * cos_theta * Ax - cos_theta * vz * theta_dot - sin_theta * Az + cos_theta * sin_psi * Ay + cos_psi * cos_theta * vy * psi_dot - cos_theta * sin_psi * vx * psi_dot - cos_psi * sin_theta * vx * theta_dot - sin_psi * sin_theta * vy * theta_dot,
+		vx*(sin_phi*sin_psi*phi_dot - cos_phi * cos_psi * psi_dot + cos_phi * cos_psi * sin_theta * phi_dot + cos_psi * cos_theta * sin_phi * theta_dot - sin_phi * sin_psi * sin_theta * psi_dot) + vy * (cos_phi * sin_psi * sin_theta * phi_dot - cos_phi * sin_psi * psi_dot - cos_psi * sin_phi * phi_dot + cos_psi * sin_phi * sin_theta * psi_dot + cos_theta * sin_phi * sin_psi * theta_dot) - (cos_phi * sin_psi - cos_psi * sin_phi * sin_theta) * Ax + (cos_phi * cos_psi + sin_phi * sin_psi * sin_theta) * Ay + cos_theta * sin_phi * Az + cos_phi * cos_theta * vz * phi_dot - sin_phi * sin_theta * vz * theta_dot,
+		vx*(cos_phi*sin_psi*phi_dot + cos_psi * sin_phi * psi_dot - cos_psi * sin_phi * sin_theta * phi_dot - cos_phi * sin_psi * sin_theta * psi_dot + cos_phi * cos_psi * cos_theta * theta_dot) + vy * (sin_phi * sin_psi * psi_dot - cos_phi * cos_psi * phi_dot + cos_phi * cos_psi * sin_theta * psi_dot + cos_phi * cos_theta * sin_psi * theta_dot - sin_phi * sin_psi * sin_theta * phi_dot) + (sin_phi * sin_psi + cos_phi * cos_psi * sin_theta) * Ax - (cos_psi * sin_phi - cos_phi * sin_psi * sin_theta) * Ay + cos_phi * cos_theta * Az - cos_theta * sin_phi * vz * phi_dot - cos_phi * sin_theta * vz * theta_dot
 	};
 }

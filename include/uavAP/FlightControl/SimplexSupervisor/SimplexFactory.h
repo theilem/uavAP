@@ -7,10 +7,10 @@
 
 #include <cpsCore/Framework/StaticFactory.h>
 #include "uavAP/FlightControl/SimplexSupervisor/ISimplexSupervisor.h"
-#include "uavAP/FlightControl/SimplexSupervisor/FullStateSimplex.h"
+#include "uavAP/FlightControl/SimplexSupervisor/MultiSimplexSupervisor.h"
 
 using SimplexFactory = StaticFactory<ISimplexSupervisor, false,
-		FullStateSimplex>;
+		MultiSimplexSupervisor>;
 
 
 #endif //UAVAP_SIMPLEXFACTORY_H
