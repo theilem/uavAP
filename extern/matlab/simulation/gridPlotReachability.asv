@@ -1,0 +1,16 @@
+function [xs, ys] = gridPlotReachability(polyArray, dimX, dimY, minX, maxX, minY, maxY)
+    numX = 100;
+    numY = 100;
+    
+    xList = linspace(minX, maxX, numX);
+    yList = linspace(minY, maxY, numY);
+    
+    for x = xList
+        for y = yList
+        end
+    end
+end
+
+function contains = polyContainsArray(polyArray, point)
+    point
+end

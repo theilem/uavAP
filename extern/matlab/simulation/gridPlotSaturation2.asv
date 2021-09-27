@@ -1,0 +1,35 @@
+function gridPlotSaturation2(InitialEllipsoid, Kr, tu, xDim, yDim, xmin, xmax, ymin, ymax, state)
+
+    if nargin < 10
+        Ashape = size(InitialEllipsoid.A);
+        state = zeros(Ashape(2), 1);
+    end
+    
+    figure(1)
+    % Limits (universal set over limits)
+%     gridPlotReachability(Polyhedron('A', zeros(1,2), 'b', 0), 1, 2, xmin, xmax, ymin, ymax)
+    x = sdpvar(2);
+    plot([xmin; ymin] <, 'r')
+    hold on
+    % InitialEllipsoid
+    gridPlotReachability(InitialEllipsoid, xDim, yDim, xmin, xmax, ymin, ymax, state, 'b', 1);
+    
+    figure(2)
+    hold on
+    umin = -1 - tu;
+    umax = 1 - tu;
+    
+    plotSingletonLimitSet(Kr(1,:), tu(1), xDim, yDim, xmin, xmax, ymin, ymax, state, 'b', 'g', 'r', 0.3);
+    plotSingletonLimitSet(Kr(2,:), tu(2), xDim, yDim, xmin, xmax, ymin, ymax, state, 'b', 'g', 'r', 0.3);
+end
+    
+function plotSingletonLimitSet(Kr, tu, xDim, yDim, xmin, xmax, ymin, ymax, state, colorb, colori, colora, alpha)
+    umin = -1 - tu;
+    umax = 1 - tu;
+    below = Polyhedron('A', -Kr, 'b', umin);
+    gridPlotReachability(below, xDim, yDim, xmin, xmax, ymin, ymax, state, colorb, alpha);
+    in = Polyhedron('A', [Kr; -Kr], 'b', [-umin; umax]);
+    gridPlotReachability(in, xDim, yDim, xmin, xmax, ymin, ymax, state, colori, alpha);
+    above = Polyhedron('A', Kr, 'b', -umax);
+    gridPlotReachability(above, xDim, yDim, xmin, xmax, ymin, ymax, state, colora, alpha);
+end

@@ -8,7 +8,7 @@ function plotReachabilityEvolution(polys, dim1, dim2, state)
     end
     
     for idx = 1:length(polys)
-        fprintf('Processed idx %i of %i', idx, length(polys))
+        fprintf('Processed idx %i of %i\n', idx, length(polys))
         plotEnvelope(polys(idx), dim1, dim2, state);
     end
 

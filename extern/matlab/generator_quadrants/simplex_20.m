@@ -24,8 +24,10 @@ Z = sdpvar(4, 9);
 
 uConstraint1 = [-1/Du; zeros(8,1)];
 uConstraint2 = [1/Du; zeros(8, 1)];
-% thetaConstraint1 = [zeros(3, 1); -1/deg2rad(30); zeros(5,1)];
-% thetaConstraint2 = [zeros(3, 1); 1/deg2rad(30); zeros(5,1)];
+
+thetaConstraint1 = [zeros(3, 1); -1/deg2rad(30); zeros(5,1)];
+thetaConstraint2 = [zeros(3, 1); 1/deg2rad(30); zeros(5,1)];
+
 phiConstraint1 = [zeros(7, 1); -1/Dphi; 0];
 phiConstraint2 = [zeros(7, 1); 1/Dphi; 0];
 hConstraint1 = [zeros(8, 1); -1/Dh];
@@ -48,8 +50,10 @@ yawConstraint2 = [zeros(3, 1);1/Dyaw_ctrl];
 %% Limit matrix formulation
 uConstraint1 = uConstraint1'*Q*uConstraint1<=1;
 uConstraint2 = uConstraint2'*Q*uConstraint2<=1;
-% thetaConstraint1 = thetaConstraint1'*Q*thetaConstraint1<=1;
-% thetaConstraint2 = thetaConstraint2'*Q*thetaConstraint2<=1;
+
+thetaConstraint1 = thetaConstraint1'*Q*thetaConstraint1<=1;
+thetaConstraint2 = thetaConstraint2'*Q*thetaConstraint2<=1;
+
 phiConstraint1 = phiConstraint1'*Q*phiConstraint1<=1;
 phiConstraint2 = phiConstraint2'*Q*phiConstraint2<=1;
 hConstraint1 = hConstraint1'*Q*hConstraint1<=1;
@@ -70,7 +74,9 @@ asymphtoticConstraint = [Q*As' + As*Q + Z'*Bs' + Bs*Z <= 0, Q >= 0];
 
 Constraints = [hConstraint1, hConstraint2,
     uConstraint1, uConstraint2,
-%     thetaConstraint1, thetaConstraint2
+    
+    thetaConstraint1, thetaConstraint2
+
     phiConstraint1, phiConstraint2
     elevatorConstraint1,elevatorConstraint2,
     throtleConstraint1,throtleConstraint2,

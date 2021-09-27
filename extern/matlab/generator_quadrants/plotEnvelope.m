@@ -1,4 +1,4 @@
-function toPlot = plotEnvelope(poly, dim1, dim2, state)
+function toPlot = plotEnvelope(poly, dim1, dim2, c, state)
 
 
     lD = min(dim1, dim2);
@@ -6,7 +6,10 @@ function toPlot = plotEnvelope(poly, dim1, dim2, state)
     A = poly.A;
     b = poly.b;
     dimA = size(A);
-    if nargin<4 || isempty(state)
+    if nargin<4 || isempty(c)
+        c = 'r';
+    end
+    if nargin<5 || isempty(state)
         state = zeros(dimA(2),1);
     end
     v = sdpvar(dimA(2),1);
@@ -16,5 +19,5 @@ function toPlot = plotEnvelope(poly, dim1, dim2, state)
     
     toPlot = Polyhedron(lmi(A * v <= b));
     
-    plot(A * v <= b);
+    plot(A * v <= b, [v(dim1), v(dim2)], c);
 end
