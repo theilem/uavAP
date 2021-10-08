@@ -13,7 +13,6 @@
 
 struct RSLQRPlannerParams
 {
-//	Parameter<Eigen::Matrix<FloatingType, 2, 16, Eigen::DontAlign>> k = {{}, "k", true};
 	Parameter<GainSchedulingParams<2, 16>> k_sched = {{}, "k_sched", true};
 
 	Parameter<FloatingType> kConvergence = {1.0, "k_convergence", true};

@@ -5,6 +5,8 @@
 #ifndef UAVAP_GAINSCHEDULER_H
 #define UAVAP_GAINSCHEDULER_H
 
+#include <iostream>
+
 #include <cpsCore/Configuration/Parameter.hpp>
 #include <cpsCore/cps_object>
 
@@ -45,7 +47,7 @@ struct GainScheduleRegion
 	}
 };
 
-template<std::size_t rows, std::size_t cols>
+template<std::size_t rows, std::size_t cols = 1>
 struct GainSchedulingParams
 {
 	Parameter<std::vector<GainScheduleRegion<rows, cols>>> regions = {{}, "regions", true};
@@ -60,16 +62,16 @@ struct GainSchedulingParams
 	}
 
 	inline Eigen::Matrix<FloatingType, rows, cols, Eigen::DontAlign>
-	calculateGains(const std::unordered_map<std::string, FloatingType>& state)
+	calculateGainsGaussian(const std::unordered_map<std::string, FloatingType>& state)
 	{
-		using MatrixType = decltype(calculateGains(state));
-		std::cout << "Current State:" << mapToStr(state) << "\n";
+		using MatrixType = decltype(calculateGainsGaussian(state));
+//		std::cout << "Current State:" << mapToStr(state) << "\n";
 		std::vector<FloatingType> weights;
 		weights.reserve(regions().size());
 		MatrixType ans = MatrixType::Zero();
 
 		FloatingType totalWeight = 0;
-		std::cout << "Weights:\n";
+//		std::cout << "Weights:\n";
 		for (auto region : regions())
 		{
 			// Gaussian fuzzifier
@@ -97,20 +99,74 @@ struct GainSchedulingParams
 				}
 			}
 
-			std::cout << "Region :" << mapToStr(region.setpoint()) << ":" << weight << "\n";
+//			std::cout << "Region :" << mapToStr(region.setpoint()) << ":" << weight << "\n";
 			weights.push_back(weight);
 			totalWeight += weight;
 		}
 
-		std::cout << "Percentage:\n";
+//		std::cout << "Percentage:\n";
 		for (unsigned idx = 0; idx < weights.size(); idx++)
 		{
 			auto percent = weights[idx] / totalWeight;
-			std::cout << "Region :" << mapToStr(regions()[idx].setpoint()) << ":" << percent << "\n";
+//			std::cout << "Region :" << mapToStr(regions()[idx].setpoint()) << ":" << percent << "\n";
 			ans += regions()[idx].k() * percent;
 		}
 		return ans;
 	}
+
+	inline Eigen::Matrix<FloatingType, rows, cols, Eigen::DontAlign>
+	calculateGainsNearest(const std::unordered_map<std::string, FloatingType>& state)
+	{
+		return regions()[_calculateNearestIdx(state)].k();
+	}
+
+	inline std::unordered_map<std::string, FloatingType>
+	calculateSetpointNearest(const std::unordered_map<std::string, FloatingType>& state)
+	{
+		return regions()[_calculateNearestIdx(state)].setpoint();
+	}
+
+private:
+	inline size_t
+	_calculateNearestIdx(const std::unordered_map<std::string, FloatingType>& state)
+	{
+		std::vector<FloatingType> weights;
+		weights.reserve(regions().size());
+
+		for (auto region : regions())
+		{
+			// Gaussian fuzzifier
+			FloatingType weight = 1;
+			for (const auto& it : interpolation_stddev())
+			{
+				auto key = it.first;
+				auto setpointVal = region.setpoint().find(key);
+				auto stateVal = state.find(key);
+				if (setpointVal == region.setpoint().end())
+				{
+					CPSLOG_ERROR << "Key not found in GainScheduling Region Config: " << key;
+					auto s = mapToStr(region.setpoint());
+					CPSLOG_ERROR << "Region is: " << s;
+				}
+				else if (stateVal == state.end())
+				{
+					CPSLOG_ERROR << "Key not found in System State: " << key;
+					auto s = mapToStr(state);
+					CPSLOG_ERROR << "Region is: " << s;
+				}
+				else
+				{
+					weight *= exp(-0.5 * pow((setpointVal->second - stateVal->second) / it.second, 2));
+				}
+			}
+
+//			std::cout << "Region :" << mapToStr(region.setpoint()) << ":" << weight << "\n";
+			weights.push_back(weight);
+		}
+		auto closest = std::max_element(weights.begin(), weights.end());
+		return std::distance(weights.begin(), closest);
+	}
 };
+
 
 #endif //UAVAP_GAINSCHEDULER_H

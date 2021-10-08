@@ -20,12 +20,14 @@ class DataHandling;
 
 class OverrideHandler;
 
+class ISimplexSupervisor;
+
 enum class DataRequest;
 
 class RSLQRController: public IController,
 					   public ConfigurableObject<RSLQRControllerParams>,
 					   public AggregatableObject<IScheduler, ISensingIO, IActuationIO, DataHandling,
-							   OverrideHandler>,
+							   OverrideHandler, ISimplexSupervisor>,
 					   public IRunnableObject
 {
 

@@ -2,39 +2,236 @@
 // Created by seedship on 8/24/21.
 //
 
+#include <boost/property_tree/json_parser.hpp>
+
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/Core/Orientation/NED.h"
 #include "uavAP/FlightControl/SimplexSupervisor/MultiSimplexSupervisor.h"
 #include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
 #include "uavAP/FlightControl/SensingActuationIO/IActuationIO.h"
+#include "uavAP/FlightControl/Controller/ControllerOutput.h"
+#include <uavAP/Core/DataHandling/DataHandling.h>
 
-void
-MultiSimplexSupervisor::setControllerOutput(const ControllerOutput& out)
+static VectorN<9>
+mapToVector(const std::unordered_map<std::string, FloatingType>& m)
+{
+	decltype(mapToVector(m)) ans;
+	ans[0] = m.find("u")->second;
+	ans[1] = m.find("w")->second;
+	ans[2] = m.find("q")->second;
+	ans[3] = m.find("theta_rad")->second;
+	ans[4] = m.find("v")->second;
+	ans[5] = m.find("p")->second;
+	ans[6] = m.find("r")->second;
+	ans[7] = m.find("phi_rad")->second;
+	ans[8] = m.find("h")->second;
+	return ans;
+}
+
+MultiSimplexSupervisor::MultiSimplexSupervisor() : safetyController_(false), safetyCtrl_phiIdx(2),
+												   safetyCtrl_thetaIdx(-1)
 {
 
 }
 
-VectorN<9>
+bool
+MultiSimplexSupervisor::run(RunStage stage)
+{
+	switch (stage)
+	{
+		case RunStage::INIT:
+		{
+			// Initialize reachability regions
+			std::cout << "\n20long\n";
+			r20_long.fromConfig(params.r20_long_path());
+			std::cout << "\n20lat\n";
+			r20_lat.fromConfig(params.r20_lat_path());
+			std::cout << "\n-20long\n";
+			rmin20_long.fromConfig(params.rmin20_long_path());
+			std::cout << "\n-20lat\n";
+			rmin20_lat.fromConfig(params.rmin20_lat_path());
+			break;
+		}
+		case RunStage::NORMAL:
+		{
+			if (auto dh = get<DataHandling>())
+			{
+				dh->subscribeOnData<bool>(Content::DISABLE_SAFETY_CONTROLLER, [this](const auto&)
+				{
+					safetyController_ = false;
+				});
+			}
+			else
+			{
+				CPSLOG_DEBUG << "Missing DataHandling";
+			}
+//			std::cout << "\n";
+//			std::cout << r20_long.regions[0].A;
+//			std::cout << "\n";
+//			std::cout << r20_long.regions[0].b;
+//			std::cout << "\n";
+//			std::cout << r20_long.regions[1400].A;
+//			std::cout << "\n";
+//			std::cout << r20_long.regions[1400].b;
+//			std::cout << "\n";
+		}
+		default:
+		{
+			break;
+		}
+	}
+	return false;
+}
+
+void
+MultiSimplexSupervisor::setControllerOutput(const ControllerOutput& out)
+{
+	VectorN<4> controlInputAbs = {out.pitchOutput, out.throttleOutput, out.rollOutput, out.yawOutput};
+	auto stateMap = calculateRawState();
+	auto currentStateRaw = mapToVector(stateMap);
+	auto Ad = this->params.a_d().calculateGainsNearest(stateMap);
+	auto Bd = this->params.b_d().calculateGainsNearest(stateMap);
+	auto ss = this->params.ss().calculateGainsNearest(stateMap);
+	auto trim = this->params.trim().calculateGainsNearest(stateMap);
+	VectorN<4> controlInputRel = controlInputAbs - trim;
+	VectorN<9> currentStateRel = mapToVector(stateMap) - ss;
+	std::cout << currentStateRel << "\n";
+	auto nextStateAbs = Ad * currentStateRel + Bd * controlInputRel + ss;
+
+	constexpr int p_idx[] = {2, 1, 3, 0, 4};
+
+	bool safe = false;
+
+	for (const auto& idx : p_idx)
+	{
+		auto x_hat = nextStateAbs - this->params.ss().regions()[idx].k();
+		if (x_hat.transpose() * this->params.p().regions()[idx].k() * x_hat <= 1)
+		{
+			safe = true;
+			safetyCtrl_phiIdx = idx;
+			safetyCtrl_thetaIdx = -1;
+			break;
+		}
+	}
+
+	if (!safe)
+	{
+		VectorN<5> x_long;
+		x_long[0] = nextStateAbs[0];
+		x_long[1] = nextStateAbs[1];
+		x_long[2] = nextStateAbs[2];
+		x_long[3] = nextStateAbs[3];
+		x_long[4] = nextStateAbs[8];
+		x_long += (this->params.cp_long().regions()[0].k()) / 100;
+		VectorN<4> x_lat = {nextStateAbs[4], nextStateAbs[5], nextStateAbs[6], nextStateAbs[7]};
+		if (rmin20_long.reachable(x_long) && rmin20_lat.reachable(x_lat))
+		{
+			safe = true;
+			safetyCtrl_phiIdx = -1;
+			safetyCtrl_thetaIdx = 0;
+		}
+		else if (r20_long.reachable(x_long) && r20_lat.reachable(x_lat))
+		{
+			safe = true;
+			safetyCtrl_phiIdx = -1;
+			safetyCtrl_thetaIdx = 2;
+		}
+	}
+
+	if (!safe)
+	{
+		safetyController_ = true;
+	}
+
+	std::cout<< "Safe: " << safe << "\n";
+	std::cout<< "Safety Control Active: " << safetyController_ << "\n";
+	std::cout<< "PhiIdx: " << safetyCtrl_phiIdx << "\n";
+	std::cout<< "ThetaIdx: " << safetyCtrl_thetaIdx << "\n";
+
+	if (safetyController_)
+	{
+		ControllerOutput safeout;
+		if (safetyCtrl_phiIdx != -1)
+		{
+			if (safetyCtrl_phiIdx < 0 || safetyCtrl_phiIdx > 4) {
+				CPSLOG_ERROR << "Unexpected value for phi idx: " << safetyCtrl_phiIdx;
+			}
+			auto x_rel = currentStateRaw - this->params.ss().regions()[safetyCtrl_phiIdx].k();
+			VectorN<4> safetyCtrl = -this->params.k().regions()[safetyCtrl_phiIdx].k() * x_rel + params.trim().regions()[safetyCtrl_phiIdx].k();
+			safeout.pitchOutput = safetyCtrl[0];
+			safeout.throttleOutput = safetyCtrl[1];
+			safeout.rollOutput = safetyCtrl[2];
+			safeout.yawOutput = safetyCtrl[3];
+		}
+		else
+		{
+			if (safetyCtrl_thetaIdx != 0 || safetyCtrl_thetaIdx != 2) {
+				CPSLOG_ERROR << "Unexpected value for theta idx: " << safetyCtrl_thetaIdx;
+			}
+			auto x_rel = currentStateRaw - this->params.ss().regions()[safetyCtrl_thetaIdx].k();
+			VectorN<5> x_long;
+			x_long[0] = x_rel[0];
+			x_long[1] = x_rel[1];
+			x_long[2] = x_rel[2];
+			x_long[3] = x_rel[3];
+			x_long[4] = x_rel[8];
+			VectorN<4> x_lat = {x_rel[4], x_rel[5], x_rel[6], x_rel[7]};
+
+			Vector2 out_long = -this->params.kp_long().regions()[safetyCtrl_phiIdx].k() * x_long;
+			Vector2 out_lat = -this->params.kp_lat().regions()[safetyCtrl_phiIdx].k() * x_lat;
+			VectorN<4> safetyCtrl = {out_long[0], out_long[1], out_lat[0], out_lat[1]};
+			safetyCtrl += params.trimp().regions()[safetyCtrl_thetaIdx].k();
+		}
+		safeout.pitchOutput = std::clamp<FloatingType>(safeout.pitchOutput, -1, 1);
+		safeout.throttleOutput = std::clamp<FloatingType>(safeout.throttleOutput, -1, 1);
+		safeout.rollOutput = std::clamp<FloatingType>(safeout.rollOutput, -1, 1);
+		safeout.yawOutput = std::clamp<FloatingType>(safeout.yawOutput, -1, 1);
+		if (auto io = get<IActuationIO>())
+		{
+			io->setControllerOutput(safeout);
+			return;
+		}
+		CPSLOG_ERROR << "Missing Actuation IO";
+	}
+
+	if (auto io = get<IActuationIO>())
+	{
+		io->setControllerOutput(out);
+		return;
+	}
+	CPSLOG_ERROR << "Missing Actuation IO";
+}
+
+std::unordered_map<std::string, FloatingType>
 MultiSimplexSupervisor::calculateRawState() const
 {
-	VectorN<9> ans;
+	decltype(calculateRawState()) ans;
 	if (auto io = get<ISensingIO>())
 	{
 		SensorData sd = io->getSensorData();
 		NED::convert(sd, Frame::BODY);
-		ans[0] = sd.velocity.x();
-		ans[1] = sd.velocity.z();
-		ans[2] = sd.angularRate.y();
-		ans[3] = sd.attitude.y();
-		ans[4] = sd.velocity.y();
-		ans[5] = sd.angularRate.x();
-		ans[6] = sd.angularRate.z();
-		ans[7] = sd.attitude.x();
-		ans[8] = -sd.position.z();
+		ans["u"] = sd.velocity.x();
+		ans["w"] = sd.velocity.z();
+		ans["q"] = sd.angularRate.y();
+		ans["theta_rad"] = sd.attitude.y();
+		ans["v"] = sd.velocity.y();
+		ans["p"] = sd.angularRate.x();
+		ans["r"] = sd.angularRate.z();
+		ans["phi_rad"] = sd.attitude.x();
+		ans["h"] = -150 - sd.position.z();
 	}
 	else
 	{
-		CPSLOG_ERROR << "Missiong Sensing IO!";
+		CPSLOG_ERROR << "Missing Sensing IO!";
 	}
 	return ans;
+}
+
+template<std::size_t dim>
+void
+MultiSimplexSupervisor::initializeReachabilitySet(ReachabilitySet<dim>& set, const std::string& path)
+{
+	Configuration config;
+	boost::property_tree::read_json(path, config);
+	set.fromConfig(path);
 }

@@ -310,7 +310,7 @@ RSLQRPlanner::calculateControllerTarget(const Vector3& position_enu, double head
 		auto phi = sensorData_.attitude.x();
 		sdl.unlock();
 
-		auto k = params.k_sched().calculateGains({std::make_pair("u", u), std::make_pair("phi_rad", phi)});
+		auto k = params.k_sched().calculateGainsGaussian({std::make_pair("u", u), std::make_pair("phi_rad", phi)});
 		stateOut_ = -k * state;
 		controlEnv_.evaluate();
 		controllerTarget.climbAngle = (controllerTargetPitch_ = outputPitch_);

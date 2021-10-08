@@ -69,30 +69,32 @@ RSLQRController::run(RunStage stage)
 void
 RSLQRController::setControllerTarget(const ControllerTarget& target)
 {
-	auto io = get<ISensingIO>();
-	auto actIo = get<IActuationIO>();
-	if (!io || !actIo)
-	{
-		CPSLOG_ERROR << "Cannot calculate control, IO missing";
-		return;
+	if (auto io = get<ISensingIO>()) {
+		Lock sdl(lock_);
+		sd_ned_ = io->getSensorData();
+		NED::convert(sd_ned_, Frame::BODY);
+		ct_ = target;
+		FloatingType u = sd_ned_.velocity.x();
+		FloatingType phi = sd_ned_.attitude.x();
+		sdl.unlock();
+
+		auto k = params.k_sched().calculateGainsGaussian({std::make_pair("u", u), std::make_pair("phi_rad", phi)});
+
+		auto state = getState();
+		stateOut_ = -k * state;
+
+		controlEnv_.evaluate();
+
+		if(auto sim = get<ISimplexSupervisor>())
+			sim->setControllerOutput(co_);
+		else if (auto actIo = get<IActuationIO>())
+			actIo->setControllerOutput(co_);
+		else
+			CPSLOG_ERROR << "Either a Simplex Supervisor or Actuation IO is required, cannot set controller target";
+
+	} else {
+		CPSLOG_ERROR << "Missing Sensing IO, cannot calculate controller target";
 	}
-
-	Lock sdl(lock_);
-	sd_ned_ = io->getSensorData();
-	NED::convert(sd_ned_, Frame::BODY);
-	ct_ = target;
-	FloatingType u = sd_ned_.velocity.x();
-	FloatingType phi = sd_ned_.attitude.x();
-	sdl.unlock();
-
-	auto k = params.k_sched().calculateGains({std::make_pair("u", u), std::make_pair("phi_rad", phi)});
-
-	auto state = getState();
-	stateOut_ = -k * state;
-
-	controlEnv_.evaluate();
-
-	actIo->setControllerOutput(co_);
 }
 
 VectorN<12>
