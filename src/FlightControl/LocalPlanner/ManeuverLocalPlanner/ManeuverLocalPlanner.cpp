@@ -80,6 +80,11 @@ ManeuverLocalPlanner::run(RunStage stage)
 				CPSLOG_DEBUG << "ManeuverLocalPlanner: OverrideHandler not set. Override disabled.";
 
 
+			// Temporary printing
+			logfile_.open("/tmp/maneuverplanner_log" + std::to_string(timePointToNanoseconds(Clock::now())) + ".csv");
+			logfile_ << "timestamp,V_c,climb_angle_command,yaw_rate_command,h_c,psi_c,target_e,target_n,deviation_e,deviation_n,deviation_u\n";
+			logfile_ << std::scientific;
+			logfile_.precision(10);
 			break;
 		}
 		case RunStage::NORMAL:
@@ -326,6 +331,15 @@ ManeuverLocalPlanner::calculateControllerTarget(const Vector3& position, double 
 
 	controllerTarget.yawRate = velocityOverride_() * curvatureOverride_() + params.kYawRate() * headingError;
 
+//	logfile_ << "timestamp,V_c,climb_angle_command,yaw_rate_command,h_c,psi_c,target_e,target_n,deviation_e,deviation_n,deviation_u\n";
+
+#define SEP <<','<<
+	logfile_ << durationToNanoseconds(sensorData_.timestamp.time_since_epoch()) SEP controllerTarget.velocity SEP
+			 controllerTarget.climbAngle SEP controllerTarget.yawRate SEP positionZOverride_ SEP headingOverride_() SEP
+			 positionXOverride_ SEP positionYOverride_ SEP positionDeviation.x()
+			 SEP positionDeviation.y() SEP positionDeviation.z() << "\n";
+#undef SEP
+
 	return controllerTarget;
 }
 
@@ -355,6 +369,7 @@ ManeuverLocalPlanner::onSensorData(const SensorData& sd)
 //	uint32_t seq = sd.sequenceNr;
 
 	createLocalPlan(position, heading, hasFix);
+	sensorData_ = sd;
 }
 //
 //void

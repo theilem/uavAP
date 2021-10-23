@@ -14,7 +14,7 @@
 #include <cmath>
 
 ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerTarget& target, ControllerOutput& out)
-		: controlEnv_(&sd.timestamp)
+		: controlEnv_(&sd.timestamp), sd_(&sd) // SensorData for temporary printing
 {
 
 	/* Roll Control */
@@ -103,6 +103,12 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	outputs_.insert(std::make_pair(ControllerOutputs::ROLL, rollOut));
 	outputs_.insert(std::make_pair(ControllerOutputs::THROTTLE, throttleOut));
 	outputs_.insert(std::make_pair(ControllerOutputs::YAW, yawOut));
+
+	//For temporary printing
+	logfile_.open("/tmp/pidcontroller_log" + std::to_string(timePointToNanoseconds(Clock::now())) + ".csv");
+	logfile_ << "timestamp,theta_c,phi_c\n";
+	logfile_ << std::scientific;
+	logfile_.precision(10);
 }
 
 bool
@@ -158,6 +164,12 @@ ManeuverRateCascade::getPIDStatus()
 void
 ManeuverRateCascade::evaluate()
 {
+//	logfile_ << "timestamp,theta_c,phi_c\n";
+#define SEP <<','<<
+	logfile_ << durationToNanoseconds(sd_->timestamp.time_since_epoch()) SEP
+			 pids_[PIDs::PITCH]->getStatus().target SEP
+			 pids_[PIDs::ROLL]->getStatus().target << "\n";
+#undef SEP
 	controlEnv_.evaluate();
 }
 

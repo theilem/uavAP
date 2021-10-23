@@ -49,9 +49,9 @@ struct ReachabilitySet
 	void
 	fromConfig(const std::string& config_path)
 	{
-		std::ifstream i(config_path);
+		std::ifstream jsonFile(config_path);
 		nlohmann::json j;
-		i >> j;
+		jsonFile >> j;
 		auto r = j["regions"];
 		for (const auto &i : r)
 		{

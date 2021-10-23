@@ -5,6 +5,8 @@
 #ifndef UAVAP_RSLQRPLANNER_H
 #define UAVAP_RSLQRPLANNER_H
 
+#include <fstream>
+
 #include <cpsCore/cps_object>
 #include <uavAP/FlightControl/LocalPlanner/ILocalPlanner.h>
 #include <uavAP/FlightControl/LocalPlanner/LocalPlannerTargets.h>
@@ -82,6 +84,9 @@ private:
 
 	FloatingType outputPitch_;
 	FloatingType outputRoll_;
+
+	// Temporary printing
+	std::ofstream logfile_;
 
 	void
 	populateControlEnv();

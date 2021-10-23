@@ -11,6 +11,8 @@
 #include "uavAP/FlightControl/StateSpaceUtils/GainScheduler.h"
 #include "uavAP/FlightControl/StateSpaceUtils/ReachabilityRegion.h"
 
+#include "uavAP/Core/OverrideHandler/OverridableValue.hpp"
+
 #include <cpsCore/Configuration/Parameter.hpp>
 
 struct MultiSimplexParams
@@ -70,7 +72,9 @@ class ISensingIO;
 
 class DataHandling;
 
-class MultiSimplexSupervisor: public AggregatableObject<IActuationIO, ISensingIO, DataHandling>,
+class OverrideHandler;
+
+class MultiSimplexSupervisor: public AggregatableObject<IActuationIO, ISensingIO, DataHandling, OverrideHandler>,
 							  public ConfigurableObject<MultiSimplexParams>,
 							  public IRunnableObject,
 							  public ISimplexSupervisor
@@ -96,10 +100,16 @@ private:
 
 	bool safetyController_;
 
+	std::ofstream logfile_;
+
 	ReachabilitySet<5> r20_long;
 	ReachabilitySet<4> r20_lat;
 	ReachabilitySet<5> rmin20_long;
 	ReachabilitySet<4> rmin20_lat;
+
+	OverridableValue<FloatingType> safetyAlt_;
+
+
 
 	int safetyCtrl_phiIdx;
 	int safetyCtrl_thetaIdx;

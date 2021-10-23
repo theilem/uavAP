@@ -15,6 +15,7 @@
 #include <uavAP/FlightControl/Controller/ControlElements/Filter/LowPassFilter.h>
 #include <uavAP/FlightControl/Controller/PIDController/IPIDCascade.h>
 #include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
+#include <fstream>
 
 struct SensorData;
 struct ControllerOutput;
@@ -73,6 +74,10 @@ private:
 	std::map<ControllerOutputs, std::shared_ptr<Control::Output>> outputs_;
 
 	using AngleConstraint = Control::Constraint<Angle<FloatingType>>;
+
+	// For temporary printing
+	const SensorData* sd_;
+	std::ofstream logfile_;
 
 	std::shared_ptr<AngleConstraint> rollConstraint_;
 	std::shared_ptr<AngleConstraint> rollRateTargetConstraint_;

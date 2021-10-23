@@ -10,6 +10,8 @@
 #ifndef UAVAP_FLIGHTCONTROL_LOCALPLANNER_MANEUVERLOCALPLANNER_MANEUVERLOCALPLANNER_H_
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_MANEUVERLOCALPLANNER_MANEUVERLOCALPLANNER_H_
 
+#include <fstream>
+
 #include <cpsCore/cps_object>
 #include <cpsCore/Utilities/LockTypes.hpp>
 
@@ -101,6 +103,10 @@ private:
 	mutable Mutex trajectoryMutex_;
 	Trajectory trajectory_;
 	PathSectionIterator currentSection_;
+
+	// Temporary printing
+	std::ofstream logfile_;
+	SensorData sensorData_;
 
 	OverridableValue<FloatingType> velocityOverride_;
 	OverridableValue<FloatingType> positionXOverride_;

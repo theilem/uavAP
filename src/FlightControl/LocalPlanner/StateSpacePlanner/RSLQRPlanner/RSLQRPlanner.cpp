@@ -11,7 +11,7 @@
 #include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
 #include "uavAP/Core/DataHandling/DataHandling.h"
 
-RSLQRPlanner::RSLQRPlanner(): controlEnv_(&sensorData_.timestamp)
+RSLQRPlanner::RSLQRPlanner() : controlEnv_(&sensorData_.timestamp)
 {
 
 }
@@ -63,6 +63,11 @@ RSLQRPlanner::run(RunStage stage)
 			}
 			else
 				CPSLOG_DEBUG << "OverrideHandler not set. Overrides disabled.";
+			// Temporary printing
+			logfile_.open("/tmp/rslqrplanner_log" + std::to_string(timePointToNanoseconds(Clock::now())) + ".csv");
+			logfile_ << "timestamp,u_c,theta_c,phi_c,h_c,psi_c,target_e,target_n,deviation_e,deviation_n,deviation_u\n";
+			logfile_ << std::scientific;
+			logfile_.precision(10);
 			break;
 		}
 		case RunStage::NORMAL:
@@ -70,7 +75,8 @@ RSLQRPlanner::run(RunStage stage)
 			if (auto dh = get<DataHandling>())
 			{
 				dh->addStatusFunction<std::map<PIDs, PIDStatus>>(
-						[this](){return getStatus();}, Content::PID_STATUS);
+						[this]()
+						{ return getStatus(); }, Content::PID_STATUS);
 			}
 			auto sensing = get<ISensingIO>();
 			sensing->subscribeOnSensorData([this](const SensorData& sd)
@@ -100,7 +106,8 @@ RSLQRPlanner::run(RunStage stage)
 				dh->addTriggeredStatusFunction<Trajectory, DataRequest>(
 						[this](const DataRequest& request) -> Optional<Trajectory>
 						{
-							if (request == DataRequest::TRAJECTORY) {
+							if (request == DataRequest::TRAJECTORY)
+							{
 								return getTrajectory();
 							}
 							return std::nullopt;
@@ -207,7 +214,8 @@ RSLQRPlanner::nextSection()
 
 // Copied from ManeuverLocalPlanner
 void
-RSLQRPlanner::createLocalPlan(const Vector3& position_enu, FloatingType heading_ned, bool hasGPSFix, FloatingType vz, FloatingType psi_dot)
+RSLQRPlanner::createLocalPlan(const Vector3& position_enu, FloatingType heading_ned, bool hasGPSFix, FloatingType vz,
+							  FloatingType psi_dot)
 {
 	bool safety = false;
 
@@ -323,6 +331,15 @@ RSLQRPlanner::calculateControllerTarget(const Vector3& position_enu, double head
 		controllerTarget.yawRate = (controllerTargetRoll_ = 0);
 	}
 
+//	logfile_ << "timestamp,u_c,theta_c,phi_c,h_c,psi_c,target_e,target_n,deviation_e,deviation_n,deviation_u\n";
+
+#define SEP <<','<<
+	logfile_ << durationToNanoseconds(sensorData_.timestamp.time_since_epoch()) SEP controllerTarget.velocity SEP
+			 controllerTarget.climbAngle SEP controllerTarget.yawRate SEP positionTargetU_ SEP headingTarget_() SEP
+			 positionTargetE_ SEP positionTargetN_ SEP positionDeviation.x()
+			 SEP positionDeviation.y() SEP positionDeviation.z() << "\n";
+#undef SEP
+
 	return controllerTarget;
 }
 
@@ -347,7 +364,8 @@ RSLQRPlanner::onSensorData(const SensorData& sd)
 std::map<PIDs, PIDStatus>
 RSLQRPlanner::getStatus() const
 {
-	if (auto controller = get<RSLQRController>()) {
+	if (auto controller = get<RSLQRController>())
+	{
 		std::map<PIDs, PIDStatus> ans = controller->getStatus();
 		Lock sdm(sensorDataMutex_);
 		Lock t(targetMutex_);
