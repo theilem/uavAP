@@ -60,7 +60,7 @@ MultiSimplexSupervisor::run(RunStage stage)
 
 			// Temporary printing
 			logfile_.open("/tmp/multisimplex_log" + std::to_string(timePointToNanoseconds(Clock::now())) + ".csv");
-			logfile_ << "timestamp,safe,safetyCtrlActive,phiIdx,thetaIdx,phi1,phi2,phi3,phi4,phi5,theta1,theta3\n";
+			logfile_ << "timestamp,safe,safetyCtrlActive,sphiIdx,sthetaIdx,dynPhiIdx,dynThetaIdx,next_u,next_w,next_q,next_theta,next_v,next_p,next_r,next_phi,next_h\n";
 			logfile_ << std::scientific;
 			logfile_.precision(10);
 			break;
@@ -115,16 +115,29 @@ MultiSimplexSupervisor::setControllerOutput(const ControllerOutput& out)
 {
 	VectorN<4> controlInputAbs = {out.pitchOutput, out.throttleOutput, out.rollOutput, out.yawOutput};
 	auto stateMap = calculateRawState();
-	auto currentStateRaw = mapToVector(stateMap);
 	auto Ad = this->params.a_d().calculateGainsNearest(stateMap);
 	auto Bd = this->params.b_d().calculateGainsNearest(stateMap);
+	auto c = this->params.c().calculateGainsNearest(stateMap);
 	auto ss = this->params.ss().calculateGainsNearest(stateMap);
 	auto trim = this->params.trim().calculateGainsNearest(stateMap);
 	VectorN<4> controlInputRel = controlInputAbs - trim;
 	VectorN<9> currentStateRel = mapToVector(stateMap) - ss;
-//	std::cout << currentStateRel << "\n";
-	auto nextStateAbs = Ad * currentStateRel + Bd * controlInputRel + ss;
-	std::cout << nextStateAbs << "\n";
+	auto nextStateAbs = Ad * currentStateRel + Bd * controlInputRel + ss + c / 100;
+//	std::cout << nextStateAbs << "\n";
+
+	// For printing only
+	auto dynidx = this->params.a_d().calculateNearestIdx(stateMap);
+	unsigned dynPhiIdx=2, dynThetaIdx=1;
+	if(dynidx < 5) {
+		dynPhiIdx = dynidx;
+	}
+	else if (dynidx == 5) {
+		dynThetaIdx = 0;
+	} else if (dynidx == 6) {
+		dynThetaIdx = 2;
+	} else {
+		CPSLOG_ERROR << "Unexpected theta idx";
+	}
 
 	constexpr int p_idx[] = {2, 1, 3, 0, 4};
 
@@ -132,8 +145,8 @@ MultiSimplexSupervisor::setControllerOutput(const ControllerOutput& out)
 
 	for (const auto& idx : p_idx)
 	{
-		auto x_hat = nextStateAbs - this->params.ss().regions()[idx].k();
-		if (x_hat.transpose() * this->params.p().regions()[idx].k() * x_hat <= 1)
+		auto x_hat = nextStateAbs - params.ss().regions()[idx].k() + (params.c().regions()[idx].k() / 100);
+		if (x_hat.transpose() * params.p().regions()[idx].k() * x_hat <= 1)
 		{
 			safe = true;
 			safetyCtrl_phiIdx = idx;
@@ -144,26 +157,16 @@ MultiSimplexSupervisor::setControllerOutput(const ControllerOutput& out)
 
 	if (!safe)
 	{
-		auto x_hat_min20 = nextStateAbs - this->params.ssp().regions()[0].k();
+		// Check min20 state
+		auto x_hat_min20 = nextStateAbs - params.ss().regions()[5].k();
 		VectorN<5> x_longmin20;
 		x_longmin20[0] = x_hat_min20[0];
 		x_longmin20[1] = x_hat_min20[1];
 		x_longmin20[2] = x_hat_min20[2];
 		x_longmin20[3] = x_hat_min20[3];
 		x_longmin20[4] = x_hat_min20[8];
-		x_longmin20 += (this->params.cp_long().regions()[0].k()) / 100;
+		x_longmin20 += (params.cp_long().regions()[0].k()) / 100;
 		VectorN<4> x_latmin20 = {x_hat_min20[4], x_hat_min20[5], x_hat_min20[6], x_hat_min20[7]};
-
-
-		auto x_hat_20 = nextStateAbs - this->params.ssp().regions()[2].k();
-		VectorN<5> x_long20;
-		x_long20[0] = x_hat_20[0];
-		x_long20[1] = x_hat_20[1];
-		x_long20[2] = x_hat_20[2];
-		x_long20[3] = x_hat_20[3];
-		x_long20[4] = x_hat_20[8];
-		x_long20 += (this->params.cp_long().regions()[0].k()) / 100;
-		VectorN<4> x_lat20 = {x_hat_20[4], x_hat_20[5], x_hat_20[6], x_hat_20[7]};
 
 		if (rmin20_long.reachable(x_longmin20) && rmin20_lat.reachable(x_latmin20))
 		{
@@ -171,14 +174,30 @@ MultiSimplexSupervisor::setControllerOutput(const ControllerOutput& out)
 			safetyCtrl_phiIdx = -1;
 			safetyCtrl_thetaIdx = 0;
 		}
-		else if (r20_long.reachable(x_long20) && r20_lat.reachable(x_lat20))
+
+		// Else if check 20 state
+		if (!safe)
 		{
-			safe = true;
-			safetyCtrl_phiIdx = -1;
-			safetyCtrl_thetaIdx = 2;
+			auto x_hat_20 = nextStateAbs - params.ss().regions()[6].k();
+			VectorN<5> x_long20;
+			x_long20[0] = x_hat_20[0];
+			x_long20[1] = x_hat_20[1];
+			x_long20[2] = x_hat_20[2];
+			x_long20[3] = x_hat_20[3];
+			x_long20[4] = x_hat_20[8];
+			x_long20 += (params.cp_long().regions()[2].k()) / 100;
+			VectorN<4> x_lat20 = {x_hat_20[4], x_hat_20[5], x_hat_20[6], x_hat_20[7]};
+
+			if (r20_long.reachable(x_long20) && r20_lat.reachable(x_lat20))
+			{
+				safe = true;
+				safetyCtrl_phiIdx = -1;
+				safetyCtrl_thetaIdx = 1;
+			}
 		}
 	}
 
+	CPSLOG_ERROR << "\n";
 	if (!safe)
 	{
 		safetyController_ = true;
@@ -189,27 +208,36 @@ MultiSimplexSupervisor::setControllerOutput(const ControllerOutput& out)
 	std::cout<< "PhiIdx: " << safetyCtrl_phiIdx << "\n";
 	std::cout<< "ThetaIdx: " << safetyCtrl_thetaIdx << "\n";
 
+//	logfile_ << "timestamp,safe,safetyCtrlActive,sphiIdx,sthetaIdx,dynPhiIdx,dynThetaIdx,next_u,next_w,next_q,next_theta,next_v,next_p,next_r,next_phi,next_h\n";
+#define SEP <<','<<
+	logfile_ << durationToNanoseconds(get<ISensingIO>()->getSensorData().timestamp.time_since_epoch()) SEP safe SEP safetyController_ SEP safetyCtrl_phiIdx SEP
+	safetyCtrl_thetaIdx SEP dynPhiIdx SEP dynThetaIdx SEP nextStateAbs[0] SEP nextStateAbs[1] SEP nextStateAbs[2] SEP nextStateAbs[3] SEP nextStateAbs[4] SEP nextStateAbs[5]
+			 SEP nextStateAbs[6] SEP nextStateAbs[7] SEP nextStateAbs[8] << "\n";
+#undef SEP
+
 	if (safetyController_)
 	{
+
+		auto currentStateRaw = mapToVector(stateMap);
 		ControllerOutput safeout;
-		if (safetyCtrl_phiIdx != -1)
+		if (safetyCtrl_phiIdx != -1) // Use Simplex controllers
 		{
 			if (safetyCtrl_phiIdx < 0 || safetyCtrl_phiIdx > 4) {
 				CPSLOG_ERROR << "Unexpected value for phi idx: " << safetyCtrl_phiIdx;
 			}
-			auto x_rel = currentStateRaw - this->params.ss().regions()[safetyCtrl_phiIdx].k();
-			VectorN<4> safetyCtrl = -this->params.k().regions()[safetyCtrl_phiIdx].k() * x_rel + params.trim().regions()[safetyCtrl_phiIdx].k();
+			auto x_rel = currentStateRaw - params.ss().regions()[safetyCtrl_phiIdx].k();
+			VectorN<4> safetyCtrl = -params.k().regions()[safetyCtrl_phiIdx].k() * x_rel + params.trim().regions()[safetyCtrl_phiIdx].k();
 			safeout.pitchOutput = safetyCtrl[0];
 			safeout.throttleOutput = safetyCtrl[1];
 			safeout.rollOutput = safetyCtrl[2];
 			safeout.yawOutput = safetyCtrl[3];
 		}
-		else
+		else // Use pitch controllers
 		{
-			if (safetyCtrl_thetaIdx != 0 && safetyCtrl_thetaIdx != 2) {
+			if (safetyCtrl_thetaIdx != 0 && safetyCtrl_thetaIdx != 1) {
 				CPSLOG_ERROR << "Unexpected value for theta idx: " << safetyCtrl_thetaIdx;
 			}
-			auto x_rel = currentStateRaw - this->params.ss().regions()[safetyCtrl_thetaIdx].k();
+			auto x_rel = currentStateRaw - params.ssp().regions()[safetyCtrl_thetaIdx].k();
 			VectorN<5> x_long;
 			x_long[0] = x_rel[0];
 			x_long[1] = x_rel[1];
@@ -218,8 +246,8 @@ MultiSimplexSupervisor::setControllerOutput(const ControllerOutput& out)
 			x_long[4] = x_rel[8];
 			VectorN<4> x_lat = {x_rel[4], x_rel[5], x_rel[6], x_rel[7]};
 
-			Vector2 out_long = -this->params.kp_long().regions()[safetyCtrl_phiIdx].k() * x_long;
-			Vector2 out_lat = -this->params.kp_lat().regions()[safetyCtrl_phiIdx].k() * x_lat;
+			Vector2 out_long = -params.kp_long().regions()[safetyCtrl_phiIdx].k() * x_long;
+			Vector2 out_lat = -params.kp_lat().regions()[safetyCtrl_phiIdx].k() * x_lat;
 			VectorN<4> safetyCtrl = {out_long[0], out_long[1], out_lat[0], out_lat[1]};
 			safetyCtrl += params.trimp().regions()[safetyCtrl_thetaIdx].k();
 		}

@@ -1,10 +1,10 @@
 %% Initial setup and constants
 
-% clear
+clear
 F = 100;
 addpath(genpath("/home/seedship/TUM/SS21/Thesis/matlab/tbxmanager"));
 addpath(genpath('/home/seedship/TUM/SS21/Thesis/matlab/generator_quadrants'))
-% load run_simplex20_5_4.mat
+load 5_4_gen_qu0.1.mat
 
 %% Linearizations
 
@@ -48,7 +48,7 @@ Aplist(:,:,2) = Alist(:,:,3); Bplist(:,:,2) = Blist(:,:,3); Cplist(:,2) = Clist(
 [Aplist(:,:,3), Bplist(:,:,3), Cplist(:,3)] = generate_full_matrix(coefp_20, linp_20);
 
 %% Discrete System Matricies
-[Adplist(:,:,1), Bdplist(:,:,2)] = generateDiscreteSystem(coefp_min20, linp_min20);
+[Adplist(:,:,1), Bdplist(:,:,1)] = generateDiscreteSystem(coefp_min20, linp_min20);
 Adplist(:,:,2) = Adlist(:,:,3); Bdplist(:,:,2) = Bdlist(:,:,3);
 [Adplist(:,:,3), Bdplist(:,:,3)] = generateDiscreteSystem(coefp_20, linp_20);
 

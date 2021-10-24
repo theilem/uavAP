@@ -62,7 +62,7 @@ struct GainSchedulingParams
 	}
 
 	inline Eigen::Matrix<FloatingType, rows, cols, Eigen::DontAlign>
-	calculateGainsGaussian(const std::unordered_map<std::string, FloatingType>& state)
+	calculateGainsGaussian(const std::unordered_map<std::string, FloatingType>& state) const
 	{
 		using MatrixType = decltype(calculateGainsGaussian(state));
 //		std::cout << "Current State:" << mapToStr(state) << "\n";
@@ -115,20 +115,21 @@ struct GainSchedulingParams
 	}
 
 	inline Eigen::Matrix<FloatingType, rows, cols, Eigen::DontAlign>
-	calculateGainsNearest(const std::unordered_map<std::string, FloatingType>& state)
+	calculateGainsNearest(const std::unordered_map<std::string, FloatingType>& state) const
 	{
-		return regions()[_calculateNearestIdx(state)].k();
+		auto n = calculateNearestIdx(state);
+		return regions()[n].k();
 	}
 
 	inline std::unordered_map<std::string, FloatingType>
-	calculateSetpointNearest(const std::unordered_map<std::string, FloatingType>& state)
+	calculateSetpointNearest(const std::unordered_map<std::string, FloatingType>& state) const
 	{
-		return regions()[_calculateNearestIdx(state)].setpoint();
+		return regions()[calculateNearestIdx(state)].setpoint();
 	}
 
-private:
+
 	inline size_t
-	_calculateNearestIdx(const std::unordered_map<std::string, FloatingType>& state)
+	calculateNearestIdx(const std::unordered_map<std::string, FloatingType>& state) const
 	{
 		std::vector<FloatingType> weights;
 		weights.reserve(regions().size());

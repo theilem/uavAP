@@ -17,20 +17,22 @@
 
 struct MultiSimplexParams
 {
+	// Length 7, first 5 equilibrium states second 2 nonequilibrium
 	Parameter<GainSchedulingParams<9, 9>> a_d = {{}, "Ad", true};
 	Parameter<GainSchedulingParams<9, 4>> b_d = {{}, "Bd", true};
+	Parameter<GainSchedulingParams<9>> c = {{}, "C", true};
 	Parameter<GainSchedulingParams<9>> ss = {{}, "ss", true};
 	Parameter<GainSchedulingParams<4>> trim = {{}, "trim", true};
-	Parameter<GainSchedulingParams<9, 9>> p = {{}, "p", true};
 
+	// Length 5
+	Parameter<GainSchedulingParams<9, 9>> p = {{}, "p", true};
 	Parameter<GainSchedulingParams<4, 9>> k = {{}, "k", true};
 
+	//Length 2
 	Parameter<GainSchedulingParams<2, 5>> kp_long = {{}, "kp_long", true};
 	Parameter<GainSchedulingParams<2, 4>> kp_lat = {{}, "kp_lat", true};
-
 	Parameter<GainSchedulingParams<9>> ssp = {{}, "ssp", true};
 	Parameter<GainSchedulingParams<4>> trimp = {{}, "trimp", true};
-
 	Parameter<GainSchedulingParams<5>> cp_long = {{}, "cp_long", true};
 
 	Parameter<std::string> r20_long_path = {"", "r20_long_path", true};
@@ -46,9 +48,10 @@ struct MultiSimplexParams
 		c & a_d;
 		c & b_d;
 		c & ss;
+		c & this->c;
 		c & trim;
-		c & p;
 
+		c & p;
 		c & k;
 
 		c & kp_long;
