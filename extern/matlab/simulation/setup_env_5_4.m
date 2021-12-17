@@ -14,6 +14,12 @@ lin_0 = loadJson('/home/seedship/TUM/SS21/Thesis/multi-SI/linearization/20_0/lin
 lin_20 = loadJson('/home/seedship/TUM/SS21/Thesis/multi-SI/linearization/20_20/lin.json');
 lin_40 = loadJson('/home/seedship/TUM/SS21/Thesis/multi-SI/linearization/20_40/lin.json');
 
+lin25_min40 = loadJson('/home/seedship/TUM/SS21/Thesis/multi-SI/linearization/25_-40/lin.json');
+lin25_min20 = loadJson('/home/seedship/TUM/SS21/Thesis/multi-SI/linearization/25_-20/lin.json');
+lin25_0 = loadJson('/home/seedship/TUM/SS21/Thesis/multi-SI/linearization/25_0/lin.json');
+lin25_20 = loadJson('/home/seedship/TUM/SS21/Thesis/multi-SI/linearization/25_20/lin.json');
+lin25_40 = loadJson('/home/seedship/TUM/SS21/Thesis/multi-SI/linearization/25_40/lin.json');
+
 linp_min20 = loadJson('/home/seedship/TUM/SS21/Thesis/multi-SI/linearization/pitch/-20/lin.json');
 linp_20 = loadJson('/home/seedship/TUM/SS21/Thesis/multi-SI/linearization/pitch/20/lin.json');
 
@@ -25,15 +31,21 @@ coef_0 = regression20(lin_0);
 coef_20 = regression20(lin_20);
 coef_40 = regression20(lin_40);
 
+coef25_min40 = regression25(lin25_min40);
+coef25_min20 = regression25(lin25_min20);
+coef25_0 = regression25(lin25_0);
+coef25_20 = regression25(lin25_20);
+coef25_40 = regression25(lin25_40);
+
 coefp_min20 = regression20(linp_min20);
 coefp_20 = regression20(linp_20);
 
 %% Indexing arrays
 % global idxPhi;
-idxPhi = [lin_min40.phi, lin_min20.phi, lin_0.phi, lin_20.phi, lin_40.phi];
+idxPhi = [lin_min40.phi, lin_min20.phi, lin_0.phi, lin_20.phi, lin_40.phi linp_min20.phi linp_20.phi];
 
 % global idxTheta;
-idxTheta = [linp_min20.theta, lin_0.theta, linp_20.theta];
+idxTheta = [lin_min40.theta, lin_min20.theta, lin_0.theta, lin_20.theta, lin_40.theta linp_min20.theta linp_20.theta];
 
 %% Continuous System Matricies
 [Alist(:,:,1), Blist(:,:,1), Clist(:,1)] = generate_full_matrix(coef_min40, lin_min40);
@@ -41,6 +53,12 @@ idxTheta = [linp_min20.theta, lin_0.theta, linp_20.theta];
 [Alist(:,:,3), Blist(:,:,3), Clist(:,3)] = generate_full_matrix(coef_0, lin_0);
 [Alist(:,:,4), Blist(:,:,4), Clist(:,4)] = generate_full_matrix(coef_20, lin_20);
 [Alist(:,:,5), Blist(:,:,5), Clist(:,5)] = generate_full_matrix(coef_40, lin_40);
+
+[Alist25(:,:,1), Blist25(:,:,1), Clist25(:,1)] = generate_full_matrix(coef25_min40, lin25_min40);
+[Alist25(:,:,2), Blist25(:,:,2), Clist25(:,2)] = generate_full_matrix(coef25_min20, lin25_min20);
+[Alist25(:,:,3), Blist25(:,:,3), Clist25(:,3)] = generate_full_matrix(coef25_0, lin25_0);
+[Alist25(:,:,4), Blist25(:,:,4), Clist25(:,4)] = generate_full_matrix(coef25_20, lin25_20);
+[Alist25(:,:,5), Blist25(:,:,5), Clist25(:,5)] = generate_full_matrix(coef25_40, lin25_40);
 
 
 [Aplist(:,:,1), Bplist(:,:,1), Cplist(:,1)] = generate_full_matrix(coefp_min20, linp_min20);
@@ -102,6 +120,12 @@ trimlist(:, 3) = [lin_0.pitch_ctrl, lin_0.throttle_ctrl, lin_0.roll_ctrl, lin_0.
 trimlist(:, 4) = [lin_20.pitch_ctrl, lin_20.throttle_ctrl, lin_20.roll_ctrl, lin_20.yaw_ctrl];
 trimlist(:, 5) = [lin_40.pitch_ctrl, lin_40.throttle_ctrl, lin_40.roll_ctrl, lin_40.yaw_ctrl];
 
+trimlist25(:, 1) = [lin25_min40.pitch_ctrl, lin25_min40.throttle_ctrl, lin25_min40.roll_ctrl, lin25_min40.yaw_ctrl];
+trimlist25(:, 2) = [lin25_min20.pitch_ctrl, lin25_min20.throttle_ctrl, lin25_min20.roll_ctrl, lin25_min20.yaw_ctrl];
+trimlist25(:, 3) = [lin25_0.pitch_ctrl, lin25_0.throttle_ctrl, lin25_0.roll_ctrl, lin25_0.yaw_ctrl];
+trimlist25(:, 4) = [lin25_20.pitch_ctrl, lin25_20.throttle_ctrl, lin25_20.roll_ctrl, lin25_20.yaw_ctrl];
+trimlist25(:, 5) = [lin25_40.pitch_ctrl, lin25_40.throttle_ctrl, lin25_40.roll_ctrl, lin25_40.yaw_ctrl];
+
 trimplist(:, 1) = [linp_min20.pitch_ctrl, linp_min20.throttle_ctrl, linp_min20.roll_ctrl, linp_min20.yaw_ctrl];
 trimplist(:, 2) = trimlist(:, 3);
 trimplist(:, 3) = [linp_20.pitch_ctrl, linp_20.throttle_ctrl, linp_20.roll_ctrl, linp_20.yaw_ctrl];
@@ -114,9 +138,17 @@ sslist(:, 3) = [lin_0.u, lin_0.w, lin_0.q, lin_0.theta, lin_0.v, lin_0.p, lin_0.
 sslist(:, 4) = [lin_20.u, lin_20.w, lin_20.q, lin_20.theta, lin_20.v, lin_20.p, lin_20.r, lin_20.phi, 0, 0];
 sslist(:, 5) = [lin_40.u, lin_40.w, lin_40.q, lin_40.theta, lin_40.v, lin_40.p, lin_40.r, lin_40.phi, 0, 0];
 
+sslist25(:, 1) = [lin25_min40.u, lin25_min40.w, lin25_min40.q, lin25_min40.theta, lin25_min40.v, lin25_min40.p, lin25_min40.r, lin25_min40.phi, 0, 0];
+sslist25(:, 2) = [lin25_min20.u, lin25_min20.w, lin25_min20.q, lin25_min20.theta, lin25_min20.v, lin25_min20.p, lin25_min20.r, lin25_min20.phi, 0, 0];
+sslist25(:, 3) = [lin25_0.u, lin25_0.w, lin25_0.q, lin25_0.theta, lin25_0.v, lin25_0.p, lin25_0.r, lin25_0.phi, 0, 0];
+sslist25(:, 4) = [lin25_20.u, lin25_20.w, lin25_20.q, lin25_20.theta, lin25_20.v, lin25_20.p, lin25_20.r, lin25_20.phi, 0, 0];
+sslist25(:, 5) = [lin25_40.u, lin25_40.w, lin25_40.q, lin25_40.theta, lin25_40.v, lin25_40.p, lin25_40.r, lin25_40.phi, 0, 0];
+
 ssplist(:, 1) = [linp_min20.u, linp_min20.w, linp_min20.q, linp_min20.theta, linp_min20.v, linp_min20.p, linp_min20.r, linp_min20.phi, 0, 0];
 ssplist(:, 2) = sslist(:, 3);
 ssplist(:, 3) = [linp_20.u, linp_20.w, linp_20.q, linp_20.theta, linp_20.v, linp_20.p, linp_20.r, linp_20.phi, 0, 0];
+
+
 
 %% Reachability tensors
 [long20_A, long20_b] = polyArrayToTensor(Rp0_20_long);

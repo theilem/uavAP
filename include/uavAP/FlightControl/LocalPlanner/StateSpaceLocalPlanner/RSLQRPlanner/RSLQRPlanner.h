@@ -85,9 +85,6 @@ private:
 	FloatingType outputPitch_;
 	FloatingType outputRoll_;
 
-	// Temporary printing
-	std::ofstream logfile_;
-
 	void
 	populateControlEnv();
 

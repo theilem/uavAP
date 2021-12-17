@@ -103,16 +103,12 @@ private:
 
 	bool safetyController_;
 
-	std::ofstream logfile_;
-
 	ReachabilitySet<5> r20_long;
 	ReachabilitySet<4> r20_lat;
 	ReachabilitySet<5> rmin20_long;
 	ReachabilitySet<4> rmin20_lat;
 
 	OverridableValue<FloatingType> safetyAlt_;
-
-
 
 	int safetyCtrl_phiIdx;
 	int safetyCtrl_thetaIdx;

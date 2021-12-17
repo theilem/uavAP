@@ -1,8 +1,10 @@
-function [xs, ys] = gridPlotReachability(polyArray, dimX, dimY, minX, maxX, minY, maxY, color, alpha, state)
+function [xs, ys] = gridPlotReachability(polyArray, dimX, dimY, minX, maxX, minY, maxY, color, alpha, state, plot)
     numX = 100;
     numY = 100;
     
-    
+    if nargin < 11
+        plot = 1;
+    end
     if nargin < 10
         Ashape = size(polyArray(1).A);
         state = zeros(Ashape(2), 1);
@@ -30,7 +32,10 @@ function [xs, ys] = gridPlotReachability(polyArray, dimX, dimY, minX, maxX, minY
             end
         end
     end
-    scatter(xs, ys, color, 's', 'filled', 'MarkerFaceAlpha', alpha,'MarkerEdgeAlpha', alpha)
+    if plot
+        scatter(xs, ys, 40, color, 'filled', 's',  'MarkerFaceAlpha', alpha,'MarkerEdgeAlpha', alpha);
+%         scatter(xs, ys, 's', color, 'filled', 'MarkerFaceAlpha', alpha,'MarkerEdgeAlpha', alpha)
+    end
 %     scatter(xs, ys, 'r', 'o', 'filled', 'MarkerFaceAlpha',.2,'MarkerEdgeAlpha',.2)
 end
 

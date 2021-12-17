@@ -19,6 +19,8 @@ Bc = [zeros(4, 4);
 
 %% Controller Generation
 Kc = lqrd(Ac, Bc, Qc, Rc, 1/F);
+fprintf('controller')
+eig(Ac - Bc * Kc)
 
 %% Planner Matrix
 Ap = [zeros(2,14), eye(2); zeros(12, 2), Ac - Bc * Kc, zeros(12, 2); zeros(2, 6), [Hlong, Hlat; Psi_long, Psi_lat], zeros(2,2)];
@@ -30,6 +32,8 @@ Qp(1,1) = 10; % Altitude tracking
 Qp(2,2) = 10; % Heading tracking
 Rp = eye(2);
 Kp = lqrd(Ap, Bp, Qp, Rp, 1/F);
+fprintf('planner')
+eig(Ap - Bp * Kp)
 
 return
 

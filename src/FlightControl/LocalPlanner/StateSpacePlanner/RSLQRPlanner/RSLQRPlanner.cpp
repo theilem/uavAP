@@ -63,11 +63,6 @@ RSLQRPlanner::run(RunStage stage)
 			}
 			else
 				CPSLOG_DEBUG << "OverrideHandler not set. Overrides disabled.";
-			// Temporary printing
-			logfile_.open("/tmp/rslqrplanner_log" + std::to_string(timePointToNanoseconds(Clock::now())) + ".csv");
-			logfile_ << "timestamp,u_c,theta_c,phi_c,h_c,psi_c,target_e,target_n,deviation_e,deviation_n,deviation_u\n";
-			logfile_ << std::scientific;
-			logfile_.precision(10);
 			break;
 		}
 		case RunStage::NORMAL:
@@ -289,14 +284,11 @@ RSLQRPlanner::calculateControllerTarget(const Vector3& position_enu, double head
 	// Pitch
 	if (auto controller = get<RSLQRController>())
 	{
-		VectorN<16> state;// = {controller->getState(), positionDeviation.z()};
+		VectorN<16> state;
 		auto controllerState = controller->getState();
 		// TODO fix with initializer lists when eigen 3.4 comes out
 		state[0] = -positionDeviation.z(); // error defined as current - target
 		state[1] = boundAngleRad(heading_ned - headingTarget_()());
-//		std::cout << "Heading:" << heading_ned << "\n";
-//		std::cout << "Heading Target:" << headingTarget_()() << "\n";
-//		std::cout << "Heading Error:" << state[1] << "\n";
 		state[2] = controllerState[0];
 		state[3] = controllerState[1];
 		state[4] = controllerState[2];
@@ -330,15 +322,6 @@ RSLQRPlanner::calculateControllerTarget(const Vector3& position_enu, double head
 		controllerTarget.climbAngle = (controllerTargetPitch_ = 0);
 		controllerTarget.yawRate = (controllerTargetRoll_ = 0);
 	}
-
-//	logfile_ << "timestamp,u_c,theta_c,phi_c,h_c,psi_c,target_e,target_n,deviation_e,deviation_n,deviation_u\n";
-
-#define SEP <<','<<
-	logfile_ << durationToNanoseconds(sensorData_.timestamp.time_since_epoch()) SEP controllerTarget.velocity SEP
-			 controllerTarget.climbAngle SEP controllerTarget.yawRate SEP positionTargetU_ SEP headingTarget_() SEP
-			 positionTargetE_ SEP positionTargetN_ SEP positionDeviation.x()
-			 SEP positionDeviation.y() SEP positionDeviation.z() << "\n";
-#undef SEP
 
 	return controllerTarget;
 }

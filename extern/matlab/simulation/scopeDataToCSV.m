@@ -21,11 +21,12 @@ function [header, csvDat] = scopeDataToCSV(scopeData, outPath)
               "safety_ctrl", ...
               "safety_phi_idx", ...
               "safety_theta_idx", ...
-              "h_c", "psi_c", "u_c", "theta_c", "v_c", "phi_c"
+              "h_c", "psi_c", "u_c", "theta_c", "v_c", "phi_c", "safe"
               ];
     if nargin >= 2
         fid = fopen(outPath,'w'); 
-        fprintf(fid,'%s,',header);
+        fprintf(fid,'%s,',header(1:end-1));
+        fprintf(fid,'%s',header(end));
         fprintf(fid,'\n');
         fclose(fid);
         %write data to end of file

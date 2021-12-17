@@ -15,7 +15,7 @@ function [Kr, Rp, ActuationLimits, LinearizationLimits, Limits, InitialEllipsoid
 
     Q = 0.001 * eye(4);
     Q = zeros(4);
-    Q(1,1) = 1;
+    Q(1,1) = 0.1;
     Q(4,4) = 10;
     R = eye(2);
 

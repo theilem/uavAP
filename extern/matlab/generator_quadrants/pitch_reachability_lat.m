@@ -42,8 +42,8 @@ function [Kr, Rp, ActuationLimits, LinearizationLimits, Limits, InitialEllipsoid
 
     LinearizationLimits = Polyhedron('A', Abound, 'b', Bbound);
     x = sdpvar(4,1);
-%     Fu = [-1 - tu <= Kr * x;
-%           Kr * x <= 1 - tu];
+%     Fu = [-1 - tu <= -Kr * x;
+%           -Kr * x <= 1 - tu];
 %     ActuationLimits = Polyhedron(Fu);
     ActuationLimits = Polyhedron('A', [-Kr; Kr], 'b', [1 - tu; 1 + tu]);
     Limits = intersect(ActuationLimits, LinearizationLimits);

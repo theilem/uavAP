@@ -51,8 +51,6 @@ RSLQRController::run(RunStage stage)
 
 			if (auto dh = get<DataHandling>())
 			{
-//				dh->addStatusFunction<std::map<PIDs, PIDStatus>>(
-//						[this](){return getStatus();}, Content::PID_STATUS);
 				dh->addTriggeredStatusFunction<PIDParams, DataRequest>([this](const DataRequest& request){return getDummyPIDParams(request);},
 						Content::PID_PARAMS, Content::REQUEST_DATA);
 			}
