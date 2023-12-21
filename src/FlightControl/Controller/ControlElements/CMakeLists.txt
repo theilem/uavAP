@@ -23,7 +23,7 @@ add_library(control SHARED 	ControlEnvironment.cpp
 		Filter/LowPassFilterAngle.cpp)
 					
 target_link_libraries(control
-		Eigen3::Eigen)
+		)
 
 install(TARGETS control OPTIONAL
 		LIBRARY DESTINATION lib

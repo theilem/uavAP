@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-add_executable(SharedMemoryInit SharedMemoryInit)
+add_executable(SharedMemoryInit SharedMemoryInit.cpp)
 
 target_link_libraries(SharedMemoryInit  uavap_core
                                         cps_core)

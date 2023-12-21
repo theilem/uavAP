@@ -45,8 +45,9 @@ DataHandling::run(RunStage stage)
 				std::string publication = EnumMap<Target>::convert(params.target()) + "_to_comm";
 				CPSLOG_DEBUG << "Publishing to " << publication;
 				auto ipc = get<IPC>();
-
-				publisher_ = ipc->publishPackets(publication);
+				IPCOptions options;
+				options.multiTarget = false;
+				publisher_ = ipc->publishPackets(publication, options);
 			}
 
 
@@ -71,8 +72,10 @@ DataHandling::run(RunStage stage)
 				std::string subscription = "comm_to_" + EnumMap<Target>::convert(params.target());
 				auto ipc = get<IPC>();
 
+				IPCOptions options;
+				options.multiTarget = false;
 				ipc->subscribeOnPackets(subscription,
-										std::bind(&DataHandling::onPacket, this, std::placeholders::_1));
+										std::bind(&DataHandling::onPacket, this, std::placeholders::_1), options);
 			}
 
 
@@ -87,7 +90,7 @@ DataHandling::run(RunStage stage)
 void
 DataHandling::onPacket(const Packet& packet)
 {
-	for (const auto& packetSub : packetSubscriptions_)
+	for (const auto& packetSub: packetSubscriptions_)
 	{
 		packetSub(packet);
 	}
@@ -108,7 +111,7 @@ DataHandling::onPacket(const Packet& packet)
 		return;
 	}
 
-	for (const auto& k : it->second)
+	for (const auto& k: it->second)
 	{
 		k(p);
 	}
@@ -117,7 +120,7 @@ DataHandling::onPacket(const Packet& packet)
 void
 DataHandling::sendStatus()
 {
-	for (const auto& it : statusPackaging_)
+	for (const auto& it: statusPackaging_)
 	{
 		publish(it());
 	}

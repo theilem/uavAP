@@ -7,7 +7,7 @@
 #include <uavAP/Core/Frames/VehicleOneFrame.h>
 
 VehicleOneFrame::VehicleOneFrame() :
-		yaw_(0)
+		yaw_(0), origin_(0,0,0)
 {
 }
 

@@ -9,21 +9,21 @@
     "network": {
         "redis": {
             "hosts": {
-                "localhost": {
-                    "ip": "127.0.0.1",
+                "remote": {
+                    "ip": "192.168.3.21",
                     "auth": "",
                     "port": 6379
                 }
             },
             "sub": {
                 "ground_station": {
-                    "host": "localhost",
+                    "host": "remote",
                     "channel": "to_uavap"
                 }
             },
             "pub": {
                 "ground_station": {
-                    "host": "localhost",
+                    "host": "remote",
                     "channel": "to_uavgs"
                 }
             }

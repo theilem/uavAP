@@ -15,14 +15,12 @@ target_link_libraries(uavap_flight_control control
         ${BOOST}
         rt
         pthread
-        Eigen3::Eigen
         )
 
 add_executable(FlightControl FlightControl.cpp
         )
 
 target_link_libraries(FlightControl uavap_flight_control cps_core
-        Eigen3::Eigen
         )
 
 install(TARGETS FlightControl uavap_flight_control

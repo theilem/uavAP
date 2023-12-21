@@ -140,6 +140,7 @@ struct SensorData
 	TimePoint timestamp;            //!< Timestamp of SensorEnum data
 	uint32_t sequenceNumber;
 
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 template<typename RetType>

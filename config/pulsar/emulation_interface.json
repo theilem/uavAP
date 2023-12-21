@@ -1,0 +1,34 @@
+{
+	"agg_autopilot_api": {
+	},
+	"network": {
+		"redis": {
+			"hosts": {
+				"xplane": {
+					"ip": "192.168.3.21",
+					"auth": "",
+					"port": 6379
+				}
+			},
+			"sub": {
+				"sensor_data": {
+					"host": "xplane",
+					"channel": "to_uavap_emu"
+				}
+			},
+			"pub": {
+				"controller_output": {
+					"host": "xplane",
+					"channel": "to_uavee"
+				}
+			}
+		}
+	},
+	"emulation_direct_interface": {
+		"sensor_data_target": "sensor_data",
+		"controller_output_target": "controller_output"
+	},
+	"data_presentation": {
+		"compress_double": true
+	}
+}

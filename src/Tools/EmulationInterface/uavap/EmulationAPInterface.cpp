@@ -9,7 +9,7 @@
 #include <uavAP/API/ap_ext/ApExtManager.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
 #include <cpsCore/Utilities/IDC/IDC.h>
-#include <cpsCore/Utilities/IDC/NetworkLayer/Serial/SerialNetworkParams.h>
+#include <cpsCore/Utilities/IDC/NetworkLayer/Serial/SerialNetworkLayerParams.h>
 
 #include "UTMToLatLong.h"
 #include "EmulationAPInterface.h"

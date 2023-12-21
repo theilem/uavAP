@@ -34,12 +34,14 @@ IDCComm::run(RunStage stage)
 
 			auto ipc = get<IPC>();
 
+			IPCOptions options;
+			options.multiTarget = false;
 			for (int k = static_cast<int>(Target::INVALID) + 1;
 				 k < static_cast<int>(Target::COMMUNICATION); k++)
 			{
 				publishers_.push_back(
 						ipc->publishPackets(
-								"comm_to_" + EnumMap<Target>::convert(static_cast<Target>(k))));
+								"comm_to_" + EnumMap<Target>::convert(static_cast<Target>(k)), options));
 			}
 
 			auto idc = get<IDC>();
@@ -57,7 +59,7 @@ IDCComm::run(RunStage stage)
 			auto ipc = get<IPC>();
 
 			IPCOptions options;
-			options.multiTarget = true;
+			options.multiTarget = false;
 			options.retry = true;
 
 			subscriptions_ = std::vector<Subscription>(static_cast<int>(Target::COMMUNICATION) - 1);

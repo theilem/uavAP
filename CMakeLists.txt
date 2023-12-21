@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.0.0)
 project (uavAP)
 
 #######Build configuration########
@@ -9,6 +9,14 @@ if(NO_DL)
 	add_definitions(-DNO_DL)
 endif(NO_DL)
 
+if (DEPLOY_PATH)
+	message(STATUS "Deploying to ${DEPLOY_PATH}")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32 -static-libstdc++")
+	link_directories(BEFORE	${DEPLOY_PATH}/lib/			)
+	set(CMAKE_INSTALL_PREFIX ${DEPLOY_PATH})
+	set(LINK_STATIC)
+endif(DEPLOY_PATH)
+
 #Set Variable inputs
 #set(EIGEN_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/eigen3/"
 #		"${LIBRARY_ROOT_DIR}/usr/include/eigen3/")
@@ -16,9 +24,8 @@ endif(NO_DL)
 #		"${LIBRARY_ROOT_DIR}/usr/lib/")
 #set(Boost_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/"
 #		"${LIBRARY_ROOT_DIR}/usr/include/")
-find_package(Eigen3 REQUIRED NO_MODULE)
-find_package(Boost REQUIRED COMPONENTS system)
 
+include_directories(/usr/include/eigen3/)
 #message(INFO ${Boost_INCLUDE_DIR})
 #message(INFO ${Eigen3_DIR})
 
@@ -40,25 +47,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -fPIC -Wall -Wno-int-i
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
 include_directories(	${CMAKE_SOURCE_DIR}/include)
-#						${Boost_INCLUDE_DIRS}
-#						${EIGEN_INCLUDE_DIRS})
 			
 
 link_directories(	${Boost_LIBRARY_DIRS}
 					)
 					
 if(LINK_STATIC)
-	set(BOOST 	#libboost_filesystem.a
-				libboost_system.a
-				)
 	set(ARB 	libarb.a
 				libmpfr.a
 				libgmp.a
 				libflint.a)
 else(LINK_STATIC)
-	set(BOOST 	#boost_filesystem
-				boost_system
-				)
 	set(ARB 	arb
 				mpfr
 				gmp

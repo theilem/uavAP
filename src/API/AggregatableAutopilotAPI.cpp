@@ -60,10 +60,6 @@ AggregatableAutopilotAPI::run(RunStage stage)
 				CPSLOG_ERROR << "Dependencies missing";
 				return true;
 			}
-			break;
-		}
-		case RunStage::NORMAL:
-		{
 			auto ipc = get<IPC>();
 			IPCOptions ipcOpts;
 			ipcOpts.retry = true;
@@ -71,6 +67,13 @@ AggregatableAutopilotAPI::run(RunStage stage)
 			sensorDataPublisher_ = ipc->publish<SensorData>("sensor_data");
 			servoDataPublisher_ = ipc->publish<ServoData>("servo_data");
 			powerDataPublisher_ = ipc->publish<PowerData>("power_data");
+			break;
+		}
+		case RunStage::NORMAL:
+		{
+			auto ipc = get<IPC>();
+			IPCOptions ipcOpts;
+			ipcOpts.retry = true;
 
 			ipc->subscribe<ControllerOutput>("actuation", std::bind(&AggregatableAutopilotAPI::onControllerOut, this,
 																	std::placeholders::_1), ipcOpts);
@@ -95,7 +98,8 @@ AggregatableAutopilotAPI::tryConnectControllerOut()
 	CPSLOG_DEBUG << "Try connect to controller out.";
 	auto ipc = get<IPC>();
 	controllerOutSubscription_ = ipc->subscribe<ControllerOutput>("actuation",
-																  std::bind(&AggregatableAutopilotAPI::onControllerOut, this,
+																  std::bind(&AggregatableAutopilotAPI::onControllerOut,
+																			this,
 																			std::placeholders::_1));
 	if (!controllerOutSubscription_.connected())
 	{

@@ -23,6 +23,8 @@
  *      Author: mircot
  */
 
+#include <thread>
+
 #include <boost/property_tree/json_parser.hpp>
 
 #include <cpsCore/Synchronization/SynchronizedRunnerMaster.h>
