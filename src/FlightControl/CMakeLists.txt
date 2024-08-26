@@ -10,10 +10,10 @@ add_library(uavap_flight_control SHARED ${FLIGHT_CONTROL_SRC})
 
 target_link_libraries(uavap_flight_control control
         uavap_core
-        cps_core
+        ${CPS_CORE_LIB}
         uavap_mission_control
         ${BOOST}
-        rt
+        ${SYSTEM_LIBS}
         pthread
         )
 

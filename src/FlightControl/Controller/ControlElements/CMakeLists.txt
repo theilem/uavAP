@@ -23,6 +23,7 @@ add_library(control SHARED 	ControlEnvironment.cpp
 		Filter/LowPassFilterAngle.cpp)
 					
 target_link_libraries(control
+		${CPS_CORE_LIB}
 		)
 
 install(TARGETS control OPTIONAL

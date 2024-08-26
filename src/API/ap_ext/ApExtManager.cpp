@@ -147,10 +147,11 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 						   - boost::posix_time::ptime(
 						boost::posix_time::special_values::min_date_time);
 
-				Duration duration = Hours(imuSample->imu_time_hour)
+				Nanoseconds duration = Hours(imuSample->imu_time_hour)
 									+ Minutes(imuSample->imu_time_minute) + Seconds(imuSample->imu_time_second)
 									+ Nanoseconds(imuSample->imu_time_nano);
-				sens.timestamp = TimePoint(duration) + Nanoseconds(dur.total_nanoseconds());
+				sens.timestamp = TimePoint(std::chrono::duration_cast<TimePoint::duration>(
+					duration + Nanoseconds(dur.total_nanoseconds())));
 			} catch (std::out_of_range& err)
 			{
 				CPSLOG_DEBUG << "Time is not valid. " << err.what();

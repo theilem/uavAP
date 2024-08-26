@@ -30,11 +30,11 @@ set(CORE_SRC 	${CORE_SRC}
 add_library(uavap_core SHARED ${CORE_SRC})
 
 target_link_libraries(uavap_core
-									${REDIS}
+									${CPP_REDIS_LIB}
 									pthread
-									rt
+									${SYSTEM_LIBS}
 									dl
-									cps_core
+									${CPS_CORE_LIB}
 									)
 
 add_custom_target(core DEPENDS uavap_core uavap_framework_api)
