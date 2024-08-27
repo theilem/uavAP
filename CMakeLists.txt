@@ -1,9 +1,11 @@
-cmake_minimum_required(VERSION 3.5.0)
+cmake_minimum_required(VERSION 3.13)
 project(uavAP)
 
 #######Build configuration########
 
 option(NO_DL "Deactivate dynamic linking in the Plugin Manager." OFF)
+option(GS "Build the Ground Station." OFF)
+option(CORE "Always build cps_core." OFF)
 
 if (NO_DL)
     add_definitions(-DNO_DL)
@@ -22,12 +24,13 @@ find_package(Boost REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIRS})
 
+
 find_library(CPS_CORE_LIBRARY cpsCore)
-if (CPS_CORE_LIBRARY)
+if (CPS_CORE_LIBRARY AND NOT CORE)
 	set(CPS_CORE_LIB ${CPS_CORE_LIBRARY})
-else(CPS_CORE_LIBRARY)
+else(CPS_CORE_LIBRARY AND NOT CORE)
 	set(CPS_CORE_LIB cps_core)
-endif (CPS_CORE_LIBRARY)
+endif (CPS_CORE_LIBRARY AND NOT CORE)
 
 #Set Variable inputs
 #set(EIGEN_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/eigen3/"
@@ -94,8 +97,11 @@ include_directories(${SUBMODULE_DIR}/cpsCore/include)
 
 add_subdirectory(${SUBMODULE_DIR}/cpsCore)
 add_subdirectory(src)
-add_subdirectory(${SUBMODULE_DIR}/uavGS)
 add_subdirectory(test)
+
+if (GS)
+    add_subdirectory(${SUBMODULE_DIR}/uavGS)
+endif (GS)
 
 install(DIRECTORY include/uavAP DESTINATION include)
 install(DIRECTORY config DESTINATION .) 
