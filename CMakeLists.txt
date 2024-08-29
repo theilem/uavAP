@@ -106,6 +106,7 @@ endif (GS)
 
 if (XPLANE)
     add_subdirectory(${SUBMODULE_DIR}/uavEE)
+    include_directories(${SUBMODULE_DIR}/uavEE/include)
 endif (XPLANE)
 
 install(DIRECTORY include/uavAP DESTINATION include)

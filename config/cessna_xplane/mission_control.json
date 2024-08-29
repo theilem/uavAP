@@ -18,7 +18,8 @@
 	},
 	"global_planner": {
 		"spline": {
-			"tau": 0.6
+			"tau": 0.6,
+			"orbit_radius": 1000
 		}
 	},
 	"mission_planner": {
@@ -26,6 +27,7 @@
 			"use_approach": false,
 			"default_velocity": 60,
 			"default_altitude": 1500,
+			"default_mission": "simple",
 			"missions": {
 				"simple": {
 					"velocity": 60,
