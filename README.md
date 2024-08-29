@@ -20,9 +20,14 @@ For uavGS
 sudo apt install libqt5svg5-dev qtbase5-dev
 ```
 
-## Cloning and Compiling
+For XPlane Interface
+```shell script
+sudo apt install redis-server
+```
 
-For full installation of uavAP with GroundStation and XPlane Interface
+## Cloning, Compiling, and Installing
+
+For full installation of uavAP with the GroundStation (uavGS) and XPlane Interface
 ```shell script
 git clone https://github.com/theilem/uavAP.git --recurse-submodules
 
@@ -35,6 +40,52 @@ sudo make install
 ```
 
 To not compile uavGS or the XPlane Interface, set the respective flags to 0. The default is 0 for both.
+
+### Setup the XPlane Interface
+After installing X-Plane 11, the XPlane Interface can be set up by creating symbolic links to the installed uavEE plugin.
+Navigate to the X-Plane 11 directory and create a symbolic link to the installed plugin.
+```shell script
+# link the plugin to the X-Plane 11 directory
+mkdir -p Resources/plugins/uavAP/64
+ln -s /usr/local/lib/lin.xpl ./Resources/plugins/uavAP/64/lin.xpl
+# link the configurations directory
+ln -s /usr/local/config/uavEE/config ./uavEEConfig
+```
+
+## Running the Autopilot (in X-Plane 11)
+To run the autopilot, start the X-Plane 11 simulator and load the desired aircraft (Cessna Skyhawk). Select Piatt County and a 3nm approach. After launching the simulation, activate the plugin:
+- Press P to pause the simulation
+- Click on plugins -> uavEE -> Select Config -> .../sitl.json
+- Click on plugins -> uavEE -> Start Node
+- Start the autopilot with the following command in a separate terminal:
+```shell script
+cd /usr/local/bin
+./uavAP/Watchdog ../config/uavAP/cessna_xplane.json
+```
+- Start the GroundStation with the following command in a separate terminal:
+```shell script
+cd /usr/local/bin
+./uavGS ../config/uavGS/cessna_xplane.json
+```
+- Click on plugins -> uavEE -> Enable Autopilot
+- Press P to resume the simulation
+
+### Using uavGS
+In the GroundStation, first request the parameters from the autopilot:
+- Click "Request Params" in the top left field -- this will request the PID cascade parameters from the autopilot
+- Click "Update Lists" on the bottom left -- this will update the lists of possible missions (and maneuvers)
+- Select a mission, e.g., validation, and click "Send Mission"
+- Click on "Request Mission" and "Request Trajectory" on the top right and zoom out to zoom level 12
+- Watch it fly 
+
+## Common Issues
+### Shared Memory
+When the autopilot or other components are not functioning as expected or the sensor data is jumping randomly, there may be some shared memory issue.
+The issue arises when uavAP is not properly shut down and the shared memory is not released. To fix this issue, the shared memory can be manually removed.
+```shell script
+# remove shared memory (this will remove all shared memory)
+rm /dev/shm/*
+```
 
 ## Control Stack
 
