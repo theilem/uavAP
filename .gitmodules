@@ -10,3 +10,7 @@
 	path = extern/uavGS
 	url = https://github.com/theilem/uavGS
 	branch = main
+[submodule "extern/uavEE"]
+	path = extern/uavEE
+	url = https://github.com/theilem/uavEE.git
+	branch = main

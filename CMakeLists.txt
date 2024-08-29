@@ -5,6 +5,7 @@ project(uavAP)
 
 option(NO_DL "Deactivate dynamic linking in the Plugin Manager." OFF)
 option(GS "Build the Ground Station." OFF)
+option(XPLANE "Build the XPlane Plugin." OFF)
 option(CORE "Always build cps_core." OFF)
 
 if (NO_DL)
@@ -102,6 +103,10 @@ add_subdirectory(test)
 if (GS)
     add_subdirectory(${SUBMODULE_DIR}/uavGS)
 endif (GS)
+
+if (XPLANE)
+    add_subdirectory(${SUBMODULE_DIR}/uavEE)
+endif (XPLANE)
 
 install(DIRECTORY include/uavAP DESTINATION include)
 install(DIRECTORY config DESTINATION .) 
