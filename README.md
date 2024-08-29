@@ -10,21 +10,31 @@ The required operating system is a Linux distribution. The provided setup script
 
 
 ## Dependencies
- - cpsCore (https://github.com/theilem/cpsCore.git)
+For uavAP with cpsCore
+```shell script
+sudo apt install build-essential cmake g++ libeigen3-dev libboost-system-dev
+```
+
+For uavGS 
+```shell script
+sudo apt install libqt5svg5-dev qtbase5-dev
+```
 
 ## Cloning and Compiling
 
+For full installation of uavAP with GroundStation and XPlane Interface
 ```shell script
-git clone https://github.com/theilem/uavAP.git
+git clone https://github.com/theilem/uavAP.git --recurse-submodules
 
 cd uavAP
-mkdir -p bld/release && cd bld/release
+mkdir bld && cd bld
 
-cmake -DCMAKE_BUILD_TYPE=Release ../../
-make
-make install
+cmake -DCMAKE_BUILD_TYPE=Release -DGS=1 -DXPLANE=1 ../
+make -j{number of cores}
+sudo make install
 ```
 
+To not compile uavGS or the XPlane Interface, set the respective flags to 0. The default is 0 for both.
 
 ## Control Stack
 
