@@ -35,7 +35,7 @@ cd uavAP
 mkdir bld && cd bld
 
 cmake -DCMAKE_BUILD_TYPE=Release -DGS=1 -DXPLANE=1 ../
-make -j{number of cores}
+make -j$(nproc)
 sudo make install
 ```
 
@@ -45,11 +45,12 @@ To not compile uavGS or the XPlane Interface, set the respective flags to 0. The
 After installing X-Plane 11, the XPlane Interface can be set up by creating symbolic links to the installed uavEE plugin.
 Navigate to the X-Plane 11 directory and create a symbolic link to the installed plugin.
 ```shell script
+# cd to X-Plane 11 directory
 # link the plugin to the X-Plane 11 directory
 mkdir -p Resources/plugins/uavAP/64
-ln -s /usr/local/lib/lin.xpl ./Resources/plugins/uavAP/64/lin.xpl
+sudo ln -s /usr/local/lib/lin.xpl ./Resources/plugins/uavAP/64/lin.xpl
 # link the configurations directory
-ln -s /usr/local/config/uavEE/config ./uavEEConfig
+sudo ln -s /usr/local/config/uavEE/config ./uavEEConfig
 ```
 
 ## Running the Autopilot (in X-Plane 11)
@@ -60,7 +61,7 @@ To run the autopilot, start the X-Plane 11 simulator and load the desired aircra
 - Start the autopilot with the following command in a separate terminal:
 ```shell script
 cd /usr/local/bin
-./uavAP/Watchdog ../config/uavAP/cessna_xplane.json
+./uavAP/Watchdog ../config/cessna_xplane.json
 ```
 - Start the GroundStation with the following command in a separate terminal:
 ```shell script
