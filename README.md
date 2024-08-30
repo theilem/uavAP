@@ -48,9 +48,9 @@ Navigate to the X-Plane 11 directory and create a symbolic link to the installed
 # cd to X-Plane 11 directory
 # link the plugin to the X-Plane 11 directory
 mkdir -p Resources/plugins/uavAP/64
-sudo ln -s /usr/local/lib/lin.xpl ./Resources/plugins/uavAP/64/lin.xpl
+ln -s /usr/local/lib/lin.xpl ./Resources/plugins/uavAP/64/lin.xpl
 # link the configurations directory
-sudo ln -s /usr/local/config/uavEE/config ./uavEEConfig
+ln -s /usr/local/config/uavEE/config ./uavEEConfig
 ```
 
 ## Running the Autopilot (in X-Plane 11)
