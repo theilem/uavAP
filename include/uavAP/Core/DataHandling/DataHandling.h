@@ -53,6 +53,14 @@ public:
 	void
 	addConfig(Object* obj, Content configContent);
 
+	template<class ParameterSet>
+	void
+	addMember(ParameterSet* member, Content content, const std::function<void(void)>& callback);
+
+	template<class ParameterSet>
+	void
+	addMember(ParameterSet* member, Content content);
+
 	template<typename Type>
 	void
 	sendData(const Type& data, Content content, Target target = Target::BROADCAST);
@@ -91,6 +99,10 @@ private:
 	void
 	getConfig(Object* obj, Content configContent, Content trigger);
 
+	template<class ParameterSet>
+	void
+	getMember(ParameterSet* member, Content content, Content trigger);
+
 	void
 	publish(const Packet& packet);
 
@@ -104,6 +116,7 @@ private:
 
 	Publisher<Packet> publisher_;
 	IDCSender sender_;
+	Subscription ipcSubscription_;
 };
 
 template<typename Type>
@@ -201,6 +214,37 @@ DataHandling::addConfig(Object* obj, Content configContent)
 
 }
 
+template<class ParameterSet>
+void
+DataHandling::addMember(ParameterSet *member, Content content, const std::function<void()> &callback)
+{
+	std::function<void
+		(const Content&)> func = std::bind(&DataHandling::getMember<ParameterSet>, this,
+										   member, content, std::placeholders::_1);
+	subscribeOnData(Content::REQUEST_MEMBER, func);
+	subscribeOnData<ParameterSet>(content, [member, callback](const auto& p)
+	{
+		*member = p;
+		callback();
+	});
+
+}
+
+template<class ParameterSet>
+void
+DataHandling::addMember(ParameterSet *member, Content content)
+{
+	std::function<void
+		(const Content&)> func = std::bind(&DataHandling::getMember<ParameterSet>, this,
+										   member, content, std::placeholders::_1);
+	subscribeOnData(Content::REQUEST_MEMBER, func);
+	subscribeOnData<ParameterSet>(content, [member](const auto& p)
+	{
+		*member = p;
+	});
+
+}
+
 template<class Object>
 void
 DataHandling::getConfig(Object* obj, Content configContent, Content trigger)
@@ -215,6 +259,24 @@ DataHandling::getConfig(Object* obj, Content configContent, Content trigger)
 	}
 	auto packet = dp->serialize(obj->getParams());
 	dp->addHeader(packet, configContent);
+	publish(packet);
+}
+
+
+template<class ParameterSet>
+void
+DataHandling::getMember(ParameterSet* member, Content content, Content trigger)
+{
+	if (trigger != content)
+		return;
+	auto dp = get<DataPresentation>();
+	if (!dp)
+	{
+		CPSLOG_ERROR << "Data Presentation Missing, cannot create packet.";
+		return;
+	}
+	auto packet = dp->serialize(*member);
+	dp->addHeader(packet, content);
 	publish(packet);
 }
 

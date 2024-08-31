@@ -74,8 +74,8 @@ DataHandling::run(RunStage stage)
 
 				IPCOptions options;
 				options.multiTarget = false;
-				ipc->subscribeOnPackets(subscription,
-										std::bind(&DataHandling::onPacket, this, std::placeholders::_1), options);
+				ipcSubscription_ = ipc->subscribeOnPackets(subscription,
+					std::bind(&DataHandling::onPacket, this, std::placeholders::_1), options);
 			}
 
 

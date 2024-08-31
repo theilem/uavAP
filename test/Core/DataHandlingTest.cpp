@@ -75,13 +75,15 @@ TEST_CASE("Data Handling Test")
 
 	dataHandling->subscribeOnData(Content::SENSOR_DATA, std::function<void
 	(const SensorData&)>(commandFunction));
-	auto pub = ipc->publishPackets("comm_to_flight_control");
+	IPCOptions options;
+	options.multiTarget = false;
+	auto pub = ipc->publishPackets("comm_to_flight_control", options);
 
 	SimpleRunner runner(agg);
 
 	CHECK(!runner.runAllStages());
 	ipc->subscribeOnPackets("flight_control_to_comm",
-			std::bind(onPacket, std::placeholders::_1, dp));
+			std::bind(onPacket, std::placeholders::_1, dp), options);
 
 	auto scheduler = agg.getOne<MicroSimulator>();
 

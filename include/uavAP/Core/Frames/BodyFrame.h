@@ -65,6 +65,8 @@ private:
 	void
 	initInvert() const;
 
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	Vector3 origin_;
 	Vector3 rotation_;
 

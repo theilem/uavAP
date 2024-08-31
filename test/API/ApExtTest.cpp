@@ -17,7 +17,7 @@ TEST_CASE("General ApExtTest")
 	setConfigPath(TestInfo::getInstance().testDir + "API/config/ap_ext.json");
 	REQUIRE(ap_ext_setup() == 0);
 
-	auto agg = getAggregator();
+	auto& agg = getAggregator();
 
 	CHECK_FALSE(agg.empty());
 	CHECK(agg.getOne<IScheduler>());
@@ -37,7 +37,7 @@ TEST_CASE("LinearSensorManager in ApExt")
 	setConfigPath(TestInfo::getInstance().testDir + "API/config/ap_ext.json");
 	REQUIRE(ap_ext_setup() == 0);
 
-	auto agg = getAggregator();
+	auto& agg = getAggregator();
 
 	CHECK_FALSE(agg.empty());
 	CHECK(agg.getOne<IScheduler>());
