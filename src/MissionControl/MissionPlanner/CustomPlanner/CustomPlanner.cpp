@@ -17,11 +17,6 @@
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
 #include <cpsCore/Utilities/IPC/IPC.h>
 
-CustomPlanner::CustomPlanner() :
-		defaultVelocity_(0), defaultAltitude_(100.0), useApproach_(false)
-{
-}
-
 bool
 CustomPlanner::run(RunStage stage)
 {

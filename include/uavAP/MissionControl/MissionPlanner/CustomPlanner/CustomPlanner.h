@@ -45,7 +45,7 @@ public:
 
 	static constexpr TypeId typeId = "custom";
 
-	CustomPlanner();
+	CustomPlanner() = default;
 
 	bool
 	run(RunStage stage) override;
@@ -79,10 +79,6 @@ private:
 	void
 	onSensorData(const SensorData& data);
 
-
-	double defaultVelocity_;
-	double defaultAltitude_;
-	bool useApproach_;
 
 	Subscription sensorDataSubscription_;
 
