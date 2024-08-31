@@ -27,6 +27,8 @@
 #define UAVAP_CORE_FRAMES_BODYFRAME_H_
 #include <uavAP/Core/Frames/IFrame.h>
 
+
+#endif /* UAVAP_CORE_FRAMES_BODYFRAME_H_ */
 class BodyFrame : public IFrame
 {
 public:
@@ -65,8 +67,6 @@ private:
 	void
 	initInvert() const;
 
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
 	Vector3 origin_;
 	Vector3 rotation_;
 
@@ -74,7 +74,3 @@ private:
 	mutable Eigen::Matrix3d rotationMatrixInv_;
 	mutable bool invInitialized_;
 };
-
-
-
-#endif /* UAVAP_CORE_FRAMES_BODYFRAME_H_ */

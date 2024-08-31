@@ -27,6 +27,7 @@
 BodyFrame::BodyFrame(const Vector3& rotation, const Vector3& origin) :
 		origin_(origin), rotation_(rotation), invInitialized_(false)
 {
+	// Fix this Eigen align issue
 	rotationMatrix_ = Eigen::AngleAxisd(-rotation[0], Vector3::UnitX())
 			* Eigen::AngleAxisd(-rotation[1], Vector3::UnitY())
 			* Eigen::AngleAxisd(-rotation[2], Vector3::UnitZ());
