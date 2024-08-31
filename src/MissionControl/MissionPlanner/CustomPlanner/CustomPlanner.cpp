@@ -130,7 +130,7 @@ CustomPlanner::publishMission()
 
 	Mission mission = currentMission_->second;
 
-	if (useApproach_)
+	if (params.useApproach())
 	{
 		std::unique_lock<std::mutex> lock(positionMutex_);
 		Waypoint wp;
