@@ -31,4 +31,4 @@ install(TARGETS autopilot  OPTIONAL
 install(FILES autopilot.json OPTIONAL DESTINATION config) 
 
 		
-configure_file(${PROJECT_SOURCE_DIR}/test/FullAutopilot/autopilot.json ${CMAKE_BINARY_DIR}/test/FullAutopilot/autopilot.json COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/tests/FullAutopilot/autopilot.json ${CMAKE_BINARY_DIR}/test/FullAutopilot/autopilot.json COPYONLY)

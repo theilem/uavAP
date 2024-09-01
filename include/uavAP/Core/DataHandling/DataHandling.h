@@ -32,8 +32,7 @@ public:
 
 	template<typename Type>
 	void
-	subscribeOnData(Content content, std::function<void
-			(const Type&)> commandFunc);
+	subscribeOnData(Content content, std::function<void(const Type&)> commandFunc);
 
 	template<typename Type>
 	void

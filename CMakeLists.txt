@@ -25,38 +25,8 @@ find_package(Boost REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIRS})
 
+set(CPS_CORE_LIB cps_core cps_framework_api)
 
-find_library(CPS_CORE_LIBRARY cpsCore)
-if (CPS_CORE_LIBRARY AND NOT CORE)
-	set(CPS_CORE_LIB ${CPS_CORE_LIBRARY})
-else(CPS_CORE_LIBRARY AND NOT CORE)
-	set(CPS_CORE_LIB cps_core)
-endif (CPS_CORE_LIBRARY AND NOT CORE)
-
-#Set Variable inputs
-#set(EIGEN_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/eigen3/"
-#		"${LIBRARY_ROOT_DIR}/usr/include/eigen3/")
-#set(Boost_LIBRARY_DIRS "${LIBRARY_ROOT_DIR}/usr/local/lib/"
-#		"${LIBRARY_ROOT_DIR}/usr/lib/")
-#set(Boost_INCLUDE_DIRS "${LIBRARY_ROOT_DIR}/usr/local/include/"
-#		"${LIBRARY_ROOT_DIR}/usr/include/")
-
-#message(INFO ${Boost_INCLUDE_DIR})
-#message(INFO ${Eigen3_DIR})
-
-#if (CMAKE_COMPILER_IS_GNUCC)
-#
-#    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.0.0)
-#        message(STATUS "g++ version older than 6.0.0. Cannot use c++17 features (e.g. shared_mutex), setting c++11 as CXX compiler flag")
-#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-#    else (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.0.0)
-#        message(STATUS "Using c++17")
-#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z")
-#    endif (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.0.0)
-#else (CMAKE_COMPILER_IS_GNUCC)
-#    message(STATUS "Using c++17")
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z")
-#endif (CMAKE_COMPILER_IS_GNUCC)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -static-libstdc++ -fPIC -Wall -Wno-int-in-bool-context -Wno-parentheses")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
@@ -96,9 +66,13 @@ set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY true)
 set(SUBMODULE_DIR ${CMAKE_SOURCE_DIR}/extern)
 include_directories(${SUBMODULE_DIR}/cpsCore/include)
 
+set(CPS_CORE_DONT_BUILD_TESTS ON)
+set(TEST_SRCS )
 add_subdirectory(${SUBMODULE_DIR}/cpsCore)
 add_subdirectory(src)
-add_subdirectory(test)
+add_subdirectory(tests)
+# Print the test sources
+message(STATUS "Test sources: ${TEST_SRCS}")
 
 if (GS)
     add_subdirectory(${SUBMODULE_DIR}/uavGS)
