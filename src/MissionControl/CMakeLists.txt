@@ -49,7 +49,7 @@ target_link_libraries(uavap_mission_control 	uavap_core
 add_executable(MissionControl   MissionControl.cpp)
 
 target_link_libraries(MissionControl    uavap_mission_control
-										#uavap_mission_control_geo
+										uavap_flight_control
 										cps_core
                                         )
                                         

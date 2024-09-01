@@ -33,7 +33,7 @@ public:
 
 	static constexpr TypeId typeId = "local_frame";
 
-	LocalFrameManager();
+	LocalFrameManager() = default;
 
 	bool
 	run(RunStage stage) override;

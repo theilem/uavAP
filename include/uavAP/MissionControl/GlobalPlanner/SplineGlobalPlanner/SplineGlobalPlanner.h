@@ -24,7 +24,7 @@ class DataPresentation;
 class DataHandling;
 
 class SplineGlobalPlanner : public IGlobalPlanner,
-							public AggregatableObject<ILocalPlanner, IPC, DataPresentation, DataHandling>,
+							public AggregatableObject<ILocalPlanner, DataHandling>,
 							public ConfigurableObject<SplineGlobalPlannerParams>,
 							public IRunnableObject
 {
@@ -55,9 +55,6 @@ private:
 	missionRequest(const DataRequest& request);
 
 	Mission mission_;
-
-	Publisher<Packet> trajectoryPublisher_;
-
 };
 
 #endif /* UAVAP_MISSIONCONTROL_GLOBALPLANNER_SPLINEGLOBALPLANNER_SPLINEGLOBALPLANNER_H_ */

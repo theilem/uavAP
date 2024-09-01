@@ -27,22 +27,16 @@
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_LOCALPLANNERFACTORY_H_
 
 #include <cpsCore/Framework/StaticFactory.h>
+
+#include "ForwardingLocalPlanner/ForwardingLocalPlanner.h"
 #include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlanner.h"
 #include "uavAP/FlightControl/LocalPlanner/ManeuverLocalPlanner/ManeuverLocalPlanner.h"
 
-//class LocalPlannerFactory: public Factory<ILocalPlanner>
-//{
-//public:
-//
-//	LocalPlannerFactory()
-//	{
-//		addCreator<LinearLocalPlanner>();
-//		addConfigurable<ManeuverLocalPlanner>();
-//	}
-//
-//};
 
-using LocalPlannerFactory = StaticFactory<ILocalPlanner, false, LinearLocalPlanner, ManeuverLocalPlanner>;
+using LocalPlannerFactory = StaticFactory<ILocalPlanner, false,
+                                          LinearLocalPlanner,
+                                          ManeuverLocalPlanner,
+                                          ForwardingLocalPlanner>;
 
 #endif /* UAVAP_FLIGHTCONTROL_LOCALPLANNER_LOCALPLANNERFACTORY_H_ */

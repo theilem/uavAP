@@ -76,6 +76,7 @@ enum class Content
 	CRITICAL_POINTS,			//!< Critical points from geofencing
 	MISC_VALUES,
 	OVERRIDE_LIST,
+	MEMBER_DATA, 	//!< Content used for all member data. The member type is defined in the following string header.
 
 	//GS to FlightControl in UAVAP
 	TUNE_PID,               	//!< TUNE_PID

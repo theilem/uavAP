@@ -10,10 +10,6 @@
 #include <uavAP/Core/DataHandling/Content.hpp>
 #include <uavAP/Core/DataHandling/DataHandling.h>
 
-LocalFrameManager::LocalFrameManager()
-{
-}
-
 bool
 LocalFrameManager::run(RunStage stage)
 {

@@ -101,7 +101,21 @@ DataHandling::onPacket(const Packet& packet)
 		return;
 	}
 	auto p = packet;
-	Content content = dp->extractHeader<Content>(p);
+	auto content = dp->extractHeader<Content>(p);
+
+	if (content == Content::MEMBER_DATA)
+	{
+		auto memberId = dp->extractHeader<std::string>(p);
+		auto it = memberSubscribers_.find(memberId);
+		if (it == memberSubscribers_.end())
+		{
+			CPSLOG_WARN << "Packet with Member Data content for " << memberId
+						<< " received, but no subscribers";
+			return;
+		}
+		it->second(p);
+		return;
+	}
 
 	auto it = subscribers_.find(content);
 	if (it == subscribers_.end())
