@@ -74,7 +74,7 @@
 		"period": 200,
 		"target": "flight_control",
 		"use_adaptive_period": true,
-		"min_period": 100,
+		"min_period": 200,
 		"max_period": 1000,
 		"increment": 1.1,
 		"decrement": 0.99
@@ -86,8 +86,8 @@
 	"override_safety": {
 		"period": 10,
 		"rectanguloid": {
-			"major_side_length": 200,
-			"minor_side_length": 100,
+			"major_side_length": 800,
+			"minor_side_length": 400,
 			"major_side_orientation": 0,
 			"height": 100,
 			"center": [

@@ -57,7 +57,12 @@ ApExtManager::run(RunStage stage)
 
 			if (auto dh = get<DataHandling>())
 			{
-				dh->addStatusFunction<std::map<std::string, FloatingType>>([this](){return this->getMiscValues();}, Content::MISC_VALUES);
+				if (auto lsm = get<LinearSensorManager>())
+				{
+					dh->addStatusFunction<std::map<std::string, FloatingType>>([this]()
+																				{ return this->getMiscValues(); },
+																				Content::MISC_VALUES);
+				}
 			}
 
 			break;

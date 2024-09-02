@@ -14,7 +14,7 @@ ForwardingLocalPlanner::run(RunStage stage)
     {
     case RunStage::INIT:
         {
-            if (checkIsSetAll())
+            if (!checkIsSetAll())
             {
                 CPSLOG_ERROR << "ForwardingLocalPlanner: missing dependencies";
                 return true;
