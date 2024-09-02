@@ -1,0 +1,22 @@
+{
+	"binary_path": "/usr/local/bin/uavAP/",
+	"config_path": "/usr/local/config/avistar_big/",
+	"processes": {
+		"flight_control": {
+			"binary": "FlightControl",
+			"config": "flight_control.json"
+		},
+		"flight_analysis": {
+			"binary": "FlightAnalysis",
+			"config": "flight_analysis.json"
+		},
+		"mission_control": {
+			"binary": "MissionControl",
+			"config": "mission_control.json"
+		},
+		"communication": {
+			"binary": "Communication",
+			"config": "communication.json"
+		}
+	}
+}

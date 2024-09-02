@@ -107,6 +107,9 @@ private:
     void
     publish(const Packet& packet);
 
+    void
+    adaptPeriod(bool queueFull);
+
     std::vector<std::function<Packet
         ()>> statusPackaging_;
 
@@ -121,6 +124,8 @@ private:
     Publisher<Packet> publisher_;
     IDCSender sender_;
     Subscription ipcSubscription_;
+    Event statusEvent_;
+    int currentPeriod_;
 };
 
 template <typename Type>

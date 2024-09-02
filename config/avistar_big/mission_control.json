@@ -1,0 +1,68 @@
+{
+	"data_handling": {
+		"period": 200,
+		"target": "mission_control"
+	},
+	"local_frame": {
+		"origin": [
+			367826.57,
+			4435393.06,
+			168
+		],
+		"yaw": 47
+	},
+	"global_planner": {
+		"spline": {
+			"tau": 0.6
+		}
+	},
+	"mission_planner": {
+		"custom": {
+			"use_approach": false,
+			"default_velocity": 20,
+			"default_altitude": 100,
+			"missions": {
+				"simple": {
+					"velocity": 20,
+					"infinite": true,
+					"offset": [0,0,150],
+					"waypoints": [
+						{"location": [150,80,0]},
+						{"location": [150,-80,0]},
+						{"location": [-150,-80,0]},
+						{"location": [-150,80,0]}
+					]
+				},
+				"validation": {
+					"velocity": 20,
+					"infinite": true,
+					"offset": [0,0,100],
+					"waypoints": [
+						{"location": [300,150,0]},
+						{"location": [300,-150,0]},
+						{"location": [150,-150,0]},
+						{"location": [-150,-150,50]},
+						{"location": [-300,-150,50]},
+						{"location": [-300,150,50]},
+						{"location": [-150,150,50]},
+						{"location": [150,150,0]}
+					]
+				},
+				"race_track": {
+					"velocity": 20,
+					"infinite": true,
+					"offset": [0,0,100],
+					"waypoints": [
+						{"location": [-250,80,0], "direction": [500,0,0]},
+						{"location": [250,80,0], "direction": [500,0,0]},
+						{"location": [250,-80,0], "direction": [-500,0,0]},
+						{"location": [-250,-80,0], "direction": [-500,0,0]}
+					]
+				}
+			}
+		}
+	},
+	"data_presentation": {
+		"compress_double": true
+	}
+}

@@ -16,6 +16,8 @@
 #include <cpsCore/Framework/StaticHelper.h>
 #include <cpsCore/Utilities/Scheduler/SchedulerFactory.h>
 
+#include <boost/interprocess/ipc/message_queue.hpp>
+
 namespace
 {
     using DataHandlingTestDefaultHelper = StaticHelper<MicroSimulator,
@@ -59,15 +61,6 @@ namespace
         CHECK(data.position.x() == 5);
         CHECK(data.position.y() == 2);
         CHECK(data.position.z() == 1);
-    }
-
-    void onPacketMember(const Packet& packet, std::shared_ptr<DataPresentation> dp)
-    {
-        auto p = packet;
-        Content content = dp->extractHeader<Content>(p);
-        CHECK(content == Content::MEMBER_DATA);
-        int data = dp->deserialize<int>(p);
-        CHECK(data == 5);
     }
 }
 
@@ -146,7 +139,6 @@ TEST_CASE("Data Handling Test 2: Members")
     ipc->subscribeOnPackets("flight_control_to_comm",
                             [&packet](const Packet& p)
                             {
-                                std::cout << "Packet received: " << p.getBuffer() << std::endl;
                                 packet = p;
                             }, opt);
 
@@ -164,6 +156,74 @@ TEST_CASE("Data Handling Test 2: Members")
     std::cout << "Packet size: " << packet.getSize() << std::endl;
 
 
-
     // dataHandling->addMember(&testObject.testParam, Content::PAR
+}
+
+TEST_CASE("Data Handling Adaptive Period")
+{
+    CPSLogger::LogLevelScope logLevel(LogLevel::ERROR);
+    auto agg = DataHandlingTestHelper::createAggregation(
+        test_info::test_dir() + "/Core/config/datahandling2.json");
+
+    SimpleRunner runner(agg);
+    CHECK_FALSE(runner.runStage(RunStage::INIT));
+    auto dh = agg.getOne<DataHandling>();
+    auto scheduler = agg.getOne<MicroSimulator>();
+    scheduler->setMainThread();
+    auto statusMessageTiming = std::vector<int>();
+    dh->addStatusFunction<SensorData>([scheduler, &statusMessageTiming]()
+    {
+        statusMessageTiming.push_back(std::chrono::duration_cast<Milliseconds>(scheduler->timeSinceStart()).count());
+        return SensorData();
+    }, Content::SENSOR_DATA);
+    CHECK_FALSE(runner.runStage(RunStage::NORMAL));
+    //Status Events: 0, 100, 200, 300, 400, 500, 600, 700, 800, 900, (1000 full) -> period 150
+    //Status Events: 1150 -> period 225, 1375 -> period 338, 1713 -> period 507
+    //Status Events: 2220 -> period 761, 2981 -> period 1000, 3981 -> period 1000
+    scheduler->simulate(Seconds(4));
+    CHECK(statusMessageTiming.size() == 17);
+    CHECK(statusMessageTiming[0] == 0);
+    CHECK(statusMessageTiming[1] == 100);
+    CHECK(statusMessageTiming[2] == 200);
+    CHECK(statusMessageTiming[3] == 300);
+    CHECK(statusMessageTiming[4] == 400);
+    CHECK(statusMessageTiming[5] == 500);
+    CHECK(statusMessageTiming[6] == 600);
+    CHECK(statusMessageTiming[7] == 700);
+    CHECK(statusMessageTiming[8] == 800);
+    CHECK(statusMessageTiming[9] == 900);
+    CHECK(statusMessageTiming[10] == 1000);
+    CHECK(statusMessageTiming[11] == 1150);
+    CHECK(statusMessageTiming[12] == 1375);
+    CHECK(statusMessageTiming[13] == 1713);
+    CHECK(statusMessageTiming[14] == 2220);
+    CHECK(statusMessageTiming[15] == 2981);
+    CHECK(statusMessageTiming[16] == 3981);
+    statusMessageTiming.clear();
+
+    auto messageQueue = boost::interprocess::message_queue(boost::interprocess::open_only, "flight_control_to_comm");
+    CHECK(messageQueue.get_num_msg() == 10);
+    boost::interprocess::message_queue::size_type recvdSize;
+    unsigned int priority;
+    std::vector<char> message;
+    message.resize(messageQueue.get_max_msg_size());
+    for (int i = 0; i < 10; i++)
+        messageQueue.receive(message.data(), message.size(), recvdSize, priority);
+
+    //Status Event Periods: 1000, 800, 640, 512, 409, 327,      261, 208, 166, 132
+    //Status Event Timings: 4981, 5781, 6421, 6933, 7342, 7669, 7930, 8138, 8304, 8436
+    scheduler->simulate(Milliseconds(4500));
+    CHECK(statusMessageTiming.size() == 10);
+    CHECK(statusMessageTiming[0] == 4981);
+    CHECK(statusMessageTiming[1] == 5781);
+    CHECK(statusMessageTiming[2] == 6421);
+    CHECK(statusMessageTiming[3] == 6933);
+    CHECK(statusMessageTiming[4] == 7342);
+    CHECK(statusMessageTiming[5] == 7669);
+    CHECK(statusMessageTiming[6] == 7930);
+    CHECK(statusMessageTiming[7] == 8138);
+    CHECK(statusMessageTiming[8] == 8304);
+    CHECK(statusMessageTiming[9] == 8436);
+
+
 }

@@ -6,3 +6,4 @@ set(TEST_SRCS ${TEST_SRCS}
         PARENT_SCOPE)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config/datahandling1.json ${CMAKE_BINARY_DIR}/tests/Core/config/datahandling1.json COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config/datahandling2.json ${CMAKE_BINARY_DIR}/tests/Core/config/datahandling2.json COPYONLY)

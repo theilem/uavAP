@@ -1,0 +1,12 @@
+{
+    "data_handling": {
+        "target": "flight_control",
+        "period": 100,
+        "use_adaptive_period": true,
+        "min_period": 100,
+        "max_period": 1000,
+        "increment": 1.5,
+        "decrement": 0.8
+    },
+    "ipc": {}
+}
