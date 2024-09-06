@@ -28,6 +28,7 @@
 
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h"
 #include <iostream>
+#include <uavAP/Core/SensorData.h>
 
 struct Line: public IPathSection, public EigenLine
 {
@@ -43,9 +44,9 @@ struct Line: public IPathSection, public EigenLine
 	}
 
 	void
-	updatePosition(const Vector3& pos) override
+	updateSensorData(const SensorData& data) override
 	{
-		currentPosition_ = pos;
+		currentPosition_ = data.position;
 	}
 
 	bool

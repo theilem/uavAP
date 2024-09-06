@@ -12,14 +12,6 @@ if (NO_DL)
     add_definitions(-DNO_DL)
 endif (NO_DL)
 
-if (DEPLOY_PATH)
-    message(STATUS "Deploying to ${DEPLOY_PATH}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32 -static-libstdc++")
-    link_directories(BEFORE ${DEPLOY_PATH}/lib/)
-    set(CMAKE_INSTALL_PREFIX ${DEPLOY_PATH})
-    set(LINK_STATIC)
-endif (DEPLOY_PATH)
-
 find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
@@ -28,7 +20,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 set(CPS_CORE_LIB cps_core cps_framework_api)
 
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -static-libstdc++ -fPIC -Wall -Wno-int-in-bool-context -Wno-parentheses")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fPIC -Wall -Wno-int-in-bool-context -Wno-parentheses")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
@@ -72,7 +64,6 @@ add_subdirectory(${SUBMODULE_DIR}/cpsCore)
 add_subdirectory(src)
 add_subdirectory(tests)
 # Print the test sources
-message(STATUS "Test sources: ${TEST_SRCS}")
 
 if (GS)
     add_subdirectory(${SUBMODULE_DIR}/uavGS)

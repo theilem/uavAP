@@ -28,43 +28,44 @@
 
 #include "cpsCore/Utilities/LinearAlgebra.h"
 
+struct SensorData;
+
 enum class PathSectionType
 {
-	UNKNOWN = 0, CURVE, ORBIT, LINE, SPLINE
+    UNKNOWN = 0, CURVE, ORBIT, LINE, SPLINE
 };
 
 struct IPathSection
 {
+    virtual
+    ~IPathSection() = default;
 
-	virtual
-	~IPathSection()
-	{
-	}
+    // virtual void
+    // updatePosition(const Vector3& pos) = 0;
 
-	virtual void
-	updatePosition(const Vector3& pos) = 0;
+    virtual void
+    updateSensorData(const SensorData& data) = 0;
 
-	virtual bool
-	inTransition() const = 0;
+    virtual bool
+    inTransition() const = 0;
 
-	virtual Vector3
-	getPositionDeviation() const = 0;
+    virtual Vector3
+    getPositionDeviation() const = 0;
 
-	virtual Vector3
-	getDirection() const = 0;
+    virtual Vector3
+    getDirection() const = 0;
 
-	virtual FloatingType
-	getSlope() const = 0;
+    virtual FloatingType
+    getSlope() const = 0;
 
-	virtual FloatingType
-	getCurvature() const = 0;
+    virtual FloatingType
+    getCurvature() const = 0;
 
-	virtual Vector3
-	getEndPoint() const = 0;
+    virtual Vector3
+    getEndPoint() const = 0;
 
-	virtual FloatingType
-	getVelocity() const = 0;
-
+    virtual FloatingType
+    getVelocity() const = 0;
 };
 
 #endif /* UAVAP_CONTROL_GLOBALPLANNER_IPATHSECTION_H_ */

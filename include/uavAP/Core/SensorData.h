@@ -12,6 +12,7 @@
 #include <cpsCore/Utilities/LinearAlgebra.h>
 #include <cpsCore/Utilities/Time.hpp>
 #include <cpsCore/Utilities/EnumMap.hpp>
+#include <cpsCore/Utilities/NamedValue.hpp>
 #include <cpsCore/Utilities/DataPresentation/detail/Split.h>
 
 enum class SensorEnum
@@ -141,6 +142,75 @@ struct SensorData
 	uint32_t sequenceNumber;
 
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+};
+
+struct NamedSensorData
+{
+	static constexpr auto name = "sensor_data";
+	NamedValue<Vector3> position = {Vector3(0., 0., 0.), "position"};
+	NamedValue<Vector3> velocity = {Vector3(0., 0., 0.), "velocity"};
+	NamedValue<Vector3> acceleration = {Vector3(0., 0., 0.), "acceleration"};
+	NamedValue<Vector3> attitude = {Vector3(0., 0., 0.), "attitude"};
+	NamedValue<Vector3> angularRate = {Vector3(0., 0., 0.), "angularRate"};
+	NamedValue<bool> hasGPSFix = {false, "hasGPSFix"};
+	NamedValue<bool> autopilotActive = {false, "autopilotActive"};
+	NamedValue<FloatingType> airSpeed = {0., "airSpeed"};
+	NamedValue<FloatingType> groundSpeed = {0., "groundSpeed"};
+	NamedValue<FloatingType> angleOfAttack = {0., "angleOfAttack"};
+	NamedValue<FloatingType> angleOfSideslip = {0., "angleOfSideslip"};
+	NamedValue<FloatingType> courseAngle = {0., "courseAngle"};
+	NamedValue<FloatingType> pressure = {0., "pressure"};
+	NamedValue<FloatingType> temperature = {0., "temperature"};
+	NamedValue<Frame> frame = {Frame::INERTIAL, "frame"};
+	NamedValue<TimePoint> timestamp = {TimePoint(), "timestamp"};
+	NamedValue<uint32_t> sequenceNumber = {0, "sequenceNumber"};
+
+	NamedSensorData() = default;
+
+	explicit NamedSensorData(const SensorData& sd)
+	{
+		position = sd.position;
+		velocity = sd.velocity;
+		acceleration = sd.acceleration;
+		attitude = sd.attitude;
+		angularRate = sd.angularRate;
+		hasGPSFix = sd.hasGPSFix;
+		autopilotActive = sd.autopilotActive;
+		airSpeed = sd.airSpeed;
+		groundSpeed = sd.groundSpeed;
+		angleOfAttack = sd.angleOfAttack;
+		angleOfSideslip = sd.angleOfSideslip;
+		courseAngle = sd.courseAngle;
+		pressure = sd.pressure;
+		temperature = sd.temperature;
+		frame = sd.frame;
+		timestamp = sd.timestamp;
+		sequenceNumber = sd.sequenceNumber;
+	}
+
+	template <typename Parser>
+	void
+	parse(Parser& p) const
+	{
+		p & position;
+		p & velocity;
+		p & acceleration;
+		p & attitude;
+		p & angularRate;
+		p & hasGPSFix;
+		p & autopilotActive;
+		p & airSpeed;
+		p & groundSpeed;
+		p & angleOfAttack;
+		p & angleOfSideslip;
+		p & courseAngle;
+		p & pressure;
+		p & temperature;
+		p & frame;
+		p & timestamp;
+		p & sequenceNumber;
+	}
+
 };
 
 template<typename RetType>

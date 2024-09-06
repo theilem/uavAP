@@ -3,45 +3,45 @@
 		"maneuver_rate": {
 			"period": 0,
 			"cascade": {
-				"velocity": {
-					"ff": 0.04,
-					"imax": 0.4,
-					"kd": 0,
-					"ki": 0.4,
-					"kp": 0.4
-				},
-				"climb_angle": {
+			    "climb_angle": {
 					"ff": 1,
-					"imax": 0.2,
+					"imax": 0,
 					"kd": 0,
-					"ki": 0.1,
-					"kp": 0.5,
+					"ki": 0,
+					"kp": 0,
 					"is_angle": true
-				},
-				"pitch": {
-					"ff": 0,
-					"imax": 0.4,
-					"kd": 0.1,
-					"ki": 0.4,
-					"kp": 1.2,
-					"is_angle": true
-				},
-				"roll": {
+			    },
+			    "pitch": {
 					"ff": 0,
 					"imax": 0,
 					"kd": 0,
 					"ki": 0,
-					"kp": 3,
+					"kp": 1,
 					"is_angle": true
-				},
-				"roll_rate": {
-					"ff": 0.3,
-					"imax": 0.2,
+			    },
+			    "roll": {
+					"ff": 0,
+					"imax": 0,
 					"kd": 0,
-					"ki": 0.1,
-					"kp": 0.1,
+					"ki": 0,
+					"kp": 1,
 					"is_angle": true
-				},
+			    },
+			    "roll_rate": {
+					"ff": 1,
+					"imax": 0,
+					"kd": 0,
+					"ki": 0,
+					"kp": 0,
+					"is_angle": true
+			    },
+			    "velocity": {
+					"ff": 0.05,
+					"imax": 10.0,
+					"kd": 0,
+					"ki": 0.05,
+					"kp": 0.1
+			    },
 				"roll_constraint": {
 					"min": -45,
 					"max": 45
@@ -63,7 +63,7 @@
 	"local_planner": {
 		"maneuver": {
 			"period": 0,
-			"safety_velocity": 18,
+			"safety_velocity": 20,
 			"k_altitude": 0.8,
 			"k_convergence": 0.01,
 			"k_yaw_rate": 0.65,
@@ -86,13 +86,13 @@
 	"override_safety": {
 		"period": 10,
 		"rectanguloid": {
-			"major_side_length": 800,
-			"minor_side_length": 400,
+			"major_side_length": 1000,
+			"minor_side_length": 500,
 			"major_side_orientation": 0,
 			"height": 100,
 			"center": [
 				0,
-				0,
+				125,
 				150
 			]
 		}

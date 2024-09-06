@@ -27,8 +27,9 @@
 #define UAVAP_FLIGHTCONTROL_CONTROLLER_PIDCONTROLLER_SIMPLEPIDCONTROLLER_IPIDCASCADE_H_
 #include "uavAP/FlightControl/Controller/ControlElements/EvaluableControlElements.h"
 #include "uavAP/FlightControl/Controller/PIDController/PIDMapping.h"
-#include <cpsCore/Configuration/Configuration.hpp>
+#include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
 #include <map>
+
 
 class IPIDCascade
 {
@@ -45,8 +46,8 @@ public:
 	virtual bool
 	tunePitchBounds(FloatingType min, FloatingType max) = 0;
 
-	virtual std::map<PIDs, PIDStatus>
-	getPIDStatus() = 0;
+	virtual PIDStati
+	getPIDStatus() const = 0;
 
 	virtual void
 	evaluate() = 0;

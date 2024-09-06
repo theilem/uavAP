@@ -25,7 +25,7 @@ VehicleOneFrame::toInertialFramePosition(const Vector3& pos) const
 Vector3
 VehicleOneFrame::toInertialFrameDirection(const Vector3& dir) const
 {
-	return Eigen::AngleAxisd(yaw_, Vector3::UnitZ()) * dir;
+	return AngleAxis(yaw_, Vector3::UnitZ()) * dir;
 }
 
 Vector3
@@ -45,14 +45,14 @@ VehicleOneFrame::toInertialFrameCourse(FloatingType chi) const
 Vector3
 VehicleOneFrame::fromFramePosition(const IFrame& orig, const Vector3& pos) const
 {
-	return Eigen::AngleAxisd(-yaw_, Vector3::UnitZ())
+	return AngleAxis(-yaw_, Vector3::UnitZ())
 			* (orig.toInertialFramePosition(pos) - origin_);
 }
 
 Vector3
 VehicleOneFrame::fromFrameDirection(const IFrame& orig, const Vector3& dir) const
 {
-	return Eigen::AngleAxisd(-yaw_, Vector3::UnitZ()) * (orig.toInertialFrameDirection(dir));
+	return AngleAxis(-yaw_, Vector3::UnitZ()) * (orig.toInertialFrameDirection(dir));
 }
 
 Vector3

@@ -71,7 +71,7 @@ public:
 private:
 
 	void
-	createLocalPlan(const Vector3& position, FloatingType heading, bool hasGPSFix);
+	createLocalPlan(const SensorData& data);
 
 	void
 	nextSection();

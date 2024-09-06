@@ -32,10 +32,10 @@
 #include "uavAP/FlightControl/Controller/PIDController/PIDHandling.h"
 #include "uavAP/FlightControl/Controller/PIDController/PIDMapping.h"
 
-class SensorData;
-class ControllerTarget;
-class ControllerOutput;
-class OverrideTarget;
+struct SensorData;
+struct ControllerTarget;
+struct ControllerOutput;
+struct OverrideTarget;
 
 class RateCascade: public IPIDCascade
 {
@@ -63,7 +63,7 @@ public:
 	tunePitchRateBounds(FloatingType min, FloatingType max);
 
 	PIDStati
-	getPIDStatus() override;
+	getPIDStatus() const override;
 
 	void
 	evaluate() override;

@@ -73,20 +73,20 @@ public:
 private:
 
 	void
-	createLocalPlan(const Vector3& position, double heading, bool hasGPSFix);
+	createLocalPlan(const SensorData& data);
 
 	std::shared_ptr<IPathSection>
-	updatePathSection(const Vector3& position);
+	updatePathSection(const SensorData& data);
 
 	void
 	nextSection();
 
 	ControllerTarget
-	calculateControllerTarget(const Vector3& position, double heading,
+	calculateControllerTarget(const SensorData& data,
 							  std::shared_ptr<IPathSection> section);
 
 	Optional<Trajectory>
-	trajectoryRequest(const DataRequest& request);
+	trajectoryRequest(const DataRequest& request) const;
 
 	void
 	onTrajectoryPacket(const Packet& packet);

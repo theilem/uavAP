@@ -35,13 +35,13 @@ Edge::fromPoints(const Vector2& p1, const Vector2& p2)
 	return edge;
 }
 
-double
+FloatingType
 Edge::getDistance(const Vector2& query) const
 {
 	return normal.dot(query - offset);
 }
 
-double
+FloatingType
 Edge::getDistanceAbs(const Vector2& query) const
 {
 	return fabs(getDistance(query));

@@ -25,6 +25,8 @@
 
 #ifndef UAVAP_MISSIONCONTROL_GLOBALPLANNER_PATHSECTIONS_CUBICSPLINE_H_
 #define UAVAP_MISSIONCONTROL_GLOBALPLANNER_PATHSECTIONS_CUBICSPLINE_H_
+#include <uavAP/Core/SensorData.h>
+
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h"
 
 struct CubicSpline: public IPathSection
@@ -42,9 +44,9 @@ struct CubicSpline: public IPathSection
 	}
 
 	void
-	updatePosition(const Vector3& pos) override
+	updateSensorData(const SensorData& data) override
 	{
-		currentPosition_ = pos;
+		currentPosition_ = data.position;
 
 		int maxIter = 10;
 		FloatingType convThreshold = 0.0001;

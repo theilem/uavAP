@@ -14,110 +14,121 @@
 #include <uavAP/Core/OverrideHandler/OverrideHandler.h>
 #include <uavAP/Core/DataHandling/Content.hpp>
 #include <cpsCore/Utilities/Scheduler/IScheduler.h>
+#include <cpsCore/Utilities/TimeProvider/ITimeProvider.h>
 
 ManeuverRatePIDController::ManeuverRatePIDController() :
-		cascade_(sensorData_, target_, output_)
+    cascade_(sensorData_, target_, output_)
 {
 }
 
 bool
 ManeuverRatePIDController::configure(const Configuration& config)
 {
+    PropertyMapper<Configuration> pm(config);
 
-	PropertyMapper<Configuration> pm(config);
+    configureParams(pm);
 
-	configureParams(pm);
-
-	return pm.map();
+    return pm.map();
 }
 
 bool
 ManeuverRatePIDController::run(RunStage stage)
 {
-	switch (stage)
-	{
-		case RunStage::INIT:
-		{
-			if (!checkIsSet<ISensingIO, IActuationIO, IScheduler>())
-			{
-				CPSLOG_ERROR << "ManeuverRatePIDController: Missing Dependencies";
-				return true;
-			}
-			if (!isSet<DataHandling>())
-			{
-				CPSLOG_DEBUG << "ManeuverPIDController: DataHandling not set. Debugging disabled.";
-			}
+    switch (stage)
+    {
+    case RunStage::INIT:
+        {
+            if (!checkIsSet<ISensingIO, IActuationIO, IScheduler>())
+            {
+                CPSLOG_ERROR << "ManeuverRatePIDController: Missing Dependencies";
+                return true;
+            }
+            if (!isSet<DataHandling>())
+            {
+                CPSLOG_DEBUG << "ManeuverPIDController: DataHandling not set. Debugging disabled.";
+            }
 
-			if (auto oh = get<OverrideHandler>())
-				cascade_.registerOverrides(oh);
-			else
-				CPSLOG_DEBUG << "ManeuverPIDController: OverrideHandler not set. Overrides disabled.";
+            if (auto oh = get<OverrideHandler>())
+                cascade_.registerOverrides(oh);
+            else
+                CPSLOG_DEBUG << "ManeuverPIDController: OverrideHandler not set. Overrides disabled.";
 
-			break;
-		}
-		case RunStage::NORMAL:
-		{
-			if (auto dh = get<DataHandling>())
-			{
-				dh->addStatusFunction<std::map<PIDs, PIDStatus>>(
-						std::bind(&IPIDCascade::getPIDStatus, &cascade_), Content::PID_STATUS);
-				dh->subscribeOnData<PIDTuning>(Content::TUNE_PID,
-											   std::bind(&ManeuverRatePIDController::tunePID, this,
-														 std::placeholders::_1));
-				dh->addTriggeredStatusFunction<PIDParams, DataRequest>(
-						std::bind(&ManeuverRateCascade::getPIDParams, &cascade_, std::placeholders::_1),
-						Content::PID_PARAMS, Content::REQUEST_DATA);
+            break;
+        }
+    case RunStage::NORMAL:
+        {
+            if (auto dh = get<DataHandling>())
+            {
+                dh->addStatusFunction<TimedPIDStati>([this]() { return getTimedPIDStati(); }, Content::PID_STATUS);
+                dh->subscribeOnData<PIDTuning>(Content::TUNE_PID,
+                                               std::bind(&ManeuverRatePIDController::tunePID, this,
+                                                         std::placeholders::_1));
+                dh->addTriggeredStatusFunction<PIDParams, DataRequest>(
+                    std::bind(&ManeuverRateCascade::getPIDParams, &cascade_, std::placeholders::_1),
+                    Content::PID_PARAMS, Content::REQUEST_DATA);
 
-			}
+                dh->subscribeOnData<PIDs>(Content::REQUEST_SINGLE_PID_PARAMS, [this](const auto& pid)
+                {
+                    auto params = cascade_.getSinglePIDParams(pid);
+                    auto dh = get<DataHandling>();
+                    dh->sendData<PIDTuning>(PIDTuning{pid, params}, Content::SINGLE_PID_PARAMS);
+                });
+            }
 
-			break;
-		}
-		default:
-		{
-			break;
-		}
-	}
+            break;
+        }
+    default:
+        {
+            break;
+        }
+    }
 
-	return false;
+    return false;
 }
 
 void
 ManeuverRatePIDController::setControllerTarget(const ControllerTarget& target)
 {
+    auto io = get<ISensingIO>();
+    auto actIo = get<IActuationIO>();
+    if (!io || !actIo)
+    {
+        CPSLOG_ERROR << "Cannot calculate control, IO missing";
+        return;
+    }
+    target_ = target;
 
-	auto io = get<ISensingIO>();
-	auto actIo = get<IActuationIO>();
-	if (!io || !actIo)
-	{
-		CPSLOG_ERROR << "Cannot calculate control, IO missing";
-		return;
-	}
-	target_ = target;
+    sensorData_ = io->getSensorData();
 
-	sensorData_ = io->getSensorData();
-
-	actIo->setControllerOutput(getControllerOutput());
-
+    actIo->setControllerOutput(getControllerOutput());
 }
 
 ControllerOutput
 ManeuverRatePIDController::getControllerOutput()
 {
-	Lock l(cascadeMutex_);
-	cascade_.evaluate();
-	return output_;
+    Lock l(cascadeMutex_);
+    cascade_.evaluate();
+    return output_;
 }
 
 void
 ManeuverRatePIDController::tunePID(const PIDTuning& tune)
 {
-	Lock l(cascadeMutex_);
-	cascade_.tunePID(static_cast<PIDs>(tune.pid), tune.params);
+    Lock l(cascadeMutex_);
+    cascade_.tunePID(static_cast<PIDs>(tune.pid), tune.params);
+}
+
+TimedPIDStati
+ManeuverRatePIDController::getTimedPIDStati() const
+{
+    auto now = get<ITimeProvider>()->now();
+    auto stati = cascade_.getPIDStatus();
+    return {now, stati};
 }
 
 void
 ManeuverRatePIDController::setThrottleLimit(FloatingType maxThrottle)
 {
-	Lock l(cascadeMutex_);
-	cascade_.setThrottleLimit(maxThrottle);
+    Lock l(cascadeMutex_);
+    cascade_.setThrottleLimit(maxThrottle);
 }

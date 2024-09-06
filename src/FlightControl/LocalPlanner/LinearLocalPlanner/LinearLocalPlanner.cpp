@@ -138,9 +138,8 @@ LinearLocalPlanner::nextSection()
 }
 
 void
-LinearLocalPlanner::createLocalPlan(const Vector3& position, FloatingType heading, bool hasGPSFix)
+LinearLocalPlanner::createLocalPlan(const SensorData& data)
 {
-
 	Lock lock(trajectoryMutex_);
 	std::shared_ptr<IPathSection> currentSection;
 
@@ -163,7 +162,7 @@ LinearLocalPlanner::createLocalPlan(const Vector3& position, FloatingType headin
 		CPSLOG_ERROR << "Current Section is nullptr. Abort.";
 		return;
 	}
-	currentSection->updatePosition(position);
+	currentSection->updateSensorData(data);
 
 	if (currentSection->inTransition())
 	{
@@ -181,12 +180,12 @@ LinearLocalPlanner::createLocalPlan(const Vector3& position, FloatingType headin
 			CPSLOG_ERROR << "Current Section is nullptr. Abort.";
 			return;
 		}
-		currentSection->updatePosition(position);
+		currentSection->updateSensorData(data);
 	}
 	lock.unlock();
 
-	if (hasGPSFix)
-		controllerTarget_ = evaluate(position, heading, currentSection);
+	if (data.hasGPSFix)
+		controllerTarget_ = evaluate(data.position, data.attitude.z(), currentSection);
 	else
 	{
 		CPSLOG_WARN << "Lost GPS fix. LocalPlanner safety procedure.";
@@ -215,13 +214,7 @@ LinearLocalPlanner::getTrajectory() const
 void
 LinearLocalPlanner::onSensorData(const SensorData& sd)
 {
-	//TODO Lock?
-	Vector3 position = sd.position;
-	FloatingType heading = sd.attitude.z();
-	bool hasFix = sd.hasGPSFix;
-//	uint32_t seq = sd.sequenceNr;
-
-	createLocalPlan(position, heading, hasFix);
+	createLocalPlan(sd);
 }
 
 void
@@ -236,7 +229,7 @@ LinearLocalPlanner::update()
 	}
 
 	SensorData data = sensing->getSensorData();
-	createLocalPlan(data.position, data.attitude.z(), data.hasGPSFix);
+	createLocalPlan(data);
 }
 
 ControllerTarget

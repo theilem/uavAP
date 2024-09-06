@@ -34,6 +34,10 @@
 
 RatePIDController::RatePIDController()
 {
+	// TODO Fixes needed before running this:
+	// - Make configurable
+	// - Make PIDStatus a TimedPIDStati
+	throw std::runtime_error("RatePIDController not updated. Fix Todos first.");
 }
 
 std::shared_ptr<RatePIDController>
@@ -88,7 +92,7 @@ RatePIDController::run(RunStage stage)
 
 		if (auto dh = get<DataHandling>())
 		{
-			dh->addStatusFunction<std::map<PIDs, PIDStatus>>(
+			dh->addStatusFunction<PIDStati>(
 					std::bind(&IPIDCascade::getPIDStatus, pidCascade_), Content::PID_STATUS);
 			dh->subscribeOnData<PIDTuning>(Content::TUNE_PID,
 					std::bind(&RatePIDController::tunePID, this, std::placeholders::_1));
@@ -138,10 +142,10 @@ RatePIDController::calculateControl()
 
 	sensorData_ = sensAct->getSensorData();
 
-	Eigen::Matrix3d m;
-	m = Eigen::AngleAxisd(-sensorData_.attitude.x(), Vector3::UnitX())
-			* Eigen::AngleAxisd(-sensorData_.attitude.y(), Vector3::UnitY())
-			* Eigen::AngleAxisd(-sensorData_.attitude.z(), Vector3::UnitZ());
+	Matrix3 m;
+	m = AngleAxis(-sensorData_.attitude.x(), Vector3::UnitX())
+			* AngleAxis(-sensorData_.attitude.y(), Vector3::UnitY())
+			* AngleAxis(-sensorData_.attitude.z(), Vector3::UnitZ());
 
 	accelerationInertial_ = m * sensorData_.acceleration;
 	Lock targetLock(controllerTargetMutex_);

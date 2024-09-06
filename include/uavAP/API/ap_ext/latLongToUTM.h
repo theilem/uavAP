@@ -20,8 +20,9 @@
 #define __LATLONGTOUTM_H__
 
 #include <math.h>
+#include <cpsCore/Utilities/LinearAlgebra.h>
 
-void
+inline void
 latLongToUTM(double Lat, double Long, double& northing, double& easting, int& zone, char& hemi)
 {
 	/*% -------------------------------------------------------------------------

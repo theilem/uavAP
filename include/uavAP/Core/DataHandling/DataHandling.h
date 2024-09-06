@@ -65,7 +65,7 @@ public:
 
     template <typename Type>
     void
-    sendData(const Type& data, Content content, Target target = Target::BROADCAST);
+    sendData(const Type& data, Content content, std::optional<Target> target = std::nullopt);
 
     void
     subscribeOnPackets(const std::function<void(const Packet&)>& packetSub);
@@ -110,8 +110,7 @@ private:
     void
     adaptPeriod(bool queueFull);
 
-    std::vector<std::function<Packet
-        ()>> statusPackaging_;
+    std::vector<std::function<Packet ()>> statusPackaging_;
 
     std::vector<std::function<void(const Packet&)>> packetSubscriptions_;
 
@@ -119,7 +118,7 @@ private:
                  (const Packet&)>>> subscribers_;
 
     std::map<std::string, std::function<void
-              (const Packet&)>> memberSubscribers_;
+                 (const Packet&)>> memberSubscribers_;
 
     Publisher<Packet> publisher_;
     IDCSender sender_;
@@ -133,7 +132,11 @@ inline void
 DataHandling::addStatusFunction(std::function<Type
                                     ()> statusFunc, Content content)
 {
-    auto func = std::bind(&DataHandling::createPacket<Type>, this, statusFunc, content);
+    auto func = [this, statusFunc, content]()
+    {
+        return createPacket<Type>(statusFunc, content);
+    };
+    // auto func = std::bind(&DataHandling::createPacket<Type>, this, statusFunc, content);
     statusPackaging_.push_back(func);
 }
 
@@ -246,7 +249,7 @@ DataHandling::addMember(ParameterSet* member, const std::string& memberId, const
 {
     std::function<void
         (const std::string&)> func = std::bind(&DataHandling::getMember<ParameterSet>, this,
-                                           member, memberId, std::placeholders::_1);
+                                               member, memberId, std::placeholders::_1);
     subscribeOnData(Content::REQUEST_MEMBER, func);
     subscribeOnMemberData<ParameterSet>(memberId, [member, callback](const auto& p)
     {
@@ -329,7 +332,7 @@ DataHandling::evaluateTrigger(const TriggerType& trigger, std::function<Optional
 
 template <typename Type>
 inline void
-DataHandling::sendData(const Type& data, Content content, Target target)
+DataHandling::sendData(const Type& data, Content content, std::optional<Target> target)
 {
     auto dp = get<DataPresentation>();
     if (!dp)
@@ -340,7 +343,8 @@ DataHandling::sendData(const Type& data, Content content, Target target)
 
     Packet packet = dp->serialize(data);
     dp->addHeader(packet, content);
-    dp->addHeader(packet, target);
+    if (target)
+        dp->addHeader(packet, *target);
     publish(packet);
 }
 

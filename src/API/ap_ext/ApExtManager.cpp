@@ -87,7 +87,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	Vector3 acceleration;
 	Vector3 angularRate;
 	Vector3 euler;
-	Eigen::Quaterniond attitude;
+	Eigen::Quaternion<FloatingType> attitude;
 	uint32_t packetNumber = 0;
 	imu_sample_t* imuSample = nullptr;
 
@@ -199,8 +199,8 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 
 	//Remove gravity from acceleration
 	Vector3 gravityInertial(0, 0, 9.81);
-	Vector3 gravityBody = Eigen::AngleAxisd(-sens.attitude[0], Vector3::UnitX())
-						  * Eigen::AngleAxisd(-sens.attitude[1], Vector3::UnitY()) * gravityInertial;
+	Vector3 gravityBody = AngleAxis(-sens.attitude[0], Vector3::UnitX())
+						  * AngleAxis(-sens.attitude[1], Vector3::UnitY()) * gravityInertial;
 	sens.acceleration = acceleration + gravityBody;
 
 	//************************
@@ -318,8 +318,11 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	//Calculate UTM from Wgs84
 	int zone;
 	char hemi;
-	latLongToUTM(latitude, longitude, sens.position[1], sens.position[0], zone, hemi);
-	sens.position[2] = altitude;
+	double easting = 0, northing = 0;
+	latLongToUTM(latitude, longitude, northing, easting, zone, hemi);
+	sens.position[0] = static_cast<FloatingType>(easting);
+	sens.position[1] = static_cast<FloatingType>(northing);
+	sens.position[2] = static_cast<FloatingType>(altitude);
 
 	//************************
 	// Airspeed
@@ -339,7 +342,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			sens.pressure = airspeed->press;
 			sens.temperature = airspeed->temp;
 			Duration timeDiff;
-			if (std::isnan(airspeed->cal_airs) || airspeed->cal_airs == -1)
+			if (std::isnan(airspeed->cal_airs) || airspeed->cal_airs < 0)
 			{
 				oldAirspeed = true;
 				airspeed = &lastAirspeedSample_;
@@ -419,7 +422,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 		aoa = 0;
 	sens.angleOfAttack = aoa;
 
-	Eigen::Matrix3d rotationMatrix;
+	Matrix3 rotationMatrix;
 	Vector3 velocityBody;
 	double velocityBodyTotal;
 	double velocityBodyLateral;
@@ -427,9 +430,9 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 	double pitch = -sens.attitude.y();
 	double yaw = sens.attitude.z();
 
-	rotationMatrix = Eigen::AngleAxisd(-roll, Vector3::UnitX())
-					 * Eigen::AngleAxisd(-pitch, Vector3::UnitY())
-					 * Eigen::AngleAxisd(-yaw, Vector3::UnitZ());
+	rotationMatrix = AngleAxis(-roll, Vector3::UnitX())
+					 * AngleAxis(-pitch, Vector3::UnitY())
+					 * AngleAxis(-yaw, Vector3::UnitZ());
 
 	velocityBody = rotationMatrix * sens.velocity;
 	velocityBodyTotal = velocityBody.norm();

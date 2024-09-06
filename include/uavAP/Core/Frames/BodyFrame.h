@@ -70,7 +70,7 @@ private:
 	Vector3 origin_;
 	Vector3 rotation_;
 
-	Eigen::Matrix3d rotationMatrix_;
-	mutable Eigen::Matrix3d rotationMatrixInv_;
+	Matrix3 rotationMatrix_;
+	mutable Matrix3 rotationMatrixInv_;
 	mutable bool invInitialized_;
 };

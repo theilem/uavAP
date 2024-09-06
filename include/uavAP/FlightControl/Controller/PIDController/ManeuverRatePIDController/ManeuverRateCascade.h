@@ -40,16 +40,16 @@ public:
 	tunePID(PIDs pid, const Control::PIDParameters& params) override;
 
 	bool
-	tuneRollBounds(double min, double max) override;
+	tuneRollBounds(FloatingType min, FloatingType max) override;
 
 	bool
-	tunePitchBounds(double min, double max) override;
+	tunePitchBounds(FloatingType min, FloatingType max) override;
 
 	void
 	setThrottleLimit(FloatingType maxThrottle);
 
 	std::map<PIDs, PIDStatus>
-	getPIDStatus() override;
+	getPIDStatus() const override;
 
 	void
 	evaluate() override;
@@ -64,9 +64,12 @@ public:
 	void
 	registerOverrides(std::shared_ptr<OverrideHandler> overrideHandler);
 
+	Control::PIDParameters
+	getSinglePIDParams(PIDs pid);
+
 private:
 
-	FloatingType
+	static FloatingType
 	yawrateToRoll(FloatingType yawrate, FloatingType airspeed);
 
 	Control::ControlEnvironment controlEnv_;

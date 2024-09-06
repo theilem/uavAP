@@ -132,19 +132,19 @@ ManeuverLocalPlanner::run(RunStage stage)
 }
 
 void
-ManeuverLocalPlanner::createLocalPlan(const Vector3& position, double heading, bool hasGPSFix)
+ManeuverLocalPlanner::createLocalPlan(const SensorData& data)
 {
 	bool safety = false;
 
 	Lock lock(trajectoryMutex_);
-	auto currentSection = updatePathSection(position);
+	auto currentSection = updatePathSection(data);
 	if (!currentSection)
 	{
 		CPSLOG_ERROR << "No current pathsection. Fly safety procedure.";
 		safety = true;
 	}
 
-	if (!hasGPSFix)
+	if (!data.hasGPSFix)
 	{
 		CPSLOG_ERROR << "Lost GPS fix. LocalPlanner safety procedure.";
 		safety = true;
@@ -160,7 +160,7 @@ ManeuverLocalPlanner::createLocalPlan(const Vector3& position, double heading, b
 	}
 	else
 	{
-		controllerTarget_ = calculateControllerTarget(position, heading, currentSection);
+		controllerTarget_ = calculateControllerTarget(data, currentSection);
 	}
 
 	//Do control overrides
@@ -194,7 +194,7 @@ ManeuverLocalPlanner::createLocalPlan(const Vector3& position, double heading, b
 }
 
 std::shared_ptr<IPathSection>
-ManeuverLocalPlanner::updatePathSection(const Vector3& position)
+ManeuverLocalPlanner::updatePathSection(const SensorData& data)
 {
 	std::shared_ptr<IPathSection> currentSection;
 
@@ -217,7 +217,7 @@ ManeuverLocalPlanner::updatePathSection(const Vector3& position)
 		CPSLOG_ERROR << "Current Section is nullptr. Abort.";
 		return nullptr;
 	}
-	currentSection->updatePosition(position);
+	currentSection->updateSensorData(data);
 
 	if (currentSection->inTransition())
 	{
@@ -235,7 +235,7 @@ ManeuverLocalPlanner::updatePathSection(const Vector3& position)
 			CPSLOG_ERROR << "Current Section is nullptr. Abort.";
 			return nullptr;
 		}
-		currentSection->updatePosition(position);
+		currentSection->updateSensorData(data);
 	}
 
 	return currentSection;
@@ -269,7 +269,7 @@ ManeuverLocalPlanner::nextSection()
 }
 
 ControllerTarget
-ManeuverLocalPlanner::calculateControllerTarget(const Vector3& position, double heading,
+ManeuverLocalPlanner::calculateControllerTarget(const SensorData& data,
 												std::shared_ptr<IPathSection> section)
 {
 	ControllerTarget controllerTarget;
@@ -277,13 +277,13 @@ ManeuverLocalPlanner::calculateControllerTarget(const Vector3& position, double 
 	velocityOverride_ = section->getVelocity();
 
 	controllerTarget.velocity = velocityOverride_;
-	Vector3 positionTarget = section->getPositionDeviation() + position;
+	Vector3 positionTarget = section->getPositionDeviation() + data.position;
 
 	positionXOverride_ = positionTarget[0];
 	positionYOverride_ = positionTarget[1];
 	positionZOverride_ = positionTarget[2];
 
-	Vector3 positionDeviation = Vector3(positionXOverride_(), positionYOverride_(), positionZOverride_()) - position;
+	Vector3 positionDeviation = Vector3(positionXOverride_(), positionYOverride_(), positionZOverride_()) - data.position;
 	double distance = positionDeviation.norm();
 
 	// Climb Rate
@@ -316,7 +316,7 @@ ManeuverLocalPlanner::calculateControllerTarget(const Vector3& position, double 
 		curvatureOverride_ = section->getCurvature();
 
 
-	double headingError = boundAngleRad(headingOverride_()() - heading);
+	double headingError = boundAngleRad(headingOverride_()() - data.attitude.z());
 
 	// Yaw Rate
 
@@ -344,31 +344,8 @@ ManeuverLocalPlanner::onTrajectoryPacket(const Packet& packet)
 void
 ManeuverLocalPlanner::onSensorData(const SensorData& sd)
 {
-	//TODO Lock?
-	Vector3 position = sd.position;
-	double heading = sd.attitude.z();
-	bool hasFix = sd.hasGPSFix;
-//	uint32_t seq = sd.sequenceNr;
-
-	createLocalPlan(position, heading, hasFix);
+	createLocalPlan(sd);
 }
-//
-//void
-//ManeuverLocalPlanner::onOverridePacket(const Packet& packet)
-//{
-//	auto dp = get<DataPresentation>();
-//	if (!dp)
-//	{
-//		CPSLOG_ERROR << "DataPresentation missing";
-//		return;
-//	}
-//
-//	auto override = dp->deserialize<Override>(packet);
-//
-//	std::unique_lock<std::mutex> plannerLock(overrideMutex_);
-//	plannerOverrides_ = override.localPlanner;
-//	targetOverrides_ = override.controllerTarget;
-//}
 
 void
 ManeuverLocalPlanner::update()
@@ -382,11 +359,11 @@ ManeuverLocalPlanner::update()
 	}
 
 	SensorData data = sensing->getSensorData();
-	createLocalPlan(data.position, data.attitude.z(), data.hasGPSFix);
+	createLocalPlan(data);
 }
 
 Optional<Trajectory>
-ManeuverLocalPlanner::trajectoryRequest(const DataRequest& request)
+ManeuverLocalPlanner::trajectoryRequest(const DataRequest& request) const
 {
 	if (request == DataRequest::TRAJECTORY)
 		return getTrajectory();

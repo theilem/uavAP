@@ -28,6 +28,7 @@
 
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h"
 #include <iostream>
+#include <uavAP/Core/SensorData.h>
 
 struct Orbit: public IPathSection
 {
@@ -45,9 +46,9 @@ public:
 	}
 
 	void
-	updatePosition(const Vector3& pos) override
+	updateSensorData(const SensorData& data) override
 	{
-		currentPosition_ = pos;
+		currentPosition_ = data.position;
 		//Calculate current radius vector to target position as it is used several times
 		Vector3 projection = EigenHyperplane(normal_, center_).projection(currentPosition_);
 		radiusVector_ = (projection - center_).normalized() * radius_;

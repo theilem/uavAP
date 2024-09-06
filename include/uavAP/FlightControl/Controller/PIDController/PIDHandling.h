@@ -32,23 +32,25 @@
 
 struct PIDTuning
 {
-	int pid;
+	PIDs pid;
 	Control::PIDParameters params;
 };
 
 struct ConstraintParams
 {
-	double min;
-	double max;
+	FloatingType min;
+	FloatingType max;
 };
 
 struct PIDStatus
 {
-	double target;
-	double value;
+	FloatingType target;
+	FloatingType value;
+	FloatingType integrator;
 };
 
 using PIDStati = std::map<PIDs, PIDStatus>;
+using TimedPIDStati = std::pair<TimePoint, PIDStati>;
 
 using PIDParams = std::map<PIDs, Control::PIDParameters>;
 

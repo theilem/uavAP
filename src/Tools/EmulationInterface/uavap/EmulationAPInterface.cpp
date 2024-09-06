@@ -108,8 +108,8 @@ EmulationAPInterface::onSensorData(const SensorData& sensorData)
 
 	//Add gravity to acceleration
 	Vector3 gravityInertial(0, 0, 9.81);
-	Eigen::Matrix3d m;
-	m = Eigen::AngleAxisd(-roll, Vector3::UnitX()) * Eigen::AngleAxisd(-pitch, Vector3::UnitY());
+	Matrix3 m;
+	m = AngleAxis(-roll, Vector3::UnitX()) * AngleAxis(-pitch, Vector3::UnitY());
 	Vector3 gravityBody = m * gravityInertial;
 
 	imu->imu_accel_x = sensorData.acceleration.x() - gravityBody.x();

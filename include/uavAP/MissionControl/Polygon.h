@@ -35,7 +35,7 @@ struct Edge
 	Vector2 direction;
 	Vector2 normal; //Pointing inside
 
-	double yaw; // [-pi, pi)
+	FloatingType yaw; // [-pi, pi)
 
 	//Create Edge from two points that are in counter clock wise order (left is inside)
 	static Edge
@@ -44,13 +44,13 @@ struct Edge
 	/**
 	 * @brief Calculate distance to Edge. Returns distance as negative if query point lies behind Edge.
 	 */
-	double
+	FloatingType
 	getDistance(const Vector2& query) const;
 
 	/**
 	 * @brief Calculate absolute distance to Edge. Returns only positive values.
 	 */
-	double
+	FloatingType
 	getDistanceAbs(const Vector2& query) const;
 };
 

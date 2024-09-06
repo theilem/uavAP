@@ -6,10 +6,6 @@
 			"binary": "FlightControl",
 			"config": "flight_control.json"
 		},
-		"flight_analysis": {
-			"binary": "FlightAnalysis",
-			"config": "flight_analysis.json"
-		},
 		"mission_control": {
 			"binary": "MissionControl",
 			"config": "mission_control.json"

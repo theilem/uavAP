@@ -37,10 +37,10 @@ class ControlEnvironment
 {
 public:
 
-	ControlEnvironment(const TimePoint* timeStamp);
+	explicit ControlEnvironment(const TimePoint* timeStamp);
 
 	virtual
-	~ControlEnvironment();
+	~ControlEnvironment() = default;
 
 	void
 	evaluate();
@@ -76,7 +76,7 @@ public:
 	addConstraint(Element in, FloatingType min, FloatingType max);
 
 	std::shared_ptr<Constraint<>>
-	addConstraint(Element in, double min, double max, double hardMin, double hardMax);
+	addConstraint(Element in, FloatingType min, FloatingType max, FloatingType hardMin, FloatingType hardMax);
 
 	std::shared_ptr<PID>
 	addPID(Element target, Element current, const PIDParameters& params);

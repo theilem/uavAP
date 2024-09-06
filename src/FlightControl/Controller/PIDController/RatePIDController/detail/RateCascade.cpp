@@ -170,15 +170,15 @@ bool
 RateCascade::configure(const Configuration& config)
 {
 	PropertyMapper<Configuration> pm(config);
-	pm.add<double>("hard_roll_constraint", hardRollConstraint_, false);
-	pm.add<double>("hard_pitch_constraint", hardPitchConstraint_, false);
-	pm.add<double>("hard_roll_rate_constraint", hardRollRateConstraint_, false);
-	pm.add<double>("hard_pitch_rate_constraint", hardPitchRateConstraint_, false);
+	pm.add<FloatingType>("hard_roll_constraint", hardRollConstraint_, false);
+	pm.add<FloatingType>("hard_pitch_constraint", hardPitchConstraint_, false);
+	pm.add<FloatingType>("hard_roll_rate_constraint", hardRollRateConstraint_, false);
+	pm.add<FloatingType>("hard_pitch_rate_constraint", hardPitchRateConstraint_, false);
 
-	pm.add<double>("roll_constraint", rollConstraint_, false);
-	pm.add<double>("pitch_constraint", pitchConstraint_, false);
-	pm.add<double>("roll_rate_constraint", rollRateConstraint_, false);
-	pm.add<double>("pitch_rate_constraint", pitchRateConstraint_, false);
+	pm.add<FloatingType>("roll_constraint", rollConstraint_, false);
+	pm.add<FloatingType>("pitch_constraint", pitchConstraint_, false);
+	pm.add<FloatingType>("roll_rate_constraint", rollRateConstraint_, false);
+	pm.add<FloatingType>("pitch_rate_constraint", pitchRateConstraint_, false);
 
 	pm.add<bool>("use_rpm_controller", useRPMController_, false);
 
@@ -223,7 +223,7 @@ RateCascade::tunePID(PIDs pid, const Control::PIDParameters& params)
 }
 
 bool
-RateCascade::tuneRollBounds(double min, double max)
+RateCascade::tuneRollBounds(FloatingType min, FloatingType max)
 {
 	if ((min < -hardRollConstraint_) || (min > 0.0))
 	{
@@ -240,7 +240,7 @@ RateCascade::tuneRollBounds(double min, double max)
 }
 
 bool
-RateCascade::tunePitchBounds(double min, double max)
+RateCascade::tunePitchBounds(FloatingType min, FloatingType max)
 {
 	if ((min < -hardPitchConstraint_) || (min > 0.0))
 	{
@@ -257,7 +257,7 @@ RateCascade::tunePitchBounds(double min, double max)
 }
 
 bool
-RateCascade::tuneRollRateBounds(double min, double max)
+RateCascade::tuneRollRateBounds(FloatingType min, FloatingType max)
 {
 	if ((min < -hardRollRateConstraint_) || (min > 0.0))
 	{
@@ -274,7 +274,7 @@ RateCascade::tuneRollRateBounds(double min, double max)
 }
 
 bool
-RateCascade::tunePitchRateBounds(double min, double max)
+RateCascade::tunePitchRateBounds(FloatingType min, FloatingType max)
 {
 	if ((min < -hardPitchRateConstraint_) || (min > 0.0))
 	{
@@ -291,7 +291,7 @@ RateCascade::tunePitchRateBounds(double min, double max)
 }
 
 PIDStati
-RateCascade::getPIDStatus()
+RateCascade::getPIDStatus() const
 {
 	std::map<PIDs, PIDStatus> status;
 	for (const auto& it : pids_)
@@ -305,18 +305,18 @@ void
 RateCascade::evaluate()
 {
 	Vector3 velocityBody;
-	double yaw = sensorData_->attitude.z();
-	double roll = sensorData_->attitude.x();
-	double pitch = -sensorData_->attitude.y();
+	FloatingType yaw = sensorData_->attitude.z();
+	FloatingType roll = sensorData_->attitude.x();
+	FloatingType pitch = -sensorData_->attitude.y();
 
-	Eigen::Matrix3d m;
-	m = Eigen::AngleAxisd(-roll, Vector3::UnitX()) * Eigen::AngleAxisd(-pitch, Vector3::UnitY())
-			* Eigen::AngleAxisd(-yaw, Vector3::UnitZ());
+	Matrix3 m;
+	m = AngleAxis(-roll, Vector3::UnitX()) * AngleAxis(-pitch, Vector3::UnitY())
+			* AngleAxis(-yaw, Vector3::UnitZ());
 
 	velocityBody = m * sensorData_->velocity;
 
-	double bigV = velocityBody.norm();
-	double smallV = velocityBody[1];
+	FloatingType bigV = velocityBody.norm();
+	FloatingType smallV = velocityBody[1];
 
 	beta_ = -asin(smallV / bigV);
 

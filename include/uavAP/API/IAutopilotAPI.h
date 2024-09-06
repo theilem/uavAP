@@ -7,15 +7,11 @@
 
 #include <boost/signals2.hpp>
 
-class SensorData;
-
-class ServoData;
-
-class PowerData;
-
-class ControllerOutput;
-
-class AdvancedControl;
+struct SensorData;
+struct ServoData;
+struct PowerData;
+struct ControllerOutput;
+struct AdvancedControl;
 
 class IAutopilotAPI
 {
@@ -25,6 +21,8 @@ public:
 
 	using OnControllerOut = boost::signals2::signal<void(const ControllerOutput&)>;
 	using OnAdvancedControl = boost::signals2::signal<void(const AdvancedControl&)>;
+
+	virtual ~IAutopilotAPI() = default;
 
 	virtual boost::signals2::connection
 	subscribeOnControllerOut(const OnControllerOut::slot_type& slot) = 0;

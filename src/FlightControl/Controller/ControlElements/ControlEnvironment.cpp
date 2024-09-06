@@ -33,10 +33,6 @@ ControlEnvironment::ControlEnvironment(const TimePoint* timeStamp) :
 {
 }
 
-ControlEnvironment::~ControlEnvironment()
-{
-}
-
 void
 ControlEnvironment::evaluate()
 {
@@ -125,7 +121,7 @@ ControlEnvironment::addConstraint(Element in, FloatingType min, FloatingType max
 }
 
 std::shared_ptr<Constraint<>>
-ControlEnvironment::addConstraint(Element in, double min, double max, double hardMin, double hardMax)
+ControlEnvironment::addConstraint(Element in, FloatingType min, FloatingType max, FloatingType hardMin, FloatingType hardMax)
 {
 	return std::make_shared<Constraint<>>(in, min, max);
 }

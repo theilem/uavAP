@@ -13,15 +13,15 @@
 #include "uavAP/API/IAutopilotAPI.h"
 //#include "uavAP/API/AggregatableAutopilotAPIParams.h"
 
-class SensorData;
+struct SensorData;
 
-class ServoData;
+struct ServoData;
 
-class PowerData;
+struct PowerData;
 
-class AdvancedControl;
+struct AdvancedControl;
 
-class ControllerOutput;
+struct ControllerOutput;
 
 class IScheduler;
 

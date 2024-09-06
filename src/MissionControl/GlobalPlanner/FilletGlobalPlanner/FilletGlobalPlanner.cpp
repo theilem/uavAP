@@ -51,7 +51,7 @@ bool
 FilletGlobalPlanner::configure(const Configuration& config)
 {
 	PropertyMapper<Configuration> pm(config);
-	pm.add<double>("fillet_radius", filletRadius_, true);
+	pm.add<FloatingType>("fillet_radius", filletRadius_, true);
 
 	return pm.map();
 }

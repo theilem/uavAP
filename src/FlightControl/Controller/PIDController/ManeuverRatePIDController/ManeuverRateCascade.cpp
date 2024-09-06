@@ -17,13 +17,12 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 										 ControllerOutput& out) :
 		controlEnv_(&sd.timestamp)
 {
-
 	/* Roll Control */
 	auto yawrateTarget = controlEnv_.addInput(&target.yawRate);
 	auto airspeed = controlEnv_.addInput(&sd.airSpeed);
 
 	auto rollCalc = std::make_shared<Control::CustomFunction2>(yawrateTarget, airspeed,
-															   std::bind(&ManeuverRateCascade::yawrateToRoll, this,
+															   std::bind(&ManeuverRateCascade::yawrateToRoll,
 																		 std::placeholders::_1,
 																		 std::placeholders::_2));
 
@@ -130,26 +129,26 @@ ManeuverRateCascade::tunePID(PIDs pid, const Control::PIDParameters& params)
 }
 
 bool
-ManeuverRateCascade::tuneRollBounds(double min, double max)
+ManeuverRateCascade::tuneRollBounds(FloatingType min, FloatingType max)
 {
 	CPSLOG_ERROR << "Deprecated function called";
 	return false;
 }
 
 bool
-ManeuverRateCascade::tunePitchBounds(double min, double max)
+ManeuverRateCascade::tunePitchBounds(FloatingType min, FloatingType max)
 {
 	CPSLOG_ERROR << "Deprecated function called";
 	return false;
 }
 
 std::map<PIDs, PIDStatus>
-ManeuverRateCascade::getPIDStatus()
+ManeuverRateCascade::getPIDStatus() const
 {
 	std::map<PIDs, PIDStatus> stati;
-	for (const auto& pid : pids_)
+	for (const auto& [id, pid] : pids_)
 	{
-		stati.insert(std::make_pair(pid.first, pid.second->getStatus()));
+		stati.insert({id, pid->getStatus()});
 	}
 	return stati;
 }
@@ -186,6 +185,20 @@ ManeuverRateCascade::registerOverrides(std::shared_ptr<OverrideHandler> override
 		overrideHandler->registerOverride("apply_trim/" + EnumMap<ControllerOutputs>::convert(it.first),
 										  it.second->getApplyTrimOverridableValue());
 	}
+}
+
+Control::PIDParameters
+ManeuverRateCascade::getSinglePIDParams(PIDs pid)
+{
+	auto it = pids_.find(pid);
+
+	if (it == pids_.end())
+	{
+		CPSLOG_ERROR << "Unknown pidIndicator. Ignore";
+		return {};
+	}
+
+	return it->second->getParams();
 }
 
 Optional<PIDParams>

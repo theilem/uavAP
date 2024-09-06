@@ -60,7 +60,7 @@ public:
 
 private:
 
-	double filletRadius_;
+	FloatingType filletRadius_;
 
 	Mission mission_;
 

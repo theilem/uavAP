@@ -8,7 +8,6 @@
 #ifndef CONTROL_EVALUABLECONTROLELEMENTS_H_
 #define CONTROL_EVALUABLECONTROLELEMENTS_H_
 
-#include <cmath>
 #include <iostream>
 #include <cpsCore/Utilities/Time.hpp>
 #include <cpsCore/Configuration/ConfigurableObject.hpp>
@@ -112,6 +111,13 @@ struct PIDParameters
 		c & ff;
 		c & isAngle;
 	}
+
+	bool
+	operator ==(const PIDParameters& other) const
+	{
+		return kp == other.kp && ki == other.ki && kd == other.kd && imax == other.imax && ff == other.ff
+				&& isAngle == other.isAngle;
+	}
 };
 
 class PID: public IEvaluableControlElement, public ConfigurableObject<PIDParameters>
@@ -136,7 +142,7 @@ public:
 	getValue() const override;
 
 	PIDStatus
-	getStatus();
+	getStatus() const;
 
 	MaintainableValue<FloatingType>
 	getMaintainableTarget();

@@ -16,17 +16,17 @@
 #include <cpsCore/Utilities/IPC/Publisher.h>
 
 #include "uavAP/Core/SensorData.h"
+#include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
 #include "uavAP/FlightControl/SensingActuationIO/IActuationIO.h"
 
-struct ControllerOutput;
 struct AdvancedControl;
 
 class IPC;
 class DataHandling;
 
 class SensingActuationIO : public ISensingIO, public IActuationIO,
-						   public AggregatableObject<IPC, DataHandling>,
+						   public AggregatableObject<IPC, DataHandling, ITimeProvider>,
 						   public IRunnableObject
 {
 public:
@@ -67,6 +67,8 @@ private:
 	SensorData sensorData_;
 	PowerData powerData_;
 	ServoData servoData_;
+	mutable SharedMutex controllerOutputMutex_;
+	TimedValue<ControllerOutput> controllerOutput_;
 
 };
 

@@ -11,7 +11,6 @@
 #include <cpsCore/cps_object>
 #include <cpsCore/Configuration/ParameterRef.hpp>
 #include <cpsCore/Utilities/LockTypes.hpp>
-#include <cpsCore/Utilities/IPC/Subscription.h>
 
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/FlightControl/Controller/ControllerOutput.h>
@@ -21,6 +20,7 @@
 #include <uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRatePIDControllerParams.h>
 
 class IScheduler;
+class ITimeProvider;
 class ISensingIO;
 class IActuationIO;
 class DataHandling;
@@ -29,7 +29,7 @@ class OverrideHandler;
 struct PIDTuning;
 
 class ManeuverRatePIDController: public AggregatableObject<IScheduler, ISensingIO, IActuationIO,
-		DataHandling, OverrideHandler>,
+		DataHandling, OverrideHandler, ITimeProvider>,
 		public ConfigurableObject<ManeuverRatePIDControllerParams>,
 		public IRunnableObject,
 		public IPIDController
@@ -63,6 +63,9 @@ private:
 
 	void
 	tunePID(const PIDTuning& tune);
+
+	TimedPIDStati
+	getTimedPIDStati() const;
 
 	Mutex cascadeMutex_;
 	ManeuverRateCascade cascade_;
