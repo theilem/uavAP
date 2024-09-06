@@ -35,7 +35,7 @@ LogParser::setupLog()
 	while (std::getline(logFile_, str))
 	{
 		counter++;
-		if (counter * params.period() < params.offsetSecs() * 1000)
+		if (counter * params.periodUs() < params.offsetSecs() * 1e6)
 			offset = logFile_.tellg();
 	}
 	logFile_.clear();
@@ -45,7 +45,7 @@ LogParser::setupLog()
 		CPSLOG_ERROR << "Log file failed";
 		return false;
 	}
-	CPSLOG_DEBUG << "Log length: " << counter * params.period() / 1000.0 << " secs";
+	CPSLOG_DEBUG << "Log length: " << counter * params.periodUs() / 1e6 << " secs";
 	CPSLOG_DEBUG << "Starting at sec: " << params.offsetSecs();
 
 	std::ifstream headerFile(params.logHeaderPath());
@@ -125,8 +125,8 @@ LogParser::run(RunStage stage)
 		case RunStage::NORMAL:
 		{
 			auto scheduler = get<IScheduler>();
-			scheduler->schedule(std::bind(&LogParser::createAndSendSample, this), Milliseconds(0),
-								Milliseconds(params.period()));
+			scheduler->schedule([this] { createAndSendSample(); }, Milliseconds(0),
+								Microseconds(params.periodUs()));
 			break;
 		}
 		default:
