@@ -56,8 +56,7 @@ ln -s /usr/local/config/uavEE/config ./uavEEConfig
 ## Running the Autopilot (in X-Plane 11)
 To run the autopilot, start the X-Plane 11 simulator and load the desired aircraft (Cessna Skyhawk). Select Piatt County and a 3nm approach. After launching the simulation, activate the plugin:
 - Press P to pause the simulation
-- Click on plugins -> uavEE -> Select Config -> .../sitl.json
-- Click on plugins -> uavEE -> Start Node
+- Click on plugins -> uavEE -> Start Node -> .../sitl.json
 - Start the autopilot with the following command in a separate terminal:
 ```shell script
 cd /usr/local/bin
