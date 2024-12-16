@@ -22,20 +22,22 @@
 #include "uavAP/Communication/Comm/IComm.h"
 
 class DataPresentation;
+
 class IDC;
+
 class IPC;
 
 
-class IDCComm: public IComm,
-			   public AggregatableObject<IPC, IDC, DataPresentation>,
-			   public ConfigurableObject<IDCCommParams>,
-			   public IRunnableObject
+class IDCComm : public IComm,
+				public AggregatableObject<IPC, IDC, DataPresentation>,
+				public ConfigurableObject<IDCCommParams>,
+				public IRunnableObject
 {
 public:
 
 	static constexpr TypeId typeId = "idc";
 
-	IDCComm();
+	IDCComm() = default;
 
 	bool
 	run(RunStage stage) override;
@@ -48,15 +50,11 @@ private:
 	void
 	receivePacket(const Packet& packet);
 
-	void
-	subscribeCallback(const Subscription& sub, Target target);
-
 	std::vector<Subscription> subscriptions_;
 	std::vector<Publisher<Packet>> publishers_;
 
 	Mutex senderMutex_;
 	IDCSender sender_;
-	bool senderAvailable_;
 	boost::signals2::connection idcConnection_;
 };
 

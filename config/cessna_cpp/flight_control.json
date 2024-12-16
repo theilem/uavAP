@@ -1,0 +1,91 @@
+{
+    "controller": {
+        "maneuver_rate": {
+            "period": 0,
+            "cascade": {
+                "velocity": {
+                    "kp": 0.5,
+                    "ki": 0.2,
+                    "kd": 0,
+                    "imax": 5,
+                    "ff": 0.02
+                },
+                "climb_angle": {
+                    "kp": 1.0,
+                    "ki": 1.0,
+                    "kd": 0,
+                    "imax": 0.2,
+                    "ff": 0,
+                    "is_angle": true
+                },
+                "pitch": {
+                    "kp": 5,
+                    "ki": 1,
+                    "kd": 1,
+                    "imax": 0.2,
+                    "ff": 2,
+                    "is_angle": true
+                },
+                "roll": {
+                    "kp": 1.2,
+                    "ki": 1,
+                    "kd": 0,
+                    "imax": 0.2,
+                    "ff": 0,
+                    "is_angle": true
+                },
+                "roll_rate": {
+                    "kp": 1,
+                    "ki": 1,
+                    "kd": 0,
+                    "imax": 1,
+                    "ff": 1,
+                    "is_angle": true
+                },
+                "roll_constraint": {
+                    "min": -60,
+                    "max": 60
+                },
+                "roll_rate_constraint": {
+                    "min": -200,
+                    "max": 200
+                },
+                "pitch_constraint": {
+                    "min": -15,
+                    "max": 15
+                },
+                "roll_alpha": 0.1,
+                "throttle_alpha": 0.1,
+                "pitch_alpha": 0.1
+            }
+        }
+    },
+    "local_planner": {
+        "maneuver": {
+            "period": 0,
+            "safety_velocity": 50,
+            "k_altitude": 0.8,
+            "k_convergence": 0.01,
+            "k_yaw_rate": 0.1,
+            "yaw_rate_distance_threshold": 200.0
+        }
+    },
+    "data_handling": {
+        "period": 200,
+        "target": "flight_control"
+    },
+    "data_presentation": {
+        "compress_double": true
+    },
+    "override_handler": {},
+    "override_safety": {
+        "period": 10,
+        "rectanguloid": {
+            "major_side_length": 5000,
+            "minor_side_length": 5000,
+            "major_side_orientation": 0,
+            "height": 200,
+            "center": [2500,2500,250]
+        }
+    }
+}

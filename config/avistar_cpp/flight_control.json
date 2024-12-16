@@ -1,0 +1,95 @@
+{
+	"controller": {
+		"maneuver_rate": {
+			"period": 0,
+			"cascade": {
+				"velocity": {
+					"ff": 0.04,
+					"imax": 0.4,
+					"kd": 0,
+					"ki": 0.4,
+					"kp": 0.4
+				},
+				"climb_angle": {
+					"ff": 1,
+					"imax": 0.2,
+					"kd": 0,
+					"ki": 0.1,
+					"kp": 0.5,
+					"is_angle": true
+				},
+				"pitch": {
+					"ff": 0,
+					"imax": 0.4,
+					"kd": 0.1,
+					"ki": 0.4,
+					"kp": 1.2,
+					"is_angle": true
+				},
+				"roll": {
+					"ff": 0,
+					"imax": 0,
+					"kd": 0,
+					"ki": 0,
+					"kp": 3,
+					"is_angle": true
+				},
+				"roll_rate": {
+					"ff": 0.3,
+					"imax": 0.2,
+					"kd": 0,
+					"ki": 0.1,
+					"kp": 0.1,
+					"is_angle": true
+				},
+				"roll_constraint": {
+					"min": -45,
+					"max": 45
+				},
+				"roll_rate_constraint": {
+					"min": -100,
+					"max": 100
+				},
+				"pitch_constraint": {
+					"min": -20,
+					"max": 20
+				},
+				"roll_alpha": 0.1,
+				"throttle_alpha": 0.1,
+				"pitch_alpha": 0.1
+			}
+		}
+	},
+	"local_planner": {
+		"maneuver": {
+			"period": 0,
+			"safety_velocity": 18,
+			"k_altitude": 0.8,
+			"k_convergence": 0.01,
+			"k_yaw_rate": 0.65,
+			"yaw_rate_distance_threshold": 20.0
+		}
+	},
+	"data_handling": {
+		"period": 200,
+		"target": "flight_control"
+	},
+	"data_presentation": {
+		"compress_double": true
+	},
+	"override_handler": {},
+	"override_safety": {
+		"period": 10,
+		"rectanguloid": {
+			"major_side_length": 2000,
+			"minor_side_length": 2000,
+			"major_side_orientation": 0,
+			"height": 100,
+			"center": [
+				1000,
+				1000,
+				150
+			]
+		}
+	}
+}

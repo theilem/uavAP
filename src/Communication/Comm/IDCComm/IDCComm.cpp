@@ -14,11 +14,6 @@
 #include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 #include <cpsCore/Utilities/Scheduler/IScheduler.h>
 
-IDCComm::IDCComm() :
-		senderAvailable_(true)
-{
-}
-
 bool
 IDCComm::run(RunStage stage)
 {
@@ -54,8 +49,8 @@ IDCComm::run(RunStage stage)
 
 			auto idc = get<IDC>();
 
-			idcConnection_ = idc->subscribeOnPacket("ground_station",
-													std::bind(&IDCComm::receivePacket, this, std::placeholders::_1));
+			idcConnection_ = idc->subscribeOnPacket("ground_station", [this](const Packet& packet)
+			{ receivePacket(packet); });
 			auto ipc = get<IPC>();
 
 			IPCOptions options;
@@ -66,9 +61,6 @@ IDCComm::run(RunStage stage)
 			for (int k = static_cast<int>(Target::INVALID) + 1;
 				 k < static_cast<int>(Target::COMMUNICATION); k++)
 			{
-				options.retrySuccessCallback = std::bind(&IDCComm::subscribeCallback, this,
-														 std::placeholders::_1, static_cast<Target>(k));
-
 				subscriptions_[k - 1] = ipc->subscribeOnPackets(
 						EnumMap<Target>::convert(static_cast<Target>(k)) + "_to_comm",
 						std::bind(&IDCComm::sendPacket, this, std::placeholders::_1), options);
@@ -117,7 +109,7 @@ IDCComm::receivePacket(const Packet& packet)
 
 	if (target == Target::BROADCAST)
 	{
-		for (auto& pub : publishers_)
+		for (auto& pub: publishers_)
 		{
 			pub.publish(p);
 		}
@@ -131,11 +123,4 @@ IDCComm::receivePacket(const Packet& packet)
 		publishers_[static_cast<int>(target) - 1].publish(p);
 	}
 
-}
-
-void
-IDCComm::subscribeCallback(const Subscription& sub, Target target)
-{
-	CPSLOG_DEBUG << "Subscribed to " << EnumMap<Target>::convert(target);
-	subscriptions_[static_cast<int>(target) - 1] = sub;
 }

@@ -90,21 +90,21 @@ ManeuverLocalPlanner::run(RunStage stage)
 			{
 				CPSLOG_DEBUG << "Calculate control on sensor data trigger";
 				auto sensing = get<ISensingIO>();
-				sensing->subscribeOnSensorData(
-						boost::bind(&ManeuverLocalPlanner::onSensorData, this, boost::placeholders::_1));
+				sensing->subscribeOnSensorData([this](const SensorData& data)
+												{ onSensorData(data); });
 			}
 			else
 			{
 				CPSLOG_DEBUG << "Calculate control with period " << params.period();
 				auto scheduler = get<IScheduler>();
-				scheduler->schedule(std::bind(&ManeuverLocalPlanner::update, this),
+				scheduler->schedule([this] { update(); },
 									Milliseconds(params.period()), Milliseconds(params.period()));
 			}
 
 			auto ipc = get<IPC>();
 
-			ipc->subscribeOnPackets("trajectory",
-									std::bind(&ManeuverLocalPlanner::onTrajectoryPacket, this, std::placeholders::_1));
+			ipc->subscribeOnPackets("trajectory", [this](const Packet& packet)
+									{ onTrajectoryPacket(packet); });
 
 			if (auto dh = get<DataHandling>())
 			{
@@ -117,10 +117,6 @@ ManeuverLocalPlanner::run(RunStage stage)
 								  std::placeholders::_1), Content::TRAJECTORY, Content::REQUEST_DATA);
 			}
 
-			break;
-		}
-		case RunStage::FINAL:
-		{
 			break;
 		}
 		default:
@@ -338,6 +334,11 @@ ManeuverLocalPlanner::onTrajectoryPacket(const Packet& packet)
 	{
 		CPSLOG_ERROR << "Invalid Trajectory packet: " << err.what();
 		return;
+	}
+
+	if (auto dh = get<DataHandling>())
+	{
+		dh->sendData(trajectory_, Content::TRAJECTORY);
 	}
 }
 
