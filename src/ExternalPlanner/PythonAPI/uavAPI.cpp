@@ -42,6 +42,7 @@ uavAPI::setSplineSegment(const QuarticSpline& spline)
 {
 	Trajectory trajectory;
 	trajectory.pathSections.push_back(std::make_shared<QuarticSpline>(spline));
+	trajectory.infinite = true;
 	auto lp = aggregator_.getOne<ForwardingLocalPlanner>();
 	lp->setTrajectory(trajectory);
 }

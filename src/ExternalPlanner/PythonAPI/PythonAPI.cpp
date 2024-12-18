@@ -21,6 +21,7 @@ PYBIND11_MODULE(PythonAPI, m)
 		.def_readwrite("velocity", &SensorData::velocity)
 		.def_readwrite("acceleration", &SensorData::acceleration)
 		.def_readwrite("attitude", &SensorData::attitude)
+		.def_readwrite("angular_rate", &SensorData::angularRate)
 		.def_readwrite("airspeed", &SensorData::airSpeed)
 		.def_readwrite("timestamp", &SensorData::timestamp);
 

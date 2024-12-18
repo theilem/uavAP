@@ -4,7 +4,7 @@
 			"period": 0,
 			"cascade": {
 				"velocity": {
-					"ff": 0.04,
+					"ff": 0.02,
 					"imax": 0.4,
 					"kd": 0,
 					"ki": 0.4,
@@ -14,7 +14,7 @@
 					"ff": 1,
 					"imax": 0.2,
 					"kd": 0,
-					"ki": 0.1,
+					"ki": 1,
 					"kp": 0.5,
 					"is_angle": true
 				},
@@ -22,15 +22,15 @@
 					"ff": 0,
 					"imax": 0.4,
 					"kd": 0.1,
-					"ki": 0.4,
-					"kp": 1.2,
+					"ki": 2,
+					"kp": 2,
 					"is_angle": true
 				},
 				"roll": {
 					"ff": 0,
-					"imax": 0,
+					"imax": 0.2,
 					"kd": 0,
-					"ki": 0,
+					"ki": 1,
 					"kp": 3,
 					"is_angle": true
 				},
