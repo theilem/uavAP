@@ -45,10 +45,19 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 	auto rollOut = controlEnv_.addOutput(rollOutConstraint, &out.rollOutput);
 
 	/* Climb Angle Control*/
-	auto aoaInput = controlEnv_.addInput(&sd.angleOfAttack);
+//	auto aoaInput = controlEnv_.addInput(&sd.angleOfAttack);
 	auto pitchInput = controlEnv_.addInput(&sd.attitude[1]);
+//
+//	auto climbAngle = controlEnv_.addDifference(pitchInput, aoaInput);
 
-	auto climbAngle = controlEnv_.addDifference(pitchInput, aoaInput);
+	// Climb Angle = asin(v[2] / airspeed)
+	auto velUp = controlEnv_.addInput(&sd.velocity[2]);
+	auto climbAngle = std::make_shared<Control::CustomFunction2>(velUp, airspeed, [](FloatingType a, FloatingType b)
+	{
+		return std::asin(a / b);
+	});
+
+
 
 	auto climbAngleTarget = controlEnv_.addInput(&target.climbAngle);
 

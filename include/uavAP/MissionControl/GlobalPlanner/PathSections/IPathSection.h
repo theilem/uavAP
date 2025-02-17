@@ -32,7 +32,7 @@ struct SensorData;
 
 enum class PathSectionType
 {
-    UNKNOWN = 0, CURVE, ORBIT, LINE, SPLINE
+    UNKNOWN = 0, CURVE, ORBIT, LINE, SPLINE, QUARTIC_SPLINE
 };
 
 struct IPathSection

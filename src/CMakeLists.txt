@@ -24,4 +24,5 @@ add_subdirectory(Communication)
 add_subdirectory(API) 
 add_subdirectory(Watchdog) 
 add_subdirectory(Tools)
+add_subdirectory(ExternalPlanner)
 

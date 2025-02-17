@@ -31,6 +31,7 @@
 #include <uavAP/MissionControl/GlobalPlanner/PathSections/Orbit.h>
 #include <uavAP/MissionControl/GlobalPlanner/PathSections/Curve.h>
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h"
+#include "uavAP/MissionControl/GlobalPlanner/PathSections/QuarticSpline.h"
 
 #include <cpsCore/Utilities/DataPresentation/detail/Split.h>
 
@@ -96,6 +97,11 @@ store(Archive & ar, const std::shared_ptr<IPathSection> & t)
 			ar << PathSectionType::SPLINE;
 			ar << *spline;
 		}
+		else if (auto quartic = std::dynamic_pointer_cast<QuarticSpline>(t))
+		{
+			ar << PathSectionType::QUARTIC_SPLINE;
+			ar << *quartic;
+		}
 		else
 		{
 			ar << PathSectionType::UNKNOWN;
@@ -136,6 +142,12 @@ load(Archive & ar, std::shared_ptr<IPathSection> & t)
 			auto spline = std::make_shared<CubicSpline>();
 			ar >> *spline;
 			t = spline;
+		}
+		else if (type == PathSectionType::QUARTIC_SPLINE)
+		{
+			auto quartic = std::make_shared<QuarticSpline>();
+			ar >> *quartic;
+			t = quartic;
 		}
 		else
 		{

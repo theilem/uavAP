@@ -1,0 +1,47 @@
+{
+	"signal_handler": {
+	},
+	"ipc": {
+	},
+	"idc": {
+	},
+	"scheduler": {
+		"thread": {
+			"priority": 20
+		}
+	},
+	"time_provider": {
+		"system_time": {
+		}
+	},
+	"data_presentation": {
+		"compress_double": true
+	},
+	"comm": {
+		"idc": {
+		}
+	},
+	"network": {
+		"redis": {
+			"hosts": {
+				"localhost": {
+					"ip": "127.0.0.1",
+					"auth": "",
+					"port": 6379
+				}
+			},
+			"sub": {
+				"ground_station": {
+					"host": "localhost",
+					"channel": "to_uavap"
+				}
+			},
+			"pub": {
+				"ground_station": {
+					"host": "localhost",
+					"channel": "to_uavgs"
+				}
+			}
+		}
+	}
+}

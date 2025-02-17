@@ -7,6 +7,10 @@ option(NO_DL "Deactivate dynamic linking in the Plugin Manager." OFF)
 option(GS "Build the Ground Station." OFF)
 option(XPLANE "Build the XPlane Plugin." OFF)
 option(CORE "Always build cps_core." OFF)
+option(PYTHON "Build the Python API." OFF)
+
+
+set(SUBMODULE_DIR ${CMAKE_SOURCE_DIR}/extern)
 
 if (NO_DL)
     add_definitions(-DNO_DL)
@@ -54,8 +58,11 @@ if (NOT APPLE)
     set(SYSTEM_LIBS_STATIC ${SYSTEM_LIBS_STATIC} rt.a)
 endif(NOT APPLE)
 
+if (PYTHON)
+    add_subdirectory(${SUBMODULE_DIR}/pybind11)
+endif (PYTHON)
+
 set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY true)
-set(SUBMODULE_DIR ${CMAKE_SOURCE_DIR}/extern)
 include_directories(${SUBMODULE_DIR}/cpsCore/include)
 
 set(CPS_CORE_DONT_BUILD_TESTS ON)
