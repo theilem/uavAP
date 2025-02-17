@@ -148,7 +148,7 @@ private:
 	T
 	getValue(const std::vector<std::string>& items, DataID id, T defaultVal);
 
-	data_sample_t dataSample_;
+	data_sample_t dataSample_{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
 	std::ifstream logFile_;
 	int dataIDIndeces_[static_cast<size_t>(DataID::NUM_OF_IDX)] = {-1};
