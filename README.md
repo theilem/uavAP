@@ -100,6 +100,3 @@ The planning and control stack of uavAP is aimed to be as modular as possible, h
 ## References
 
 Theile, M., Dantsker, O., Nai, R., Caccamo, M., & Yu, S. (2020). uavAP: A Modular Autopilot Framework for UAVs. In AIAA AVIATION 2020 FORUM (p. 3268).
-
-
-Test Push to approach
