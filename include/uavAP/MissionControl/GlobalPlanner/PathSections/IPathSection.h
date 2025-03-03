@@ -30,6 +30,7 @@
 
 struct SensorData;
 
+// TODO: Add more path section types for Partial Orbit and Helix
 enum class PathSectionType
 {
     UNKNOWN = 0, CURVE, ORBIT, LINE, SPLINE, QUARTIC_SPLINE

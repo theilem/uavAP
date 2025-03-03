@@ -30,7 +30,8 @@
 #include <iostream>
 #include <uavAP/Core/SensorData.h>
 
-struct Helix: public IPathSection
+// todo make this an Orbit
+struct Helix : public IPathSection
 {
 public:
 
@@ -39,24 +40,23 @@ public:
 	{
 	}
 
-	Helix(const Vector3& center, const Vector3& normal, const SensorData& data, FloatingType radius, FloatingType slope, FloatingType vel) :
+	Helix(const Vector3& center, const Vector3& normal, const SensorData& data, FloatingType radius, FloatingType slope,
+		  FloatingType vel) :
 			center_(center), normal_(normal), initialPosition_(data), radius_(radius), slope_(slope), velocity_(vel),
 			currentPosition_(0, 0, 0), elevate_(true)
 	{
-			// Calling function to see if pitch should be positive or negative
-			checkElevate(initialPosition_);
 	}
 
 	void
-	checkElevate(const SensorData& data) override
+	checkElevate(const Vector3& position)
 	{
-		currentPosition_ = data.position;
-		if (currentPosition_.z() < center_.z())
+		if (position.z() < center_.z())
 		{
-			bool elevate_ = true;
-		} else
+			elevate_ = true;
+		}
+		else
 		{
-			bool elevate_ = false;
+			elevate_ = false;
 		}
 	}
 
@@ -64,6 +64,7 @@ public:
 	updateSensorData(const SensorData& data) override
 	{
 		currentPosition_ = data.position;
+		checkElevate(currentPosition_);
 		//Calculate current radius vector to target position as it is used several times
 		Vector3 projection = EigenHyperplane(normal_, center_).projection(currentPosition_);
 		radiusVector_ = (projection - center_).normalized() * radius_;
@@ -74,6 +75,7 @@ public:
 	inTransition() const override
 	{
 		// Don't want to stay forever.. once altitude is close enough to center altitude can return true
+		// Todo fix with threshold
 		if (elevate_)
 		{
 			if (center_.z() < currentPosition_.z())
@@ -125,7 +127,8 @@ public:
 		if (elevate_)
 		{
 			return slope_;
-		} else
+		}
+		else
 		{
 			return -slope_;
 		}
@@ -159,7 +162,6 @@ public:
 
 	Vector3 currentPosition_;
 	bool elevate_;
-	SensorData initialPosition_;
 };
 
 namespace dp
@@ -176,7 +178,6 @@ serialize(Archive& ar, Helix& t)
 	ar & t.velocity_;
 	ar & t.currentPosition_;
 	ar & t.elevate_;
-	ar & t.initialPosition_;
 }
 }
 

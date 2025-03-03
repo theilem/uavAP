@@ -66,12 +66,10 @@ ApproachPlanner::setMission(const Mission& mission)
 
     const auto& wp = mission.waypoints();
     // calculating orbit
-    IPathSection partial_orbit;          // (point - radius) should always be on circumference
-    partial_orbit = std::make_shared<PartialOrbit>(wp[0].location()-Vector3(50,0,0), Vector3(0, 0, 1), 50, 50);
+    auto partial_orbit = std::make_shared<PartialOrbit>(wp[0].location()-Vector3(50,0,0), Vector3(0, 0, 1), 50, 50);
 
     // calculating helix
-    IPathSection helix;
-    helix = std::make_shared<Helix>(wp[0].location()-Vector3(50,0,0), Vector3(0, 0, 1), 50, 50);
+    auto helix = std::make_shared<Helix>(wp[0].location()-Vector3(50,0,0), Vector3(0, 0, 1), 50, 50);
     if (infinite && params.naturalSplines())
     {
         // return path section list
@@ -167,6 +165,7 @@ ApproachPlanner::createNaturalSplines(const Mission& mission)
 PathSections
 ApproachPlanner::createCatmulRomSplines(const Mission& mission)
 {
+// TODO Make this function only connect two waypoints with a direction each
     CPSLOG_DEBUG << "Create Catmull Rom Splines";
     // Need to set the waypoint altitude equal to current altitude somewhere in here...
     const auto& wp = mission.waypoints();

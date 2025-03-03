@@ -30,6 +30,7 @@
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/Orbit.h"
 #include <iostream>
 
+// TODO Delete this
 struct Curve: public Orbit
 {
 

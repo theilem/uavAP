@@ -77,6 +77,7 @@ store(Archive & ar, const std::shared_ptr<IPathSection> & t)
 	ar << notNull;
 	if (notNull)
 	{
+		// Todo add other path section types
 		if (auto curve = std::dynamic_pointer_cast<Curve>(t))
 		{
 			ar << PathSectionType::CURVE;

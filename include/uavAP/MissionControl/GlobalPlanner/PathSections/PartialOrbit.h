@@ -31,98 +31,33 @@
 #include <uavAP/Core/SensorData.h>
 #include <cmath>
 
-struct PartialOrbit: public IPathSection
+struct PartialOrbit : public Orbit
 {
 public:
 
-	PartialOrbit() :
-			radius_(0), velocity_(0)
-	{
-	}
+	PartialOrbit() = default;
 
-	PartialOrbit(const Vector3& center, const Vector3& normal, FloatingType radius, FloatingType vel) :
-			center_(center), normal_(normal), radius_(radius), velocity_(vel), currentPosition_(0,
-					0, 0)
+	PartialOrbit(const Vector3& center, const Vector3& normal, FloatingType radius, FloatingType vel,
+				 const Vector3& goalPoint) :
+			Orbit(center, normal, radius, vel), goalPoint_(goalPoint)
 	{
-	}
-
-	void
-	updateSensorData(const SensorData& data) override
-	{
-		currentPosition_ = data.position;
-		//Calculate current radius vector to target position as it is used several times
-		Vector3 projection = EigenHyperplane(normal_, center_).projection(currentPosition_);
-		radiusVector_ = (projection - center_).normalized() * radius_;
 	}
 
 	bool
 	inTransition() const override
 	{
-		double l2_norm = std::sqrt(std::pow(center_.x() - currentPosition_.x(), 2) +
-									   std::pow(center_.y() - currentPosition_.y(), 2));
-        if (l2_norm > radius_ / 20){
-        	return true;
-        }
-        //Stay forever
+		double l2_norm = std::sqrt(std::pow(goalPoint_.x() - currentPosition_.x(), 2) +
+								   std::pow(goalPoint_.y() - currentPosition_.y(), 2));
+		if (l2_norm < radius_ / 20.0)
+		{
+			return true;
+		}
+		//Stay forever
 		return false;
 	}
 
-	Vector3
-	getPositionDeviation() const override
-	{
-		return radiusVector_ + center_ - currentPosition_;
-	}
+	Vector3 goalPoint_;
 
-	Vector3
-	getDirection() const override
-	{
-		return normal_.cross(radiusVector_ / radius_);
-	}
-
-	Vector3
-	getCenter() const
-	{
-		return center_;
-	}
-
-	FloatingType
-	getRadius() const
-	{
-		return radius_;
-	}
-
-	FloatingType
-	getSlope() const override
-	{
-		return getDirection().z();
-	}
-
-	FloatingType
-	getCurvature() const override
-	{
-		FloatingType curv = 1 / radius_;
-		return normal_.z() < 0 ? -curv : curv;
-	}
-
-	Vector3
-	getEndPoint() const override
-	{
-		return center_;
-	}
-
-	FloatingType
-	getVelocity() const override
-	{
-		return velocity_;
-	}
-
-	Vector3 center_;
-	Vector3 normal_;
-	FloatingType radius_;
-	Vector3 radiusVector_;
-	FloatingType velocity_;
-
-	Vector3 currentPosition_;
 };
 
 namespace dp
@@ -131,12 +66,8 @@ template<class Archive, typename Type>
 inline void
 serialize(Archive& ar, PartialOrbit& t)
 {
-	ar & t.center_;
-	ar & t.normal_;
-	ar & t.radius_;
-	ar & t.radiusVector_;
-	ar & t.velocity_;
-	ar & t.currentPosition_;
+	ar & static_cast<Orbit&>(t);
+	ar & t.goalPoint_;
 }
 }
 

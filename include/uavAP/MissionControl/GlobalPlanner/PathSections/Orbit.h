@@ -30,6 +30,7 @@
 #include <iostream>
 #include <uavAP/Core/SensorData.h>
 
+// TODO: Fix that it is not always in the same direction
 struct Orbit: public IPathSection
 {
 public:
