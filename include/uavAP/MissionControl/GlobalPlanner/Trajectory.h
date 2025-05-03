@@ -88,6 +88,18 @@ store(Archive & ar, const std::shared_ptr<IPathSection> & t)
 			ar << PathSectionType::ORBIT;
 			ar << *orbit;
 		}
+        // confirm this is correct. do i need to say they are Type::Orbit if they pull from the orbit path section?
+		else if (auto partialOrbit = std::dynamic_pointer_cast<PartialOrbit>(t))
+		{
+			ar << PathSectionType::PARTIALORBIT;
+			ar << *partialOrbit;
+		}
+		// confirm this is correct. do i need to say they are Type::Orbit if they pull from the orbit path section?
+		else if (auto helix = std::dynamic_pointer_cast<Helix>(t))
+		{
+			ar << PathSectionType::HELIX;
+			ar << *helix;
+		}
 		else if (auto line = std::dynamic_pointer_cast<Line>(t))
 		{
 			ar << PathSectionType::LINE;

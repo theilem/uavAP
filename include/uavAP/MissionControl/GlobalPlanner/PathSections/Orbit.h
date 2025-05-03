@@ -31,18 +31,25 @@
 #include <uavAP/Core/SensorData.h>
 
 // TODO: Fix that it is not always in the same direction
+// added orientation_: set to 1 for original direction (counter-clockwise). set to -1 for flipped direction.
+// see lines 45-47, 76
+enum class Direction
+{
+	CLOCKWISE = 0, COUNTER_CLOCKWISE
+};
+
 struct Orbit: public IPathSection
 {
 public:
 
 	Orbit() :
-			radius_(0), velocity_(0)
+			radius_(0), velocity_(0), orientation_(Direction::COUNTER_CLOCKWISE)
 	{
 	}
 
-	Orbit(const Vector3& center, const Vector3& normal, FloatingType radius, FloatingType vel) :
+	Orbit(const Vector3& center, const Vector3& normal, FloatingType radius, FloatingType vel, Direction orientation) :
 			center_(center), normal_(normal), radius_(radius), velocity_(vel), currentPosition_(0,
-					0, 0)
+					0, 0), orientation_(orientation)
 	{
 	}
 
@@ -71,7 +78,7 @@ public:
 	Vector3
 	getDirection() const override
 	{
-		return normal_.cross(radiusVector_ / radius_);
+		return orientation_ * normal_.cross(radiusVector_ / radius_);
 	}
 
 	Vector3
@@ -116,6 +123,7 @@ public:
 	FloatingType radius_;
 	Vector3 radiusVector_;
 	FloatingType velocity_;
+    Direction orientation_;
 
 	Vector3 currentPosition_;
 };
@@ -131,6 +139,7 @@ serialize(Archive& ar, Orbit& t)
 	ar & t.radius_;
 	ar & t.radiusVector_;
 	ar & t.velocity_;
+    ar & t.orientation_;
 	ar & t.currentPosition_;
 }
 }

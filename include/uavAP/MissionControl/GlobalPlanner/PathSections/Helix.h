@@ -31,19 +31,16 @@
 #include <uavAP/Core/SensorData.h>
 
 // todo make this an Orbit
-struct Helix : public IPathSection
+// fixed. keeping override on inTransition() and getSlope(). kept new function checkElevate().
+struct Helix : public Orbit
 {
 public:
 
-	Helix() :
-			radius_(0), velocity_(0)
-	{
-	}
+	Helix() = default;
 
-	Helix(const Vector3& center, const Vector3& normal, const SensorData& data, FloatingType radius, FloatingType slope,
-		  FloatingType vel) :
-			center_(center), normal_(normal), initialPosition_(data), radius_(radius), slope_(slope), velocity_(vel),
-			currentPosition_(0, 0, 0), elevate_(true)
+	Helix(const Vector3& center, const Vector3& normal, FloatingType radius, FloatingType vel,
+              Direction orientation, FloatingType slope) :
+			Orbit(center, normal, radius, vel, orientation), slope_(slope), elevate_(true)
 	{
 	}
 
@@ -60,65 +57,24 @@ public:
 		}
 	}
 
-	void
-	updateSensorData(const SensorData& data) override
-	{
-		currentPosition_ = data.position;
-		checkElevate(currentPosition_);
-		//Calculate current radius vector to target position as it is used several times
-		Vector3 projection = EigenHyperplane(normal_, center_).projection(currentPosition_);
-		radiusVector_ = (projection - center_).normalized() * radius_;
-	}
+	// Q (updateSensorData()): do I need to change center to a temporaryCenter_ with the same z as current position?
 
-
-	bool
+    bool
 	inTransition() const override
 	{
 		// Don't want to stay forever.. once altitude is close enough to center altitude can return true
 		// Todo fix with threshold
-		if (elevate_)
-		{
-			if (center_.z() < currentPosition_.z())
-			{
-				return true;
-			}
-		}
-		else // This triggers when elevate_ is false
-		{
-			if (center_.z() > currentPosition_.z()) // Adjust condition as needed
-			{
-				return true;
-			}
-		}
+        // now only checking if absolute value of difference is within the threshold.
+        // shouldn't matter if above or below.
+        threshold = 10 // insert tau
+		FloatingType elevationDifference = std::abs(center_.z() - currentPosition_.z());
 
+        if (elevationDifference < threshold)
+        {
+            return true;
+        }
 		//Else stay in loop while you continue to move towards goal altitude
 		return false;
-	}
-
-	Vector3
-	getPositionDeviation() const override
-	{
-		Vector3 positionDeviation_ = radiusVector_ + center_ - currentPosition_;
-		positionDeviation_.z = 0;
-		return positionDeviation_;
-	}
-
-	Vector3
-	getDirection() const override
-	{
-		return normal_.cross(radiusVector_ / radius_);
-	}
-
-	Vector3
-	getCenter() const
-	{
-		return center_;
-	}
-
-	FloatingType
-	getRadius() const
-	{
-		return radius_;
 	}
 
 	FloatingType
@@ -134,34 +90,9 @@ public:
 		}
 	}
 
-	FloatingType
-	getCurvature() const override
-	{
-		FloatingType curv = 1 / radius_;
-		return normal_.z() < 0 ? -curv : curv;
-	}
-
-	Vector3
-	getEndPoint() const override
-	{
-		return center_;
-	}
-
-	FloatingType
-	getVelocity() const override
-	{
-		return velocity_;
-	}
-
-	Vector3 center_;
-	Vector3 normal_;
-	FloatingType radius_;
-	Vector3 radiusVector_;
-	FloatingType slope_;
-	FloatingType velocity_;
-
-	Vector3 currentPosition_;
+    FloatingType slope_;
 	bool elevate_;
+
 };
 
 namespace dp
@@ -170,13 +101,8 @@ template<class Archive, typename Type>
 inline void
 serialize(Archive& ar, Helix& t)
 {
-	ar & t.center_;
-	ar & t.normal_;
-	ar & t.radius_;
-	ar & t.radiusVector_;
+	ar & static_cast<Orbit&>(t);
 	ar & t.slope_;
-	ar & t.velocity_;
-	ar & t.currentPosition_;
 	ar & t.elevate_;
 }
 }

@@ -38,8 +38,8 @@ public:
 	PartialOrbit() = default;
 
 	PartialOrbit(const Vector3& center, const Vector3& normal, FloatingType radius, FloatingType vel,
-				 const Vector3& goalPoint) :
-			Orbit(center, normal, radius, vel), goalPoint_(goalPoint)
+				 Direction orientation, const Vector3& goalPoint) :
+			Orbit(center, normal, radius, vel, orientation), goalPoint_(goalPoint)
 	{
 	}
 
