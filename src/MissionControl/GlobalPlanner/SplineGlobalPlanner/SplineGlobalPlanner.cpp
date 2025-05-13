@@ -217,7 +217,7 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
                 FloatingType velocity = (!it->velocity()) ? mission.velocity() : *it->velocity();
                 traj.push_back(
                     std::make_shared<Orbit>(it->location(), Vector3::UnitZ(), params.orbitRadius(),
-                                            velocity));
+                                            velocity, Direction::COUNTER_CLOCKWISE)); // Jonathan edit - put in a random direction
                 break;
             }
             nextIt = wp.begin();

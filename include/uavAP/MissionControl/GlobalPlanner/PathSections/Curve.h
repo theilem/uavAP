@@ -38,8 +38,8 @@ struct Curve: public Orbit
 	{
 	}
 
-	Curve(const Vector3& center, const Vector3& normal, const Vector3 endPoint, FloatingType vel) :
-			Orbit(center, normal, (endPoint - center).norm(), vel), endPoint_(endPoint)
+	Curve(const Vector3& center, const Vector3& normal, const Vector3 endPoint, const FloatingType vel) :
+			Orbit(center, normal, static_cast<FloatingType>((endPoint - center).norm()), vel, Direction::COUNTER_CLOCKWISE), endPoint_(endPoint)
 	{
 		auto radius = (endPoint_ - center).normalized();
 		endPointDirection_ = normal.cross(radius);

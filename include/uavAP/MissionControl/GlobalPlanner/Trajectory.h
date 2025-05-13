@@ -32,6 +32,8 @@
 #include <uavAP/MissionControl/GlobalPlanner/PathSections/Curve.h>
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h"
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/QuarticSpline.h"
+#include "uavAP/MissionControl/GlobalPlanner/PathSections/Helix.h"
+#include "uavAP/MissionControl/GlobalPlanner/PathSections/PartialOrbit.h"
 
 #include <cpsCore/Utilities/DataPresentation/detail/Split.h>
 

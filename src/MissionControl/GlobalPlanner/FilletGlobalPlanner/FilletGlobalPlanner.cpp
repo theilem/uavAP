@@ -169,7 +169,7 @@ FilletGlobalPlanner::setMission(const Mission& mission)
 			vel = traj.back()->getVelocity();
 		}
 		//Make orbit parallel to ground at the endPoint of  the last line
-		auto orbit = std::make_shared<Orbit>(center, Vector3(0, 0, 1), filletRadius_, vel);
+		auto orbit = std::make_shared<Orbit>(center, Vector3(0, 0, 1), filletRadius_, vel, Direction::COUNTER_CLOCKWISE);  // Jonathan edit - put in a random direction
 		traj.push_back(orbit);
 	}
 

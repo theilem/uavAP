@@ -66,10 +66,12 @@ ApproachPlanner::setMission(const Mission& mission)
 
     const auto& wp = mission.waypoints();
     // calculating orbit
-    auto partial_orbit = std::make_shared<PartialOrbit>(wp[0].location()-Vector3(50,0,0), Vector3(0, 0, 1), 50, 50);
+
+    auto partial_orbit = std::make_shared<PartialOrbit>(wp[0].location()-Vector3(50,0,0), Vector3(0, 0, 1), 50, 50, Direction::COUNTER_CLOCKWISE, wp[0].location());
 
     // calculating helix
-    auto helix = std::make_shared<Helix>(wp[0].location()-Vector3(50,0,0), Vector3(0, 0, 1), 50, 50);
+    // Jonathan edit - don't know what the slope or direction should be
+    auto helix = std::make_shared<Helix>(wp[0].location()-Vector3(50,0,0), Vector3(0, 0, 1), 50, 50, Direction::COUNTER_CLOCKWISE, 0.1);
     if (infinite && params.naturalSplines())
     {
         // return path section list
@@ -238,7 +240,7 @@ ApproachPlanner::createCatmulRomSplines(const Mission& mission)
                 FloatingType velocity = (!it->velocity()) ? mission.velocity() : *it->velocity();
                 traj.push_back(
                     std::make_shared<Orbit>(it->location(), Vector3::UnitZ(), params.orbitRadius(),
-                                            velocity));
+                                            velocity, Direction::COUNTER_CLOCKWISE));  // Jonathan edit - I am adding a direction don't know if it's right
                 break;
             }
             nextIt = wp.begin();

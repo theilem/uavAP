@@ -29,6 +29,7 @@
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h"
 #include <iostream>
 #include <uavAP/Core/SensorData.h>
+#include "uavAP/MissionControl/GlobalPlanner/PathSections/Orbit.h"
 
 // todo make this an Orbit
 // fixed. keeping override on inTransition() and getSlope(). kept new function checkElevate().
@@ -66,7 +67,7 @@ public:
 		// Todo fix with threshold
         // now only checking if absolute value of difference is within the threshold.
         // shouldn't matter if above or below.
-        threshold = 10 // insert tau
+        FloatingType threshold = 10; // insert tau
 		FloatingType elevationDifference = std::abs(center_.z() - currentPosition_.z());
 
         if (elevationDifference < threshold)

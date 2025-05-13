@@ -63,7 +63,7 @@ LinearLocalPlanner::run(RunStage stage)
 
 		Trajectory traj;
 		traj.pathSections.push_back(
-				std::make_shared<Orbit>(Vector3(0, 0, 0), Vector3(0, 0, 1), 50, 50));
+				std::make_shared<Orbit>(Vector3(0, 0, 0), Vector3(0, 0, 1), 50, 50, Direction::COUNTER_CLOCKWISE)); // Jonathan edit - put in random direction
 		setTrajectory(traj);
 
 		break;

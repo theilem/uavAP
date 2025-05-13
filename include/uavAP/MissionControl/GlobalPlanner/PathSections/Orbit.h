@@ -35,7 +35,7 @@
 // see lines 45-47, 76
 enum class Direction
 {
-	CLOCKWISE = 0, COUNTER_CLOCKWISE
+	CLOCKWISE = -1, COUNTER_CLOCKWISE = 1
 };
 
 struct Orbit: public IPathSection
@@ -78,7 +78,8 @@ public:
 	Vector3
 	getDirection() const override
 	{
-		return orientation_ * normal_.cross(radiusVector_ / radius_);
+        FloatingType orientationScalar = (orientation_ == Direction::COUNTER_CLOCKWISE) ? 1 : -1;
+		return orientationScalar * normal_.cross(radiusVector_ / radius_);
 	}
 
 	Vector3
