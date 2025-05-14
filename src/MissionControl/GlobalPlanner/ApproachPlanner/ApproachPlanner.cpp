@@ -1,8 +1,8 @@
 /*
  * ApproachPlanner.cpp
  *
- *  Created on: Dec 16, 2017
- *      Author: mircot
+ *  Created on: May 14, 2025
+ *      Author: acmeighan, jjponnia
  */
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/CubicSpline.h"
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/Orbit.h"
@@ -164,16 +164,15 @@ ApproachPlanner::createNaturalSplines(const Mission& mission)
     return traj;
 }
 
-PathSections
+PathSections // TODO two references to waypoints 0 and 1 instead of a mission
 ApproachPlanner::createCatmulRomSplines(const Mission& mission)
 {
-// TODO Make this function only connect two waypoints with a direction each
+    // TODO Make this function only connect two waypoints with a direction each
+    // Assume that mission only contains two waypoints with a direction each
     CPSLOG_DEBUG << "Create Catmull Rom Splines";
     // Need to set the waypoint altitude equal to current altitude somewhere in here...
     const auto& wp = mission.waypoints();
     bool infinite = mission.infinite();
-
-    PathSections traj;
 
     Eigen::Matrix<FloatingType, 4, 4> tauMat;
     tauMat << 0, 1, 0, 0,
@@ -182,139 +181,29 @@ ApproachPlanner::createCatmulRomSplines(const Mission& mission)
         -params.tau(), 2 - params.tau(), params.tau() - 2, params.tau();
     Eigen::Matrix<FloatingType, 4, 3> pointMat;
     Eigen::Matrix<FloatingType, 4, 3> approachMat;
-    if (wp.size() == 1)
-        infinite = false;
+
+    if (wp.size() != 2)
+        CPSLOG_ERROR << "Mission does not contain the correct number of Waypoints.";
     else
     {
-        if (infinite)
-            pointMat.row(0) = wp.back().location().transpose();
-        else
-            pointMat.row(0) = wp.front().location().transpose();
-        pointMat.row(1) = wp.front().location().transpose();
+        pointMat.row(0) = wp[1].location().transpose() - wp[0].direction()->transpose();
+        pointMat.row(1) = wp[0].location().transpose();
         pointMat.row(2) = wp[1].location().transpose();
+        pointMat.row(3) = wp[0].location().transpose() + wp[1].direction()->transpose();
+
     }
+    // ensuring that there is no change in the z-direction. this elevation can be saved for helix
+    pointMat.col(2)[1] = pointMat.col(2)[0];
+    pointMat.col(2)[2] = pointMat.col(2)[0];
+    pointMat.col(2)[3] = pointMat.col(2)[0];
 
-    for (auto it = wp.begin(); it != wp.end(); ++it)
-    {
-        if (it->direction())
-            pointMat.row(0) = pointMat.row(2) - it->direction()->transpose();
-        else
-        {
-            if (params.smoothenZ())
-            {
-                const auto& col = pointMat.col(2);
-                FloatingType incline1 = col[2] - col[0];
-                FloatingType incline2 = col[2] - col[1];
-                FloatingType incline3 = col[1] - col[0];
-                FloatingType minIncline = 0;
-                if (fabs(incline1) < fabs(incline2))
-                {
-                    if (fabs(incline3) < fabs(incline1))
-                        minIncline = incline3;
-                    else
-                        minIncline = incline1;
-                }
-                else
-                {
-                    if (fabs(incline3) < fabs(incline2))
-                        minIncline = incline3;
-                    else
-                        minIncline = incline2;
-                }
-
-                pointMat.col(2)[0] = col[2] - minIncline;
-            }
-        }
-
-        //		if (populateApproach)
-        //		{
-        //			approachMat.bottomRows(3) = pointMat.topRows(3);
-        //			populateApproach = false;
-        //		}
-
-        auto nextIt = it + 1;
-        if (nextIt == wp.end())
-        {
-            if (!infinite)
-            {
-                FloatingType velocity = (!it->velocity()) ? mission.velocity() : *it->velocity();
-                traj.push_back(
-                    std::make_shared<Orbit>(it->location(), Vector3::UnitZ(), params.orbitRadius(),
-                                            velocity, Direction::COUNTER_CLOCKWISE));  // Jonathan edit - I am adding a direction don't know if it's right
-                break;
-            }
-            nextIt = wp.begin();
-        }
-        auto next = nextIt + 1;
-        if (next == wp.end())
-        {
-            if (!infinite)
-                next = nextIt;
-            else
-                next = wp.begin();
-        }
-
-        if (nextIt->direction())
-            pointMat.row(3) = pointMat.row(1) + nextIt->direction()->transpose();
-        else
-        {
-            pointMat.row(3) = next->location();
-            if (params.smoothenZ())
-            {
-                const auto& col = pointMat.col(2);
-                FloatingType incline1 = col[3] - col[1];
-                FloatingType incline2 = col[3] - col[2];
-                FloatingType incline3 = col[2] - col[1];
-                FloatingType minIncline = 0;
-                if (fabs(incline1) < fabs(incline2))
-                {
-                    if (fabs(incline3) < fabs(incline1))
-                        minIncline = incline3;
-                    else
-                        minIncline = incline1;
-                }
-                else
-                {
-                    if (fabs(incline3) < fabs(incline2))
-                        minIncline = incline3;
-                    else
-                        minIncline = incline2;
-                }
-
-                pointMat.col(2)[3] = col[1] + minIncline;
-            }
-        }
-
-        Eigen::Matrix<FloatingType, 3, 4> C = (tauMat * pointMat).transpose();
-        FloatingType velocity = (!it->velocity()) ? mission.velocity() : *it->velocity();
-        auto spline = std::make_shared<CubicSpline>(C.col(0), C.col(1), C.col(2), C.col(3),
+    Eigen::Matrix<FloatingType, 3, 4> C = (tauMat * pointMat).transpose();
+    // this velocity line may be incorrect
+    FloatingType velocity = (!wp[0].velocity()) ? mission.velocity() : *wp[0].velocity();
+    auto spline = std::make_shared<CubicSpline>(C.col(0), C.col(1), C.col(2), C.col(3),
                                                     velocity);
-        traj.push_back(spline);
-
-        pointMat.topRows(3) = pointMat.bottomRows(3);
-
-        pointMat.row(2) = next->location();
-    }
-
-    // Trajectory result(traj, mission.infinite());
-
-    //	if (mission.initialPosition())
-    //	{
-    //		Waypoint init = *mission.initialPosition();
-    //		approachMat.row(1) = init.location().transpose();
-    //		if (init.direction())
-    //			approachMat.row(0) = approachMat.row(2)
-    //								 - (init.direction()->transpose() * mission.velocity());
-    //		else
-    //			approachMat.row(0) = approachMat.row(1);
-    //
-    //		Eigen::Matrix<FloatingType, 3, 4> C = (tauMat * approachMat).transpose();
-    //		auto spline = std::make_shared<CubicSpline>(C.col(0), C.col(1), C.col(2), C.col(3),
-    //													mission.velocity());
-    //		result.approachSection = spline;
-    //	}
-
-    return traj;
+    // need to change this to return a pathsection
+    return spline;
 }
 
 Optional<Mission>

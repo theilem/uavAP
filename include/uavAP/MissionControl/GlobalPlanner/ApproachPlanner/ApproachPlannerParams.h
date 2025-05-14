@@ -1,8 +1,8 @@
 /*
  * ApproachPlannerParams.h
  *
- *  Created on: Jun 26, 2019
- *      Author: mirco
+ *  Created on: May 14, 2025
+ *      Author: acmeighan, jjponnia
  */
 
 #ifndef UAVAP_MISSIONCONTROL_GLOBALPLANNER_APPROACHPLANNER_APPROACHPLANNERPARAMS_H_

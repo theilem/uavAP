@@ -1,8 +1,8 @@
 /*
  * ApproachPlanner.h
  *
- *  Created on: Dec 16, 2017
- *      Author: mircot
+ *  Created on: May 14, 2025
+ *      Author: acmeighan, jjponnia
  */
 
 #ifndef UAVAP_MISSIONCONTROL_GLOBALPLANNER_APPROACHPLANNER_APPROACHPLANNER_H_
