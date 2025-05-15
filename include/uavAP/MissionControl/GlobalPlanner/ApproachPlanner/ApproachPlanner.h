@@ -38,18 +38,15 @@ public:
 	run(RunStage stage) override;
 
 	void
-	setMission(const Mission& mission) override;
+	setMission(const Waypoint& wp0, const Waypoint& wp1) override;
 
 	Mission
 	getMission() const override;
 
 private:
 
-	PathSections
-	createNaturalSplines(const Mission& mission);
-
-	PathSections
-	createCatmulRomSplines(const Mission& mission);
+	Trajectory
+	createCatmulRomSplines(const Waypoint& wp0, const Waypoint& wp1);
 
 	Optional<Mission>
 	missionRequest(const DataRequest& request);
