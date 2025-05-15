@@ -1,4 +1,5 @@
 set(TEST_SRCS ${TEST_SRCS}
+        ${CMAKE_CURRENT_SOURCE_DIR}/ApproachTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DataHandlingTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/EnumAccess.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/FramesTest.cpp
