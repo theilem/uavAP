@@ -38,9 +38,12 @@ public:
 	~IGlobalPlanner() = default;
 
 	virtual void
-	setMission(const Mission& mission) = 0;
+	setMission(const Waypoint& wp0, const Waypoint& wp1) {} // Jonathan edit - changed parameters to match ApproachPlanner override
 
-	virtual Mission
+	virtual void
+    setMission(const Mission& mission) {}; // Jonathan edit - took out the = 0 because inheriting class only needs to implement one of the two
+
+    virtual Mission
 	getMission() const = 0;
 
 };

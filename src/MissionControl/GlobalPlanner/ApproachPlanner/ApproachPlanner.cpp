@@ -65,6 +65,7 @@ ApproachPlanner::setMission(const Waypoint& wp0, const Waypoint& wp1)
     auto helix = std::make_shared<Helix>(wp1.location()-Vector3(50,0,0), Vector3(0, 0, 1), 50, 50, Direction::COUNTER_CLOCKWISE, 0.1);
 
     // returns path section list
+    Trajectory trajectory; // Jonathan edit - this is a trajectory object
     trajectory = createCatmulRomSplines(wp0, wp1);
 
     // adding helix then orbit to traj
@@ -111,7 +112,7 @@ ApproachPlanner::createCatmulRomSplines(const Waypoint& wp0, const Waypoint& wp1
 
     Eigen::Matrix<FloatingType, 3, 4> C = (tauMat * pointMat).transpose();
     // this velocity line may be incorrect
-    FloatingType velocity = (!wp0.velocity()) ? mission.velocity() : *wp0.velocity();
+    FloatingType velocity = (!wp0.velocity()) ? *wp1.velocity() : *wp0.velocity(); // Jonathan edit - changed mission to wp1.  Not sure if correct.
     auto spline = std::make_shared<CubicSpline>(C.col(0), C.col(1), C.col(2), C.col(3),
                                                     velocity);
     Trajectory trajectory;
