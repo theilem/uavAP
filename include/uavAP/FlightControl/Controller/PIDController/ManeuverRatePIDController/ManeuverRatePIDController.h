@@ -41,7 +41,7 @@ public:
 	ManeuverRatePIDController();
 
 	bool
-	configure(const Configuration& config);
+	configure(const Configuration& config) override;
 
 	bool
 	run(RunStage stage) override;

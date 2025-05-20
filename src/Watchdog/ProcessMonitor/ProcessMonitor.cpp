@@ -33,17 +33,17 @@ ProcessMonitor::ProcessMonitor() :
 bool
 ProcessMonitor::configure(const Configuration& config)
 {
-	PropertyMapper<Configuration> pm(config);
+	PropertyMapper pm(config);
 	Configuration processConfig;
 
 	pm.add("binary_path", binaryPath_, false);
 	pm.add("config_path", configPath_, false);
 	pm.add("processes", processConfig, true);
 
-	for (auto &it : processConfig)
+	for (auto &[key, value] : processConfig.items())
 	{
-		ProcessInfo processInfo(it.first);
-		if (!processInfo.configure(it.second))
+		ProcessInfo processInfo(key);
+		if (!processInfo.configure(value))
 			return false;
 		processes_.push_back(std::move(processInfo));
 	}

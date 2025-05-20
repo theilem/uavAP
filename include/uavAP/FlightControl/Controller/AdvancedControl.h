@@ -83,87 +83,22 @@ ENUMMAP_INIT(AdvancedControls, {{AdvancedControls::CAMBER_CONTROL, "camber_contr
  */
 struct AdvancedControl
 {
-	ThrowsControl throwsSelection = ThrowsControl::NORMAL;
-	CamberControl camberSelection = CamberControl::NORMAL;
-	SpecialControl specialSelection = SpecialControl::NONE;
-	double camberValue = 0.0;
-	double specialValue = 0.0;
+	Parameter<ThrowsControl> throwsSelection = {ThrowsControl::NORMAL, "throws_control", true};
+	Parameter<CamberControl> camberSelection = {CamberControl::NORMAL, "camber_control", true};
+	Parameter<SpecialControl> specialSelection = {SpecialControl::NONE, "special_control", true};
+	Parameter<double> camberValue = {0.0, "camber_value", true};
+	Parameter<double> specialValue = {0.0, "special_value", true};
 
-	bool
-	configure(const Configuration& config)
+	template<typename Configurator>
+	void
+	configure(Configurator& c)
 	{
-		PropertyMapper<Configuration> pm(config);
-
-		for (auto& it : config)
-		{
-			auto advancedControlEnum = EnumMap<AdvancedControls>::convert(it.first);
-
-			switch (advancedControlEnum)
-			{
-			case AdvancedControls::CAMBER_CONTROL:
-			{
-				Configuration camberConfig;
-
-				if (pm.add(it.first, camberConfig, true))
-				{
-					PropertyMapper<Configuration> camberPm(camberConfig);
-					std::string camberString;
-
-					camberPm.add("control", camberString, true);
-					camberPm.add<double>("value", camberValue, true);
-					camberSelection = EnumMap<CamberControl>::convert(camberString);
-				}
-
-				break;
-			}
-			case AdvancedControls::SPECIAL_CONTROL:
-			{
-				Configuration specialConfig;
-
-				if (pm.add(it.first, specialConfig, true))
-				{
-					PropertyMapper<Configuration> specialPm(specialConfig);
-					std::string specialString;
-
-					specialPm.add("control", specialString, true);
-					specialPm.add<double>("value", specialValue, true);
-					specialSelection = EnumMap<SpecialControl>::convert(specialString);
-				}
-
-				break;
-			}
-			case AdvancedControls::THROWS_CONTROL:
-			{
-				std::string throwsString;
-
-				pm.add(it.first, throwsString, true);
-				throwsSelection = EnumMap<ThrowsControl>::convert(throwsString);
-
-				break;
-			}
-			default:
-			{
-				break;
-			}
-			}
-		}
-
-		return pm.map();
+		c & throwsSelection;
+		c & camberSelection;
+		c & specialSelection;
+		c & camberValue;
+		c & specialValue;
 	}
 };
-
-namespace dp
-{
-template<class Archive, typename Type>
-inline void
-serialize(Archive& ar, AdvancedControl& t)
-{
-	ar & t.throwsSelection;
-	ar & t.camberSelection;
-	ar & t.specialSelection;
-	ar & t.camberValue;
-	ar & t.specialValue;
-}
-} /* dp */
 
 #endif /* UAVAP_FLIGHTCONTROL_CONTROLLER_ADVANCEDCONTROL_H_ */

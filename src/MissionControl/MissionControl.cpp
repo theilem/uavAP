@@ -22,11 +22,10 @@ main(int argc, char** argv)
 	}
 	else
 	{
-		std::ofstream file;
-		file.open("mission_control.json", std::ofstream::out);
-		JsonPopulator pop(file);
+		JsonPopulator pop;
 
-		pop.populateContainer(MissionControlHelper());
+		pop.populateContainer<MissionControlHelper>();
+		pop.toFile("mission_control.json");
 		std::cout << "Populated json" << std::endl;
 		return 0;
 	}

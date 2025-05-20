@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.13)
 project(uavAP)
-
+# Set c++17 as the minimum version
+if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 7.0.0)
+    message(FATAL_ERROR "Cannot compile, need c++17")
+endif (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 7.0.0)
+set(CMAKE_CXX_STANDARD 17)
 #######Build configuration########
 
 option(NO_DL "Deactivate dynamic linking in the Plugin Manager." OFF)

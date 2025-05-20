@@ -101,7 +101,7 @@ struct PIDParameters
 	Parameter<bool> isAngle = {false, "is_angle", false};
 
 	template <typename Config>
-	inline void
+	void
 	configure(Config& c)
 	{
 		c & kp;

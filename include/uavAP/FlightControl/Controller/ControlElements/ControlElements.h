@@ -32,228 +32,204 @@
 
 namespace Control
 {
+    class Constant : public IControlElement
+    {
+    public:
+        Constant(FloatingType val);
 
-class Constant : public IControlElement
-{
-public:
-	Constant(FloatingType val);
+        FloatingType
+        getValue() const override;
 
-	FloatingType
-	getValue() const override;
+    private:
+        FloatingType val_;
+    };
 
-private:
+    template <typename Type>
+    struct ConstraintParams
+    {
+        Parameter<Type> min = {{}, "min", true};
+        Parameter<Type> max = {{}, "max", true};
 
-	FloatingType val_;
-};
+        template <typename Config>
+        inline void
+        configure(Config& c)
+        {
+            c & min;
+            c & max;
+        }
+    };
 
-template<typename Type>
-struct ConstraintParams
-{
-	Parameter<Type> min =
-			{
-					{}, "min", true};
-	Parameter<Type> max =
-			{
-					{}, "max", true};
+    template <typename Type = FloatingType>
+    class Constraint : public ConfigurableObject<ConstraintParams<Type>>, public IControlElement
+    {
+    public:
+        Constraint(Element in) :
+            in_(in), override_(false)
+        {
+        }
 
-	template<typename Config>
-	inline void
-	configure(Config& c)
-	{
-		c & min;
-		c & max;
-	}
-};
+        Constraint(Element in, Type min, Type max) :
+            in_(in), override_(false)
+        {
+            this->params.min = min;
+            this->params.max = max;
+        }
 
-template<typename Type = FloatingType>
-class Constraint : public ConfigurableObject<ConstraintParams<Type>>, public IControlElement
-{
+        FloatingType
+        getValue() const override
+        {
+            if (override_)
+                return in_->getValue() > overrideMax_
+                           ? overrideMax_
+                           : (in_->getValue() < overrideMin_ ? overrideMin_ : in_->getValue());
 
-public:
+            return in_->getValue() > this->params.max()
+                       ? this->params.max()
+                       : (in_->getValue() < this->params.min() ? this->params.min() : in_->getValue());
+        }
 
-	Constraint(Element in) :
-			in_(in), override_(false)
-	{
-	}
+        void
+        setConstraintValue(Type min, Type max)
+        {
+            this->params.min = min;
+            this->params.max = max;
+        }
 
-	Constraint(Element in, Type min, Type max) :
-			in_(in), override_(false)
-	{
-		this->params.min = min;
-		this->params.max = max;
-	}
+        void
+        setConstraintValue(Type minmax)
+        {
+            this->params.min = -minmax;
+            this->params.max = minmax;
+        }
 
-	FloatingType
-	getValue() const override
-	{
-		if (override_)
-			return in_->getValue() > overrideMax_ ?
-				   overrideMax_ : (in_->getValue() < overrideMin_ ? overrideMin_ : in_->getValue());
+        void
+        overrideConstraintValue(Type overrideMinmax)
+        {
+            overrideMin_ = -overrideMinmax;
+            overrideMax_ = overrideMinmax;
+            override_ = true;
+        }
 
-		return in_->getValue() > this->params.max() ?
-			   this->params.max() :
-			   (in_->getValue() < this->params.min() ? this->params.min() : in_->getValue());
-	}
+        void
+        overrideConstraintValue(Type overrideMin, Type overrideMax)
+        {
+            overrideMin_ = overrideMin;
+            overrideMax_ = overrideMax;
+            override_ = true;
+        }
 
-	void
-	setConstraintValue(Type min, Type max)
-	{
-		this->params.min = min;
-		this->params.max = max;
-	}
+        void
+        disableOverride()
+        {
+            override_ = false;
+        }
 
-	void
-	setConstraintValue(Type minmax)
-	{
-		this->params.min = -minmax;
-		this->params.max = minmax;
-	}
+        Element in_;
+        bool override_;
+        Type overrideMin_;
+        Type overrideMax_;
+    };
 
-	void
-	overrideConstraintValue(Type overrideMinmax)
-	{
-		overrideMin_ = -overrideMinmax;
-		overrideMax_ = overrideMinmax;
-		override_ = true;
-	}
+    class Difference : public IControlElement
+    {
+    public:
+        Difference(Element in1, Element in2);
 
-	void
-	overrideConstraintValue(Type overrideMin, Type overrideMax)
-	{
-		overrideMin_ = overrideMin;
-		overrideMax_ = overrideMax;
-		override_ = true;
-	}
+        FloatingType
+        getValue() const override;
 
-	void
-	disableOverride()
-	{
-		override_ = false;
-	}
+    private:
+        Element in1_;
+        Element in2_;
+    };
 
-	Element in_;
-	bool override_;
-	Type overrideMin_;
-	Type overrideMax_;
-};
+    class Gain : public IControlElement
+    {
+    public:
+        Gain(Element in, FloatingType gain);
 
-class Difference : public IControlElement
-{
-public:
+        FloatingType
+        getValue() const override;
 
-	Difference(Element in1, Element in2);
+    private:
+        Element in_;
 
-	FloatingType
-	getValue() const override;
+        FloatingType gain_;
+    };
 
-private:
+    class Input : public IControlElement
+    {
+    public:
+        Input(const FloatingType* in);
 
-	Element in1_;
-	Element in2_;
-};
+        FloatingType
+        getValue() const override;
 
-class Gain : public IControlElement
-{
+    private:
+        const FloatingType* in_;
+    };
 
-public:
+    class Sum : public IControlElement
+    {
+    public:
+        Sum(Element in1, Element in2);
 
-	Gain(Element in, FloatingType gain);
+        FloatingType
+        getValue() const override;
 
-	FloatingType
-	getValue() const override;
+    private:
+        Element in1_;
+        Element in2_;
+    };
 
-private:
+    class ManualSwitch : public IControlElement
+    {
+    public:
+        ManualSwitch(Element inTrue, Element inFalse);
 
-	Element in_;
+        FloatingType
+        getValue() const override;
 
-	FloatingType gain_;
+        void
+        switchTo(bool state);
 
-};
+    private:
+        Element inTrue_;
+        Element inFalse_;
 
-class Input : public IControlElement
-{
-public:
+        bool state_;
+    };
 
-	Input(const FloatingType* in);
+    class CustomFunction : public IControlElement
+    {
+    public:
+        CustomFunction(Element input, std::function<FloatingType
+                           (FloatingType)> function);
 
-	FloatingType
-	getValue() const override;
+        FloatingType
+        getValue() const override;
 
-private:
+    private:
+        Element input_;
+        std::function<FloatingType
+            (FloatingType)> function_;
+    };
 
-	const FloatingType* in_;
-};
+    class CustomFunction2 : public IControlElement
+    {
+    public:
+        CustomFunction2(Element input, Element input2, std::function<FloatingType
+                            (FloatingType, FloatingType)> function);
 
-class Sum : public IControlElement
-{
-public:
+        FloatingType
+        getValue() const override;
 
-	Sum(Element in1, Element in2);
-
-	FloatingType
-	getValue() const override;
-
-private:
-
-	Element in1_;
-	Element in2_;
-};
-
-class ManualSwitch : public IControlElement
-{
-public:
-
-	ManualSwitch(Element inTrue, Element inFalse);
-
-	FloatingType
-	getValue() const override;
-
-	void
-	switchTo(bool state);
-
-private:
-
-	Element inTrue_;
-	Element inFalse_;
-
-	bool state_;
-};
-
-class CustomFunction : public IControlElement
-{
-public:
-
-	CustomFunction(Element input, std::function<FloatingType
-			(FloatingType)> function);
-
-	FloatingType
-	getValue() const override;
-
-private:
-
-	Element input_;
-	std::function<FloatingType
-			(FloatingType)> function_;
-};
-
-class CustomFunction2 : public IControlElement
-{
-public:
-
-	CustomFunction2(Element input, Element input2, std::function<FloatingType
-			(FloatingType, FloatingType)> function);
-
-	FloatingType
-	getValue() const override;
-
-private:
-
-	Element input_;
-	Element input2_;
-	std::function<FloatingType
-			(FloatingType, FloatingType)> function_;
-};
-
+    private:
+        Element input_;
+        Element input2_;
+        std::function<FloatingType
+            (FloatingType, FloatingType)> function_;
+    };
 }
 
 #endif /* CONTROL_CONTROLELEMENTS_H_ */

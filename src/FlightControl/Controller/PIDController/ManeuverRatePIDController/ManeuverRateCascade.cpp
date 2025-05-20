@@ -115,8 +115,7 @@ ManeuverRateCascade::ManeuverRateCascade(const SensorData& sd, const ControllerT
 bool
 ManeuverRateCascade::configure(const Configuration& config)
 {
-	PropertyMapper<Configuration> pm(config);
-
+	PropertyMapper pm(config);
 	configureParams(pm);
 
 	return pm.map();

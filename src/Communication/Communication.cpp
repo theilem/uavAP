@@ -25,11 +25,10 @@ main(int argc, char** argv)
 	}
 	else
 	{
-		std::ofstream file;
-		file.open("communication.json", std::ofstream::out);
-		JsonPopulator pop(file);
+		JsonPopulator pop;
 
-		pop.populateContainer(CommunicationHelper());
+		pop.populateContainer<CommunicationHelper>();
+		pop.toFile("communication.json");
 		std::cout << "Populated json" << std::endl;
 		return 0;
 	}

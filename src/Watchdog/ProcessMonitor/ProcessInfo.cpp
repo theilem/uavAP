@@ -36,7 +36,7 @@ ProcessInfo::ProcessInfo(const std::string& n) :
 bool
 ProcessInfo::configure(const Configuration& config)
 {
-	PropertyMapper<Configuration> pm(config);
+	PropertyMapper pm(config);
 	pm.add("binary", binaryPath, true);
 	pm.add("config", configPath, false);
 	return pm.map();

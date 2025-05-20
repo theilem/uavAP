@@ -25,7 +25,7 @@ main(int argc, char** argv)
 
 	file.open(filename, std::ofstream::out);
 
-	JsonPopulator pop(file);
+	JsonPopulator pop;
 
 //	pop.populate<Geofencing, ConstRollRateModel>();
 

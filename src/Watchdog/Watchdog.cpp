@@ -23,9 +23,8 @@
  *      Author: mircot
  */
 
+#include <fstream>
 #include <thread>
-
-#include <boost/property_tree/json_parser.hpp>
 
 #include <cpsCore/Synchronization/SynchronizedRunnerMaster.h>
 
@@ -57,8 +56,13 @@ main(int argc, char** argv)
 		return 1;
 	}
 
-	Configuration conf;
-	boost::property_tree::read_json(argv[1], conf);
+	std::ifstream file(argv[1]);
+	if (!file.is_open())
+	{
+		CPSLOG_ERROR << "Could not open file " << argv[1];
+		return 1;
+	}
+	auto conf = Configuration::parse(file);
 
 	signal(SIGINT, sigHandler);
 	signal(SIGTERM, sigHandler);

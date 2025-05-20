@@ -33,7 +33,7 @@ ChannelMixing::ChannelMixing() :
 bool
 ChannelMixing::configure(const Configuration& config)
 {
-	PropertyMapper<Configuration> pm(config);
+	PropertyMapper pm(config);
 
 	Configuration channelMixing;
 	Configuration channelMapping;
@@ -54,7 +54,7 @@ ChannelMixing::configure(const Configuration& config)
 	}
 
 	/* Create mixing matrix */
-	PropertyMapper<Configuration> pmMix(channelMixing);
+	PropertyMapper pmMix(channelMixing);
 	Eigen::VectorXd roll, pitch, yaw, throttle;
 	pmMix.add("roll_out", roll, true);
 	pmMix.add("pitch_out", pitch, true);
@@ -68,57 +68,57 @@ ChannelMixing::configure(const Configuration& config)
 	mixingMatrix_.col(3) = throttle;
 
 	/* Load mappings */
-	for (const auto& it : channelMapping)
+	for (const auto& [key, value] : channelMapping.items())
 	{
-		auto throwsEnum = EnumMap<ThrowsControl>::convert(it.first);
+		auto throwsEnum = EnumMap<ThrowsControl>::convert(key);
 
 		if (throwsEnum == ThrowsControl::INVALID)
 		{
-			CPSLOG_ERROR << "Invalid Throws Control " << it.first;
+			CPSLOG_ERROR << "Invalid Throws Control " << key;
 			continue;
 		}
 
-		mapping_.insert(std::make_pair(throwsEnum, getMapping(it.second)));
+		mapping_.insert(std::make_pair(throwsEnum, getMapping(value)));
 	}
 
 	/* Load camber */
-	PropertyMapper<Configuration> camberPm(camberOffset);
+	PropertyMapper camberPm(camberOffset);
 
-	for (const auto& it : camberOffset)
+	for (const auto& [key, value] : camberOffset.items())
 	{
-		auto camberEnum = EnumMap<CamberControl>::convert(it.first);
+		auto camberEnum = EnumMap<CamberControl>::convert(key);
 
 		if (camberEnum == CamberControl::INVALID)
 		{
-			CPSLOG_ERROR << "Invalid Camber Control " << it.first;
+			CPSLOG_ERROR << "Invalid Camber Control " << key;
 			continue;
 		}
 
 		Eigen::ArrayXd offset;
-		camberPm.add(it.first, offset, true);
+		camberPm.add(key, offset, true);
 		camberOffsets_.insert(std::make_pair(camberEnum, offset));
 	}
 
 	/* Load special */
-	PropertyMapper<Configuration> specialPm(specialOffset);
+	PropertyMapper specialPm(specialOffset);
 
-	for (const auto& it : specialOffset)
+	for (const auto& [key,value] : specialOffset.items())
 	{
-		auto specialEnum = EnumMap<SpecialControl>::convert(it.first);
+		auto specialEnum = EnumMap<SpecialControl>::convert(key);
 
 		if (specialEnum == SpecialControl::INVALID)
 		{
-			CPSLOG_ERROR << "Invalid Special Control " << it.first;
+			CPSLOG_ERROR << "Invalid Special Control " << key;
 			continue;
 		}
 
 		Eigen::ArrayXd offset;
-		specialPm.add(it.first, offset, true);
+		specialPm.add(key, offset, true);
 		specialOffsets_.insert(std::make_pair(specialEnum, offset));
 	}
 
 	/* Load constraints */
-	PropertyMapper<Configuration> constraintPm(channelContraints);
+	PropertyMapper constraintPm(channelContraints);
 	constraintPm.add("min", channelMin_, true);
 	constraintPm.add("max", channelMax_, true);
 
@@ -139,7 +139,7 @@ ChannelMixing::mapChannels(const ControllerOutput& out, const AdvancedControl& a
 {
 	auto mix = mixChannels(out);
 
-	auto throws = mapping_.find(advanced.throwsSelection);
+	auto throws = mapping_.find(advanced.throwsSelection());
 	if (throws == mapping_.end())
 	{
 		CPSLOG_ERROR << "Throws not available. Set to first mapping.";
@@ -153,28 +153,28 @@ ChannelMixing::mapChannels(const ControllerOutput& out, const AdvancedControl& a
 	Eigen::ArrayXd result = mix.array().min(0) * negThrows + mix.array().max(0) * posThrows
 			+ center;
 
-	if (advanced.camberSelection != CamberControl::NORMAL)
+	if (advanced.camberSelection() != CamberControl::NORMAL)
 	{
-		auto camber = camberOffsets_.find(advanced.camberSelection);
+		auto camber = camberOffsets_.find(advanced.camberSelection());
 		if (camber == camberOffsets_.end())
 		{
 			CPSLOG_ERROR << "camber not available. Set to first camber.";
 			camber = camberOffsets_.begin();
 		}
 
-		result = result + (camber->second * advanced.camberValue);
+		result = result + (camber->second * advanced.camberValue());
 	}
 
-	if (advanced.specialSelection != SpecialControl::NONE)
+	if (advanced.specialSelection() != SpecialControl::NONE)
 	{
-		auto special = specialOffsets_.find(advanced.specialSelection);
+		auto special = specialOffsets_.find(advanced.specialSelection());
 		if (special == specialOffsets_.end())
 		{
 			CPSLOG_ERROR << "special not available. Set to first special.";
 			special = specialOffsets_.begin();
 		}
 
-		result = result + (special->second * advanced.specialValue);
+		result = result + (special->second * advanced.specialValue());
 	}
 
 	result = result.max(channelMin_).min(channelMax_);
@@ -192,7 +192,7 @@ ChannelMixing::mapChannels(const ControllerOutput& out, const AdvancedControl& a
 ChannelMixing::Mapping
 ChannelMixing::getMapping(const Configuration& config)
 {
-	PropertyMapper<Configuration> pm(config);
+	PropertyMapper pm(config);
 	Eigen::ArrayXd min, max, center;
 	pm.add("min", min, true);
 	pm.add("max", max, true);

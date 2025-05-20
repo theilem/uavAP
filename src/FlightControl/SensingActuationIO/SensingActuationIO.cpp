@@ -122,10 +122,10 @@ SensingActuationIO::getSensorData() const
 void
 SensingActuationIO::onAdvancedControl(const AdvancedControl& control)
 {
-    CPSLOG_TRACE << "Camber Control: " << EnumMap<CamberControl>::convert(control.camberSelection);
-    CPSLOG_TRACE << "Special Control: " << EnumMap<SpecialControl>::convert(control.specialSelection);
-    CPSLOG_TRACE << "Throw Control: " << EnumMap<ThrowsControl>::convert(control.throwsSelection);
-    CPSLOG_TRACE << "Camber Value: " << control.camberValue;
-    CPSLOG_TRACE << "Special Value: " << control.specialValue;
+    CPSLOG_TRACE << "Camber Control: " << EnumMap<CamberControl>::convert(control.camberSelection());
+    CPSLOG_TRACE << "Special Control: " << EnumMap<SpecialControl>::convert(control.specialSelection());
+    CPSLOG_TRACE << "Throw Control: " << EnumMap<ThrowsControl>::convert(control.throwsSelection());
+    CPSLOG_TRACE << "Camber Value: " << control.camberValue();
+    CPSLOG_TRACE << "Special Value: " << control.specialValue();
     advancedControlPublisher_.publish(control);
 }

@@ -24,7 +24,7 @@ ManeuverRatePIDController::ManeuverRatePIDController() :
 bool
 ManeuverRatePIDController::configure(const Configuration& config)
 {
-    PropertyMapper<Configuration> pm(config);
+    PropertyMapper pm(config);
 
     configureParams(pm);
 

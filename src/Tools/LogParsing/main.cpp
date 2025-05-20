@@ -19,11 +19,10 @@ main(int argc, char** argv)
 	}
 	else
 	{
-		std::ofstream file;
-		file.open("log_parser.json", std::ofstream::out);
-		JsonPopulator pop(file);
+		JsonPopulator pop;
 
-		pop.populateContainer(LogParsingHelper());
+		pop.populateContainer<LogParsingHelper>();
+		pop.toFile("log_parser.json");
 		std::cout << "Populated json" << std::endl;
 		return 0;
 	}

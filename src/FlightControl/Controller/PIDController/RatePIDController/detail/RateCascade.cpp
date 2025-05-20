@@ -169,7 +169,7 @@ RateCascade::RateCascade(SensorData* sensorData, Vector3& velInertial, Vector3& 
 bool
 RateCascade::configure(const Configuration& config)
 {
-	PropertyMapper<Configuration> pm(config);
+	PropertyMapper pm(config);
 	pm.add<FloatingType>("hard_roll_constraint", hardRollConstraint_, false);
 	pm.add<FloatingType>("hard_pitch_constraint", hardPitchConstraint_, false);
 	pm.add<FloatingType>("hard_roll_rate_constraint", hardRollRateConstraint_, false);
@@ -192,9 +192,9 @@ RateCascade::configure(const Configuration& config)
 	rollRateTargetConstraint_->setConstraintValue(degToRad(rollRateConstraint_));
 	pitchRateTargetConstraint_->setConstraintValue(degToRad(pitchRateConstraint_));
 
-	for (const auto& it : pidConfig)
+	for (const auto& [key, value] : pidConfig.items())
 	{
-		auto pid = pids_.find(EnumMap<PIDs>::convert(it.first));
+		auto pid = pids_.find(EnumMap<PIDs>::convert(key));
 
 		if (pid == pids_.end())
 		{
@@ -202,7 +202,7 @@ RateCascade::configure(const Configuration& config)
 			continue;
 		}
 
-		pid->second->configure(it.second);
+		pid->second->configure(value);
 	}
 	return true;
 }
