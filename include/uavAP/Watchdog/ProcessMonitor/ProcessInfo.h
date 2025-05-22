@@ -26,12 +26,19 @@
 #ifndef UAVAP_WATCHDOG_PROCESSINFO_H_
 #define UAVAP_WATCHDOG_PROCESSINFO_H_
 
-#include <boost/process/v1/child.hpp>
 #include <string>
 #include <cpsCore/Configuration/Configuration.hpp>
 
+// If using macOS do this
+#ifdef __APPLE__
+#include <boost/process/v1/child.hpp>
 using ChildProcess = boost::process::v1::child;
 using ProcessError = boost::process::v1::process_error;
+#else
+#include <boost/process.hpp>
+using ChildProcess = boost::process::child;
+using ProcessError = boost::process::process_error;
+#endif
 
 struct ProcessInfo
 {
