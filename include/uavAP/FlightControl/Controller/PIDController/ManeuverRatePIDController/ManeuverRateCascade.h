@@ -92,18 +92,18 @@ ManeuverRateCascade::configureParams(Config& c)
 {
 	params.configure(c);
 
-	for (auto& pid : pids_)
+	for (auto& [key, pid] : pids_)
 	{
-		ParameterRef<Control::PIDParameters> param(pid.second->getParams(),
-												   EnumMap<PIDs>::convert(pid.first), true);
+		ParameterRef<Control::PIDParameters> param(pid->getParams(),
+												   EnumMap<PIDs>::convert(key), true);
 
 		c & param;
 	}
 
-	for (auto& output : outputs_)
+	for (auto& [key, out] : outputs_)
 	{
-		ParameterRef<FloatingType> param(output.second->getTrimAlpha(),
-										 EnumMap<ControllerOutputs>::convert(output.first) + "_alpha", true);
+		ParameterRef<FloatingType> param(out->getTrimAlpha(),
+										 EnumMap<ControllerOutputs>::convert(key) + "_alpha", true);
 
 		c & param;
 	}

@@ -5,7 +5,7 @@ set(TEST_SRCS ${TEST_SRCS}
 add_subdirectory(API)
 add_subdirectory(Core)
 add_subdirectory(FlightAnalysis)
-#add_subdirectory(FlightControl)
+add_subdirectory(FlightControl)
 #add_subdirectory(Math)
 
 include_directories(${SUBMODULE_DIR}/cpsCore/extern/Catch2/single_include
@@ -16,6 +16,7 @@ add_executable(tests EXCLUDE_FROM_ALL ${TEST_SRCS})
 target_link_libraries(tests ${CPS_CORE_LIBS}
         uavap_core
         uavap_api
+        uavap_flight_control
         ap_ext
         )
 

@@ -13,7 +13,7 @@
 #include "uavAP/FlightControl/Controller/PIDController/ManeuverRatePIDController/ManeuverRatePIDController.h"
 
 using ControllerFactory = StaticFactory<IController, false,
-		RatePIDController,
+		// RatePIDController,
 		ManeuverRatePIDController>;
 
 #endif /* FLIGHTCONTROLLER_FLIGHTCONTROLLERFACTORY_H_ */

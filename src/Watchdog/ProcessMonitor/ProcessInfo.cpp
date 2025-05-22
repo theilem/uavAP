@@ -53,12 +53,12 @@ ProcessInfo::startChild(const std::string& binPath, const std::string& confPath)
 	if (configPath.empty())
 	{
 		CPSLOG_DEBUG << "No config path. Starting " << binPath + binaryPath;
-		process = boost::process::child(binPath + binaryPath);
+		process = ChildProcess(binPath + binaryPath);
 	}
 	else
 	{
 		CPSLOG_DEBUG << "Starting " << binPath + binaryPath << " with " << confPath + configPath;
-		process = boost::process::child(binPath + binaryPath, confPath + configPath);
+		process = ChildProcess(binPath + binaryPath, confPath + configPath);
 	}
 	id = process.id();
 	return true;

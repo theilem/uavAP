@@ -139,7 +139,7 @@ ProcessMonitor::startAll()
 			CPSLOG_DEBUG << "with config path: " << it.configPath;
 			it.startChild(binaryPath_, configPath_);
 			CPSLOG_DEBUG << "Success. ID: " << it.id;
-		} catch (boost::process::process_error& er)
+		} catch (ProcessError& er)
 		{
 			CPSLOG_ERROR << "Failed to launch process " << it.name << ": " << er.what();
 			return false;

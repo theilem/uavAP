@@ -16,14 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-add_executable(Watchdog         ProcessMonitor/ProcessInfo.cpp
-                                ProcessMonitor/ProcessMonitor.cpp
-                                Watchdog.cpp
-                                )
-                                
-target_link_libraries(Watchdog  uavap_core
-                                cps_core)
+add_executable(Watchdog ProcessMonitor/ProcessInfo.cpp
+        ProcessMonitor/ProcessMonitor.cpp
+        Watchdog.cpp
+)
 
+target_link_libraries(Watchdog uavap_core
+        cps_core
+        Boost::system)
 install(TARGETS Watchdog
         DESTINATION bin/uavAP)
                         

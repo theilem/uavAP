@@ -26,17 +26,19 @@
 #ifndef UAVAP_WATCHDOG_PROCESSINFO_H_
 #define UAVAP_WATCHDOG_PROCESSINFO_H_
 
-#include <boost/process.hpp>
+#include <boost/process/v1/child.hpp>
 #include <string>
-#include <cpsCore/Utilities/Time.hpp>
 #include <cpsCore/Configuration/Configuration.hpp>
+
+using ChildProcess = boost::process::v1::child;
+using ProcessError = boost::process::v1::process_error;
 
 struct ProcessInfo
 {
 	std::string name;
 	std::string binaryPath;
 	std::string configPath;
-	boost::process::child process;
+	ChildProcess process;
 	bool joined;
 	pid_t id;
 

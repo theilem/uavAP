@@ -13,15 +13,19 @@ option(XPLANE "Build the XPlane Plugin." OFF)
 option(CORE "Always build cps_core." OFF)
 option(PYTHON "Build the Python API." OFF)
 
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
 set(SUBMODULE_DIR ${CMAKE_SOURCE_DIR}/extern)
+
+include_directories(${SUBMODULE_DIR}/cpsCore/include)
 
 if (NO_DL)
     add_definitions(-DNO_DL)
 endif (NO_DL)
 
 find_package(Eigen3 REQUIRED)
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system filesystem)
+
 include_directories(${EIGEN3_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIRS})
 
@@ -31,7 +35,6 @@ set(CPS_CORE_LIB cps_core cps_framework_api)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fPIC -Wall -Wno-int-in-bool-context -Wno-parentheses")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
 
 
 link_directories(${Boost_LIBRARY_DIRS}
