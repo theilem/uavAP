@@ -25,4 +25,5 @@ add_subdirectory(API)
 add_subdirectory(Watchdog) 
 add_subdirectory(Tools)
 add_subdirectory(ExternalPlanner)
+add_subdirectory(Simulation)
 

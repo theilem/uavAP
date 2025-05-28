@@ -23,13 +23,14 @@ class IScheduler;
 class ITimeProvider;
 class ISensingIO;
 class IActuationIO;
+template <typename C, typename T>
 class DataHandling;
 class Packet;
 class OverrideHandler;
 struct PIDTuning;
 
 class ManeuverRatePIDController: public AggregatableObject<IScheduler, ISensingIO, IActuationIO,
-		DataHandling, OverrideHandler, ITimeProvider>,
+		DataHandling<Content, Target>, OverrideHandler, ITimeProvider>,
 		public ConfigurableObject<ManeuverRatePIDControllerParams>,
 		public IRunnableObject,
 		public IPIDController

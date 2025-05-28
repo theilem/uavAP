@@ -9,8 +9,8 @@
 #define UAVAP_MISSIONCONTROL_MISSION_H_
 
 #include <vector>
+#include <optional>
 #include <cpsCore/Utilities/LinearAlgebra.h>
-#include <cpsCore/Utilities/Optional.hpp>
 #include <cpsCore/Configuration/Parameter.hpp>
 
 
@@ -19,8 +19,8 @@
 struct Waypoint
 {
 	Parameter<Vector3> location = {{}, "location", true};
-	Parameter<Optional<Vector3>> direction = {std::nullopt, "direction", false};
-	Parameter<Optional<FloatingType>> velocity = {std::nullopt, "velocity", false};
+	Parameter<std::optional<Vector3>> direction = {std::nullopt, "direction", false};
+	Parameter<std::optional<FloatingType>> velocity = {std::nullopt, "velocity", false};
 
 	template<typename Config>
 	inline void
@@ -36,7 +36,7 @@ struct Waypoint
 struct Mission
 {
 	Parameter<std::vector<Waypoint>> waypoints = {{}, "waypoints", true};
-	Parameter<Optional<Vector3>> offset = {std::nullopt, "offset", false};
+	Parameter<std::optional<Vector3>> offset = {std::nullopt, "offset", false};
 	Parameter<bool> infinite = {true, "infinite", true};
 	Parameter<FloatingType> velocity = {DEFAULT_VELOCITY, "velocity", true};
 

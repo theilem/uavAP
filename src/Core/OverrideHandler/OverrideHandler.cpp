@@ -134,7 +134,7 @@ OverrideHandler::run(RunStage stage)
 				return true;
 			}
 
-			auto dh = get<DataHandling>();
+			auto dh = get<DataHandling<Content, Target>>();
 			dh->addTriggeredStatusFunction<std::vector<std::string>, DataRequest>(
 					[this](const DataRequest& req) -> Optional<std::vector<std::string>>
 					{

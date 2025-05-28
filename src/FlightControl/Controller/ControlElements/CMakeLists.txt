@@ -16,17 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-add_library(control SHARED 	ControlEnvironment.cpp
+add_library(uavap_control SHARED 	ControlEnvironment.cpp
 							ControlElements.cpp
 							EvaluableControlElements.cpp
 		Filter/LowPassFilter.cpp
 		Filter/LowPassFilterAngle.cpp)
 					
-target_link_libraries(control
+target_link_libraries(uavap_control
 		${CPS_CORE_LIB}
 		)
 
-install(TARGETS control OPTIONAL
+install(TARGETS uavap_control OPTIONAL
 		LIBRARY DESTINATION lib
 		)
                                 

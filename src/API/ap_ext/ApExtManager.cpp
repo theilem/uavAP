@@ -55,7 +55,7 @@ ApExtManager::run(RunStage stage)
 			aggAPI->subscribeOnAdvancedControl([this](const auto& advanced)
 											   { this->onAdvancedControl(advanced); });
 
-			if (auto dh = get<DataHandling>())
+			if (auto dh = get<DataHandling<Content, Target>>())
 			{
 				if (auto lsm = get<LinearSensorManager>())
 				{

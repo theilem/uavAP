@@ -43,7 +43,7 @@ ManeuverRatePIDController::run(RunStage stage)
                 CPSLOG_ERROR << "ManeuverRatePIDController: Missing Dependencies";
                 return true;
             }
-            if (!isSet<DataHandling>())
+            if (!isSet<DataHandling<Content, Target>>())
             {
                 CPSLOG_DEBUG << "ManeuverPIDController: DataHandling not set. Debugging disabled.";
             }
@@ -57,7 +57,7 @@ ManeuverRatePIDController::run(RunStage stage)
         }
     case RunStage::NORMAL:
         {
-            if (auto dh = get<DataHandling>())
+            if (auto dh = get<DataHandling<Content, Target>>())
             {
                 dh->addStatusFunction<TimedPIDStati>([this]() { return getTimedPIDStati(); }, Content::PID_STATUS);
                 dh->subscribeOnData<PIDTuning>(Content::TUNE_PID,
@@ -70,7 +70,7 @@ ManeuverRatePIDController::run(RunStage stage)
                 dh->subscribeOnData<PIDs>(Content::REQUEST_SINGLE_PID_PARAMS, [this](const auto& pid)
                 {
                     auto params = cascade_.getSinglePIDParams(pid);
-                    auto dh = get<DataHandling>();
+                    auto dh = get<DataHandling<Content, Target>>();
                     dh->sendData<PIDTuning>(PIDTuning{pid, params}, Content::SINGLE_PID_PARAMS);
                 });
             }

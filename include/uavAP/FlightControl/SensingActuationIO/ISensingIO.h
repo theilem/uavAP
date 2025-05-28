@@ -11,7 +11,7 @@
 class ISensingIO
 {
 public:
-	static constexpr const char* const typeId = "sens_act_io";
+	static constexpr const char* const typeId = "sens_io";
 
 	virtual
 	~ISensingIO() = default;

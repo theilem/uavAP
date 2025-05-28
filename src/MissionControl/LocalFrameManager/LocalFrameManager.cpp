@@ -23,7 +23,7 @@ LocalFrameManager::run(RunStage stage)
 			return true;
 		}
 
-		if (!isSet<DataHandling>())
+		if (!isSet<DataHandling<Content, Target>>())
 		{
 			CPSLOG_WARN << "LocalFrameManager: Cannot send local frame. DataHandling missing";
 		}
@@ -39,7 +39,7 @@ LocalFrameManager::run(RunStage stage)
 		auto scheduler = get<IScheduler>();
 		scheduler->schedule(std::bind(&LocalFrameManager::publishFrame, this), Milliseconds(0), Milliseconds(500));
 
-		if (auto dh = get<DataHandling>())
+		if (auto dh = get<DataHandling<Content, Target>>())
 		{
 			dh->addTriggeredStatusFunction<VehicleOneFrame, DataRequest>(
 					std::bind(&LocalFrameManager::localFrameRequest, this,

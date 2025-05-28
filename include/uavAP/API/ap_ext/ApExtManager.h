@@ -20,13 +20,16 @@
 
 #include <cpsCore/cps_object>
 
+#include "uavAP/Core/DataHandling/Content.hpp"
+
 class AggregatableAutopilotAPI;
 
 class LinearSensorManager;
+template <typename C, typename T>
 class DataHandling;
 
 class ApExtManager
-		: public AggregatableObject<AggregatableAutopilotAPI, LinearSensorManager, DataHandling>,
+		: public AggregatableObject<AggregatableAutopilotAPI, LinearSensorManager, DataHandling<Content, Target>>,
 		  public ConfigurableObject<ApExtManagerParams>,
 		  public IRunnableObject
 {

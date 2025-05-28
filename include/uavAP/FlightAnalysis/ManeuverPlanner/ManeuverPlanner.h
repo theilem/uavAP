@@ -9,15 +9,18 @@
 #include <cpsCore/Aggregation/AggregatableObjectMaster.hpp>
 #include <cpsCore/Utilities/IPC/Publisher.h>
 #include <fstream>
+
+#include "uavAP/Core/DataHandling/Content.hpp"
 #include "uavAP/FlightAnalysis/ManeuverPlanner/ManeuverPlannerParams.h"
 
+template <typename C, typename T>
 class DataHandling;
 class IScheduler;
 class IPC;
 class ISensingIO;
 
 class ManeuverPlanner
-		: public AggregatableObjectMaster<DataHandling, IScheduler, IPC, ISensingIO>,
+		: public AggregatableObjectMaster<DataHandling<Content, Target>, IScheduler, IPC, ISensingIO>,
 		  public ConfigurableObject<ManeuverPlannerParams>,
 		  public IRunnableObject
 {

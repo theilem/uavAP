@@ -16,6 +16,7 @@
 #include <cpsCore/Utilities/IPC/Publisher.h>
 
 #include "uavAP/Core/SensorData.h"
+#include "uavAP/Core/DataHandling/Content.hpp"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
 #include "uavAP/FlightControl/SensingActuationIO/IActuationIO.h"
@@ -23,10 +24,11 @@
 struct AdvancedControl;
 
 class IPC;
+template <typename C, typename T>
 class DataHandling;
 
 class SensingActuationIO : public ISensingIO, public IActuationIO,
-						   public AggregatableObject<IPC, DataHandling, ITimeProvider>,
+						   public AggregatableObject<IPC, DataHandling<Content, Target>, ITimeProvider>,
 						   public IRunnableObject
 {
 public:

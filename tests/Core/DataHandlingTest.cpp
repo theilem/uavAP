@@ -21,7 +21,7 @@
 namespace
 {
     using DataHandlingTestDefaultHelper = StaticHelper<MicroSimulator,
-                                                       DataHandling,
+                                                       DataHandling<Content, Target>,
                                                        DataPresentation>;
 
     using DataHandlingTestHelper = StaticHelper<DataHandlingTestDefaultHelper,
@@ -69,7 +69,7 @@ TEST_CASE("Data Handling Test")
     Aggregator agg = DataHandlingTestHelper::createAggregation(
         test_info::test_dir() + "/Core/config/datahandling1.json");
 
-    auto dataHandling = agg.getOne<DataHandling>();
+    auto dataHandling = agg.getOne<DataHandling<Content, Target>>();
     auto ipc = agg.getOne<IPC>();
     auto dp = agg.getOne<DataPresentation>();
 
@@ -110,7 +110,7 @@ TEST_CASE("Data Handling Test 2: Members")
     Aggregator agg = DataHandlingTestHelper::createAggregation(
         test_info::test_dir() + "/Core/config/datahandling1.json");
 
-    auto dataHandling = agg.getOne<DataHandling>();
+    auto dataHandling = agg.getOne<DataHandling<Content, Target>>();
     auto ipc = agg.getOne<IPC>();
     auto dp = agg.getOne<DataPresentation>();
 
@@ -167,7 +167,7 @@ TEST_CASE("Data Handling Adaptive Period")
 
     SimpleRunner runner(agg);
     CHECK_FALSE(runner.runStage(RunStage::INIT));
-    auto dh = agg.getOne<DataHandling>();
+    auto dh = agg.getOne<DataHandling<Content, Target>>();
     auto scheduler = agg.getOne<MicroSimulator>();
     scheduler->setMainThread();
     auto statusMessageTiming = std::vector<int>();

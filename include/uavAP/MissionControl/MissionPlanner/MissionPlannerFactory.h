@@ -14,17 +14,6 @@
 #include "uavAP/MissionControl/MissionPlanner/CustomPlanner/CustomPlanner.h"
 //#include "uavAP/MissionControl/MissionPlanner/SimpleMissionPlanner/SimpleMissionPlanner.h"
 
-//class MissionPlannerFactory: public Factory<IMissionPlanner>
-//{
-//public:
-//	MissionPlannerFactory()
-//	{
-//		addCreator<SimpleMissionPlanner>();
-//		addCreator<CustomPlanner>();
-//	}
-//
-//};
-
 using MissionPlannerFactory = StaticFactory<IMissionPlanner, false, CustomPlanner>;
 
 #endif /* UAVAP_MISSIONCONTROL_MISSIONPLANNER_MISSIONPLANNERFACTORY_H_ */

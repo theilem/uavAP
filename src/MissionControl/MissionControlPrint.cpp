@@ -59,23 +59,13 @@ operator<<(std::ostream& os, std::shared_ptr<IPathSection>& ps)
 }
 
 std::ostream&
-operator<<(std::ostream& os, const Trajectory& traj)
-{
-	for (auto it : traj.pathSections)
-	{
-		os << it;
-	}
-	return os;
-}
-
-std::ostream&
 operator<<(std::ostream& io, const CubicSpline& s)
 {
-	io << "c0: " << s.c0_;
-	io << "c1: " << s.c1_;
-	io << "c2: " << s.c2_;
-	io << "c3: " << s.c3_;
-	io << "Velocity: " << s.velocity_;
+	io << "c0: " << s.c0;
+	io << "c1: " << s.c1;
+	io << "c2: " << s.c2;
+	io << "c3: " << s.c3;
+	io << "Velocity: " << s.velocity;
 	return io;
 }
 

@@ -6,6 +6,7 @@ add_subdirectory(API)
 add_subdirectory(Core)
 add_subdirectory(FlightAnalysis)
 add_subdirectory(FlightControl)
+add_subdirectory(MissionControl)
 #add_subdirectory(Math)
 
 include_directories(${SUBMODULE_DIR}/cpsCore/extern/Catch2/single_include

@@ -30,7 +30,7 @@ OverrideSafety::run(RunStage stage)
 			sched->schedule([this]()
 							{ checkRectanguloid(); }, Milliseconds(params.period()), Milliseconds(params.period()));
 
-			auto dh = get<DataHandling>();
+			auto dh = get<DataHandling<Content, Target>>();
 			dh->addTriggeredStatusFunction<Rectanguloid, DataRequest>(
 					[this](const DataRequest& req) -> Optional<Rectanguloid>
 					{

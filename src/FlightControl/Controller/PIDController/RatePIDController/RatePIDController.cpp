@@ -70,7 +70,7 @@ RatePIDController::run(RunStage stage)
 			CPSLOG_ERROR << "RatePIDController: missing dependencies";
 			return true;
 		}
-		if (!isSet<DataHandling>())
+		if (!isSet<DataHandling<Content, Target>>())
 		{
 			CPSLOG_DEBUG << "RatePIDController: DataHandling not set. Debugging disabled.";
 		}
@@ -90,7 +90,7 @@ RatePIDController::run(RunStage stage)
 //			return true;
 		}
 
-		if (auto dh = get<DataHandling>())
+		if (auto dh = get<DataHandling<Content, Target>>())
 		{
 			dh->addStatusFunction<PIDStati>(
 					std::bind(&IPIDCascade::getPIDStatus, pidCascade_), Content::PID_STATUS);

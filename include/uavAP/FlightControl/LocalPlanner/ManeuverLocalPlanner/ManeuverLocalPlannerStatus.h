@@ -9,21 +9,21 @@
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_MANEUVERLOCALPLANNER_MANEUVERLOCALPLANNERSTATUS_H_
 #include <cpsCore/Utilities/DataPresentation/detail/SerializeCustom.h>
 #include <cpsCore/Utilities/LinearAlgebra.h>
+#include "uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h"
 
-struct ManeuverLocalPlannerStatus : public SerializeCustom
+struct ManeuverLocalPlannerStatus : SerializeCustom
 {
 	FloatingType velocityTarget;
 	FloatingType headingTarget;
 	FloatingType yawRateTarget;
 	FloatingType climbAngleTarget;
-	uint8_t currentPathSection;
-	bool isInApproach;
+	std::shared_ptr<IPathSection> currentPathSection;
 };
 
 namespace dp
 {
-template<class Archive, typename Type>
-inline void
+template<class Archive, typename >
+void
 serialize(Archive& ar, ManeuverLocalPlannerStatus& t)
 {
 	ar & t.velocityTarget;
@@ -31,7 +31,6 @@ serialize(Archive& ar, ManeuverLocalPlannerStatus& t)
 	ar & t.yawRateTarget;
 	ar & t.climbAngleTarget;
 	ar & t.currentPathSection;
-	ar & t.isInApproach;
 }
 }
 

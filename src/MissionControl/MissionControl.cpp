@@ -22,9 +22,7 @@ main(int argc, char** argv)
 	}
 	else
 	{
-		JsonPopulator pop;
-
-		pop.populateContainer<MissionControlHelper>();
+		auto pop = JsonPopulator::populateContainer<MissionControlHelper>();
 		pop.toFile("mission_control.json");
 		std::cout << "Populated json" << std::endl;
 		return 0;

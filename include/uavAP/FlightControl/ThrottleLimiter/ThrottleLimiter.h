@@ -8,13 +8,15 @@
 
 #include <cpsCore/cps_object>
 
+#include "uavAP/Core/DataHandling/Content.hpp"
 #include "uavAP/FlightControl/ThrottleLimiter/ThrottleLimiterParams.h"
 
 class ManeuverRatePIDController;
+template <typename C, typename T>
 class DataHandling;
 
 class ThrottleLimiter
-		: public AggregatableObject<ManeuverRatePIDController, DataHandling>,
+		: public AggregatableObject<ManeuverRatePIDController, DataHandling<Content, Target>>,
 		  public IRunnableObject,
 		  public ConfigurableObject<ThrottleLimiterParams>
 {

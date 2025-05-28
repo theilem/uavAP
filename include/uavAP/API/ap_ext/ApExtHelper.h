@@ -29,7 +29,7 @@ using ApExtHelperDefaults = StaticHelper<
 using ApExtHelper = StaticHelper<ApExtHelperDefaults,
 		ApExtManager,
 		LinearSensorManager,
-		DataHandling
+		DataHandling<Content, Target>
 >;
 
 #endif //UAVAP_APEXTHELPER_H

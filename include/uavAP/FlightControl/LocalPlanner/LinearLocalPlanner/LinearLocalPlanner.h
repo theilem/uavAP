@@ -1,21 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
 /**
  *  @file         LinearLocalPlanner.h
  *  @author  Mirco Theile
@@ -30,7 +12,6 @@
 
 #include <cpsCore/cps_object>
 
-#include <uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlannerParams.h>
 #include <cpsCore/Utilities/LockTypes.hpp>
 #include "uavAP/FlightControl/LocalPlanner/LinearLocalPlanner/LinearLocalPlannerStatus.h"
 
@@ -45,6 +26,26 @@ class Packet;
 
 struct SensorData;
 struct ControllerTarget;
+
+struct LinearLocalPlannerParams
+{
+	Parameter<FloatingType> kAltitude = {1.0, "k_altitude", true};
+	Parameter<FloatingType> kHeading = {1.0, "k_heading", true};
+	Parameter<FloatingType> kYawrate = {1.0, "k_yawrate", true};
+	Parameter<int> period = {0, "period", false};
+	Parameter<Angle<FloatingType>> safetyYawRate = {Angle<FloatingType>(10), "safety_yaw_rate", true};
+
+	template <class Configurator>
+	void
+	configure(Configurator& c)
+	{
+		c & kAltitude;
+		c & kHeading;
+		c & kYawrate;
+		c & period;
+		c & safetyYawRate;
+	}
+};
 
 class LinearLocalPlanner : public ILocalPlanner, public IRunnableObject, public AggregatableObject<
 		ISensingIO, IController, IScheduler>, public ConfigurableObject<

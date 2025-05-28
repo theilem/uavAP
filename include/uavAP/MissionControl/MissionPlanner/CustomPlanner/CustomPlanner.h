@@ -25,6 +25,7 @@ class IGlobalPlanner;
 
 class IScheduler;
 
+template <typename C, typename T>
 class DataHandling;
 
 struct SensorData;
@@ -37,7 +38,7 @@ enum class DataRequest;
  */
 class CustomPlanner
 		: public IMissionPlanner,
-		  public AggregatableObject<IPC, IGlobalPlanner, IScheduler, DataHandling>,
+		  public AggregatableObject<IPC, IGlobalPlanner, IScheduler, DataHandling<Content, Target>>,
 		  public IRunnableObject,
 		  public ConfigurableObject<CustomPlannerParams>
 {

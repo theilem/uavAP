@@ -6,12 +6,15 @@
 #define UAVAP_OVERRIDEHANDLER_H
 
 #include <cpsCore/cps_object>
+
+#include "uavAP/Core/DataHandling/Content.hpp"
 #include "uavAP/Core/OverrideHandler/OverridableValue.hpp"
 
+template <typename C, typename T>
 class DataHandling;
 class IPC;
 
-class OverrideHandler: public AggregatableObject<DataHandling, IPC>, public IRunnableObject
+class OverrideHandler: public AggregatableObject<DataHandling<Content, Target>, IPC>, public IRunnableObject
 {
 public:
 

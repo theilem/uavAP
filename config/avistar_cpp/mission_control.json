@@ -3,6 +3,13 @@
 		"period": 200,
 		"target": "mission_control"
 	},
+	"approach_planner":
+	{
+		"slope": 0.2,
+		"radius": 70,
+		"velocity": 20
+	},
+	"sensing_shared_mem": {},
 	"local_frame": {
 		"origin": [
 			367826.57,

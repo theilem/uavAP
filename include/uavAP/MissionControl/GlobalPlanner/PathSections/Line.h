@@ -27,94 +27,124 @@
 #define UAVAP_CONTROL_GLOBALPLANNER_LINE_H_
 
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h"
-#include <iostream>
-#include <uavAP/Core/SensorData.h>
+#include "uavAP/Core/SensorData.h"
 
-struct Line: public IPathSection, public EigenLine
+struct Line : IPathSection, EigenLine
 {
+    Line() :
+        velocity(20)
+    {
+    }
 
-	Line() :
-			velocity_(0)
-	{
-	}
+    Line(const Vector3& start, const Vector3& end, FloatingType vel) :
+        EigenLine(start, (end - start).normalized()), endPoint(end), currentPosition(0, 0, 0), velocity(vel)
+    {
+    }
 
-	Line(const EigenLine& line, const Vector3& end, FloatingType vel) :
-			EigenLine(line), endPoint_(end), currentPosition_(0, 0, 0), velocity_(vel)
-	{
-	}
+    Line(const EigenLine& line, const Vector3& end, FloatingType vel) :
+        EigenLine(line), endPoint(end), currentPosition(0, 0, 0), velocity(vel)
+    {
+    }
 
-	void
-	updateSensorData(const SensorData& data) override
-	{
-		currentPosition_ = data.position;
-	}
+    void
+    updateSensorData(const SensorData& data) override
+    {
+        currentPosition = data.position;
+    }
 
-	bool
-	inTransition() const override
-	{
-		return (currentPosition_ - endPoint_).dot(direction()) > 0;
-	}
+    bool
+    inTransition() const override
+    {
+        return (currentPosition - endPoint).dot(direction()) > 0;
+    }
 
-	Vector3
-	getPositionDeviation() const override
-	{
-		return projection(currentPosition_) - currentPosition_;
-	}
+    Vector3
+    getPositionDeviation() const override
+    {
+        return projection(currentPosition) - currentPosition;
+    }
 
-	Vector3
-	getDirection() const override
-	{
-		return direction();
-	}
+    Vector3
+    getDirection() const override
+    {
+        return direction();
+    }
 
-	FloatingType
-	getSlope() const override
-	{
-		return direction().z();
-	}
+    FloatingType
+    getSlope() const override
+    {
+        return direction().z();
+    }
 
-	FloatingType
-	getCurvature() const override
-	{
-		return 0;
-	}
+    FloatingType
+    getCurvature() const override
+    {
+        return 0;
+    }
 
-	Vector3
-	getEndPoint() const override
-	{
-		return endPoint_;
-	}
+    std::optional<Vector3>
+    getEndPoint() const override
+    {
+        return endPoint;
+    }
 
-	void
-	setEndPoint(const Vector3& end)
-	{
-		endPoint_ = end;
-	}
+    std::optional<Vector3>
+    getEndDirection() const override
+    {
+        return direction();
+    }
 
-	FloatingType
-	getVelocity() const override
-	{
-		return velocity_;
-	}
+    std::optional<Vector3>
+    getStartingDirection() const override
+    {
+        return direction();
+    }
 
-	Vector3 endPoint_;
-	Vector3 currentPosition_;
-	FloatingType velocity_;
+    std::optional<Vector3>
+    getStartingPoint() const override
+    {
+        return origin();
+    }
 
+    void
+    setEndPoint(const Vector3& end)
+    {
+        endPoint = end;
+    }
+
+    FloatingType
+    getVelocity() const override
+    {
+        return velocity;
+    }
+
+
+    std::string
+    getDescription(bool currentState) const override
+    {
+        std::stringstream ss;
+        ss << "Line: start: " << origin().transpose() << ", end: " << endPoint.transpose()
+            << ", direction: " << direction().transpose() << ", velocity: " << velocity;
+        return ss.str();
+    }
+
+    Vector3 endPoint;
+    Vector3 currentPosition;
+    FloatingType velocity;
 };
 
 namespace dp
 {
-template<class Archive, typename Type>
-inline void
-serialize(Archive& ar, Line& t)
-{
-	ar & static_cast<EigenLine&>(t);
+    template <class Archive, typename>
+    void
+    serialize(Archive& ar, Line& t)
+    {
+        ar & static_cast<EigenLine&>(t);
 
-	ar & t.endPoint_;
-	ar & t.currentPosition_;
-	ar & t.velocity_;
-}
+        ar & t.endPoint;
+        ar & t.currentPosition;
+        ar & t.velocity;
+    }
 }
 
 #endif /* UAVAP_CONTROL_GLOBALPLANNER_LINE_H_ */

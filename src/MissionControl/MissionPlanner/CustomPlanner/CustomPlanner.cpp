@@ -24,7 +24,7 @@ CustomPlanner::run(RunStage stage)
     {
     case RunStage::INIT:
         {
-            if (!checkIsSet<IPC, IScheduler, IGlobalPlanner, DataHandling>())
+            if (!checkIsSet<IPC, IScheduler, IGlobalPlanner, DataHandling<Content, Target>>())
             {
                 CPSLOG_ERROR << "CustomPlanner: Missing deps.";
                 return true;
@@ -63,7 +63,7 @@ CustomPlanner::run(RunStage stage)
                 return true;
             }
 
-            if (auto dh = get<DataHandling>())
+            if (auto dh = get<DataHandling<Content, Target>>())
             {
                 dh->subscribeOnData<std::string>(Content::SELECT_MISSION,
                                                  std::bind(&CustomPlanner::missionRequest, this,

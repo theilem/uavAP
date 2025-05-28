@@ -33,7 +33,7 @@ using FlightControlDefaults = StaticHelper<SchedulerFactory,
 		>;
 
 using FlightControlHelper = StaticHelper<FlightControlDefaults,
-		DataHandling,
+		DataHandling<Content, Target>,
 		ControllerFactory,
 		LocalPlannerFactory,
 		ThrottleLimiter,

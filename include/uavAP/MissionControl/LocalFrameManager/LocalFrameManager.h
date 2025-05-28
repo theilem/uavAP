@@ -19,36 +19,33 @@
 
 class IPC;
 
+template <typename C, typename T>
 class DataHandling;
 
 class IScheduler;
 
 class LocalFrameManager
-		: public AggregatableObject<IPC, IScheduler, DataHandling>,
-		  public ConfigurableObject<LocalFrameManagerParams>,
-		  public IRunnableObject
+    : public AggregatableObject<IPC, IScheduler, DataHandling<Content, Target>>,
+      public ConfigurableObject<LocalFrameManagerParams>,
+      public IRunnableObject
 {
-
 public:
+    static constexpr TypeId typeId = "local_frame";
 
-	static constexpr TypeId typeId = "local_frame";
+    LocalFrameManager() = default;
 
-	LocalFrameManager() = default;
-
-	bool
-	run(RunStage stage) override;
+    bool
+    run(RunStage stage) override;
 
 private:
+    void
+    publishFrame();
 
-	void
-	publishFrame();
+    Optional<VehicleOneFrame>
+    localFrameRequest(const DataRequest& request);
 
-	Optional<VehicleOneFrame>
-	localFrameRequest(const DataRequest& request);
-
-	Publisher<VehicleOneFrame> framePublisher_;
-	mutable std::mutex frameMutex_;
-
+    Publisher<VehicleOneFrame> framePublisher_;
+    mutable std::mutex frameMutex_;
 };
 
 #endif /* UAVAP_MISSIONCONTROL_LOCALFRAMEMANAGER_LOCALFRAMEMANAGER_H_ */

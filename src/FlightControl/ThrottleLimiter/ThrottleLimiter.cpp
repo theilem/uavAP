@@ -22,7 +22,7 @@ ThrottleLimiter::run(RunStage stage)
 		}
 		case RunStage::NORMAL:
 		{
-			auto dh = get<DataHandling>();
+			auto dh = get<DataHandling<Content, Target>>();
 
 			dh->addConfig(this, Content::THROTTLE_LIMITER_PARAMS, [this]{applyThrottleLimit();});
 			applyThrottleLimit();

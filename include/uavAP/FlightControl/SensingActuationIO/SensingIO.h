@@ -25,7 +25,7 @@ class SensingIO : public ISensingIO,
 {
 public:
 
-	static constexpr TypeId typeId = "shared_memory";
+	static constexpr TypeId typeId = "sensing_shared_mem";
 
 	SensingIO() = default;
 

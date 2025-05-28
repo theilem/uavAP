@@ -16,15 +16,17 @@
 #include "uavAP/MissionControl/GlobalPlanner/IGlobalPlanner.h"
 #include "uavAP/MissionControl/GlobalPlanner/Trajectory.h"
 
+class ApproachPlanner;
 class ILocalPlanner;
 
 class IPC;
 
 class DataPresentation;
+template <typename C, typename T>
 class DataHandling;
 
 class SplineGlobalPlanner : public IGlobalPlanner,
-							public AggregatableObject<ILocalPlanner, DataHandling>,
+							public AggregatableObject<ILocalPlanner, DataHandling<Content, Target>, ApproachPlanner>,
 							public ConfigurableObject<SplineGlobalPlannerParams>,
 							public IRunnableObject
 {

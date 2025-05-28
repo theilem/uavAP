@@ -140,13 +140,15 @@ FilletGlobalPlanner::setMission(const Mission& mission)
 
 		Vector3 center = nextLine->origin() + d * dir;
 		Vector3 normal = (*nextIt)->getDirection().cross(-(*it)->getDirection());
+		OrbitDirection direction = normal.z() > 0 ? OrbitDirection::CCW
+												   : OrbitDirection::CW;;
 
 		//Set end point of line as tangent point to curve
 		line->setEndPoint(line->projection(center));
 		//Set end point of curve to tangent point of next line to curve
 		auto endCurve = nextLine->projection(center);
 
-		auto curve = std::make_shared<Curve>(center, normal, endCurve, nextLine->getVelocity());
+		auto curve = std::make_shared<Curve>(center, direction, endCurve, nextLine->getVelocity());
 
 		traj.insert(nextIt, curve);
 		//Step over inserted curve
@@ -165,11 +167,11 @@ FilletGlobalPlanner::setMission(const Mission& mission)
 		}
 		else
 		{
-			center = traj.back()->getEndPoint();
+			center = *traj.back()->getEndPoint();
 			vel = traj.back()->getVelocity();
 		}
 		//Make orbit parallel to ground at the endPoint of  the last line
-		auto orbit = std::make_shared<Orbit>(center, Vector3(0, 0, 1), filletRadius_, vel);
+		auto orbit = std::make_shared<Orbit>(center, OrbitDirection::CCW, filletRadius_, vel);
 		traj.push_back(orbit);
 	}
 

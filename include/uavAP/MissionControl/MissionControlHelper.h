@@ -14,6 +14,7 @@
 //#include "uavAP/MissionControl/ConditionManager/ConditionManager.h"
 #include "uavAP/MissionControl/GlobalPlanner/GlobalPlannerFactory.h"
 #include "uavAP/MissionControl/MissionPlanner/MissionPlannerFactory.h"
+#include "uavAP/MissionControl/GlobalPlanner/ApproachPlanner/ApproachPlanner.h"
 //#include "uavAP/MissionControl/Geofencing/Geofencing.h"
 //#include "uavAP/MissionControl/Geofencing/GeofencingModelFactory.h"
 #include "uavAP/MissionControl/LocalFrameManager/LocalFrameManager.h"
@@ -21,6 +22,8 @@
 #include <cpsCore/Utilities/SignalHandler/SignalHandler.h>
 #include <cpsCore/Utilities/IDC/IDC.h>
 #include <uavAP/FlightControl/LocalPlanner/ForwardingLocalPlanner/ForwardingLocalPlanner.h>
+
+#include "uavAP/FlightControl/SensingActuationIO/SensingIO.h"
 //#include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
 //#include "uavAP/MissionControl/WindAnalysis/WindAnalysis.h"
 
@@ -28,15 +31,13 @@ using MissionControlDefaults = StaticHelper<IPC, SchedulerFactory, TimeProviderF
                                             ForwardingLocalPlanner>;
 
 using MissionControlHelper = StaticHelper<MissionControlDefaults,
-                                          //		ConditionManager,
-                                          //		ManeuverPlanner,
-                                          //		GeofencingModelFactory,
-                                          //		Geofencing,
-                                          //		WindAnalysis,
-                                          DataHandling,
+
+                                          DataHandling<Content, Target>,
                                           LocalFrameManager,
                                           MissionPlannerFactory,
-                                          GlobalPlannerFactory
+                                          GlobalPlannerFactory,
+                                          ApproachPlanner,
+                                          SensingIO
 >;
 
 #endif /* UAVAP_MISSIONCONTROL_MISSIONCONTROLHELPER_H_ */

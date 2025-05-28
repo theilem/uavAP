@@ -1,21 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
 /*
  * PathSection.h
  *
@@ -26,22 +8,20 @@
 #ifndef UAVAP_CONTROL_GLOBALPLANNER_IPATHSECTION_H_
 #define UAVAP_CONTROL_GLOBALPLANNER_IPATHSECTION_H_
 
+#include <optional>
 #include "cpsCore/Utilities/LinearAlgebra.h"
 
 struct SensorData;
 
 enum class PathSectionType
 {
-    UNKNOWN = 0, CURVE, ORBIT, LINE, SPLINE, QUARTIC_SPLINE
+    UNKNOWN = 0, CURVE, SPIRAL, ORBIT, LINE, SPLINE, QUARTIC_SPLINE
 };
 
 struct IPathSection
 {
     virtual
     ~IPathSection() = default;
-
-    // virtual void
-    // updatePosition(const Vector3& pos) = 0;
 
     virtual void
     updateSensorData(const SensorData& data) = 0;
@@ -61,11 +41,23 @@ struct IPathSection
     virtual FloatingType
     getCurvature() const = 0;
 
-    virtual Vector3
+    virtual std::optional<Vector3>
     getEndPoint() const = 0;
+
+    virtual std::optional<Vector3>
+    getEndDirection() const = 0;
+
+    virtual std::optional<Vector3>
+    getStartingPoint() const = 0;
+
+    virtual std::optional<Vector3>
+    getStartingDirection() const = 0;
 
     virtual FloatingType
     getVelocity() const = 0;
+
+    virtual std::string
+    getDescription(bool currentState) const = 0;
 };
 
 #endif /* UAVAP_CONTROL_GLOBALPLANNER_IPATHSECTION_H_ */

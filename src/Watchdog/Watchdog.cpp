@@ -106,7 +106,12 @@ main(int argc, char** argv)
 	while (1)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-		monitor->checkAlive();
+		if (!monitor->checkAlive())
+		{
+			monitor->killAll();
+			CPSLOG_ERROR << "One or more processes died. Aborting.";
+			return 1;
+		}
 	}
 
 	monitor->killAll();

@@ -8,7 +8,7 @@ add_subdirectory(ThrottleLimiter)
 
 add_library(uavap_flight_control SHARED ${FLIGHT_CONTROL_SRC})
 
-target_link_libraries(uavap_flight_control control
+target_link_libraries(uavap_flight_control uavap_control
         uavap_core
         ${CPS_CORE_LIB}
         uavap_mission_control

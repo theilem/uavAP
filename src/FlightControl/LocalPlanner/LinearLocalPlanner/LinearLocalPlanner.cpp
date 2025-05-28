@@ -1,21 +1,4 @@
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (C) 2018 University of Illinois Board of Trustees
-//
-// This file is part of uavAP.
-//
-// uavAP is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// uavAP is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-////////////////////////////////////////////////////////////////////////////////
+
 /**
  *  @file         LinearLocalPlanner.cpp
  *  @author  Mirco Theile
@@ -62,8 +45,8 @@ LinearLocalPlanner::run(RunStage stage)
 		}
 
 		Trajectory traj;
-		traj.pathSections.push_back(
-				std::make_shared<Orbit>(Vector3(0, 0, 0), Vector3(0, 0, 1), 50, 50));
+		traj.periodicPart.push_back(
+				std::make_shared<Orbit>(Vector3(0, 0, 0), OrbitDirection::CCW, 50, 50));
 		setTrajectory(traj);
 
 		break;
@@ -100,9 +83,10 @@ LinearLocalPlanner::setTrajectory(const Trajectory& traj)
 	LockGuard lock(trajectoryMutex_);
 
 	trajectory_ = traj;
-	currentSection_ = trajectory_.pathSections.begin();
-	currentPathSectionIdx_ = 0;
-	inApproach_ = trajectory_.approachSection != nullptr;
+	if (!trajectory_.aperiodicPart.empty())
+		currentSection_ = trajectory_.aperiodicPart.begin();
+	else
+		currentSection_ = trajectory_.periodicPart.begin();
 	CPSLOG_TRACE << "Trajectory set.";
 }
 
@@ -115,25 +99,10 @@ LinearLocalPlanner::getControllerTarget()
 void
 LinearLocalPlanner::nextSection()
 {
-	if (inApproach_)
-	{
-		//We were approaching the first waypoint
-		currentSection_ = trajectory_.pathSections.begin();
-		inApproach_ = false;
-		return;
-	}
-
-	if (currentSection_ == trajectory_.pathSections.end())
-	{
-		return;
-	}
 	++currentSection_;
-	++currentPathSectionIdx_;
-
-	if (currentSection_ == trajectory_.pathSections.end() && trajectory_.infinite)
+	if (currentSection_ == trajectory_.aperiodicPart.end() || currentSection_ == trajectory_.periodicPart.end())
 	{
-		currentSection_ = trajectory_.pathSections.begin();
-		currentPathSectionIdx_ = 0;
+		currentSection_ = trajectory_.periodicPart.begin();
 	}
 }
 
@@ -141,39 +110,19 @@ void
 LinearLocalPlanner::createLocalPlan(const SensorData& data)
 {
 	Lock lock(trajectoryMutex_);
-	std::shared_ptr<IPathSection> currentSection;
-
-	if (!inApproach_)
-	{
-		if (currentSection_ == trajectory_.pathSections.end())
-		{
-			CPSLOG_ERROR << "Trajectory at the end.";
-			return;
-		}
-		currentSection = *currentSection_;
-	}
-	else
-	{
-		currentSection = trajectory_.approachSection;
-	}
+	auto currentSection = *currentSection_;
 
 	if (!currentSection)
 	{
 		CPSLOG_ERROR << "Current Section is nullptr. Abort.";
 		return;
 	}
+
 	currentSection->updateSensorData(data);
 
 	if (currentSection->inTransition())
 	{
 		nextSection();
-
-		if (currentSection_ == trajectory_.pathSections.end())
-		{
-			CPSLOG_ERROR << "Trajectory at the end.";
-			return;
-		}
-
 		currentSection = *currentSection_;
 		if (!currentSection)
 		{
@@ -190,15 +139,13 @@ LinearLocalPlanner::createLocalPlan(const SensorData& data)
 	{
 		CPSLOG_WARN << "Lost GPS fix. LocalPlanner safety procedure.";
 		controllerTarget_.velocity = currentSection->getVelocity();
-		controllerTarget_.yawRate = 0;
+		controllerTarget_.yawRate = params.safetyYawRate();
 	}
-//	controllerTarget_.sequenceNr = seqNum;
 
 	auto controller = get<IController>();
 	if (!controller)
 	{
 		CPSLOG_ERROR << "LinearLocalPlanner: Controller missing";
-
 		return;
 	}
 

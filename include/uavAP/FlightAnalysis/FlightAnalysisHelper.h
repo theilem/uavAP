@@ -28,7 +28,7 @@ using FlightAnalysisDefaults = StaticHelper<SchedulerFactory,
 		SensingActuationIO>;
 
 using FlightAnalysisHelper = StaticHelper<FlightAnalysisDefaults,
-		DataHandling,
+		DataHandling<Content, Target>,
 		ManeuverPlanner
 >;
 

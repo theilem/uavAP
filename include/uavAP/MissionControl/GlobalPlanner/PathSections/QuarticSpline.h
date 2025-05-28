@@ -8,149 +8,174 @@
 #ifndef UAVAP_MISSIONCONTROL_GLOBALPLANNER_PATHSECTIONS_QUARTICSPLINE_H_
 #define UAVAP_MISSIONCONTROL_GLOBALPLANNER_PATHSECTIONS_QUARTICSPLINE_H_
 
-#include <uavAP/Core/SensorData.h>
-
+#include "uavAP/Core/SensorData.h"
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h"
 
-struct QuarticSpline : public IPathSection
+struct QuarticSpline : IPathSection
 {
-	QuarticSpline() = default;
+    QuarticSpline() = default;
 
-	QuarticSpline(const QuarticSpline& other) = default;
+    QuarticSpline(const QuarticSpline& other) = default;
 
-	QuarticSpline(const Vector3& c0, const Vector3& c1, const Vector3& c2, const Vector3& c3, const Vector3& c4,
-				  FloatingType velocity) :
-			closestU_(0), c0_(c0), c1_(c1), c2_(c2), c3_(c3), c4_(c4), velocity_(velocity)
-	{
-	}
+    QuarticSpline(const Vector3& c0, const Vector3& c1, const Vector3& c2, const Vector3& c3, const Vector3& c4,
+                  FloatingType velocity) :
+        c0(c0), c1(c1), c2(c2), c3(c3), c4(c4), velocity(velocity)
+    {
+    }
 
-	Vector3
-	positionFromU(FloatingType u) const
-	{
-		return c0_ + c1_ * u + c2_ * pow(u, 2) + c3_ * pow(u, 3) + c4_ * pow(u, 4);
-	}
+    Vector3
+    positionFromU(FloatingType u) const
+    {
+        return c0 + c1 * u + c2 * pow(u, 2) + c3 * pow(u, 3) + c4 * pow(u, 4);
+    }
 
-	void
-	updateSensorData(const SensorData& data) override
-	{
-		currentPosition_ = data.position;
+    void
+    updateSensorData(const SensorData& data) override
+    {
+        currentPosition = data.position;
 
-		int maxIter = 10;
-		FloatingType convThreshold = 0.0001;
-		auto posClosest = positionFromU(closestU_);
+        int maxIter = 10;
+        FloatingType convThreshold = 0.0001;
+        auto posClosest = positionFromU(closestU);
 
-		FloatingType distClosest = (posClosest - currentPosition_).squaredNorm();
-		FloatingType distZero = (c0_ - currentPosition_).squaredNorm();
-		//Newton method to find closest point
-		FloatingType u;
-		if (distClosest < distZero)
-			u = closestU_;
-		else
-			u = 0;
+        FloatingType distClosest = (posClosest - currentPosition).squaredNorm();
+        FloatingType distZero = (c0 - currentPosition).squaredNorm();
+        //Newton method to find closest point
+        FloatingType u;
+        if (distClosest < distZero)
+            u = closestU;
+        else
+            u = 0;
 
-		for (int i = 0; i < maxIter; ++i)
-		{
-			Vector3 p = positionFromU(u) - currentPosition_;
-			Vector3 p_prime = c1_ + 2 * c2_ * u + 3 * c3_ * pow(u, 2) + 4 * c4_ * pow(u, 3);
-			Vector3 p_2prime = 2 * c2_ + 6 * c3_ * u + 12 * c4_ * pow(u, 2);
+        for (int i = 0; i < maxIter; ++i)
+        {
+            Vector3 p = positionFromU(u) - currentPosition;
+            Vector3 p_prime = c1 + 2 * c2 * u + 3 * c3 * pow(u, 2) + 4 * c4 * pow(u, 3);
+            Vector3 p_2prime = 2 * c2 + 6 * c3 * u + 12 * c4 * pow(u, 2);
 
-			FloatingType grad = (p.dot(p_prime)) / (p_prime.dot(p_prime) + p.dot(p_2prime));
+            FloatingType grad = (p.dot(p_prime)) / (p_prime.dot(p_prime) + p.dot(p_2prime));
 
-			if (std::isnan(grad))
-				break;
+            if (std::isnan(grad))
+                break;
 
-			u = u - grad;
-			if (fabs(grad) < convThreshold)
-				break;
-		}
+            u = u - grad;
+            if (fabs(grad) < convThreshold)
+                break;
+        }
 
-		if (u < 0)
-			u = 0;
-		if (u > 1)
-			u = 1;
-		closestU_ = u;
-	}
+        closestU = std::clamp(u, static_cast<FloatingType>(0), static_cast<FloatingType>(1));
+    }
 
-	bool
-	inTransition() const override
-	{
-		if (closestU_ >= 1) //In transition if u for the closest point out of definition for current spline
-		{
-			return true;
-		}
-		return false;
-	}
+    bool
+    inTransition() const override
+    {
+        if (closestU >= 1) //In transition if u for the closest point out of definition for current spline
+        {
+            return true;
+        }
+        return false;
+    }
 
-	Vector3
-	getPositionDeviation() const override
-	{
-		return positionFromU(closestU_) - currentPosition_;
-	}
+    Vector3
+    getPositionDeviation() const override
+    {
+        return positionFromU(closestU) - currentPosition;
+    }
 
-	Vector3
-	getDirection() const override
-	{
-		return (c1_ + 2 * c2_ * closestU_ + 3 * c3_ * pow(closestU_, 2) + 4 * c4_ * pow(closestU_, 3)).normalized();
-	}
+    Vector3
+    getDirection() const override
+    {
+        return (c1 + 2 * c2 * closestU + 3 * c3 * pow(closestU, 2) + 4 * c4 * pow(closestU, 3)).normalized();
+    }
 
-	FloatingType
-	getSlope() const override
-	{
-		return getDirection().z();
-	}
+    FloatingType
+    getSlope() const override
+    {
+        return getDirection().z();
+    }
 
-	FloatingType
-	getCurvature() const override
-	{
-		Vector3 dp_du = c1_ + 2 * c2_ * closestU_ + 3 * c3_ * pow(closestU_, 2) + 4 * c4_ * pow(closestU_, 3);
-		Vector3 dp_ddu = 2 * c2_ + 6 * c3_ * closestU_ + 12 * c4_ * pow(closestU_, 2);
+    FloatingType
+    getCurvature() const override
+    {
+        Vector3 dp_du = c1 + 2 * c2 * closestU + 3 * c3 * pow(closestU, 2) + 4 * c4 * pow(closestU, 3);
+        Vector3 dp_ddu = 2 * c2 + 6 * c3 * closestU + 12 * c4 * pow(closestU, 2);
 
-		FloatingType dPsi_du = (dp_ddu[1] * dp_du[0] - dp_ddu[0] * dp_du[1])
-							   / pow((pow(dp_du[0], 2) + pow(dp_du[1], 2)), 3.0 / 2.0);
+        FloatingType dPsi_du = (dp_ddu[1] * dp_du[0] - dp_ddu[0] * dp_du[1])
+            / pow((pow(dp_du[0], 2) + pow(dp_du[1], 2)), 3.0 / 2.0);
 
-		return dPsi_du;
-	}
+        return dPsi_du;
+    }
 
-	Vector3
-	getEndPoint() const override
-	{
-		return c0_ + c1_ + c2_ + c3_ + c4_;
-	}
+    std::optional<Vector3>
+    getEndPoint() const override
+    {
+        return c0 + c1 + c2 + c3 + c4;
+    }
 
-	FloatingType
-	getVelocity() const override
-	{
-		return velocity_;
-	}
+    std::optional<Vector3>
+    getStartingPoint() const override
+    {
+        return c0;
+    }
 
-	FloatingType closestU_{0.0};
-	Vector3 currentPosition_;
+    std::optional<Vector3>
+    getEndDirection() const override
+    {
+        return (c1 + 2 * c2 + 3 * c3 + 4 * c4).normalized(); //Derivative at u = 1
+    }
 
-	//Quartic Spline: p(u) = c0 + c1 * u + c2 * u^2 + c3 * u^3 + c4 * u^4
-	Vector3 c0_;
-	Vector3 c1_;
-	Vector3 c2_;
-	Vector3 c3_;
-	Vector3 c4_;
+    std::optional<Vector3>
+    getStartingDirection() const override
+    {
+        return c1.normalized(); //Derivative at u = 0
+    }
 
-	FloatingType velocity_{};
+    FloatingType
+    getVelocity() const override
+    {
+        return velocity;
+    }
 
+    std::string
+    getDescription(bool currentState) const override
+    {
+        std::stringstream ss;
+        ss << "Quartic Spline: c0: " << c0.transpose() << ", c1: " << c1.transpose()
+            << ", c2: " << c2.transpose() << ", c3: " << c3.transpose() << ", c4: " << c4.transpose() << ", velocity: "
+            << velocity;
+        if (currentState)
+            ss << ", closestU: " << closestU
+                << ", currentPosition: " << currentPosition.transpose();
+        return ss.str();
+    }
+
+    FloatingType closestU{0.0};
+    Vector3 currentPosition;
+
+    //Quartic Spline: p(u) = c0 + c1 * u + c2 * u^2 + c3 * u^3 + c4 * u^4
+    Vector3 c0;
+    Vector3 c1;
+    Vector3 c2;
+    Vector3 c3;
+    Vector3 c4;
+
+    FloatingType velocity{};
 };
 
 namespace dp
 {
-template<class Archive, typename Type>
-inline void
-serialize(Archive& ar, QuarticSpline& t)
-{
-	ar & t.c0_;
-	ar & t.c1_;
-	ar & t.c2_;
-	ar & t.c3_;
-	ar & t.c4_;
-	ar & t.closestU_;
-	ar & t.velocity_;
-}
+    template <class Archive, typename Type>
+    inline void
+    serialize(Archive& ar, QuarticSpline& t)
+    {
+        ar & t.c0;
+        ar & t.c1;
+        ar & t.c2;
+        ar & t.c3;
+        ar & t.c4;
+        ar & t.closestU;
+        ar & t.velocity;
+    }
 }
 
 #endif /* UAVAP_MISSIONCONTROL_GLOBALPLANNER_PATHSECTIONS_QUARTICSPLINE_H_ */

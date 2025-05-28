@@ -13,6 +13,8 @@
 #include <cpsCore/Utilities/DataPresentation/DataPresentation.h>
 #include <cpsCore/Utilities/IPC/IPC.h>
 
+#include "uavAP/MissionControl/GlobalPlanner/ApproachPlanner/ApproachPlanner.h"
+
 
 bool
 SplineGlobalPlanner::run(RunStage stage)
@@ -29,11 +31,14 @@ SplineGlobalPlanner::run(RunStage stage)
         }
     case RunStage::NORMAL:
         {
-            if (auto dh = get<DataHandling>())
+            if (auto dh = get<DataHandling<Content, Target>>())
             {
                 dh->addTriggeredStatusFunction<Mission, DataRequest>(
-                    std::bind(&SplineGlobalPlanner::missionRequest, this,
-                              std::placeholders::_1), Content::MISSION, Content::REQUEST_DATA);
+                    [this](const DataRequest& request)
+                    {
+                        return missionRequest(request);
+                    },
+                    Content::MISSION, Content::REQUEST_DATA);
                 dh->addConfig(this, Content::SPLINE_GLOBAL_PLANNER_PARAMS);
             }
             break;
@@ -158,7 +163,6 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
         2 * params.tau(), params.tau() - 3, 3 - 2 * params.tau(), -params.tau(),
         -params.tau(), 2 - params.tau(), params.tau() - 2, params.tau();
     Eigen::Matrix<FloatingType, 4, 3> pointMat;
-    Eigen::Matrix<FloatingType, 4, 3> approachMat;
     if (wp.size() == 1)
         infinite = false;
     else
@@ -203,12 +207,6 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
             }
         }
 
-        //		if (populateApproach)
-        //		{
-        //			approachMat.bottomRows(3) = pointMat.topRows(3);
-        //			populateApproach = false;
-        //		}
-
         auto nextIt = it + 1;
         if (nextIt == wp.end())
         {
@@ -216,7 +214,7 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
             {
                 FloatingType velocity = (!it->velocity()) ? mission.velocity() : *it->velocity();
                 traj.push_back(
-                    std::make_shared<Orbit>(it->location(), Vector3::UnitZ(), params.orbitRadius(),
+                    std::make_shared<Orbit>(it->location(), OrbitDirection::CCW, params.orbitRadius(),
                                             velocity));
                 break;
             }
@@ -272,24 +270,16 @@ SplineGlobalPlanner::createCatmulRomSplines(const Mission& mission)
 
         pointMat.row(2) = next->location();
     }
+    if (auto ap = get<ApproachPlanner>())
+    {
+        auto approach = ap->getApproach(traj);
+        if (infinite)
+            return {approach, traj};
+        approach.insert(approach.end(), traj.begin(), traj.end());
+        return {approach, false};
+    }
 
     Trajectory result(traj, mission.infinite());
-
-    //	if (mission.initialPosition())
-    //	{
-    //		Waypoint init = *mission.initialPosition();
-    //		approachMat.row(1) = init.location().transpose();
-    //		if (init.direction())
-    //			approachMat.row(0) = approachMat.row(2)
-    //								 - (init.direction()->transpose() * mission.velocity());
-    //		else
-    //			approachMat.row(0) = approachMat.row(1);
-    //
-    //		Eigen::Matrix<FloatingType, 3, 4> C = (tauMat * approachMat).transpose();
-    //		auto spline = std::make_shared<CubicSpline>(C.col(0), C.col(1), C.col(2), C.col(3),
-    //													mission.velocity());
-    //		result.approachSection = spline;
-    //	}
 
     return result;
 }

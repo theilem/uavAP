@@ -53,15 +53,10 @@ ENUMMAP_INIT(Waveforms, { {Waveforms::NONE, "none"}, {Waveforms::SINE, "sine"}, 
 
 struct ControllerOutput : SerializeCustom
 {
-    FloatingType rollOutput;
-    FloatingType pitchOutput;
-    FloatingType yawOutput;
-    FloatingType throttleOutput;
-
-    ControllerOutput() :
-        rollOutput(0), pitchOutput(0), yawOutput(0), throttleOutput(-1)
-    {
-    }
+    FloatingType rollOutput{0.0};
+    FloatingType pitchOutput{0.0};
+    FloatingType yawOutput{0.0};
+    FloatingType throttleOutput{-1.0};
 };
 
 struct NamedControllerOutput

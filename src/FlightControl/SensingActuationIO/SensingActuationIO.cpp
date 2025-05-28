@@ -25,7 +25,7 @@ SensingActuationIO::run(RunStage stage)
                 CPSLOG_ERROR << "SensingActuationIO missing dependencies.";
                 return true;
             }
-            if (!isSet<DataHandling>())
+            if (!isSet<DataHandling<Content, Target>>())
             {
                 CPSLOG_DEBUG << "SensingActuationIO: DataHandling not set. Debugging disabled.";
             }
@@ -56,7 +56,7 @@ SensingActuationIO::run(RunStage stage)
                 CPSLOG_ERROR << "SensorData in shared memory missing. Cannot continue.";
                 return true;
             }
-            if (auto dh = get<DataHandling>())
+            if (auto dh = get<DataHandling<Content, Target>>())
             {
                 dh->addStatusFunction<SensorData>(
                     std::bind(&SensingActuationIO::getSensorData, this), Content::SENSOR_DATA);

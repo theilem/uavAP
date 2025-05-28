@@ -33,6 +33,8 @@
 
 #include <uavAP/Core/SensorData.h>
 #include <uavAP/FlightControl/Controller/PIDController/PIDHandling.h>
+
+#include "uavAP/Core/DataHandling/Content.hpp"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include "uavAP/FlightControl/Controller/ControllerTarget.h"
 #include "uavAP/FlightControl/Controller/PIDController/IPIDController.h"
@@ -48,6 +50,7 @@ class ISensingIO;
 
 class IActuationIO;
 
+template <typename C, typename T>
 class DataHandling;
 
 class Packet;
@@ -57,7 +60,7 @@ class DataPresentation;
 
 class RatePIDController
 		: public IPIDController,
-		  public AggregatableObject<ISensingIO, IActuationIO, IScheduler, DataHandling, IPC, DataPresentation>,
+		  public AggregatableObject<ISensingIO, IActuationIO, IScheduler, DataHandling<Content, Target>, IPC, DataPresentation>,
 		  public IRunnableObject
 {
 public:

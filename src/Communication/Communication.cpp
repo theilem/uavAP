@@ -25,9 +25,7 @@ main(int argc, char** argv)
 	}
 	else
 	{
-		JsonPopulator pop;
-
-		pop.populateContainer<CommunicationHelper>();
+		auto pop = JsonPopulator::populateContainer<CommunicationHelper>();
 		pop.toFile("communication.json");
 		std::cout << "Populated json" << std::endl;
 		return 0;

@@ -18,7 +18,6 @@
 #-------------------------------------------------------------------------------
 set(CORE_SRC "")
 
-add_subdirectory(DataHandling)
 add_subdirectory(Frames)
 add_subdirectory(OverrideHandler)
 
