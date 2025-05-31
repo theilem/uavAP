@@ -21,11 +21,8 @@ set(MISSION_CONTROL_GEO_SRC "")
 
 add_subdirectory(MissionPlanner)
 add_subdirectory(GlobalPlanner)
-#add_subdirectory(DataHandling)
-#add_subdirectory(ConditionManager)
 add_subdirectory(LocalFrameManager)
-#add_subdirectory(Geofencing)
-#add_subdirectory(WindAnalysis)
+add_subdirectory(ExternalPlanner)
 
 set(MISSION_CONTROL_SRC ${MISSION_CONTROL_SRC}
 						MissionControlPrint.cpp

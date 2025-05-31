@@ -4,6 +4,7 @@
 
 #include <cpsCore/Configuration/TerminalConfigurator.h>
 #include <cpsCore/Utilities/IDC/NetworkLayer/Serial/SerialHandlerParams.h>
+#include <cpsCore/Utilities/IDC/TransportLayer/ITransportLayer.h>
 #include <cpsCore/Framework/StaticHelper.h>
 #include <cpsCore/Utilities/IDC/NetworkLayer/Serial/SerialNetworkLayer.h>
 #include <cpsCore/Utilities/IDC/IDC.h>

@@ -23,6 +23,7 @@
 #include <cpsCore/Utilities/IDC/IDC.h>
 #include <uavAP/FlightControl/LocalPlanner/ForwardingLocalPlanner/ForwardingLocalPlanner.h>
 
+#include "ExternalPlanner/ExternalPlanner.h"
 #include "uavAP/FlightControl/SensingActuationIO/SensingIO.h"
 //#include "uavAP/MissionControl/ManeuverPlanner/ManeuverPlanner.h"
 //#include "uavAP/MissionControl/WindAnalysis/WindAnalysis.h"
@@ -37,7 +38,8 @@ using MissionControlHelper = StaticHelper<MissionControlDefaults,
                                           MissionPlannerFactory,
                                           GlobalPlannerFactory,
                                           ApproachPlanner,
-                                          SensingIO
+                                          SensingIO,
+                                          ExternalPlanner
 >;
 
 #endif /* UAVAP_MISSIONCONTROL_MISSIONCONTROLHELPER_H_ */

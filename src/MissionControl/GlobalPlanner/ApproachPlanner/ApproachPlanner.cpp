@@ -3,10 +3,11 @@
 //
 
 #include <utility>
+#include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
+#include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
 
 #include "uavAP/MissionControl/GlobalPlanner/ApproachPlanner/ApproachPlanner.h"
 
-#include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
 
 bool
 ApproachPlanner::run(RunStage stage)

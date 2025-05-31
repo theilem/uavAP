@@ -22,9 +22,7 @@ ManeuverLocalPlanner::setTrajectory(const Trajectory& traj)
     trajectory_ = traj;
     if (trajectory_.periodicPart.empty())
     {
-        auto safetyOrbit = std::make_shared<Orbit>(
-            Vector3(0, 0, 0), OrbitDirection::CCW, 50, 50);
-        trajectory_.periodicPart.push_back(safetyOrbit);
+        trajectory_.periodicPart = safetyTrajectory_;
     }
     if (!trajectory_.aperiodicPart.empty())
         currentSection_ = trajectory_.aperiodicPart.begin();
@@ -124,12 +122,14 @@ ManeuverLocalPlanner::run(RunStage stage)
             if (auto dh = get<DataHandling<Content, Target>>())
             {
                 dh->addStatusFunction<ManeuverLocalPlannerStatus>(
-                    std::bind(&ManeuverLocalPlanner::getStatus, this),
+                    [this] { return getStatus(); },
                     Content::MANEUVER_LOCAL_PLANNER_STATUS);
                 dh->addConfig(this, Content::MANEUVER_LOCAL_PLANNER_PARAMS);
-                dh->addTriggeredStatusFunction<Trajectory, DataRequest>(
-                    std::bind(&ManeuverLocalPlanner::trajectoryRequest, this,
-                              std::placeholders::_1), Content::TRAJECTORY, Content::REQUEST_DATA);
+                dh->addTriggeredStatusFunction<Trajectory, DataRequest>([this](const DataRequest& request)
+                              {
+                                  return trajectoryRequest(request);
+                              },
+                              Content::TRAJECTORY, Content::REQUEST_DATA);
             }
 
             break;
@@ -149,6 +149,7 @@ ManeuverLocalPlanner::createLocalPlan(const SensorData& data)
 
     Lock lock(trajectoryMutex_);
     auto currentSection = updatePathSection(data);
+    lock.unlock();
     if (!currentSection)
     {
         CPSLOG_ERROR << "No current pathsection. Fly safety procedure.";
@@ -161,8 +162,6 @@ ManeuverLocalPlanner::createLocalPlan(const SensorData& data)
         safety = true;
     }
 
-    //	Lock plannerLock(overrideMutex_);
-
     if (safety)
     {
         controllerTarget_.velocity = params.safetyVelocity();
@@ -173,7 +172,6 @@ ManeuverLocalPlanner::createLocalPlan(const SensorData& data)
     {
         controllerTarget_ = calculateControllerTarget(data, currentSection);
     }
-    lock.unlock();
 
     //Do control overrides
     controllerTargetVelocityOverride_ = controllerTarget_.velocity;

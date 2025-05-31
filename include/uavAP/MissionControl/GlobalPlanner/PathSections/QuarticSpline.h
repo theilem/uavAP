@@ -8,11 +8,14 @@
 #ifndef UAVAP_MISSIONCONTROL_GLOBALPLANNER_PATHSECTIONS_QUARTICSPLINE_H_
 #define UAVAP_MISSIONCONTROL_GLOBALPLANNER_PATHSECTIONS_QUARTICSPLINE_H_
 
+#include <cmath>
+
 #include "uavAP/Core/SensorData.h"
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h"
 
 struct QuarticSpline : IPathSection
 {
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     QuarticSpline() = default;
 
     QuarticSpline(const QuarticSpline& other) = default;
@@ -26,7 +29,7 @@ struct QuarticSpline : IPathSection
     Vector3
     positionFromU(FloatingType u) const
     {
-        return c0 + c1 * u + c2 * pow(u, 2) + c3 * pow(u, 3) + c4 * pow(u, 4);
+        return c0 + c1 * u + c2 * std::pow(u, 2) + c3 * std::pow(u, 3) + c4 * std::pow(u, 4);
     }
 
     void
