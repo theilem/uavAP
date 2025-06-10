@@ -46,8 +46,9 @@ struct ManeuverLocalPlannerParams
 	Parameter<FloatingType> kConvergence = {1.0, "k_convergence", true};
 	Parameter<FloatingType> kYawRate = {1.0, "k_yaw_rate", true};
 	Parameter<FloatingType> yawRateDistanceThreshold = {50.0, "yaw_rate_distance_threshold", true};
-	Parameter<FloatingType> safetyVelocity = {25.0, "safety_velocity", true};
-	Parameter<Angle<FloatingType>> safetyYawRate = {Angle<FloatingType>(10), "safety_yaw_rate", false};
+	Parameter<FloatingType> safetyVelocity = {20.0, "safety_velocity", true};
+	Parameter<Vector3> safetyOrbitCenter = {{0.0, 0.0, 150.0}, "safety_orbit_center", true};
+	Parameter<FloatingType> safetyOrbitRadius = {50.0, "safety_orbit_radius", true};
 	Parameter<int> period = {0, "period", false};
 	Parameter<FloatingType> overrideVelocity = {25.0, "override_velocity", false};
 	Parameter<bool> doOverrideVelocity = {false, "do_override_velocity", false};
@@ -61,7 +62,8 @@ struct ManeuverLocalPlannerParams
 		c & kYawRate;
 		c & yawRateDistanceThreshold;
 		c & safetyVelocity;
-		c & safetyYawRate;
+		c & safetyOrbitRadius;
+		c & safetyOrbitCenter;
 		c & period;
 		c & overrideVelocity;
 		c & doOverrideVelocity;

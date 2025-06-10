@@ -65,7 +65,7 @@ ManeuverLocalPlanner::run(RunStage stage)
                 CPSLOG_DEBUG << "ManeuverLocalPlanner: IPC or DP not set. Will not subscribe on packets.";
             }
             auto safetyOrbit = std::make_shared<Orbit>(
-                Vector3(0, 0, 100), OrbitDirection::CCW, 1. / params.safetyYawRate(), params.safetyVelocity());
+                params.safetyOrbitCenter(), OrbitDirection::CCW, params.safetyOrbitRadius(), params.safetyVelocity());
             safetyTrajectory_ = {safetyOrbit};
             currentSection_ = safetyTrajectory_.begin();
 
@@ -165,7 +165,7 @@ ManeuverLocalPlanner::createLocalPlan(const SensorData& data)
     if (safety)
     {
         controllerTarget_.velocity = params.safetyVelocity();
-        controllerTarget_.yawRate = params.safetyYawRate();
+        controllerTarget_.yawRate = params.safetyOrbitRadius() / params.safetyVelocity();
         controllerTarget_.climbAngle = 0;
     }
     else

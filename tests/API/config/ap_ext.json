@@ -215,7 +215,11 @@
 	"data_handling":
 	{
 		"period": 200,
-		"target": "api"
+		"target": "api",
+		"use_ipc": true,
+		"use_idc": false,
+		"ipc_sub": "comm_to_ap_ext",
+		"ipc_pub": "ap_ext_to_comm"
 	},
 	"data_presentation": {}
 }

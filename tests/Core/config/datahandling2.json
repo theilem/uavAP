@@ -1,7 +1,10 @@
 {
     "data_handling": {
-        "target": "flight_control",
-        "period": 100,
+        "period":100,
+        "use_ipc": true,
+        "use_idc": false,
+        "ipc_sub": "comm_to_flight_control",
+        "ipc_pub": "flight_control_to_comm",
         "use_adaptive_period": true,
         "min_period": 100,
         "max_period": 1000,

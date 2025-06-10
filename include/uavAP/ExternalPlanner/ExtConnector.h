@@ -10,11 +10,14 @@
 
 #include "cpsCore/Utilities/IDC/IDCSender.h"
 #include "cpsCore/Utilities/IPC/Publisher.h"
+#include "uavAP/Core/DataHandling/Content.hpp"
 
 class ISensingIO;
 class DataPresentation;
 class IPC;
 class IDC;
+template <typename C, typename T>
+class DataHandling;
 
 struct ExtConnectorParams
 {
@@ -26,7 +29,7 @@ struct ExtConnectorParams
 };
 
 class ExtConnector: public ConfigurableObject<ExtConnectorParams>,
-                      public AggregatableObject<IPC, IDC, DataPresentation, ISensingIO>,
+                      public AggregatableObject<IPC, IDC, DataPresentation, ISensingIO, DataHandling<Content, Target>>,
                       public IRunnableObject
 {
 public:
@@ -40,7 +43,6 @@ private:
     onExtPacket(const Packet& packet);
     IDCSender extSender_;
     Publisher<Packet> missionControlPublisher_;
-    Publisher<Packet> commsPublisher_;
     boost::signals2::connection sensorSubscription_;
 };
 

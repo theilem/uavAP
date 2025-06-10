@@ -28,6 +28,8 @@
 
 #include <cpsCore/Utilities/EnumMap.hpp>
 
+#include "cpsCore/Utilities/IDC/Header/Hash.h"
+
 /**
  * @brief Defines the Target for forwarding of packets. Only used in uavAP.
  */
@@ -39,6 +41,7 @@ enum class Target
     MISSION_CONTROL, //!< Forward to MissionControl
     API, //!< Forward to API
     COMMUNICATION, //!< Forward to Communication
+    GROUND_STATION, //!< Forward to GroundStation
     EXTERNAL, //!< Forward to External
     BROADCAST //!< Broadcast to everyone
 };
@@ -49,6 +52,7 @@ ENUMMAP_INIT(Target, {
              {Target::FLIGHT_CONTROL, "flight_control"},
              {Target::MISSION_CONTROL, "mission_control"},
              {Target::COMMUNICATION, "communication"},
+             {Target::GROUND_STATION, "ground_station"},
              {Target::EXTERNAL, "external"},
              {Target::API, "api"}});
 
@@ -108,7 +112,10 @@ enum class Content
     //GS to FlightAnalysis
     SELECT_INSPECTING_METRICS, //!< SELECT_INSPECTING_METRICS
     ABORT_MANEUVER,
-    WIND_INFO
+    WIND_INFO,
+
+    // Other
+    EXTERNAL //!< External packets that are handled by external systems, not by uavAP
 };
 
 /**
@@ -152,10 +159,10 @@ getConfigRequest()
 }
 
 template <typename ContentType>
-std::enable_if_t<std::is_same_v<ContentType, std::size_t>, ContentType>
+std::enable_if_t<std::is_same_v<ContentType, Hash>, ContentType>
 getConfigRequest()
 {
-    return std::hash<std::string>{}("request_config");
+    return Hash("request_config");
 }
 
 template <typename ContentType>
@@ -173,10 +180,10 @@ getMemberRequest()
 }
 
 template <typename ContentType>
-std::enable_if_t<std::is_same_v<ContentType, std::size_t>, ContentType>
+std::enable_if_t<std::is_same_v<ContentType, Hash>, ContentType>
 getMemberRequest()
 {
-    return std::hash<std::string>{}("request_member");
+    return Hash("request_member");
 }
 
 template <typename ContentType>
@@ -194,10 +201,10 @@ getMemberData()
 }
 
 template <typename ContentType>
-std::enable_if_t<std::is_same_v<ContentType, std::size_t>, ContentType>
+std::enable_if_t<std::is_same_v<ContentType, Hash>, ContentType>
 getMemberData()
 {
-    return std::hash<std::string>{}("member_data");
+    return Hash("member_data");
 }
 
 template <typename TargetType>
@@ -215,10 +222,10 @@ getDefaultTarget()
 }
 
 template <typename TargetType>
-std::enable_if_t<std::is_same_v<TargetType, std::size_t>, TargetType>
+std::enable_if_t<std::is_same_v<TargetType, Hash>, TargetType>
 getDefaultTarget()
 {
-    return std::hash<std::string>{}("broadcast");
+    return Hash("broadcast");
 }
 
 #endif /* UAVAP_CORE_DATAPRESENTATION_CONTENT_H_ */

@@ -21,5 +21,4 @@ TEST_CASE("Approach Planner")
     Pose goalPose(goalPosition, goalDirection);
 
     auto path = approachPlanner.getApproach(initPose, goalPose);
-    std::cout << path << std::endl;
 }

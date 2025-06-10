@@ -4,7 +4,7 @@
 
 #include "uavAP/MissionControl/ExternalPlanner/ExternalPlanner.h"
 
-#include "cpsCore/Utilities/IDC/Header/HashingHeader.h"
+#include "cpsCore/Utilities/IDC/Header/Hash.h"
 #include "uavAP/FlightControl/LocalPlanner/ILocalPlanner.h"
 #include "uavAP/MissionControl/GlobalPlanner/ApproachPlanner/approach.h"
 #include "uavAP/MissionControl/GlobalPlanner/ApproachPlanner/ApproachPlanner.h"
@@ -46,7 +46,7 @@ ExternalPlanner::onExternalPacket(const Packet& packet)
 {
     Packet p = packet;
     auto dp = get<DataPresentation>();
-    auto contentHeader = dp->extractHeader<HashingHeader>(p);
+    auto contentHeader = dp->extractHeader<Hash>(p);
     if (contentHeader == "approach")
     {
         auto pose = dp->deserialize<Pose>(p);

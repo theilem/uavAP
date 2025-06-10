@@ -85,7 +85,7 @@ CustomPlanner::run(RunStage stage)
 
 
             auto scheduler = get<IScheduler>();
-            scheduler->schedule(std::bind(&CustomPlanner::publishMission, this), Milliseconds(100));
+            scheduler->schedule([this] { publishMission(); }, Milliseconds(2000));
             break;
         }
     case RunStage::FINAL:

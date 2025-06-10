@@ -12,6 +12,9 @@ option(GS "Build the Ground Station." OFF)
 option(XPLANE "Build the XPlane Plugin." OFF)
 option(CORE "Always build cps_core." OFF)
 option(PYTHON "Build the Python API." OFF)
+option(WITH_TOOLS "Build the TOOLS of uavAP." ON)
+
+option(BUILD_SHARED_LIBS "Build shared libraries (.so) instead of static (.a)" ON)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 

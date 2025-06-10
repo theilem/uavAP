@@ -58,8 +58,7 @@ SensingActuationIO::run(RunStage stage)
             }
             if (auto dh = get<DataHandling<Content, Target>>())
             {
-                dh->addStatusFunction<SensorData>(
-                    std::bind(&SensingActuationIO::getSensorData, this), Content::SENSOR_DATA);
+                dh->addStatusFunction<SensorData>([this] { return sensorData_; }, Content::SENSOR_DATA);
                 dh->addStatusFunction<PowerData>(
                     [this] { return powerData_; }, Content::POWER_DATA);
                 dh->addStatusFunction<ServoData>(

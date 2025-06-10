@@ -6,11 +6,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef __linux__
-#include <linux/types.h>
-#else
+// #ifdef __linux__
+// #include <linux/types.h>
+// #else
+// typedef unsigned long ulong;
+// #endif
+
 typedef unsigned long ulong;
-#endif
 #include <stdint.h>
 #include <unistd.h>
 

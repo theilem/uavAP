@@ -10,5 +10,4 @@
 TEST_CASE("Json Populator Test -- Flight Control Helper")
 {
     auto config = JsonPopulator::populateContainer<FlightControlHelper>();
-    // std::cout << config.getString() << std::endl;
 }

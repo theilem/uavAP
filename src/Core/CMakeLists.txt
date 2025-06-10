@@ -26,7 +26,7 @@ set(CORE_SRC 	${CORE_SRC}
 				)
 
 				
-add_library(uavap_core SHARED ${CORE_SRC})
+add_library(uavap_core ${CORE_SRC})
 
 target_link_libraries(uavap_core
 									${CPP_REDIS_LIB}

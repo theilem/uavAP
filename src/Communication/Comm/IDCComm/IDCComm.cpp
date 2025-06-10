@@ -31,12 +31,11 @@ IDCComm::run(RunStage stage)
 
             IPCOptions options;
             options.multiTarget = false;
-            for (int k = static_cast<int>(Target::INVALID) + 1;
-                 k < static_cast<int>(Target::COMMUNICATION); k++)
+            for (const auto& targetPub : params.targetPubs())
             {
-                publishers_.push_back(
-                    ipc->publishPackets(
-                        "comm_to_" + EnumMap<Target>::convert(static_cast<Target>(k)), options));
+                CPSLOG_DEBUG << "Publishing to target " << EnumMap<Target>::convert(targetPub.first) << " on " <<
+                    targetPub.second;
+                publishers_.insert(std::make_pair(targetPub.first, ipc->publishPackets(targetPub.second, options)));
             }
 
             auto idc = get<IDC>();
@@ -58,19 +57,20 @@ IDCComm::run(RunStage stage)
             options.multiTarget = false;
             options.retry = true;
 
-            subscriptions_ = std::vector<Subscription>(static_cast<int>(Target::COMMUNICATION) - 1);
-            for (int k = static_cast<int>(Target::INVALID) + 1;
-                 k < static_cast<int>(Target::COMMUNICATION); k++)
+            for (const auto& targetSub : params.targetSubs())
             {
-                subscriptions_[k - 1] = ipc->subscribeOnPackets(
-                    EnumMap<Target>::convert(static_cast<Target>(k)) + "_to_comm", [this](const Packet& packet)
+                CPSLOG_DEBUG << "Subscribing to target " << EnumMap<Target>::convert(targetSub.first) << " on " <<
+                    targetSub.second;
+                auto sub = ipc->subscribeOnPackets(
+                    targetSub.second, [this](const Packet& packet)
                     {
                         sendPacket(packet);
                     }, options);
+                subscriptions_.insert(std::make_pair(targetSub.first, sub));
 
-                if (!subscriptions_[k - 1].connected())
+                if (!sub.connected())
                 {
-                    CPSLOG_DEBUG << EnumMap<Target>::convert(static_cast<Target>(k))
+                    CPSLOG_DEBUG << EnumMap<Target>::convert(targetSub.first)
                         << " not found. Retry later.";
                 }
             }
@@ -108,21 +108,23 @@ IDCComm::receivePacket(const Packet& packet)
     }
 
     Packet p = packet;
-    Target target = dp->extractHeader<Target>(p);
+    auto target = dp->extractHeader<Target>(p);
 
     if (target == Target::BROADCAST)
     {
-        for (auto& pub : publishers_)
+        for (auto& [key, pub] : publishers_)
         {
             pub.publish(p);
         }
     }
-    else if (target == Target::INVALID || target == Target::COMMUNICATION)
-    {
-        CPSLOG_ERROR << "Invalid Target";
-    }
     else
     {
-        publishers_[static_cast<int>(target) - 1].publish(p);
+        auto it = publishers_.find(target);
+        if (it == publishers_.end())
+        {
+            CPSLOG_ERROR << "Target " << EnumMap<Target>::convert(target) << " not found in publishers.";
+            return;
+        }
+        it->second.publish(p);
     }
 }

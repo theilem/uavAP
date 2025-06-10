@@ -12,7 +12,6 @@
 
 #include <cpsCore/cps_object>
 
-#include <uavAP/Communication/Comm/IDCComm/IDCCommParams.h>
 #include <uavAP/Core/DataHandling/Content.hpp>
 #include <cpsCore/Utilities/Packet.h>
 #include <cpsCore/Utilities/IPC/Subscription.h>
@@ -26,6 +25,19 @@ class DataPresentation;
 class IDC;
 
 class IPC;
+
+struct IDCCommParams
+{
+	Parameter<std::map<Target, std::string>> targetPubs = {{}, "target_pubs", true};
+	Parameter<std::map<Target, std::string>> targetSubs = {{}, "target_subs", true};
+	template <typename Config>
+	void
+	configure(Config& c)
+	{
+		c & targetPubs;
+		c & targetSubs;
+	}
+};
 
 
 class IDCComm : public IComm,
@@ -50,8 +62,8 @@ private:
 	void
 	receivePacket(const Packet& packet);
 
-	std::vector<Subscription> subscriptions_;
-	std::vector<Publisher<Packet>> publishers_;
+	std::map<Target, Subscription> subscriptions_;
+	std::map<Target, Publisher<Packet>> publishers_;
 
 	Mutex senderMutex_;
 	IDCSender sender_;

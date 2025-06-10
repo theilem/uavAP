@@ -9,7 +9,7 @@ add_subdirectory (ManeuverPlanner)
 add_subdirectory (Condition)
 add_subdirectory (SignalGenerator)
 
-add_library(uavap_flight_analysis SHARED ${FLIGHT_ANALYSIS_SRC})
+add_library(uavap_flight_analysis ${FLIGHT_ANALYSIS_SRC})
 
 target_link_libraries(uavap_flight_analysis uavap_core
 		uavap_mission_control

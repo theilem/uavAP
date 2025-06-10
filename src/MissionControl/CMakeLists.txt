@@ -28,12 +28,12 @@ set(MISSION_CONTROL_SRC ${MISSION_CONTROL_SRC}
 						MissionControlPrint.cpp
 						)
 
-add_library(uavap_mission_control SHARED ${MISSION_CONTROL_SRC}
+add_library(uavap_mission_control  ${MISSION_CONTROL_SRC}
 										Polygon.cpp)
 
 
 target_link_libraries(uavap_mission_control 	uavap_core
-												control
+												uavap_control
 		)
 
 #add_library(uavap_mission_control_geo SHARED ${MISSION_CONTROL_GEO_SRC})

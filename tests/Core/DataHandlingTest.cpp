@@ -84,7 +84,7 @@ TEST_CASE("Data Handling Test")
 
     SimpleRunner runner(agg);
 
-    CHECK(!runner.runAllStages());
+    REQUIRE(!runner.runAllStages());
     ipc->subscribeOnPackets("flight_control_to_comm",
                             std::bind(onPacket, std::placeholders::_1, dp), options);
 
@@ -166,7 +166,7 @@ TEST_CASE("Data Handling Adaptive Period")
         test_info::test_dir() + "/Core/config/datahandling2.json");
 
     SimpleRunner runner(agg);
-    CHECK_FALSE(runner.runStage(RunStage::INIT));
+    REQUIRE(!runner.runStage(RunStage::INIT));
     auto dh = agg.getOne<DataHandling<Content, Target>>();
     auto scheduler = agg.getOne<MicroSimulator>();
     scheduler->setMainThread();
@@ -176,7 +176,7 @@ TEST_CASE("Data Handling Adaptive Period")
         statusMessageTiming.push_back(std::chrono::duration_cast<Milliseconds>(scheduler->timeSinceStart()).count());
         return SensorData();
     }, Content::SENSOR_DATA);
-    CHECK_FALSE(runner.runStage(RunStage::NORMAL));
+    REQUIRE(!runner.runStage(RunStage::NORMAL));
     //Status Events: 0, 100, 200, 300, 400, 500, 600, 700, 800, 900, (1000 full) -> period 150
     //Status Events: 1150 -> period 225, 1375 -> period 338, 1713 -> period 507
     //Status Events: 2220 -> period 761, 2981 -> period 1000, 3981 -> period 1000

@@ -5,10 +5,11 @@
 
 #include "uavAP/Core/DataHandling/Content.hpp"
 
-#include "cpsCore/Utilities/IDC/Header/HashingHeader.h"
+#include "cpsCore/Utilities/IDC/Header/Hash.h"
 #include "uavAP/FlightControl/SensingActuationIO/ISensingIO.h"
 #include "cpsCore/Utilities/IPC/IPC.h"
 #include "cpsCore/Utilities/IDC/IDC.h"
+#include "uavAP/Core/DataHandling/DataHandling.h"
 
 bool
 ExtConnector::run(RunStage stage)
@@ -24,7 +25,6 @@ ExtConnector::run(RunStage stage)
             }
             auto ipc = get<IPC>();
             missionControlPublisher_ = ipc->publishPackets("external_to_mission_control");
-            commsPublisher_ = ipc->publishPackets(EnumMap<Target>::convert(Target::EXTERNAL) + "_to_comm");
             break;
         }
     case RunStage::NORMAL:
@@ -35,21 +35,18 @@ ExtConnector::run(RunStage stage)
             {
                 onExtPacket(packet);
             });
-            auto ipc = get<IPC>();
-            ipc->subscribeOnPackets("comm_to_" + EnumMap<Target>::convert(Target::EXTERNAL),
-                                    [this](const Packet& packet)
-                                    {
-                                        extSender_.sendPacket(packet);
-                                    });
             auto sens = get<ISensingIO>();
             sens->subscribeOnSensorData([this](const SensorData& data)
             {
-                std::cout << "ExtConnector: Sending sensor data to external planner." << std::endl;
                 auto dp = get<DataPresentation>();
                 Packet packet = dp->serialize(data);
-                HashingHeader header("sensor_data");
-                dp->addHeader(packet, header);
+                dp->addHeader(packet, Hash("sensor_data"));
                 extSender_.sendPacket(packet);
+            });
+            auto dh = get<DataHandling<Content, Target>>();
+            dh->subscribeOnData<Packet>(Content::EXTERNAL, [this](const Packet& packet)
+            {
+                extSender_.sendPacket(packet); // Forward packets from uavGS to external planner
             });
         }
     default:
@@ -63,11 +60,14 @@ ExtConnector::onExtPacket(const Packet& packet)
 {
     auto p = packet;
     auto dp = get<DataPresentation>();
-    auto target = dp->extract<Target>(p);
-    if (target == Target::MISSION_CONTROL)
+    auto target = dp->extract<Hash>(p);
+    if (target == "mission_control")
         missionControlPublisher_.publish(p);
-    else if (target == Target::COMMUNICATION)
-        commsPublisher_.publish(p);
+    else if (target == "ground_station")
+    {
+        auto dh = get<DataHandling<Content, Target>>();
+        dh->sendData<Packet>(p, Content::EXTERNAL);
+    }
     else
-        CPSLOG_ERROR << "ExtConnector: Unknown target in packet: " << EnumMap<Target>::convert(target);
+        CPSLOG_ERROR << "ExtConnector: Unknown target in packet: " << target.hashValue;
 }

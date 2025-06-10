@@ -15,12 +15,13 @@
 #include "cpsCore/Utilities/Scheduler/SchedulerFactory.h"
 #include "cpsCore/Utilities/TimeProvider/TimeProviderFactory.h"
 #include "cpsCore/Utilities/SignalHandler/SignalHandler.h"
+#include "uavAP/Core/DataHandling/DataHandling.h"
 
 int
 main(int argc, char** argv)
 {
     using ExternalPlannerHelper = StaticHelper<TimeProviderFactory, SchedulerFactory, ExtConnector, IPC, IDC, NetworkFactory,
-                                               DataPresentation, SensingIO>;
+                                               DataPresentation, SensingIO, DataHandling<Content, Target>>;
     if (argc < 2)
     {
         auto pop = JsonPopulator::populateContainer<ExternalPlannerHelper>();

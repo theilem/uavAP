@@ -16,15 +16,15 @@
 #include <cpsCore/Utilities/Scheduler/IScheduler.h>
 #include <cpsCore/Utilities/IDC/IDCSender.h>
 
-#include "cpsCore/Utilities/IDC/IDC.h"
 #include "uavAP/Core/DataHandling/Content.hpp"
+#include "cpsCore/Utilities/IDC/IDC.h"
 
-template <typename T>
 struct DataHandlingParams
 {
     Parameter<int> period = {100, "period", true};
     Parameter<bool> useIPC = {true, "use_ipc", false};
-    Parameter<T> target = {getDefaultTarget<T>(), "target", true};
+    Parameter<std::string> ipcSub = {"", "ipc_sub", false};
+    Parameter<std::string> ipcPub = {"", "ipc_pub", false};
     Parameter<bool> useIDC = {false, "use_idc", false};
     Parameter<std::string> idcTarget = {"autopilot", "idc_target", false};
 
@@ -40,8 +40,9 @@ struct DataHandlingParams
     configure(Config& c)
     {
         c & period;
-        c & target;
         c & useIPC;
+        c & ipcSub;
+        c & ipcPub;
         c & useIDC;
         c & idcTarget;
 
@@ -55,7 +56,7 @@ struct DataHandlingParams
 
 template <typename C, typename T>
 class DataHandling : public AggregatableObject<DataPresentation, IScheduler, IPC, IDC>,
-                     public ConfigurableObject<DataHandlingParams<T>>,
+                     public ConfigurableObject<DataHandlingParams>,
                      public IRunnableObject
 {
 public:
@@ -104,6 +105,14 @@ public:
     void
     addStatusFunction(std::function<Type ()> statusFunc, ContentArg content)
     {
+        if (statusPackaging_.empty())
+        {
+            auto scheduler = get<IScheduler>();
+            statusEvent_ = scheduler->schedule([this]
+            {
+                sendStatus();
+            }, Milliseconds(0), Milliseconds(this->params.period()));
+        }
         auto func = [this, statusFunc, content]()
         {
             return createPacket<Type>(statusFunc, content);
@@ -180,6 +189,8 @@ public:
         dp->addHeader(packet, content);
         if (target)
             dp->addHeader(packet, *target);
+        CPSLOG_TRACE << "Sending Data of size: " << packet.getSize() << " bytes, content: " << static_cast<int>(
+            content);
         publish(packet);
     }
 
@@ -285,11 +296,9 @@ private:
 
     std::vector<std::function<void(const Packet&)>> packetSubscriptions_;
 
-    std::map<Content, std::vector<std::function<void
-                 (const Packet&)>>> subscribers_;
+    std::map<ContentType, std::vector<std::function<void (const Packet&)>>> subscribers_;
 
-    std::map<std::string, std::function<void
-                 (const Packet&)>> memberSubscribers_;
+    std::unordered_map<std::string, std::function<void (const Packet&)>> memberSubscribers_;
 
     Publisher<Packet> publisher_;
     IDCSender sender_;
@@ -315,7 +324,7 @@ DataHandling<C, T>::run(RunStage stage)
         {
             if (!checkIsSet<DataPresentation, IScheduler>())
             {
-                CPSLOG_ERROR << "DataHandling: missing deps";
+                CPSLOG_ERROR << "DataHandling: missing data presentation or scheduler";
                 return true;
             }
 
@@ -323,59 +332,51 @@ DataHandling<C, T>::run(RunStage stage)
             {
                 if (!checkIsSet<IDC>())
                 {
-                    CPSLOG_ERROR << "DataHandling: missing deps";
+                    CPSLOG_ERROR << "DataHandling: missing idc";
                     return true;
                 }
-
-                auto idc = get<IDC>();
-                sender_ = idc->createSender(this->params.idcTarget());
             }
 
             if (this->params.useIPC())
             {
-                if (!checkIsSet<IPC>())
+                auto ipc = get<IPC>();
+                if (!ipc)
                 {
-                    CPSLOG_ERROR << "DataHandling: missing deps";
+                    CPSLOG_ERROR << "DataHandling: missing ipc";
+                    return true;
+                }
+                if (params.ipcPub() == "" || params.ipcSub() == "")
+                {
+                    CPSLOG_ERROR << "DataHandling: IPC publication or subscription name not set";
                     return true;
                 }
 
-                std::string publication = EnumMap<Target>::convert(this->params.target()) + "_to_comm";
-                CPSLOG_DEBUG << "Publishing to " << publication;
-                auto ipc = get<IPC>();
+                CPSLOG_DEBUG << "Publishing to " << params.ipcPub();
                 IPCOptions options;
                 options.multiTarget = false;
-                publisher_ = ipc->publishPackets(publication, options);
+                publisher_ = ipc->publishPackets(params.ipcPub(), options);
             }
-
-
             break;
         }
     case RunStage::NORMAL:
         {
-            auto scheduler = get<IScheduler>();
-            statusEvent_ = scheduler->schedule([this]
-            {
-                sendStatus();
-            }, Milliseconds(0), Milliseconds(this->params.period()));
             currentPeriod_ = this->params.period();
             if (this->params.useIDC())
             {
                 auto idc = get<IDC>();
+                sender_ = idc->createSender(this->params.idcTarget());
 
-                idc->subscribeOnPacket(this->params.idcTarget(),
-                                       std::bind(&DataHandling::onPacket, this, std::placeholders::_1));
+                idc->subscribeOnPacket(this->params.idcTarget(), [this](const Packet& packet) { onPacket(packet); });
             }
 
             if (this->params.useIPC())
             {
-                std::string subscription = "comm_to_" + EnumMap<Target>::convert(this->params.target());
                 auto ipc = get<IPC>();
 
                 IPCOptions options;
                 options.multiTarget = false;
-                ipcSubscription_ = ipc->subscribeOnPackets(subscription,
-                                                           std::bind(&DataHandling::onPacket, this,
-                                                                     std::placeholders::_1), options);
+                ipcSubscription_ = ipc->subscribeOnPackets(params.ipcSub(),
+                                                           [this](const Packet& packet) { onPacket(packet); }, options);
             }
 
 
@@ -391,6 +392,7 @@ template <typename C, typename T>
 void
 DataHandling<C, T>::onPacket(const Packet& packet)
 {
+    CPSLOG_TRACE << "Received Packet of size: " << packet.getSize() << " bytes";
     for (const auto& packetSub : packetSubscriptions_)
     {
         packetSub(packet);
@@ -422,7 +424,7 @@ DataHandling<C, T>::onPacket(const Packet& packet)
     if (it == subscribers_.end())
     {
         CPSLOG_DEBUG << "Packet with content " << static_cast<int>(content)
-            << " received, but no subscribers";
+            << " received, but no subscribers. Packet size with content: " << packet.getSize();
         return;
     }
 
@@ -469,9 +471,6 @@ DataHandling<C, T>::adaptPeriod(bool sendSuccess)
     currentPeriod_ = std::clamp(currentPeriod_, this->params.minPeriod(), this->params.maxPeriod());
     statusEvent_.changePeriod(Milliseconds(currentPeriod_));
 }
-
-using HashingDataHandling = DataHandling<std::size_t, std::size_t>;
-using EnumBasedDataHandling = DataHandling<Content, Target>;
 
 
 #endif /* UAVAP_CORE_DATAHANDLING_H_ */

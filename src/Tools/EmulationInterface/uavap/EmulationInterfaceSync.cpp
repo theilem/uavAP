@@ -23,11 +23,8 @@ main(int argc, char** argv)
 	}
 	else
 	{
-		JsonPopulator pop;
-
-		pop.populateContainer<EmulationInterfaceHelper>();
-		pop.toFile("emulation_interface.json");
-		std::cout << "Populated json" << std::endl;
+		auto pop = JsonPopulator::populateContainer<EmulationInterfaceHelper>();
+		std::cout << pop.getString() << std::endl;
 		return 0;
 	}
 
