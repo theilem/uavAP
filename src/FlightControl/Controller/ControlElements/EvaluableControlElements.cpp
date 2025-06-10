@@ -305,6 +305,7 @@ namespace Control
             integrator_ += currentError_ * timeDiffus * MUSEC_TO_SEC;
 
         integrator_ = std::clamp(integrator_, -params.imax(), params.imax());
+        integrator_ = std::isnan(integrator_) ? 0 : integrator_;
 
         output_ += params.ki() * integrator_;
     }

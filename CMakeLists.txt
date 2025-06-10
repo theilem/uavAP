@@ -20,6 +20,8 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 set(SUBMODULE_DIR ${CMAKE_SOURCE_DIR}/extern)
 
+set(UAVGS_INCLUDE_DIR ${SUBMODULE_DIR}/uavGS/include)
+
 include_directories(${SUBMODULE_DIR}/cpsCore/include)
 
 if (NO_DL)
