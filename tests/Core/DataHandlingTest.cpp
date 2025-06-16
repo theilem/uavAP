@@ -146,17 +146,11 @@ TEST_CASE("Data Handling Test 2: Members")
 
     Packet p = dp->serialize<std::string>("test_param_id");
     dp->addHeader(p, Content::REQUEST_MEMBER);
-    std::cout << "Packet: " << p.getBuffer() << std::endl;
 
     auto scheduler = agg.getOne<MicroSimulator>();
     scheduler->schedule([&publisher, &p] { publisher.publish(p); }, Milliseconds(50));
     scheduler->simulate(Seconds(1));
     std::this_thread::sleep_for(Milliseconds(10));
-
-    std::cout << "Packet size: " << packet.getSize() << std::endl;
-
-
-    // dataHandling->addMember(&testObject.testParam, Content::PAR
 }
 
 TEST_CASE("Data Handling Adaptive Period")
