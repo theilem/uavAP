@@ -13,6 +13,7 @@ option(XPLANE "Build the XPlane Plugin." OFF)
 option(CORE "Always build cps_core." OFF)
 option(PYTHON "Build the Python API." OFF)
 option(WITH_TOOLS "Build the TOOLS of uavAP." ON)
+option(NO_DEBUG "Build CPSLOG without DEBUG and TRACE." OFF)
 
 option(BUILD_SHARED_LIBS "Build shared libraries (.so) instead of static (.a)" ON)
 
@@ -61,9 +62,9 @@ set(REDIS cpp_redis
         tacopie
 )
 
-if (NODEBUG)
+if (NO_DEBUG)
     add_definitions(-DNODEBUG)
-endif (NODEBUG)
+endif (NO_DEBUG)
 
 if (NOT APPLE)
     set(SYSTEM_LIBS ${SYSTEM_LIBS} rt)
