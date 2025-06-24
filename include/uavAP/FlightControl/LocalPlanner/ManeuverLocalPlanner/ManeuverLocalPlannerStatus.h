@@ -7,6 +7,7 @@
 
 #ifndef UAVAP_FLIGHTCONTROL_LOCALPLANNER_MANEUVERLOCALPLANNER_MANEUVERLOCALPLANNERSTATUS_H_
 #define UAVAP_FLIGHTCONTROL_LOCALPLANNER_MANEUVERLOCALPLANNER_MANEUVERLOCALPLANNERSTATUS_H_
+#include <memory>
 #include <cpsCore/Utilities/DataPresentation/detail/SerializeCustom.h>
 #include <cpsCore/Utilities/LinearAlgebra.h>
 #include "uavAP/MissionControl/GlobalPlanner/PathSections/IPathSection.h"

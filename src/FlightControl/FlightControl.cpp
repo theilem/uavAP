@@ -5,7 +5,6 @@
  *      Author: mircot
  */
 
-#include <boost/property_tree/json_parser.hpp>
 #include <cpsCore/Synchronization/SynchronizedRunner.h>
 #include <cpsCore/Configuration/JsonPopulator.h>
 #include "uavAP/FlightControl/FlightControlHelper.h"
