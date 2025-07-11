@@ -224,7 +224,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			if (gps->flags != 7)
 			{
 				gps = &lastGPSSample_;
-				if (Clock::now() - gpsSampleTimestamp_ > params.gpsTimeout())
+				if (Clock::now() - gpsSampleTimestamp_ > Milliseconds(params.gpsTimeout()))
 				{
 					sens.hasGPSFix = false;
 				}
@@ -346,7 +346,7 @@ ApExtManager::ap_sense(const data_sample_t* sample)
 			{
 				oldAirspeed = true;
 				airspeed = &lastAirspeedSample_;
-				if (Clock::now() - airspeedTimestamp_ > params.airspeedTimeout())
+				if (Clock::now() - airspeedTimestamp_ > Milliseconds(params.airspeedTimeout()))
 				{
 					setGroundSpeed = true;
 					sens.airSpeed = sens.groundSpeed; // Set to ground speed if timeout

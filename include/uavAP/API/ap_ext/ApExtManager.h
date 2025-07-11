@@ -16,7 +16,6 @@
 #include "uavAP/FlightControl/Controller/AdvancedControl.h"
 #include "uavAP/FlightControl/Controller/ControllerOutput.h"
 #include <mutex>
-#include <functional>
 
 #include <cpsCore/cps_object>
 
