@@ -7,10 +7,16 @@
 #include "uavAP/MissionControl/GlobalPlanner/Geometry.h"
 
 PathSections
-approach(const Pose& start, const Pose& end, FloatingType velocity, FloatingType slope, FloatingType radius)
+approach(const Pose& start, const Pose& end, FloatingType velocity, FloatingType slope, FloatingType radius, FloatingType endingStraightLength)
 {
-    auto endOrbit1 = poseToOrbit(end, OrbitDirection::CCW, radius, velocity);
-    auto endOrbit2 = poseToOrbit(end, OrbitDirection::CW, radius, velocity);
+    Pose endOrbitPose = end;
+    if (endingStraightLength > 0.0)
+    {
+        Vector2 endOrbitPosition = end.first.head<2>() - end.second.head<2>().normalized() * endingStraightLength;
+        endOrbitPose.first.head<2>() = endOrbitPosition;
+    }
+    auto endOrbit1 = poseToOrbit(endOrbitPose, OrbitDirection::CCW, radius, velocity);
+    auto endOrbit2 = poseToOrbit(endOrbitPose, OrbitDirection::CW, radius, velocity);
 
     auto traj1 = approach(start, endOrbit1, velocity, slope, radius);
     auto traj2 = approach(start, endOrbit2, velocity, slope, radius);
@@ -56,8 +62,16 @@ approach(const Pose& start, const Pose& end, FloatingType velocity, FloatingType
         }
     }
     // Add the final curve to the trajectory
-    auto finalCurve = std::make_shared<Curve>(*finalOrbit, end.first);
+    auto finalCurve = std::make_shared<Curve>(*finalOrbit, endOrbitPose.first);
     bestTraj.push_back(finalCurve);
+
+    // Add the final straight line if the ending straight length is specified
+    if (endingStraightLength > 0.0)
+    {
+        auto finalLine = std::make_shared<Line>(endOrbitPose.first, end.first, velocity);
+        bestTraj.push_back(finalLine);
+    }
+
     return bestTraj;
 }
 

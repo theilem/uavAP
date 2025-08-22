@@ -37,7 +37,7 @@ ApproachPlanner::run(RunStage stage)
 PathSections
 ApproachPlanner::getApproach(const Pose& start, const Pose& goal) const
 {
-    return approach(start, goal, params.velocity(), params.slope(), params.radius());
+    return approach(start, goal, params.velocity(), params.slope(), params.radius(), params.endingStraightLength());
 }
 
 PathSections

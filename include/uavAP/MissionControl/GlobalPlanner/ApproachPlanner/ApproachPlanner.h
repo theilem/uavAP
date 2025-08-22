@@ -18,6 +18,7 @@ struct ApproachPlannerParams
     Parameter<FloatingType> slope = {0.2, "slope", true};
     Parameter<FloatingType> radius = {100.0, "radius", true};
     Parameter<FloatingType> velocity = {20.0, "velocity", true};
+    Parameter<FloatingType> endingStraightLength = {0.0, "ending_straight_length", true}; // Length of the straight line at the end of the approach
     template <typename Configurator>
     void
     configure(Configurator& c)
@@ -25,6 +26,7 @@ struct ApproachPlannerParams
         c & slope;
         c & radius;
         c & velocity;
+        c & endingStraightLength;
     }
 };
 
